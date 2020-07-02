@@ -1,20 +1,32 @@
-import typescript from 'rollup-plugin-typescript2';
+import typescript from '@rollup/plugin-typescript';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 // import { plugin as analyze } from 'rollup-plugin-analyzer';
 import { terser } from 'rollup-plugin-terser';
 import filesize from 'rollup-plugin-filesize';
-import vue from 'rollup-plugin-vue';
+import svelte from 'rollup-plugin-svelte';
+import preprocess from 'svelte-preprocess';
 import pkg from './package.json';
 
-let plugins = [resolve(), commonjs(), typescript(), vue()];
-if (process.env.NODE_ENV === 'production') {
-  plugins = plugins.concat([
-    terser(),
-    filesize(),
-    //analyze(),
-  ]);
-}
+const production = !process.env.ROLLUP_WATCH;
+
+const plugins = [
+  svelte({
+    dev: !production,
+    css: (css) => {
+      css.write('dist/bundle.css');
+    },
+    preprocess: preprocess(),
+  }),
+  typescript(),
+  resolve({
+    browser: true,
+    dedupe: ['svelte'],
+  }),
+  commonjs(),
+  production && terser(),
+  production && filesize(),
+];
 
 const esOutput = {
   file: pkg.module,
@@ -26,7 +38,7 @@ const umdOutput = {
   file: pkg.main,
   format: 'umd',
   name: 'marcelle',
-  // sourcemap: true,
+  sourcemap: true,
   globals: {
     // '@tensorflow/tfjs-core': 'tf',
     // '@tensorflow/tfjs-converter': 'tf',
@@ -34,8 +46,6 @@ const umdOutput = {
     // 'element-ui': 'ELEMENT',
     // meyda: 'Meyda',
     // 'pouchdb-browser': 'PouchDB',
-    vue: 'Vue',
-    // vuex: 'Vuex',
   },
 };
 
@@ -49,8 +59,6 @@ export default {
     // 'element-ui',
     // 'meyda',
     // 'pouchdb-browser',
-    'vue',
-    // 'vuex',
   ],
   output: [esOutput, umdOutput],
 };

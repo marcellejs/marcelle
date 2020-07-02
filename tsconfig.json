@@ -1,10 +1,9 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "outDir": "dist",
-    "sourceMap": false,
-    "target": "esnext",
-    "module": "esnext",
+    "sourceMap": true,
+    "target": "es6",
+    "module": "es6",
     "moduleResolution": "node",
     "allowJs": false,
     "strict": true,
@@ -14,15 +13,11 @@
     "esModuleInterop": true,
     "removeComments": false,
     "lib": ["esnext", "dom"],
-    "types": ["node"],
+    "types": ["node", "svelte"],
     "rootDir": "."
   },
-  "files": [
-    "vue-shims.d.ts"
-  ],
   "include": [
-    "packages/*/src/**/*.ts",
-    "packages/*/src/**/*.vue",
+    "packages/*/src/",
   ],
   "exclude": [
     "node_modules"

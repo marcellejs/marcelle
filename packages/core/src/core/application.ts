@@ -1,9 +1,5 @@
 import { Module } from './module';
-import { newDefaultScheduler } from '@most/scheduler';
-import { Stream } from '@most/types';
-import { runEffects } from '@most/core';
-import App from './App.vue';
-import Vue from 'vue';
+import App from './App.svelte';
 
 interface ApplicationOptions {
   title: string;
@@ -20,8 +16,7 @@ class Application {
     left: Record<string, string[]>;
     right: Record<string, string[]>;
   } = { left: {}, right: {} };
-  streams: Stream<unknown>[] = [];
-  scheduler = newDefaultScheduler();
+  // streams: Stream<unknown>[] = [];
   dashboards: string[] = [];
 
   constructor(
@@ -67,12 +62,12 @@ class Application {
     // }
   }
 
-  run(stream: Stream<unknown>): void {
-    this.streams.push(stream);
-    if (this.started) {
-      runEffects(stream, this.scheduler);
-    }
-  }
+  // run(stream: Stream<unknown>): void {
+  //   this.streams.push(stream);
+  //   if (this.started) {
+  //     runEffects(stream, this.scheduler);
+  //   }
+  // }
 
   input(module: Module) {
     if (!Object.keys(this.modules).includes(module.id)) {
@@ -121,101 +116,27 @@ class Application {
     console.log('title', this.title);
     console.log('author', this.author);
     console.log('datasets', this.datasets);
-    const app = new Vue({
-      el: '#app',
-      // template: '<App :title="title" />',
-      // components: { App },
-      // data: {
-      //   title: this.title,
-      //   left: {
-      //     input: ['test'],
-      //   },
-      //   right: {
-      //     yo: ['test'],
-      //   },
-      // },
-      render: (h) =>
-        h(App, {
-          props: {
-            title: this.title,
-            left: this.ui.left,
-            right: this.ui.right,
-          },
-        }),
+    const app = new App({
+      target: document.body,
+      props: {
+        title: this.title,
+        left: this.ui.left,
+        right: this.ui.right,
+      },
     });
-    console.log('app.$data', app.$data);
-    // app.$data.left = {
-    //   input: ['test'],
-    // };
     console.log('app', app);
     Object.values(this.ui.left)
       .reduce((x, y) => x.concat(y), [])
       .concat(Object.values(this.ui.right).reduce((x, y) => x.concat(y), []))
       .forEach((id) => {
-        this.modules[id].run(this.scheduler);
+        this.modules[id].run();
       });
-    this.streams.forEach((s) => {
-      runEffects(s, this.scheduler);
-    });
-    //     const data = {
-    //       slots: this.plugins.map((x) => x.slot).filter((x) => !!x),
-    //       ...this.plugins.reduce((c, x) => ({ ...c, ...x.data }), {}),
-    //       ...Object.values(this.tabs).reduce((x, y) => ({ ...x, ...y.data }), {}),
-    //       observables: this.observables,
-    //     };
-    //     Vue.use(coreVuePlugin);
-    //     const store = new Vuex.Store();
-    //     const setupPlugins = this.plugins.map(
-    //       ({ plugin }) =>
-    //         new Promise((resolve, reject) => {
-    //           try {
-    //             Vue.use(plugin, {
-    //               store,
-    //               appSpec: this,
-    //               loaded() {
-    //                 resolve();
-    //               },
-    //             });
-    //           } catch (e) {
-    //             reject(e);
-    //           }
-    //         }),
-    //     );
-    //     await Promise.all(setupPlugins);
-    //     this.$root = new Vue({
-    //       el: '#app',
-    //       store,
-    //       components: this.components,
-    //       data,
-    //       template: this.markup,
-    //     });
-    //     runWatchers(this.$root, this.watchers);
-    //     this.running = true;
+    // this.streams.forEach((s) => {
+    //   runEffects(s, this.scheduler);
+    // });
     this.started = true;
     return this;
   }
-
-  //   get components() {
-  //     return {
-  //       ...this.plugins.reduce((c, x) => ({ ...c, ...x.components }), {}),
-  //       ...Object.values(this.tabs).reduce((x, { components }) => ({ ...x, ...components }), {}),
-  //     };
-  //   }
-
-  //   get markup() {
-  //     const pluginsMarkup = this.plugins.reduce((m, x) => m + x.markup, '');
-  //     const tabsMarkup = Object.values(this.tabs).reduce(
-  //       (x, y) => `${x}<el-tab-pane label="${y.name}">${y.markup}</el-tab-pane>`,
-  //       '',
-  //     );
-  //     return `
-  // <marcelle-app :slots="slots">
-  //   ${pluginsMarkup}
-  //   <template v-slot:tabs>
-  //     ${tabsMarkup}
-  //   </template>
-  // </marcelle-app>`;
-  //   }
 }
 
 export function createApp(options: ApplicationOptions): Application {

@@ -8,17 +8,23 @@ const app = marcelle.createApp({
   datasets: ['trainingSet'],
 });
 
+const b = marcelle.button({ text: 'Say hi!' });
+app.use(b);
+setTimeout(() => {
+  console.log('b.props.text', b.props.text);
+}, 2000);
+b.out.click.subscribe(() => {
+  b.props.text = 'Love on the beat!';
+});
 const w = marcelle.webcam();
 app.use(w);
 
-// // ALTERNATIVE SYNTAX?
-// app.computed('metro', () => {
-//   console.log(w.out.$test);
-//   return w.out.$test;
-// });
-
-const $webcamActive = mostCore.tap(console.log, w.out.$active);
-app.run($webcamActive);
+setTimeout(() => {
+  w.out.active.set(true);
+}, 3000);
+w.out.active.subscribe((x) => {
+  console.log('w.out.active', x);
+});
 
 // // PIPELINES
 // const $input = webcam({ ui: 'webcam' });
@@ -57,6 +63,6 @@ app.run($webcamActive);
 // // UI
 app.input(w);
 
-app.dashboard('Data Management');
+app.dashboard('Data Management').use(b);
 
 app.start();
