@@ -1,0 +1,42 @@
+{
+  "name": "root",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JulesFrancoise/marcelle-next"
+  },
+  "author": "me@julesfrancoise.com",
+  "license": "MIT",
+  "scripts": {
+    "prepare": "npm run bootstrap && lerna run prepare",
+    "bootstrap": "lerna bootstrap",
+    "build": "lerna run build --stream --ignore example-*",
+    "examples:build": "lerna run build --stream --scope example-*",
+    "dev": "cross-env NODE_ENV=development BABEL_ENV=build rollup -c -w",
+    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
+    "clean": "lerna clean --yes && rm -rf `find packages -type d -name dist`"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^13.0.0",
+    "@rollup/plugin-node-resolve": "^8.1.0",
+    "@rollup/plugin-typescript": "^5.0.1",
+    "@typescript-eslint/eslint-plugin": "^3.5.0",
+    "@typescript-eslint/parser": "^3.5.0",
+    "@vue/compiler-sfc": "^3.0.0-beta.16",
+    "cross-env": "^7.0.2",
+    "eslint": "^7.3.1",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "lerna": "^3.22.1",
+    "prettier": "^2.0.5",
+    "rollup": "^2.18.1",
+    "rollup-plugin-css-only": "^2.1.0",
+    "rollup-plugin-filesize": "^9.0.1",
+    "rollup-plugin-terser": "^6.1.0",
+    "rollup-plugin-typescript2": "^0.27.1",
+    "rollup-plugin-vue": "^6.0.0-beta.6",
+    "typescript": "^3.9.5",
+    "vue": "^2.6.11",
+    "vue-template-compiler": "^2.6.11"
+  }
+}
