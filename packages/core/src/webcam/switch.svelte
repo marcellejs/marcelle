@@ -1,4 +1,10 @@
-<style lang="postcss">
+<script>
+  export let text = '';
+  export let checked = false;
+  export let disabled = false;
+</script>
+
+<style type="text/postcss">
   .switch {
     @apply relative inline-block align-middle cursor-pointer select-none bg-transparent;
   }
@@ -33,17 +39,11 @@
   }
 </style>
 
-<script>
-  export let text = '';
-  export let checked = false;
-  export let disabled = false;
-</script>
-
 <label>
   <div class="switch">
     <input type="checkbox" class="sr-only" {disabled} bind:checked />
-    <div class="track"></div>
-    <div class="thumb"></div>
+    <div class="track" />
+    <div class="thumb" />
   </div>
   <span class="ml-2 cursor-pointer">{text}</span>
 </label>

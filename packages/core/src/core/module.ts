@@ -1,10 +1,3 @@
-// import { runEffects } from '@most/core';
-// import { Stream, Scheduler } from '@most/types';
-// import { tap, multicast } from '@most/core';
-// import { createAdapter } from '@most/adapter';
-// import Vue from 'vue';
-// import { CombinedVueInstance, VueConstructor } from 'vue/types/vue';
-
 import { Writable } from 'svelte/store';
 import { SvelteComponent } from 'svelte';
 

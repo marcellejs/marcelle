@@ -23,7 +23,7 @@ class Application {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     private datasets: string[] = [],
-  ) {}
+  ) { }
 
   use(module: Module) {
     this.modules[module.id] = module;
@@ -31,9 +31,11 @@ class Application {
 
   input(module: Module) {
     if (!Object.keys(this.modules).includes(module.id)) {
-      throw new Error(`Module '${module.id}' hasn't been registered on the application.
+      throw new Error(
+        `Module '${module.id}' hasn't been registered on the application.
         Use \`app.use()\`
-      `);
+      `,
+      );
     }
     if (!Object.keys(this.ui.left).includes('input')) {
       this.ui.left.input = [];
@@ -48,9 +50,11 @@ class Application {
     return {
       use: (module: Module) => {
         if (!Object.keys(this.modules).includes(module.id)) {
-          throw new Error(`Module '${module.id}' hasn't been registered on the application.
+          throw new Error(
+            `Module '${module.id}' hasn't been registered on the application.
             Use \`app.use()\`
-          `);
+          `,
+          );
         }
         this.ui.right[dashboardName].push(module.id);
       },

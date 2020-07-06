@@ -5,7 +5,8 @@
     click.set(event);
   }
 </script>
-<svelte:options accessors/>
+
+<svelte:options accessors />
 
 <span class="card-title">button</span>
 <button on:click={sendClick}>{$text}</button>

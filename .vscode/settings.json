@@ -1,6 +1,10 @@
 {
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": false
   },
-  "editor.formatOnSave": false
+  "svelte.plugin.css.diagnostics.enable": false,
+  "editor.formatOnSave": true,
+  "[svelte]": {
+    "editor.defaultFormatter": "JamesBirtles.svelte-vscode"
+  }
 }

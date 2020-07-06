@@ -24,9 +24,9 @@
 
   onMount(() => {
     setupMedia();
-  })
+  });
 
-  active.subscribe((v) => {
+  active.subscribe(v => {
     if (v) {
       if (!camerasListEmitted) {
         loadCameras();
@@ -36,7 +36,7 @@
     } else {
       stop();
     }
-  })
+  });
 
   function start() {
     if (deviceId) {
@@ -74,9 +74,9 @@
         }
       })
       .catch(error => {
-        notyf.error("Webcam not supported");
+        notyf.error('Webcam not supported');
       });
-    }
+  }
 
   function loadCamera(device) {
     const constraints = { video: { deviceId: { exact: device } } };
@@ -150,27 +150,26 @@
 </script>
 
 <style lang="postcss">
-.webcam {
-  @apply mt-2;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
+  .webcam {
+    @apply mt-2;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
 
-.webcam .webcam-container {
-  @apply rounded overflow-hidden bg-gray-200;
-  width: 300px;
-  height: 300px;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  margin: 10px;
-  /* border: 1px solid grey; */
-}
+  .webcam .webcam-container {
+    @apply rounded overflow-hidden bg-gray-200;
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    margin: 10px;
+  }
 
-video {
-  transform: scaleX(-1);
-}
+  video {
+    transform: scaleX(-1);
+  }
 </style>
 
 <span class="card-title">{title}</span>
@@ -188,7 +187,6 @@ video {
       width={$width}
       autoplay
       muted
-      playsinline
-    />
+      playsinline />
   </div>
 </div>
