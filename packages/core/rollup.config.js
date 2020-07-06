@@ -1,3 +1,4 @@
+import css from 'rollup-plugin-css-only';
 import typescript from '@rollup/plugin-typescript';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
@@ -11,6 +12,7 @@ import pkg from './package.json';
 const production = !process.env.ROLLUP_WATCH;
 
 const plugins = [
+  css({ output: 'dist/extra.css' }),
   svelte({
     dev: !production,
     css: (css) => {

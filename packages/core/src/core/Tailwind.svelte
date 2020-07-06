@@ -27,15 +27,15 @@ body {
 }
 
 .card {
-  @apply border border-indigo-500 rounded relative p-1 m-1 max-w-sm overflow-hidden;
+  @apply border border-indigo-500 rounded-lg relative p-1 m-1 max-w-sm overflow-hidden;
 }
 
 .card:hover {
-  @apply border-indigo-500 shadow-md;
+  @apply border-indigo-500 shadow;
 }
 
 .card-title {
   /* @apply bg-indigo-500 text-white px-2 py-1 text-xs absolute left-0 top-0 rounded-br; */
-  @apply bg-indigo-500 text-white px-2 py-1 text-xs absolute right-0 top-0 rounded-bl;
+  @apply bg-indigo-500 text-white px-2 py-1 text-xs absolute right-0 top-0 rounded-bl-lg;
 }
 </style>

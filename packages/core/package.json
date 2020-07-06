@@ -13,5 +13,8 @@
   },
   "devDependencies": {
     "rollup": "^2.18.2"
+  },
+  "dependencies": {
+    "notyf": "^3.7.0"
   }
 }

@@ -7,6 +7,11 @@ fsevents@~2.1.2:
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.1.3.tgz#fb738703ae8d2f9fe900c33836ddebee8b97f23e"
   integrity sha512-Auw9a4AxqWpa9GUfj370BMPzzyncfBABW8Mab7BGWBYDj4Isgq+cDKtx0i6u9jcX9pQDnswsaaOTgTmA5pEjuQ==
 
+notyf@^3.7.0:
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/notyf/-/notyf-3.7.0.tgz#adeaab5482fa25259c3682d2aaf5bf3d37cb0421"
+  integrity sha512-YLku5YhncldCrSK/KeRAa3b+G6ylEjSbAWqZcF2NccWNUYhOk9bEvxyKgrZ04bBCmzNKEn6fOKYreYkRfNFYzA==
+
 rollup@^2.18.2:
   version "2.18.2"
   resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.18.2.tgz#886ac6e4549e493df106c3e2580c89aeb997be25"

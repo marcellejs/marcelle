@@ -1,16 +1,8 @@
-import { readable, writable } from 'svelte/store';
-
-const timer = readable(0, (set) => {
-  let current = 0;
-
-  const id = setInterval(() => {
-    current += 1;
-    set(current);
-  }, 1000);
-
-  return () => clearInterval(id);
-});
+import { writable } from 'svelte/store';
 
 const active = writable(false);
+const cameras = writable<string[]>([]);
+const width = writable(400);
+const height = writable(300);
 
-export { timer, active };
+export { active, cameras, width, height };
