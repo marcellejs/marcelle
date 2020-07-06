@@ -7,4 +7,5 @@
 </script>
 <svelte:options accessors/>
 
+<span class="card-title">button</span>
 <button on:click={sendClick}>{$text}</button>

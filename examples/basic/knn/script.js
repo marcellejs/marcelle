@@ -2,7 +2,7 @@
 // import mobilenet from './myMobilenet';
 
 const app = marcelle.createApp({
-  title: 'Webcam + Mobilenet + MLP + Real-time',
+  title: 'Marcelle Starter',
   author: 'Marcelle Pirates Crew',
   // plugins: [ImagePlugin],
   datasets: ['trainingSet'],
