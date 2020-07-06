@@ -1,7 +1,7 @@
 import typescript from '@rollup/plugin-typescript';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-// import { plugin as analyze } from 'rollup-plugin-analyzer';
+import { plugin as analyze } from 'rollup-plugin-analyzer';
 import { terser } from 'rollup-plugin-terser';
 import filesize from 'rollup-plugin-filesize';
 import svelte from 'rollup-plugin-svelte';
@@ -26,6 +26,7 @@ const plugins = [
   commonjs(),
   production && terser(),
   production && filesize(),
+  production && analyze(),
 ];
 
 const esOutput = {

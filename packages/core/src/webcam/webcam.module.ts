@@ -6,12 +6,11 @@ export class Webcam extends Module {
   name = 'webcam';
   description = 'Webcam input module';
   component = component;
-  // watchers = ['active'];
 
   constructor(options: Record<string, unknown>) {
-    super(options);
+    super();
+    console.log('webcam, options =', options);
     this.out.active = active;
-    this.setup();
   }
 
   protected mount(): void {

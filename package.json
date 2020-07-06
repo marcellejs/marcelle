@@ -29,6 +29,7 @@
     "lerna": "^3.22.1",
     "prettier": "^2.0.5",
     "rollup": "^2.18.1",
+    "rollup-plugin-analyzer": "^3.2.3",
     "rollup-plugin-css-only": "^2.1.0",
     "rollup-plugin-filesize": "^9.0.1",
     "rollup-plugin-svelte": "^5.2.3",

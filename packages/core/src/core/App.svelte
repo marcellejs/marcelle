@@ -1,59 +1,36 @@
 <script>
 export let title;
+export let author;
 export let left = {};
 export let right = {};
 </script>
 
-  <div id="app">
+<div id="app">
+  <header>
     <h1>{title}</h1>
-    <div class="row">
-      <div class="left">
-        {#each Object.keys(left) as tab}
-          <div id={tab}>
-            {#each left[tab] as id}
-              <div id={id}></div>
-            {/each}
-          </div>
-        {/each}
-      </div>
-      <div class="right">
-        {#each Object.keys(right) as tab}
-          <div id={tab}>
-            {#each right[tab] as id}
-              <div id={id}></div>
-            {/each}
-          </div>
-        {/each}
-      </div>
+    <div class="author">{author}</div>
+  </header>
+  <div class="row">
+    <div class="left">
+      {#each Object.keys(left) as tab}
+        <div id={tab}>
+          {#each left[tab] as id}
+            <div id={id}></div>
+          {/each}
+        </div>
+      {/each}
+    </div>
+    <div class="right">
+      {#each Object.keys(right) as tab}
+        <div id={tab}>
+          {#each right[tab] as id}
+            <div id={id}></div>
+          {/each}
+        </div>
+      {/each}
     </div>
   </div>
-
-<!-- <script>
-export default {
-  name: 'App',
-  // components: { ProjectManager },
-  props: {
-    title: {
-      type: String,
-      default: 'Marcelle App',
-    },
-    left: {
-      type: Object,
-      default: {},
-    },
-    right: {
-      type: Object,
-      default: {},
-    },
-  },
-  // data() {
-  //   return {
-  //     left: { input: ['test'] },
-  //     right: {},
-  //   };
-  // },
-};
-</script> -->
+</div>
 
 <style>
 html,

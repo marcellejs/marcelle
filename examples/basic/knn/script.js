@@ -10,21 +10,21 @@ const app = marcelle.createApp({
 
 const b = marcelle.button({ text: 'Say hi!' });
 app.use(b);
-setTimeout(() => {
-  console.log('b.props.text', b.props.text);
-}, 2000);
-b.out.click.subscribe(() => {
+console.log('b.props.text', b.props.text);
+b.out.click.subscribe((v) => {
+  if (!v) return;
   b.props.text = 'Love on the beat!';
 });
+
 const w = marcelle.webcam();
 app.use(w);
 
-setTimeout(() => {
-  w.out.active.set(true);
-}, 3000);
-w.out.active.subscribe((x) => {
-  console.log('w.out.active', x);
-});
+// setTimeout(() => {
+//   w.out.active.set(true);
+// }, 3000);
+// w.out.active.subscribe((x) => {
+//   console.log('w.out.active', x);
+// });
 
 // // PIPELINES
 // const $input = webcam({ ui: 'webcam' });
@@ -64,5 +64,6 @@ w.out.active.subscribe((x) => {
 app.input(w);
 
 app.dashboard('Data Management').use(b);
+// app.page('Data Management').left(w).right(b);
 
 app.start();
