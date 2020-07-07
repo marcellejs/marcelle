@@ -11,10 +11,10 @@
     "build": "rollup -c",
     "lint": "eslint src"
   },
-  "devDependencies": {
-    "rollup": "^2.18.2"
-  },
   "dependencies": {
     "notyf": "^3.7.0"
+  },
+  "devDependencies": {
+    "rollup": "^2.20.0"
   }
 }
