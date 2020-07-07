@@ -1,8 +1,6 @@
 import { writable } from 'svelte/store';
 
-const active = writable(false);
-const cameras = writable<string[]>([]);
-const width = writable(400);
-const height = writable(300);
-
-export { active, cameras, width, height };
+export const active = writable(false);
+export const cameras = writable<string[]>([]);
+export const width = writable(400);
+export const height = writable(300);

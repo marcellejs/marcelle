@@ -13,7 +13,7 @@ export class Button extends Module {
     this.out.click = click;
   }
 
-  protected mount(): void {
+  mount(): void {
     const target = document.querySelector(`#${this.id}`);
     if (!target) return;
     this.app = new component({ target });

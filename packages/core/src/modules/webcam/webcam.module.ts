@@ -13,7 +13,7 @@ export class Webcam extends Module {
     this.out.active = active;
   }
 
-  protected mount(): void {
+  mount(): void {
     const target = document.querySelector(`#${this.id}`);
     if (!target) return;
     this.app = new component({

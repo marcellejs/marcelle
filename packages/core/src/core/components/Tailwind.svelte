@@ -27,7 +27,7 @@
   }
 
   .card {
-    @apply border border-indigo-500 rounded-lg relative p-1 m-1 max-w-sm overflow-hidden;
+    @apply border border-indigo-500 rounded-lg relative p-1 m-1 max-w-sm;
   }
 
   .card:hover {
@@ -35,6 +35,6 @@
   }
 
   .card-title {
-    @apply bg-indigo-500 text-white px-2 py-1 text-xs absolute right-0 top-0 rounded-bl-lg;
+    @apply bg-indigo-500 text-white px-2 py-1 text-xs absolute right-0 top-0 rounded-bl-lg rounded-tr-md z-10;
   }
 </style>

@@ -1,31 +1,56 @@
 <script>
+  import routie from './routie';
   import Tailwind from './Tailwind.svelte';
+  import Dashboard from './Dashboard.svelte';
 
   export let title;
   export let author;
-  export let left = {};
-  export let right = {};
+  export let dashboards = {};
+
+  let currentDashboard = Object.keys(dashboards)[0] || undefined;
+
+  function string2slug(str) {
+    str = str.replace(/^\s+|\s+$/g, ''); // trim
+    str = str.toLowerCase();
+
+    // remove accents, swap ñ for n, etc
+    var from = 'àáäâèéëêìíïîòóöôùúüûñç·/_,:;';
+    var to = 'aaaaeeeeiiiioooouuuunc------';
+    for (var i = 0, l = from.length; i < l; i++) {
+      str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+    }
+
+    str = str
+      .replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+      .replace(/\s+/g, '-') // collapse whitespace and replace by -
+      .replace(/-+/g, '-'); // collapse dashes
+
+    return str;
+  }
+
+  $: dashboardNames = Object.keys(dashboards);
+  $: dashboardSlugs = [''].concat(dashboardNames.slice(1).map(string2slug));
+
+  $: dashboardSlugs.forEach((slug, i) => {
+    routie(slug, () => {
+      if (currentDashboard === dashboardNames[i]) return;
+      currentDashboard && dashboards[currentDashboard].destroy();
+      currentDashboard = dashboardNames[i];
+      dashboards[currentDashboard].mount();
+    });
+  });
 </script>
 
 <style type="text/postcss">
   .container {
     @apply max-w-none w-screen p-1 flex flex-row flex-wrap flex-grow;
   }
-
-  .left {
-    @apply flex-shrink-0 p-1;
-    width: 350px;
-  }
-
-  .right {
-    @apply flex-grow p-1;
-  }
 </style>
 
 <Tailwind />
 <header class="text-gray-700 body-font border-b">
   <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
-    <a href="/" class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+    <a href="#/" class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -40,7 +65,9 @@
       <span class="ml-3 text-xl">{title}</span>
     </a>
     <nav class="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center">
-      <a href="/" class="mr-5 hover:text-gray-900">Dashboard</a>
+      {#each dashboardNames as dashboardName, index}
+        <a href={'#' + dashboardSlugs[index]} class="mr-5 hover:text-gray-900">{dashboardName}</a>
+      {/each}
     </nav>
     <button
       class="inline-flex items-center bg-gray-200 border-0 py-1 px-3 focus:outline-none
@@ -60,26 +87,13 @@
     </button>
   </div>
 </header>
+
 <div class="container">
-  <div class="left">
-    {#each Object.keys(left) as tab}
-      <div id={tab}>
-        {#each left[tab] as id}
-          <div {id} class="card" />
-        {/each}
-      </div>
-    {/each}
-  </div>
-  <div class="right">
-    {#each Object.keys(right) as tab}
-      <div id={tab}>
-        {#each right[tab] as id}
-          <div {id} class="card" />
-        {/each}
-      </div>
-    {/each}
-  </div>
+  {#if currentDashboard}
+    <Dashboard dashboard={dashboards[currentDashboard]} />
+  {/if}
 </div>
+
 <footer class="text-gray-700 body-font border-t">
   <div class="px-5 py-2 mx-full flex items-center justify-end sm:flex-row">
     <p class="text-sm text-gray-500 sm:ml-4 sm:pl-4 sm:border-gray-200 sm:py-2 sm:mt-0 mt-4">

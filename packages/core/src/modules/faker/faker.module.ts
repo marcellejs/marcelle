@@ -13,7 +13,7 @@ export class Faker extends Module {
     this.out.frames = frames;
   }
 
-  protected mount(): void {
+  mount(): void {
     const target = document.querySelector(`#${this.id}`);
     if (!target) return;
     this.app = new component({
