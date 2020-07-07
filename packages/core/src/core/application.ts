@@ -1,5 +1,5 @@
 import { Module } from './module';
-import App from './App.svelte';
+import App from './components/App.svelte';
 
 interface ApplicationOptions {
   title: string;
@@ -23,7 +23,7 @@ class Application {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     private datasets: string[] = [],
-  ) { }
+  ) {}
 
   use(module: Module) {
     this.modules[module.id] = module;

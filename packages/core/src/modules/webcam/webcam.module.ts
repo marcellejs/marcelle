@@ -1,4 +1,4 @@
-import { Module } from '../core/module';
+import { Module } from '../../core/module';
 import { active } from './webcam.store';
 import component from './webcam.svelte';
 

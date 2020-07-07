@@ -1,4 +1,4 @@
-import { Writable } from 'svelte/store';
+import { Writable, Readable } from 'svelte/store';
 import { SvelteComponent } from 'svelte';
 
 export abstract class Module {
@@ -13,7 +13,7 @@ export abstract class Module {
 
   props: Record<string, unknown> = {};
   propValues: Record<string, unknown> = {};
-  out: Record<string, Writable<unknown>> = {};
+  out: Record<string, Writable<unknown> | Readable<unknown>> = {};
 
   protected component: unknown = undefined;
   protected app: SvelteComponent | undefined = undefined;

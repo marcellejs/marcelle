@@ -12,7 +12,7 @@
     "bootstrap": "lerna bootstrap",
     "build": "lerna run build --stream --ignore example-*",
     "examples:build": "lerna run build --stream --scope example-*",
-    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
+    "lint": "eslint './packages/*/src/**/*.{js,ts,tsx,svelte}'",
     "clean": "lerna clean --yes && rm -rf `find packages -type d -name dist`"
   },
   "devDependencies": {

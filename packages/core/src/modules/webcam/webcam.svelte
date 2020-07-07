@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { Notyf } from 'notyf';
   import 'notyf/notyf.min.css';
-  import Switch from './switch.svelte';
+  import Switch from '../../core/components/Switch.svelte';
   import { active, width, height } from './webcam.store';
 
   export let title;

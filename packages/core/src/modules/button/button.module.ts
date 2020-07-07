@@ -1,4 +1,4 @@
-import { Module } from '../core/module';
+import { Module } from '../../core/module';
 import { click, text as textObs } from './button.store';
 import component from './button.svelte';
 

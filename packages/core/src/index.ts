@@ -1,3 +1,4 @@
 export { createApp } from './core/application';
-export { button } from './button';
-export { webcam } from './webcam';
+export { button } from './modules/button';
+export { faker } from './modules/faker';
+export { webcam } from './modules/webcam';

@@ -8,16 +8,23 @@ const app = marcelle.createApp({
   datasets: ['trainingSet'],
 });
 
-const b = marcelle.button({ text: 'Say hi!' });
-app.use(b);
-console.log('b.props.text', b.props.text);
-b.out.click.subscribe((v) => {
-  if (!v) return;
-  b.props.text = 'Love on the beat!';
+const f = marcelle.faker({ size: 3 });
+app.use(f);
+console.log('f.props.size', f.props.size);
+f.out.frames.subscribe((data) => {
+  console.log('Fake data:', data);
 });
 
-const w = marcelle.webcam();
-app.use(w);
+// const b = marcelle.button({ text: 'Say hi!' });
+// app.use(b);
+// console.log('b.props.text', b.props.text);
+// b.out.click.subscribe((v) => {
+//   if (!v) return;
+//   b.props.text = 'Love on the beat!';
+// });
+
+// const w = marcelle.webcam();
+// app.use(w);
 
 // setTimeout(() => {
 //   w.out.active.set(true);
@@ -61,9 +68,9 @@ app.use(w);
 // 	.predict('mlp');
 
 // // UI
-app.input(w);
+app.input(f);
 
-app.dashboard('Data Management').use(b);
+// app.dashboard('Data Management').use(b);
 // app.page('Data Management').left(w).right(b);
 
 app.start();
