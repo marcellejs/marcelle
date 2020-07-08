@@ -4,12 +4,10 @@
   export let title;
 
   function startCapture() {
-    console.log('Start capturing...');
     capturing.set(true);
   }
 
   function stopCapture() {
-    console.log('Stop capturing...');
     capturing.set(false);
   }
 </script>

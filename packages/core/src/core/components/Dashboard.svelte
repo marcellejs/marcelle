@@ -3,7 +3,6 @@
   export let dashboard = undefined;
 
   onMount(() => {
-    console.log('mount!');
     dashboard.mount();
   });
 </script>

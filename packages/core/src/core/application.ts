@@ -23,7 +23,6 @@ class Dashboard {
   }
 
   mount() {
-    console.log('Mounting dashboard', this.name);
     this.modules.forEach((m) => m.mount());
     this.modulesLeft.forEach((m) => m.mount());
   }
@@ -56,10 +55,14 @@ export class Application {
         dashboards: this.dashboards,
       },
     });
-    // console.log('this.dashboards', this.dashboards);
-    // Object.values(this.dashboards).forEach((d) => {
-    //   d.mount();
-    // });
+    this.app.$on('quit', () => {
+      this.app?.$destroy();
+      this.app = undefined;
+    });
+  }
+
+  destroy(): void {
+    this.app?.quit();
   }
 }
 

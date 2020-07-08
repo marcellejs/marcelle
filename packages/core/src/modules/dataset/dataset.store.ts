@@ -23,6 +23,6 @@ export function setInstanceStream(s: Stream<Instance>): void {
     const id = nextId();
     instance.id = id;
     instances[id] = instance;
-    console.log('instances', instances);
+    console.log('[dataset store] instances', instances);
   });
 }
