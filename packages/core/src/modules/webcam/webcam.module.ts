@@ -1,5 +1,5 @@
 import { Module } from '../../core/module';
-import { active } from './webcam.store';
+import { active, stream, tensors, thumbnails } from './webcam.store';
 import component from './webcam.svelte';
 
 export class Webcam extends Module {
@@ -7,10 +7,12 @@ export class Webcam extends Module {
   description = 'Webcam input module';
   component = component;
 
-  constructor(options: Record<string, unknown>) {
+  constructor() {
     super();
-    console.log('webcam, options =', options);
+    this.defineProp('stream', stream, false);
     this.out.active = active;
+    this.out.tensors = tensors;
+    this.out.thumbnails = thumbnails;
   }
 
   mount(): void {

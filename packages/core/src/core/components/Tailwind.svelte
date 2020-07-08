@@ -46,7 +46,7 @@
   } */
 
   .card {
-    @apply border border-indigo-500 rounded-lg relative p-1 m-1 max-w-sm;
+    @apply border border-indigo-500 rounded-lg relative p-1 m-1;
   }
 
   .card:hover {

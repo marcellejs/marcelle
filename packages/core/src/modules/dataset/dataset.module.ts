@@ -1,6 +1,6 @@
 import { Module } from '../../core/module';
 import component from './dataset.svelte';
-import { setInstanceStream, Instance, Stream } from './dataset.store';
+import { setInstanceStream, Instance, Stream, instances, count } from './dataset.store';
 
 export interface DatasetOptions {
   name: string;
@@ -14,6 +14,8 @@ export class Dataset extends Module {
   constructor({ name }: DatasetOptions) {
     super();
     this.name = name;
+    this.out.instances = instances;
+    this.out.count = count;
   }
 
   capture(instanceStream: Stream<Instance>): void {

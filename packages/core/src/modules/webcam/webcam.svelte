@@ -1,9 +1,11 @@
 <script>
   import { onMount } from 'svelte';
+  import { derived } from 'svelte/store';
+  import { tidy, browser, scalar } from '@tensorflow/tfjs-core';
   import { Notyf } from 'notyf';
   import 'notyf/notyf.min.css';
   import Switch from '../../core/components/Switch.svelte';
-  import { active, width, height } from './webcam.store';
+  import { active, width, height, stream, tensors, thumbnails } from './webcam.store';
 
   export let title;
   let camerasListEmitted = false;
@@ -11,6 +13,9 @@
   let deviceId = null;
   let source = null;
   let videoElement = null;
+  let ready = false;
+
+  const IMAGE_SIZE = 224;
 
   const notyf = new Notyf({
     duration: 3000,
@@ -35,13 +40,28 @@
       }
     } else {
       stop();
+      stream.set(false);
     }
   });
+
+  let animationFrame;
+  stream.subscribe(s => {
+    if (s) {
+      process();
+    } else {
+      cancelAnimationFrame(animationFrame);
+    }
+  });
+
+  function process() {
+    animationFrame = requestAnimationFrame(process);
+    tensors.set(captureTensor());
+    thumbnails.set(captureThumbnail());
+  }
 
   function start() {
     if (deviceId) {
       loadCamera(deviceId);
-      active.set(true);
     }
   }
 
@@ -49,7 +69,6 @@
     if (videoElement !== null && videoElement.srcObject) {
       stopStreamedVideo(videoElement);
     }
-    active.set(false);
   }
 
   function loadCameras() {
@@ -84,7 +103,7 @@
     //   constraints.video.height = resolution.height;
     //   constraints.video.width = resolution.width;
     // }
-    navigator.mediaDevices
+    return navigator.mediaDevices
       .getUserMedia(constraints)
       .then(stream => loadSrcStream(stream))
       .catch(error => {
@@ -102,7 +121,7 @@
     }
     // Emit video start/live event
     videoElement.onloadedmetadata = () => {
-      // this.$emit('video-live', stream);
+      ready = true;
     };
     // this.$emit('started', stream);
   }
@@ -146,6 +165,50 @@
       videoElement.srcObject = null;
       source = null;
     });
+    ready = false;
+  }
+
+  let ctx, canvas;
+  function captureThumbnail() {
+    if (!ctx) {
+      canvas = document.createElement('canvas');
+      canvas.height = videoElement.videoHeight;
+      canvas.width = videoElement.videoWidth;
+      ctx = canvas.getContext('2d');
+    }
+    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL('image/jpeg');
+  }
+
+  function captureTensor() {
+    return tidy(() => {
+      const webcamImage = browser.fromPixels(videoElement);
+
+      // Crop the image so we're using the center square of the rectangular
+      // webcam.
+      const croppedImage = cropImage(webcamImage);
+
+      // // Expand the outer most dimension so we have a batch size of 1.
+      // const batchedImage = croppedImage.expandDims(0);
+
+      const offset = scalar(127.5);
+      // Normalize the image from [0, 255] to [-1, 1].
+      const normalized = croppedImage
+        .toFloat()
+        .sub(offset)
+        .div(offset);
+
+      const batched = normalized.reshape([1, IMAGE_SIZE, IMAGE_SIZE, 3]);
+      return batched;
+    });
+  }
+
+  function cropImage(img) {
+    const centerHeight = img.shape[0] / 2;
+    const beginHeight = centerHeight - IMAGE_SIZE / 2;
+    const centerWidth = img.shape[1] / 2;
+    const beginWidth = centerWidth - IMAGE_SIZE / 2;
+    return img.slice([beginHeight, beginWidth, 0], [IMAGE_SIZE, IMAGE_SIZE, 3]);
   }
 </script>
 
@@ -175,7 +238,12 @@
 <span class="card-title">{title}</span>
 <div class="webcam">
   <div style="margin-left: 10px;">
-    <Switch text="activate video" bind:checked={$active} />
+    <div>
+      <Switch text="activate video" bind:checked={$active} />
+    </div>
+    <div>
+      <Switch text="stream" bind:checked={$stream} disabled={!ready} />
+    </div>
   </div>
   <div class="webcam-container">
     <video

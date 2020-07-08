@@ -43,7 +43,7 @@ const umdOutput = {
   name: 'marcelle',
   sourcemap: true,
   globals: {
-    // '@tensorflow/tfjs-core': 'tf',
+    '@tensorflow/tfjs-core': 'tf',
     // '@tensorflow/tfjs-converter': 'tf',
     // apexcharts: 'ApexCharts',
     // 'element-ui': 'ELEMENT',
@@ -56,7 +56,7 @@ export default {
   input: 'src/index.ts',
   plugins,
   external: [
-    // '@tensorflow/tfjs-core',
+    '@tensorflow/tfjs-core',
     // '@tensorflow/tfjs-converter',
     // 'apexcharts',
     // 'element-ui',

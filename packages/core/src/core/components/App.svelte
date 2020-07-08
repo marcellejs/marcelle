@@ -72,7 +72,7 @@
     @apply flex flex-col absolute top-0 left-0 w-screen min-h-screen z-10 bg-white;
   }
   .container {
-    @apply max-w-none w-screen p-1 flex flex-row flex-wrap flex-grow;
+    @apply max-w-none w-screen p-1 flex flex-row flex-no-wrap flex-grow;
   }
 
   .active {

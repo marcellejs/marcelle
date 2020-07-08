@@ -11,10 +11,9 @@
     "build": "rollup -c",
     "lint": "eslint src"
   },
-  "dependencies": {
-    "notyf": "^3.7.0"
-  },
   "devDependencies": {
+    "@tensorflow/tfjs-core": "^2.0.1",
+    "notyf": "^3.7.0",
     "rollup": "^2.20.0"
   }
 }
