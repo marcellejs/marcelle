@@ -2,8 +2,7 @@
   import { onMount } from 'svelte';
   import { derived } from 'svelte/store';
   import { tidy, browser, scalar } from '@tensorflow/tfjs-core';
-  import { Notyf } from 'notyf';
-  import 'notyf/notyf.min.css';
+  import notify from '../../core/util/notify';
   import Switch from '../../core/components/Switch.svelte';
   import { active, width, height, stream, tensors, thumbnails } from './webcam.store';
 
@@ -16,16 +15,6 @@
   let ready = false;
 
   const IMAGE_SIZE = 224;
-
-  const notyf = new Notyf({
-    duration: 3000,
-    position: {
-      x: 'right',
-      y: 'top',
-    },
-    dismissible: true,
-    ripple: false,
-  });
 
   onMount(() => {
     setupMedia();
@@ -93,7 +82,11 @@
         }
       })
       .catch(error => {
-        notyf.error('Webcam not supported');
+        notify({
+          title: 'Webcam not supported',
+          message: error,
+          type: 'danger',
+        });
       });
   }
 
@@ -107,7 +100,11 @@
       .getUserMedia(constraints)
       .then(stream => loadSrcStream(stream))
       .catch(error => {
-        notyf.error(`Error loading camera: ${error}`);
+        notify({
+          title: 'Error loading camera',
+          message: error,
+          type: 'danger',
+        });
       });
   }
 
