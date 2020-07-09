@@ -1,7 +1,6 @@
 <script>
   import { onMount } from 'svelte';
   import { derived, get } from 'svelte/store';
-  import { tidy, browser, scalar } from '@tensorflow/tfjs-core';
   import notify from '../../core/util/notify';
   import Switch from '../../core/components/Switch.svelte';
 
@@ -9,7 +8,7 @@
   export let width;
   export let height;
   export let store;
-  $: ({ active, tensors, stream, thumbnails } = store);
+  $: ({ active, images, stream, thumbnails } = store);
 
   let camerasListEmitted = false;
   let cameras = [];
@@ -52,10 +51,8 @@
     });
 
     function process() {
-      // tf.dispose(get(tensors));
-      tensors.set(captureTensor());
-      const t = captureThumbnail();
-      thumbnails.set(t);
+      images.set(captureImage());
+      thumbnails.set(captureThumbnail());
       animationFrame = requestAnimationFrame(process);
     }
   }
@@ -181,67 +178,50 @@
     ready = false;
   }
 
-  let ctx, canvas;
+  const thumbnailCanvas = document.createElement('canvas');
+  thumbnailCanvas.width = THUMBNAIL_WIDTH;
+  thumbnailCanvas.height = (THUMBNAIL_WIDTH * height) / width;
+  const thumbnailCtx = thumbnailCanvas.getContext('2d');
   function captureThumbnail() {
-    if (!ctx) {
-      canvas = document.createElement('canvas');
-      canvas.width = THUMBNAIL_WIDTH;
-      canvas.height = (THUMBNAIL_WIDTH * height) / width;
-      ctx = canvas.getContext('2d');
-    }
     const hRatio = height / webcamHeight;
     const wRatio = width / webcamWidth;
-    const centerHeight = canvas.height / 2;
-    const beginHeight = centerHeight - height / 2;
-    const centerWidth = canvas.width / 2;
-    const beginWidth = centerWidth - width / 2;
     if (hRatio > wRatio) {
-      const w = (canvas.height * webcamWidth) / webcamHeight;
-      ctx.drawImage(videoElement, canvas.width / 2 - w / 2, 0, w, canvas.height);
+      const w = (thumbnailCanvas.height * webcamWidth) / webcamHeight;
+      thumbnailCtx.drawImage(
+        videoElement,
+        thumbnailCanvas.width / 2 - w / 2,
+        0,
+        w,
+        thumbnailCanvas.height,
+      );
     } else {
-      const h = (canvas.width * webcamHeight) / webcamWidth;
-      ctx.drawImage(videoElement, 0, canvas.height / 2 - h / 2, canvas.width, h);
+      const h = (thumbnailCanvas.width * webcamHeight) / webcamWidth;
+      thumbnailCtx.drawImage(
+        videoElement,
+        0,
+        thumbnailCanvas.height / 2 - h / 2,
+        thumbnailCanvas.width,
+        h,
+      );
     }
-    return canvas.toDataURL('image/jpeg');
+    return thumbnailCanvas.toDataURL('image/jpeg');
   }
 
-  function captureTensor() {
-    console.log('numTensors (): ' + tf.memory().numTensors);
-    return tidy(() => {
-      const webcamImage = browser.fromPixels(videoElement);
-      const hRatio = height / webcamHeight;
-      const wRatio = width / webcamWidth;
-      const size =
-        hRatio > wRatio
-          ? [height, Math.round((height * webcamWidth) / webcamHeight)]
-          : [Math.round((width * webcamHeight) / webcamWidth), width];
-      const newImg = tf.image.resizeBilinear(webcamImage, size);
-
-      // Crop the image so we're using the center square of the rectangular
-      // webcam.
-      const croppedImage = cropImage(newImg);
-
-      // // Expand the outer most dimension so we have a batch size of 1.
-      // const batchedImage = croppedImage.expandDims(0);
-
-      const offset = scalar(127.5);
-      // Normalize the image from [0, 255] to [-1, 1].
-      const normalized = croppedImage
-        .toFloat()
-        .sub(offset)
-        .div(offset);
-
-      const batched = normalized.reshape([1, height, width, 3]);
-      return batched.arraySync();
-    });
-  }
-
-  function cropImage(img) {
-    const centerHeight = img.shape[0] / 2;
-    const beginHeight = centerHeight - height / 2;
-    const centerWidth = img.shape[1] / 2;
-    const beginWidth = centerWidth - width / 2;
-    return img.slice([beginHeight, beginWidth, 0], [height, width, 3]);
+  const captureCanvas = document.createElement('canvas');
+  captureCanvas.width = width;
+  captureCanvas.height = height;
+  const captureCtx = captureCanvas.getContext('2d');
+  function captureImage() {
+    const hRatio = height / webcamHeight;
+    const wRatio = width / webcamWidth;
+    if (hRatio > wRatio) {
+      const w = (height * webcamWidth) / webcamHeight;
+      captureCtx.drawImage(videoElement, width / 2 - w / 2, 0, w, height);
+    } else {
+      const h = (width * webcamHeight) / webcamWidth;
+      captureCtx.drawImage(videoElement, 0, height / 2 - h / 2, width, h);
+    }
+    return captureCanvas.toDataURL('image/jpeg');
   }
 </script>
 

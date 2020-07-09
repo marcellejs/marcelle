@@ -8,6 +8,6 @@
 
 <div class="flex flex-wrap">
   {#each $instances as { thumbnail }}
-    <img src={thumbnail} alt="thumbnail" width="40" class="p-1" />
+    <img src={thumbnail} alt="thumbnail" class="p-1" />
   {/each}
 </div>

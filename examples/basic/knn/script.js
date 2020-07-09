@@ -21,7 +21,7 @@
 //////////////////////////////////
 
 const w = marcelle.webcam();
-const cap = marcelle.capture({ input: w.out.tensors, thumbnail: w.out.thumbnails });
+const cap = marcelle.capture({ input: w.out.images, thumbnail: w.out.thumbnails });
 const trainingSet = marcelle.dataset({ name: 'TrainingSet' });
 trainingSet.capture(cap.out.instances);
 
@@ -37,7 +37,7 @@ app.start();
 
 // const w = marcelle.webcam();
 
-// const cap = marcelle.capture({ input: w.out.tensors, thumbnail: w.out.thumbnails });
+// const cap = marcelle.capture({ input: w.out.images, thumbnail: w.out.thumbnails });
 // const instances = cap.out.instances;
 // // const mobilenet = marcelle.mobilenet();
 // // const instances = cap.out.instances.pipe(

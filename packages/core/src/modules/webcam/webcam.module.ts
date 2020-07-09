@@ -21,7 +21,7 @@ export class Webcam extends Module {
     this.width = width;
     this.height = height;
     this.out.active = this.store.active;
-    this.out.tensors = this.store.tensors;
+    this.out.images = this.store.images;
     this.out.thumbnails = this.store.thumbnails;
   }
 
