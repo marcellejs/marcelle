@@ -26,7 +26,10 @@
   }
 
   input[type='checkbox']:disabled ~ .track {
-    @apply bg-gray-500;
+    @apply bg-gray-500 cursor-default;
+  }
+  input[type='checkbox']:disabled:active + .track {
+    @apply shadow-none;
   }
 
   input[type='checkbox']:disabled ~ .thumb {

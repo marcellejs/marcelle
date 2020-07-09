@@ -13,7 +13,7 @@ function nextId() {
   return staticId++;
 }
 
-export const instances = writable<{ [id: number]: Instance }>({});
+export const instances = writable<Instance[]>([]);
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 let unsubscribe = () => {};
@@ -23,7 +23,7 @@ export function setInstanceStream(s: Stream<Instance>): void {
     if (!instance) return;
     const id = nextId();
     instance.id = id;
-    instances.set({ ...get(instances), [id]: instance });
+    instances.set([...get(instances), instance]);
   });
 }
 
