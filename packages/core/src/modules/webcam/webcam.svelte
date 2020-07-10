@@ -80,7 +80,7 @@
       if (s) {
         process();
       } else {
-        cancelAnimationFrame(animationFrame);
+        global.cancelAnimationFrame(animationFrame);
       }
     });
   }
