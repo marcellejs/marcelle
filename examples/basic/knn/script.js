@@ -22,8 +22,19 @@
 
 const w = marcelle.webcam();
 const cap = marcelle.capture({ input: w.out.images, thumbnail: w.out.thumbnails });
+
+const mobilenet = marcelle.mobilenet();
+const instances = cap.out.instances.pipe(
+  rxjs.operators.mergeMap(async (instance) => ({
+    ...instance,
+    type: 'image',
+    features: await mobilenet.process(instance.data),
+  })),
+  // rxjs.operators.tap(console.log),
+);
+
 const trainingSet = marcelle.dataset({ name: 'TrainingSet' });
-trainingSet.capture(cap.out.instances);
+trainingSet.capture(instances);
 
 const app = marcelle.createApp({
   title: 'Marcelle Starter',

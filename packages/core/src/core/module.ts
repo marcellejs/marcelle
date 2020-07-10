@@ -1,5 +1,6 @@
 import { Writable, Readable } from 'svelte/store';
 import { SvelteComponent } from 'svelte';
+import { Observable } from 'rxjs';
 
 export abstract class Module {
   static moduleId = 0;
@@ -13,7 +14,7 @@ export abstract class Module {
 
   props: Record<string, unknown> = {};
   propValues: Record<string, unknown> = {};
-  out: Record<string, Writable<unknown> | Readable<unknown>> = {};
+  out: Record<string, Writable<unknown> | Readable<unknown> | Observable<unknown>> = {};
 
   protected component: unknown = undefined;
   protected app: SvelteComponent | undefined = undefined;

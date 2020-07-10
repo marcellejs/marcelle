@@ -1,11 +1,12 @@
 <script>
-  import { onMount, onDestroy } from 'svelte';
+  /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+  import { onMount } from 'svelte';
   import { blur } from 'svelte/transition';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();
 
-  import routie from './routie';
+  import Routie from './routie';
   import Tailwind from './Tailwind.svelte';
   import Dashboard from './Dashboard.svelte';
   import Settings from './Settings.svelte';
@@ -53,11 +54,12 @@
   $: dashboardSlugs = [''].concat(dashboardNames.slice(1).map(string2slug));
 
   // Routing
-  routie('settings', () => {
+  const router = new Routie();
+  router.route('settings', () => {
     showSettings = true;
   });
   $: dashboardSlugs.forEach((slug, i) => {
-    routie(slug, () => {
+    router.route(slug, () => {
       showSettings = false;
       if (currentDashboard === dashboardNames[i]) return;
       currentDashboard && dashboards[currentDashboard].destroy();

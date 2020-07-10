@@ -44,24 +44,14 @@ const umdOutput = {
   sourcemap: true,
   globals: {
     '@tensorflow/tfjs-core': 'tf',
-    // '@tensorflow/tfjs-converter': 'tf',
-    // apexcharts: 'ApexCharts',
-    // 'element-ui': 'ELEMENT',
-    // meyda: 'Meyda',
-    // 'pouchdb-browser': 'PouchDB',
+    '@tensorflow/tfjs-converter': 'tf',
+    rxjs: 'rxjs',
   },
 };
 
 export default {
   input: 'src/index.ts',
   plugins,
-  external: [
-    '@tensorflow/tfjs-core',
-    // '@tensorflow/tfjs-converter',
-    // 'apexcharts',
-    // 'element-ui',
-    // 'meyda',
-    // 'pouchdb-browser',
-  ],
+  external: ['@tensorflow/tfjs-core', '@tensorflow/tfjs-converter', 'rxjs'],
   output: [esOutput, umdOutput],
 };

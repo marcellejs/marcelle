@@ -12,7 +12,11 @@
     "lint": "eslint src"
   },
   "devDependencies": {
-    "@tensorflow/tfjs-core": "^2.0.1",
     "rollup": "^2.20.0"
+  },
+  "dependencies": {
+    "@tensorflow-models/mobilenet": "^2.0.4",
+    "@tensorflow/tfjs-core": "^2.0.1",
+    "rxjs": "^6.6.0"
   }
 }

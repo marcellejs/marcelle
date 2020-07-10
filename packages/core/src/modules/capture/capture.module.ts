@@ -8,10 +8,11 @@ import {
   temporal as temporalStream,
 } from './capture.store';
 import component from './capture.svelte';
+import { Observable } from 'rxjs';
 
-type Stream = Writable<unknown[]> | Readable<unknown[]>;
+type Stream = Writable<unknown> | Readable<unknown> | Observable<unknown>;
 export interface CaptureOptions {
-  input: Stream;
+  input: Writable<unknown> | Readable<unknown>;
   thumbnail?: Stream;
   temporal: boolean;
 }

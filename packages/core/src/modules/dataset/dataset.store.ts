@@ -1,4 +1,5 @@
-import { writable, Writable, Readable, derived, get } from 'svelte/store';
+import { writable, derived, get } from 'svelte/store';
+import { Observable } from 'rxjs';
 
 export interface Instance {
   id?: number;
@@ -6,7 +7,7 @@ export interface Instance {
   data: unknown;
   thumbnail?: string;
 }
-export type Stream<T> = Readable<T> | Writable<T>;
+export type Stream<T> = Observable<T>;
 
 let staticId = 0;
 function nextId() {
@@ -19,12 +20,12 @@ export const instances = writable<Instance[]>([]);
 let unsubscribe = () => {};
 export function setInstanceStream(s: Stream<Instance>): void {
   unsubscribe();
-  unsubscribe = s.subscribe((instance: Instance) => {
+  ({ unsubscribe } = s.subscribe((instance: Instance) => {
     if (!instance) return;
     const id = nextId();
     instance.id = id;
     instances.set([...get(instances), instance]);
-  });
+  }));
 }
 
 export const count = derived(instances, ($x) => Object.keys($x).length);

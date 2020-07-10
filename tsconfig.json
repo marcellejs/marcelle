@@ -7,19 +7,18 @@
     "moduleResolution": "node",
     "allowJs": false,
     "strict": true,
+    "strictNullChecks": false,
     "noUnusedLocals": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "removeComments": false,
+    "skipLibCheck": true,
+    "strictPropertyInitialization": false,
     "lib": ["esnext", "dom"],
     "types": ["node", "svelte"],
     "rootDir": "."
   },
-  "include": [
-    "packages/*/src/",
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["packages/*/src/"],
+  "exclude": ["node_modules", "packages/*/node_modules"]
 }

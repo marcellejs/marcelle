@@ -1,6 +1,5 @@
 <script>
   import { onMount } from 'svelte';
-  import { derived, get } from 'svelte/store';
   import notify from '../../core/util/notify';
   import Switch from '../../core/components/Switch.svelte';
 
