@@ -1,36 +1,9 @@
-import { Module } from './module';
+import { Dashboard } from './dashboard';
 import App from './components/App.svelte';
 
 interface ApplicationOptions {
   title: string;
   author: string;
-}
-
-class Dashboard {
-  modules: Module[] = [];
-  modulesLeft: Module[] = [];
-
-  constructor(public name: string) {}
-
-  use(...modules: [Module]): Dashboard {
-    this.modules = this.modules.concat(modules);
-    return this;
-  }
-
-  useLeft(...modules: [Module]): Dashboard {
-    this.modulesLeft = this.modulesLeft.concat(modules);
-    return this;
-  }
-
-  mount() {
-    this.modules.forEach((m) => m.mount());
-    this.modulesLeft.forEach((m) => m.mount());
-  }
-
-  destroy() {
-    this.modules.forEach((m) => m.destroy());
-    this.modulesLeft.forEach((m) => m.destroy());
-  }
 }
 
 export class Application {

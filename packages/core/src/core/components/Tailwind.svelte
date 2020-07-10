@@ -39,12 +39,6 @@
     @apply bg-red-800;
   }
 
-  /* body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  } */
-
   .card {
     @apply border border-indigo-500 rounded-lg relative p-1 m-1;
   }

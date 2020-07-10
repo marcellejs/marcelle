@@ -1,8 +1,8 @@
-import Notification from '../components/Notification.svelte';
 import { SvelteComponent } from 'svelte';
+import Notification from '../components/Notification.svelte';
 
-let notificationContainer: HTMLDivElement | undefined = undefined;
-let app: SvelteComponent | undefined = undefined;
+let notificationContainer: HTMLDivElement | undefined;
+let app: SvelteComponent | undefined;
 
 export default function notify({
   title,

@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable max-classes-per-file */
 // Simple router inspired by Routie: https://github.com/jgallen23/routie
 type RoutieKey = { name: string; optional: boolean };
 type RoutieParams = unknown[];
@@ -10,36 +12,32 @@ function pathToRegexp(
   strict: boolean,
 ): RegExp {
   if (path instanceof RegExp) return path;
-  if (path instanceof Array) path = '(' + path.join('|') + ')';
+  if (path instanceof Array) path = `(${path.join('|')})`;
   path = path
     .concat(strict ? '' : '/?')
     .replace(/\/\(/g, '(?:/')
     .replace(/\+/g, '__plus__')
-    .replace(/(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g, function (
-      _: unknown,
-      slash: string,
-      format: string,
-      key: string,
-      capture: string,
-      optional: boolean,
-    ) {
-      keys.push({ name: key, optional: !!optional });
-      slash = slash || '';
-      return (
-        '' +
-        (optional ? '' : slash) +
-        '(?:' +
-        (optional ? slash : '') +
-        (format || '') +
-        (capture || (format && '([^/.]+?)') || '([^/]+?)') +
-        ')' +
-        (optional || '')
-      );
-    })
-    .replace(/([\/.])/g, '\\$1')
+    .replace(
+      /(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g,
+      (
+        _: unknown,
+        slash: string,
+        format: string,
+        key: string,
+        capture: string,
+        optional: boolean,
+      ) => {
+        keys.push({ name: key, optional: !!optional });
+        slash = slash || '';
+        return `${optional ? '' : slash}(?:${optional ? slash : ''}${format || ''}${
+          capture || (format && '([^/.]+?)') || '([^/]+?)'
+        })${optional || ''}`;
+      },
+    )
+    .replace(/([/.])/g, '\\$1')
     .replace(/__plus__/g, '(.+)')
     .replace(/\*/g, '(.*)');
-  return new RegExp('^' + path + '$', sensitive ? '' : 'i');
+  return new RegExp(`^${path}$`, sensitive ? '' : 'i');
 }
 
 class Route {
@@ -70,9 +68,9 @@ class Route {
     const m = this.regex.exec(path);
     if (!m) return false;
 
-    for (let i = 1, len = m.length; i < len; ++i) {
+    for (let i = 1, len = m.length; i < len; i++) {
       const key = this.keys[i - 1];
-      const val = 'string' === typeof m[i] ? decodeURIComponent(m[i]) : m[i];
+      const val = typeof m[i] === 'string' ? decodeURIComponent(m[i]) : m[i];
 
       if (key) {
         this.params[key.name] = val;
@@ -124,11 +122,12 @@ export default class Router {
 
   reload(): void {
     const hash = window.location.hash.substring(1);
-    this.routes.forEach((route: Route) => {
+    for (let i = 0; i < this.routes.length; i++) {
+      const route = this.routes[i];
       if (checkRoute(hash, route)) {
         return;
       }
-    });
+    }
   }
 
   navigate(path: string, { silent = false } = {}): void {

@@ -1,5 +1,6 @@
 <script>
   import { frames, size } from './faker.store';
+
   export let title;
 </script>
 

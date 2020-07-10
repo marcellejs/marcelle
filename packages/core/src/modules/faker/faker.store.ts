@@ -4,7 +4,7 @@ export const size = writable(32);
 
 export const frames = readable<number[]>(
   Array.from(Array(32), () => Math.random()),
-  function start(set) {
+  (set) => {
     let currentSize = 32;
     size.subscribe((s) => {
       currentSize = s;

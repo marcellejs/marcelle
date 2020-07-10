@@ -23,8 +23,7 @@ export function setInstanceStream(s: Stream<Instance>): void {
   ({ unsubscribe } = s.subscribe((instance: Instance) => {
     if (!instance) return;
     const id = nextId();
-    instance.id = id;
-    instances.set([...get(instances), instance]);
+    instances.set([...get(instances), { ...instance, id }]);
   }));
 }
 

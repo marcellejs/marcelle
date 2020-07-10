@@ -1,6 +1,6 @@
 import { Module } from '../../core/module';
 import { createStore } from './webcam.store';
-import component from './webcam.svelte';
+import Component from './webcam.svelte';
 
 export interface WebcamOptions {
   width?: number;
@@ -10,7 +10,6 @@ export interface WebcamOptions {
 export class Webcam extends Module {
   name = 'webcam';
   description = 'Webcam input module';
-  component = component;
   store = createStore();
   width: number;
   height: number;
@@ -28,7 +27,7 @@ export class Webcam extends Module {
   mount(): void {
     const target = document.querySelector(`#${this.id}`);
     if (!target) return;
-    this.app = new component({
+    this.app = new Component({
       target,
       props: {
         title: this.name,

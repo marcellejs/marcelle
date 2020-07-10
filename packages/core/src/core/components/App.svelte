@@ -1,8 +1,7 @@
 <script>
   /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-  import { onMount } from 'svelte';
+  import { onMount, createEventDispatcher } from 'svelte';
   import { blur } from 'svelte/transition';
-  import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();
 
@@ -32,22 +31,22 @@
   let currentDashboard = Object.keys(dashboards)[0] || undefined;
 
   function string2slug(str) {
-    str = str.replace(/^\s+|\s+$/g, ''); // trim
-    str = str.toLowerCase();
+    let s = str.replace(/^\s+|\s+$/g, ''); // trim
+    s = s.toLowerCase();
 
     // remove accents, swap ñ for n, etc
-    var from = 'àáäâèéëêìíïîòóöôùúüûñç·/_,:;';
-    var to = 'aaaaeeeeiiiioooouuuunc------';
-    for (var i = 0, l = from.length; i < l; i++) {
-      str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+    const from = 'àáäâèéëêìíïîòóöôùúüûñç·/_,:;';
+    const to = 'aaaaeeeeiiiioooouuuunc------';
+    for (let i = 0, l = from.length; i < l; i++) {
+      s = s.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
     }
 
-    str = str
+    s = s
       .replace(/[^a-z0-9 -]/g, '') // remove invalid chars
       .replace(/\s+/g, '-') // collapse whitespace and replace by -
       .replace(/-+/g, '-'); // collapse dashes
 
-    return str;
+    return s;
   }
 
   $: dashboardNames = Object.keys(dashboards);
@@ -62,7 +61,7 @@
     router.route(slug, () => {
       showSettings = false;
       if (currentDashboard === dashboardNames[i]) return;
-      currentDashboard && dashboards[currentDashboard].destroy();
+      if (currentDashboard) dashboards[currentDashboard].destroy();
       currentDashboard = dashboardNames[i];
       dashboards[currentDashboard].mount();
     });
@@ -107,7 +106,7 @@
           items-center text-base justify-center">
           {#each dashboardNames as dashboardName, index}
             <a
-              href={'#' + dashboardSlugs[index]}
+              href={`${dashboardSlugs[index]}`}
               class:active={!showSettings && currentDashboard === dashboardName}
               class="mr-5 hover:text-gray-900 border-teal-500">
               {dashboardName}

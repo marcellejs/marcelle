@@ -3,23 +3,7 @@
 </script>
 
 <style lang="postcss">
-  .webcam {
-    @apply mt-2;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
 
-  .webcam .webcam-container {
-    @apply rounded-md overflow-hidden bg-gray-200 m-2;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-  }
-
-  video {
-    transform: scaleX(-1);
-  }
 </style>
 
 <span class="card-title">Mobilenet</span>
