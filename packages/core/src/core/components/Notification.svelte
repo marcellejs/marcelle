@@ -1,26 +1,28 @@
 <script>
-  import { onMount, onDestroy } from 'svelte';
   import { blur } from 'svelte/transition';
   import { flip } from 'svelte/animate';
-  import { createEventDispatcher } from 'svelte';
-
-  const dispatch = createEventDispatcher();
 
   let uid = 1;
   export let notifications = [];
 
+  function close(id) {
+    notifications = notifications.filter(x => x.id !== id);
+  }
+
   export function add({ title, message, type = 'default', duration = 3000 }) {
-    const n = { id: uid++, title, message, type };
+    const n = {
+      id: uid,
+      title,
+      message,
+      type,
+    };
+    uid += 1;
     notifications = [...notifications, n];
     if (duration > 0) {
       setTimeout(() => {
         close(n.id);
       }, duration);
     }
-  }
-
-  function close(id) {
-    notifications = notifications.filter(x => x.id !== id);
   }
 </script>
 

@@ -16,7 +16,7 @@ export abstract class Module {
   propValues: Record<string, unknown> = {};
   out: Record<string, Writable<unknown> | Readable<unknown> | Observable<unknown>> = {};
 
-  protected component: unknown = undefined;
+  // protected component: unknown = undefined;
   protected app: SvelteComponent | undefined = undefined;
 
   abstract mount(): void;

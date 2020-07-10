@@ -1,11 +1,10 @@
 import { Module } from '../../core/module';
 import { frames, size as sizeObs } from './faker.store';
-import component from './faker.svelte';
+import Component from './faker.svelte';
 
 export class Faker extends Module {
   name = 'faker';
   description = 'Fake data input module';
-  component = component;
 
   constructor({ size = 32 } = {}) {
     super();
@@ -16,7 +15,7 @@ export class Faker extends Module {
   mount(): void {
     const target = document.querySelector(`#${this.id}`);
     if (!target) return;
-    this.app = new component({
+    this.app = new Component({
       target,
       props: {
         title: this.name,

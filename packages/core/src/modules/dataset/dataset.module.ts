@@ -1,5 +1,5 @@
 import { Module } from '../../core/module';
-import component from './dataset.svelte';
+import Component from './dataset.svelte';
 import { setInstanceStream, Instance, Stream, instances, count } from './dataset.store';
 
 export interface DatasetOptions {
@@ -9,7 +9,6 @@ export interface DatasetOptions {
 export class Dataset extends Module {
   name = 'dataset';
   description = 'Dataset';
-  component = component;
 
   constructor({ name }: DatasetOptions) {
     super();
@@ -18,14 +17,15 @@ export class Dataset extends Module {
     this.out.count = count;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   capture(instanceStream: Stream<Instance>): void {
     setInstanceStream(instanceStream);
   }
 
   mount(): void {
     const target = document.querySelector(`#${this.id}`);
-    if (!target || !this.component) return;
-    this.app = new this.component({
+    if (!target || !Component) return;
+    this.app = new Component({
       target,
       props: {
         title: this.name,

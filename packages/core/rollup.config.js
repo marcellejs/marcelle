@@ -18,7 +18,9 @@ const plugins = [
     css: (css) => {
       css.write('dist/bundle.css');
     },
-    preprocess: preprocess({ postcss: true }),
+    preprocess: preprocess({
+      postcss: true,
+    }),
   }),
   typescript(),
   resolve({

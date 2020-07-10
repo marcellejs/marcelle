@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
-  export let dashboard = undefined;
+
+  export let dashboard;
 
   onMount(() => {
     dashboard.mount();
