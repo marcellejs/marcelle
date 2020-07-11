@@ -106,7 +106,7 @@
           items-center text-base justify-center">
           {#each dashboardNames as dashboardName, index}
             <a
-              href={`${dashboardSlugs[index]}`}
+              href={`#/${dashboardSlugs[index]}`}
               class:active={!showSettings && currentDashboard === dashboardName}
               class="mr-5 hover:text-gray-900 border-teal-500">
               {dashboardName}

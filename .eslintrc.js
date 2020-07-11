@@ -2,30 +2,37 @@
 const { resolve } = require('path');
 const { readdirSync, lstatSync } = require('fs');
 
-const PACKAGE_DIR = 'packages/'; // this could be replaced utilizing the globs in package.json's "workpackges" or from the lerna.json config
+const PACKAGE_DIRS = ['packages/', 'examples/']; // this could be replaced utilizing the globs in package.json's "workpackges" or from the lerna.json config
 
 // get files in packages
-const noExtraneousOverrides = readdirSync(resolve(__dirname, PACKAGE_DIR))
-  // filter for non-hidden dirs to get a list of packages
-  .filter(
-    (entry) =>
-      entry.substr(0, 1) !== '.' && lstatSync(resolve(__dirname, PACKAGE_DIR, entry)).isDirectory(),
-  )
-  // map to override rules pointing to local and root package.json for rule
-  .map((entry) => ({
-    files: [`${PACKAGE_DIR}${entry}/**/*`],
-    rules: {
-      'import/no-extraneous-dependencies': [
-        'error',
-        {
-          devDependencies: true,
-          optionalDependencies: false,
-          peerDependencies: false,
-          packageDir: [__dirname, resolve(__dirname, PACKAGE_DIR, entry)],
+function noExtra(PACKAGE_DIR) {
+  return (
+    readdirSync(resolve(__dirname, PACKAGE_DIR))
+      // filter for non-hidden dirs to get a list of packages
+      .filter(
+        (entry) =>
+          entry.substr(0, 1) !== '.' &&
+          lstatSync(resolve(__dirname, PACKAGE_DIR, entry)).isDirectory(),
+      )
+      // map to override rules pointing to local and root package.json for rule
+      .map((entry) => ({
+        files: [`${PACKAGE_DIR}${entry}/**/*`],
+        rules: {
+          'import/no-extraneous-dependencies': [
+            'error',
+            {
+              devDependencies: true,
+              optionalDependencies: false,
+              peerDependencies: false,
+              packageDir: [__dirname, resolve(__dirname, PACKAGE_DIR, entry)],
+            },
+          ],
         },
-      ],
-    },
-  }));
+      }))
+  );
+}
+
+const noExtraneousOverrides = PACKAGE_DIRS.reduce((x, p) => x.concat(noExtra(p)), []);
 
 module.exports = {
   parser: '@typescript-eslint/parser',
