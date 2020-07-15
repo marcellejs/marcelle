@@ -1,3 +1,11 @@
+import { Stream as MostStream } from '@most/types';
+import { Stream } from './core/stream';
+import './polyfill';
+
+export function createStream<T>(s: MostStream<T>): Stream<T> {
+  return new Stream(s);
+}
+
 export { createApp } from './core/application';
 export { button } from './modules/button';
 export { capture } from './modules/capture';

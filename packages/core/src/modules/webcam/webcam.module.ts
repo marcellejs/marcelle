@@ -1,6 +1,7 @@
+import { empty } from '@most/core';
 import { Module } from '../../core/module';
-import { createStore } from './webcam.store';
 import Component from './webcam.svelte';
+import { Stream } from '../../core/stream';
 
 export interface WebcamOptions {
   width?: number;
@@ -10,30 +11,39 @@ export interface WebcamOptions {
 export class Webcam extends Module {
   name = 'webcam';
   description = 'Webcam input module';
-  store = createStore();
-  width: number;
-  height: number;
+
+  #width: number;
+  #height: number;
+
+  $active = new Stream(false, true);
+  $stream = new Stream(false, true);
+  $images = new Stream(empty());
+  $thumbnails = new Stream(empty());
 
   constructor({ width = 224, height = 224 }: WebcamOptions = {}) {
     super();
-    this.defineProp('stream', this.store.stream, false);
-    this.width = width;
-    this.height = height;
-    this.out.active = this.store.active;
-    this.out.images = this.store.images;
-    this.out.thumbnails = this.store.thumbnails;
+    this.#width = width;
+    this.#height = height;
+    this.start();
   }
 
-  mount(): void {
-    const target = document.querySelector(`#${this.id}`);
+  getWidth(): number {
+    return this.#width;
+  }
+
+  mount(targetId?: string): void {
+    const target = document.querySelector(`#${targetId || this.id}`);
     if (!target) return;
-    this.app = new Component({
+    this.$$.app = new Component({
       target,
       props: {
         title: this.name,
-        store: this.store,
-        width: this.width,
-        height: this.height,
+        width: this.#width,
+        height: this.#height,
+        active: this.$active,
+        stream: this.$stream,
+        images: this.$images,
+        thumbnails: this.$thumbnails,
       },
     });
   }

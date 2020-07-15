@@ -1,16 +1,16 @@
+import { empty, map, awaitPromises } from '@most/core';
 import {
   load as loadMobilenet,
   MobileNet,
   MobileNetVersion,
   MobileNetAlpha,
 } from '@tensorflow-models/mobilenet';
-import { Writable, Readable } from 'svelte/store';
 import { Module } from '../../core/module';
-import { createStore } from './mobilenet.store';
-import component from './mobilenet.svelte';
+import Component from './mobilenet.svelte';
+import { Stream } from '../../core/stream';
 
 export interface MobilenetOptions {
-  input?: Writable<string> | Readable<string>;
+  input?: Stream<string>;
   version?: MobileNetVersion;
   alpha?: MobileNetAlpha;
 }
@@ -43,23 +43,49 @@ function createImageConverter() {
 export class Mobilenet extends Module {
   name = 'mobilenet';
   description = 'Mobilenet input module';
-  component = component;
-  store = createStore();
-  mobilenet: MobileNet | undefined;
-  private convert = createImageConverter();
+
+  #mobilenet: MobileNet | undefined;
+  #convert = createImageConverter();
+  loading = true;
+  readonly version: MobileNetVersion;
+  readonly alpha: MobileNetAlpha;
+
+  $features: Stream<
+    | number
+    | number[]
+    | number[][]
+    | number[][][]
+    | number[][][][]
+    | number[][][][][]
+    | number[][][][][][]
+  >;
 
   constructor({ input = undefined, version = 1, alpha = 1 }: MobilenetOptions = {}) {
     super();
-    if (input) input.subscribe(this.process.bind(this));
-    this.out.features = this.store.features;
-    this.setup(version, alpha);
+    if (![1, 2].includes(version)) {
+      throw new Error('Mobilenet version must be 1 or 2');
+    }
+    if (![0.25, 0.5, 0.75, 1.0].includes(alpha)) {
+      throw new Error('Mobilenet alpha must be 0.25 | 0.50 | 0.75 | 1.0');
+    }
+    this.version = version;
+    this.alpha = alpha;
+    if (input) {
+      this.$features = new Stream(awaitPromises(map(this.process.bind(this), input)));
+    } else {
+      this.$features = new Stream(empty());
+    }
+    this.setup();
   }
 
-  async setup(version: MobileNetVersion, alpha: MobileNetAlpha): Promise<Mobilenet> {
-    this.mobilenet = await loadMobilenet({
-      version,
-      alpha,
+  async setup(): Promise<Mobilenet> {
+    this.#mobilenet = await loadMobilenet({
+      version: this.version,
+      alpha: this.alpha,
     });
+    this.loading = false;
+    this.start();
+    this.$$.app?.$set({ loading: false });
     return this;
   }
 
@@ -74,10 +100,22 @@ export class Mobilenet extends Module {
     | number[][][][][]
     | number[][][][][][]
   > {
-    if (!this.mobilenet) return [];
-    return this.mobilenet.infer(await this.convert(image), true).arraySync();
+    if (!this.#mobilenet) return [];
+    return this.#mobilenet.infer(await this.#convert(image), true).arraySync();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  mount(): void {} // eslint-disable-line class-methods-use-this
+  mount(targetId?: string): void {
+    const target = document.querySelector(`#${targetId || this.id}`);
+    if (!target) return;
+    this.$$.app = new Component({
+      target,
+      props: {
+        title: this.name,
+        loading: this.loading,
+        version: this.version,
+        alpha: this.alpha,
+      },
+    });
+  } // eslint-disable-line class-methods-use-this
 }

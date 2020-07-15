@@ -1,5 +1,5 @@
-import { Webcam } from './webcam.module';
+import { Webcam, WebcamOptions } from './webcam.module';
 
-export function webcam(): Webcam {
-  return new Webcam();
+export function webcam(options: WebcamOptions): Webcam {
+  return new Webcam(options);
 }

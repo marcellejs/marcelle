@@ -1,14 +1,15 @@
 <script>
-  import { count, instances } from './dataset.store';
-
   export let title;
+  export let count;
+  export let instances;
+  export let instanceData;
 </script>
 
 <span class="card-title">{title}</span>
 <p>This dataset contains {$count} instance{$count > 1 ? 's' : ''}.</p>
 
 <div class="flex flex-wrap">
-  {#each $instances as { thumbnail }}
-    <img src={thumbnail} alt="thumbnail" class="p-1" />
+  {#each $instances as id}
+    <img src={instanceData[id].thumbnail} alt="thumbnail" class="p-1" />
   {/each}
 </div>

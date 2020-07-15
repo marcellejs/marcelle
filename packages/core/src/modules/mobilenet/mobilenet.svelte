@@ -1,20 +1,15 @@
 <script>
+  import Spinner from '../../core/components/Spinner.svelte';
+
+  export let title;
   export let loading = true;
+  export let version;
+  export let alpha;
 </script>
 
-<style lang="postcss">
-
-</style>
-
-<span class="card-title">Mobilenet</span>
+<span class="card-title">{title}</span>
 {#if loading}
-  <div class="w-full h-full fixed block top-0 left-0 bg-white opacity-75 z-50">
-    <span
-      class="text-green-500 opacity-75 top-1/2 my-0 mx-auto block relative w-0 h-0"
-      style=" top: 50%; ">
-      <i class="fas fa-circle-notch fa-spin fa-5x" />
-    </span>
-  </div>
+  <Spinner />
 {:else}
-  <p>Using Mobilenet vX with alpha = X.</p>
+  <p class="mt-6 p-2 text-sm text-gray-600">Using Mobilenet v{version} with alpha = {alpha}.</p>
 {/if}

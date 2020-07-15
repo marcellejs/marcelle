@@ -30,6 +30,9 @@ export class Application {
     });
     this.app.$on('quit', () => {
       this.app?.$destroy();
+      Object.values(this.dashboards).forEach((dashboard) => {
+        dashboard.destroy();
+      });
       this.app = undefined;
     });
   }

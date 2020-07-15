@@ -1,5 +1,5 @@
-import { Button } from './button.module';
+import { Button, ButtonOptions } from './button.module';
 
-export function button(options: Record<string, unknown>): Button {
+export function button(options: ButtonOptions): Button {
   return new Button(options);
 }

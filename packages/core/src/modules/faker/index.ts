@@ -1,5 +1,5 @@
-import { Faker } from './faker.module';
+import { Faker, FakerOptions } from './faker.module';
 
-export function faker(options: Record<string, unknown>): Faker {
+export function faker(options: FakerOptions): Faker {
   return new Faker(options);
 }

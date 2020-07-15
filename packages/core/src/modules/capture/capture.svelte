@@ -1,7 +1,7 @@
 <script>
-  import { capturing, label } from './capture.store';
-
   export let title;
+  export let capturing;
+  export let label;
 
   function startCapture() {
     capturing.set(true);

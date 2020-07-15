@@ -56,6 +56,7 @@
   const router = new Routie();
   router.route('settings', () => {
     showSettings = true;
+    if (currentDashboard) dashboards[currentDashboard].destroy();
   });
   $: dashboardSlugs.forEach((slug, i) => {
     router.route(slug, () => {
@@ -63,7 +64,6 @@
       if (currentDashboard === dashboardNames[i]) return;
       if (currentDashboard) dashboards[currentDashboard].destroy();
       currentDashboard = dashboardNames[i];
-      dashboards[currentDashboard].mount();
     });
   });
 </script>
@@ -106,7 +106,7 @@
           items-center text-base justify-center">
           {#each dashboardNames as dashboardName, index}
             <a
-              href={`#/${dashboardSlugs[index]}`}
+              href={`#${dashboardSlugs[index]}`}
               class:active={!showSettings && currentDashboard === dashboardName}
               class="mr-5 hover:text-gray-900 border-teal-500">
               {dashboardName}

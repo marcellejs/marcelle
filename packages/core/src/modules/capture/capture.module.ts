@@ -1,42 +1,58 @@
-import { Writable, Readable } from 'svelte/store';
-import { Observable } from 'rxjs';
+import { empty, snapshot, combine, filter } from '@most/core';
 import { Module } from '../../core/module';
-import {
-  capturing,
-  instances,
-  setInputStream,
-  setThumbnailStream,
-  temporal as temporalStream,
-} from './capture.store';
 import Component from './capture.svelte';
+import { Stream } from '../../core/stream';
 
-type Stream = Writable<unknown> | Readable<unknown> | Observable<unknown>;
 export interface CaptureOptions {
-  input: Writable<unknown> | Readable<unknown>;
-  thumbnail?: Stream;
-  temporal: boolean;
+  input: Stream<unknown>;
+  thumbnail?: Stream<string>;
+  label?: Stream<string>;
+}
+
+interface Instance {
+  data: unknown;
+  thumbnail: string;
+  label: string;
 }
 
 export class Capture extends Module {
   name = 'capture';
   description = 'Capture an input stream to a dataset';
 
-  constructor({ input, thumbnail, temporal = false }: CaptureOptions) {
+  $label: Stream<string>;
+  $thumbnail: Stream<string>;
+  $capturing = new Stream(false);
+  $instances: Stream<Instance>;
+
+  // TODO: temporal mode
+  constructor({ input, thumbnail = undefined, label = undefined }: CaptureOptions) {
     super();
-    if (thumbnail) setThumbnailStream(thumbnail);
-    setInputStream(input);
-    this.defineProp('capturing', capturing, false);
-    this.defineProp('temporal', temporalStream, temporal);
-    this.out.instances = instances;
+    this.$thumbnail = thumbnail || new Stream(empty());
+    this.$label = label || new Stream('default', true);
+    this.$instances = new Stream(
+      snapshot(
+        (x: { thumbnail: string; label: string }, data) => ({ ...x, data }),
+        combine(
+          (t: string, l: string) => ({ thumbnail: t, label: l }),
+          this.$thumbnail,
+          this.$label,
+        ),
+        filter(() => this.$capturing.value, input),
+      ),
+    );
+
+    this.start();
   }
 
-  mount(): void {
-    const target = document.querySelector(`#${this.id}`);
+  mount(targetId?: string): void {
+    const target = document.querySelector(`#${targetId || this.id}`);
     if (!target) return;
-    this.app = new Component({
+    this.$$.app = new Component({
       target,
       props: {
         title: this.name,
+        capturing: this.$capturing,
+        label: this.$label,
       },
     });
   }

@@ -82,13 +82,12 @@ const umdOutput = {
   globals: {
     '@tensorflow/tfjs-core': 'tf',
     '@tensorflow/tfjs-converter': 'tf',
-    rxjs: 'rxjs',
   },
 };
 
 export default {
   input: 'src/index.ts',
   plugins,
-  external: ['@tensorflow/tfjs-core', '@tensorflow/tfjs-converter', 'rxjs'],
+  external: ['@tensorflow/tfjs-core', '@tensorflow/tfjs-converter'],
   output: umdOutput,
 };

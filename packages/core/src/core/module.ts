@@ -1,45 +1,54 @@
-import { Writable, Readable } from 'svelte/store';
 import { SvelteComponent } from 'svelte';
-import { Observable } from 'rxjs';
+import { Stream, isStream } from './stream';
+
+let nextId = 0;
+
+interface ModuleInternals {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  streams: Array<Stream<any>>;
+  app: SvelteComponent | undefined;
+  readonly isModule: boolean;
+  readonly moduleType: string;
+  [key: string]: unknown;
+}
 
 export abstract class Module {
-  static moduleId = 0;
-  static readonly isModule = true;
-  static readonly moduleType = 'generic';
-
   public abstract name: string;
   public abstract description: string;
 
-  id: string;
+  id = `module-${String(nextId++).padStart(3, '0')}`;
 
-  props: Record<string, unknown> = {};
-  propValues: Record<string, unknown> = {};
-  out: Record<string, Writable<unknown> | Readable<unknown> | Observable<unknown>> = {};
+  protected $$: ModuleInternals = {
+    streams: [],
+    app: undefined,
+    isModule: true,
+    moduleType: 'generic',
+  };
 
-  // protected component: unknown = undefined;
-  protected app: SvelteComponent | undefined = undefined;
-
-  abstract mount(): void;
-
-  constructor() {
-    this.id = `module-${String(Module.moduleId++).padStart(3, '0')}`;
-  }
-
-  protected defineProp<T>(name: string, obs: Writable<T>, initialValue: T): void {
-    Object.defineProperty(this.props, name, {
-      get: () => this.propValues[name],
-      set: (v: T) => {
-        obs.set(v);
-      },
-    });
-    obs.subscribe((v: T) => {
-      this.propValues[name] = v;
-    });
-    this.props[name] = initialValue;
-  }
+  abstract mount(targetId?: string): void;
 
   destroy(): void {
-    this.app?.$destroy();
-    this.app = undefined;
+    this.$$.app?.$destroy();
+    this.$$.app = undefined;
+  }
+
+  start(): void {
+    this.$$.streams = Object.entries(this)
+      .filter(([x, s]) => x[0] === '$' && isStream(s))
+      .map(([, stream]) => {
+        stream.start();
+        return stream;
+      });
+  }
+
+  stop(): void {
+    this.$$.streams.forEach((s) => {
+      s.stop();
+    });
+  }
+
+  dispose(): void {
+    this.destroy();
+    this.stop();
   }
 }

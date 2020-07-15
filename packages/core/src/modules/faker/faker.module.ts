@@ -1,24 +1,38 @@
+import { periodic, map } from '@most/core';
 import { Module } from '../../core/module';
-import { frames, size as sizeObs } from './faker.store';
 import Component from './faker.svelte';
+import { Stream } from '../../core/stream';
+
+export interface FakerOptions {
+  size?: number;
+  period?: number;
+}
 
 export class Faker extends Module {
   name = 'faker';
   description = 'Fake data input module';
+  size: number;
 
-  constructor({ size = 32 } = {}) {
+  $frames: Stream<number[]>;
+
+  constructor({ size = 32, period = 1000 }: FakerOptions = {}) {
     super();
-    this.defineProp('size', sizeObs, size);
-    this.out.frames = frames;
+    this.size = size;
+    this.$frames = new Stream(
+      map(() => Array.from(Array(size), () => Math.random()), periodic(period)),
+    );
+    this.start();
   }
 
-  mount(): void {
-    const target = document.querySelector(`#${this.id}`);
+  mount(targetId?: string): void {
+    const target = document.querySelector(`#${targetId || this.id}`);
     if (!target) return;
-    this.app = new Component({
+    this.$$.app = new Component({
       target,
       props: {
         title: this.name,
+        size: this.size,
+        frames: this.$frames,
       },
     });
   }

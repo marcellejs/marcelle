@@ -1,13 +1,15 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import notify from '../../core/util/notify';
   import Switch from '../../core/components/Switch.svelte';
 
   export let title;
   export let width;
   export let height;
-  export let store;
-  $: ({ active, images, stream, thumbnails } = store);
+  export let active;
+  export let images;
+  export let stream;
+  export let thumbnails;
 
   let camerasListEmitted = false;
   const cameras = [];
@@ -26,6 +28,7 @@
   thumbnailCanvas.height = (THUMBNAIL_WIDTH * height) / width;
   const thumbnailCtx = thumbnailCanvas.getContext('2d');
   function captureThumbnail() {
+    if (!ready) return null;
     const hRatio = height / webcamHeight;
     const wRatio = width / webcamWidth;
     if (hRatio > wRatio) {
@@ -55,6 +58,7 @@
   captureCanvas.height = height;
   const captureCtx = captureCanvas.getContext('2d');
   function captureImage() {
+    if (!ready) return null;
     const hRatio = height / webcamHeight;
     const wRatio = width / webcamWidth;
     if (hRatio > wRatio) {
@@ -67,25 +71,28 @@
     return captureCanvas.toDataURL('image/jpeg');
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  let unsubStreaming = () => {};
+  let animationFrame;
   function setupStreaming() {
-    let animationFrame;
-
     function process() {
       images.set(captureImage());
       thumbnails.set(captureThumbnail());
       animationFrame = requestAnimationFrame(process);
     }
 
-    stream.subscribe(s => {
+    unsubStreaming = stream.subscribe(s => {
+      cancelAnimationFrame(animationFrame);
       if (s) {
         process();
-      } else {
-        global.cancelAnimationFrame(animationFrame);
       }
     });
   }
 
+  let srcStream;
   function loadSrcStream(s) {
+    srcStream = s;
+
     if ('srcObject' in videoElement) {
       // new browsers api
       videoElement.srcObject = s;
@@ -205,11 +212,12 @@
     }
   }
 
-  onMount(async () => {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  let unsubActive = () => {};
+  onMount(() => {
     setupMedia();
     setupStreaming();
-
-    active.subscribe(v => {
+    unsubActive = active.subscribe(v => {
       if (v) {
         if (!camerasListEmitted) {
           loadCameras();
@@ -223,6 +231,17 @@
         }
       }
     });
+  });
+
+  onDestroy(() => {
+    cancelAnimationFrame(animationFrame);
+    unsubActive();
+    unsubStreaming();
+    if (srcStream) {
+      srcStream.getTracks().forEach(track => {
+        track.stop();
+      });
+    }
   });
 </script>
 

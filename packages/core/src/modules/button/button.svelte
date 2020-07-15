@@ -1,12 +1,9 @@
 <script>
-  import { click, text } from './button.store';
-
-  function sendClick(event) {
-    click.set(event);
-  }
+  export let title;
+  export let text;
 </script>
 
 <svelte:options accessors />
 
-<span class="card-title">button</span>
-<button on:click={sendClick}>{$text}</button>
+<span class="card-title">{title}</span>
+<button on:click>{$text}</button>

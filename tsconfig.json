@@ -2,9 +2,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "sourceMap": true,
-    "target": "es6",
-    "module": "es6",
-    "moduleResolution": "node",
+    "target": "ES2015",
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "allowJs": false,
     "strict": true,
     "strictNullChecks": false,
@@ -15,7 +15,7 @@
     "removeComments": false,
     "skipLibCheck": true,
     "strictPropertyInitialization": false,
-    "lib": ["esnext", "dom"],
+    "lib": ["ESNext", "DOM"],
     "types": ["node", "svelte"],
     "rootDir": "."
   },

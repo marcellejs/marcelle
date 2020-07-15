@@ -1,9 +1,9 @@
 <script>
-  import { onMount } from 'svelte';
+  import { afterUpdate } from 'svelte';
 
   export let dashboard;
 
-  onMount(() => {
+  afterUpdate(() => {
     dashboard.mount();
   });
 </script>

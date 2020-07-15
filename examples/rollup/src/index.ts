@@ -1,26 +1,30 @@
-import { createApp, webcam, capture, mobilenet, dataset } from '@marcellejs/core';
-import { mergeMap } from 'rxjs/operators';
+import { createApp, createStream, webcam, capture, mobilenet, dataset } from '@marcellejs/core';
+import { awaitPromises, map } from '@most/core';
 
 const w = webcam();
-const cap = capture({ input: w.out.images, thumbnail: w.out.thumbnails });
 
+const cap = capture({ input: w.$images, thumbnail: w.$thumbnails });
 const m = mobilenet();
-const instances = cap.out.instances.pipe(
-  mergeMap(async (instance: Record<string, unknown>) => ({
-    ...instance,
-    type: 'image',
-    features: await m.process(instance.data),
-  })),
-  // rxjs.operators.tap(console.log),
-);
 
+const instances = createStream(
+  awaitPromises(
+    map(
+      async (instance: Record<string, unknown>) => ({
+        ...instance,
+        type: 'image',
+        features: await m.process(instance.data),
+      }),
+      cap.$instances,
+    ),
+  ),
+);
 const trainingSet = dataset({ name: 'TrainingSet' });
 trainingSet.capture(instances);
 
 const app = createApp({
-  title: 'Marcelle + Rollup Starter',
+  title: 'Marcelle Starter',
   author: 'Marcelle Pirates Crew',
 });
-app.dashboard('Data Management').useLeft(w).use(cap, trainingSet);
+app.dashboard('Data Management').useLeft(w, m).use(cap, trainingSet);
 
 app.start();
