@@ -15,19 +15,19 @@ const plugins = [
   css({ output: 'dist/extra.css' }),
   svelte({
     dev: !production,
-    css: (css) => {
-      css.write('dist/bundle.css');
+    css: (c) => {
+      c.write('dist/bundle.css');
     },
     preprocess: preprocess({
       postcss: true,
     }),
   }),
-  typescript(),
   resolve({
     browser: true,
     dedupe: ['svelte'],
   }),
   commonjs(),
+  typescript(),
   production && terser(),
   production && filesize(),
   // production && analyze(),

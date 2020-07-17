@@ -43,12 +43,12 @@ const plugins = [
       postcss: true,
     }),
   }),
-  typescript(),
   resolve({
     browser: true,
     dedupe: ['svelte'],
   }),
   commonjs(),
+  typescript(),
   copy({
     targets: [
       { src: 'src/index.html', dest: 'public' },
