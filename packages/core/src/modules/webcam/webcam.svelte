@@ -1,5 +1,6 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
+  import Spinner from '../../core/components/Spinner.svelte';
   import notify from '../../core/util/notify';
   import Switch from '../../core/components/Switch.svelte';
 
@@ -279,6 +280,9 @@
     class="webcam-container"
     bind:clientWidth={webcamContainerWidth}
     style="flex-direction: {width > height ? 'column' : 'row'};height: {(webcamContainerWidth * height) / width}px">
+    {#if $active && !ready}
+      <Spinner />
+    {/if}
     <video
       id="webcam-video"
       class="max-w-none"

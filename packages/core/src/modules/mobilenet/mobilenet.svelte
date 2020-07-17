@@ -8,8 +8,10 @@
 </script>
 
 <span class="card-title">{title}</span>
-{#if loading}
-  <Spinner />
-{:else}
-  <p class="mt-6 p-2 text-sm text-gray-600">Using Mobilenet v{version} with alpha = {alpha}.</p>
-{/if}
+
+<p class="mt-6 p-2 text-sm text-gray-600">
+  {#if loading}
+    &nbsp;
+    <Spinner />
+  {:else}Using Mobilenet v{version} with alpha = {alpha}.{/if}
+</p>

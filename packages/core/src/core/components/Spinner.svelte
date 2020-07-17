@@ -1,4 +1,17 @@
 <style lang="postcss">
+  .spinner-container {
+    position: absolute;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    min-height: 40px;
+  }
+
   .spinner {
     margin: 30px auto;
     width: 40px;
@@ -64,7 +77,9 @@
   }
 </style>
 
-<div class="spinner">
-  <div class="dot1" />
-  <div class="dot2" />
+<div class="spinner-container">
+  <div class="spinner">
+    <div class="dot1" />
+    <div class="dot2" />
+  </div>
 </div>
