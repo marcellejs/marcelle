@@ -1,6 +1,7 @@
 import { Stream as MostStream } from '@most/types';
 import { Stream } from './core/stream';
 import './polyfill';
+import './utils';
 
 export function createStream<T>(s: MostStream<T>): Stream<T> {
   return new Stream(s);

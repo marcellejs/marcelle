@@ -12,8 +12,8 @@ export default function notify({
 }: {
   title: string;
   message: string;
-  duration: number;
-  type: string;
+  duration?: number;
+  type?: string;
 }): void {
   if (!notificationContainer) {
     notificationContainer = document.createElement('div');
