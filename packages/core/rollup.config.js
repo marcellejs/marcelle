@@ -47,6 +47,7 @@ const umdOutput = {
   globals: {
     '@tensorflow/tfjs-core': 'tf',
     '@tensorflow/tfjs-converter': 'tf',
+    '@tensorflow/tfjs-layers': 'tf',
     '@most/prelude': 'mostPrelude',
     '@most/core': 'mostCore',
   },
@@ -55,6 +56,12 @@ const umdOutput = {
 export default {
   input: 'src/index.ts',
   plugins,
-  external: ['@tensorflow/tfjs-core', '@tensorflow/tfjs-converter', '@most/core', '@most/prelude'],
+  external: [
+    '@tensorflow/tfjs-core',
+    '@tensorflow/tfjs-converter',
+    '@tensorflow/tfjs-layers',
+    '@most/core',
+    '@most/prelude',
+  ],
   output: [esOutput, umdOutput],
 };

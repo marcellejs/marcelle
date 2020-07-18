@@ -70,10 +70,10 @@
 
 <style type="text/postcss">
   .app-container {
-    @apply flex flex-col absolute top-0 left-0 w-screen min-h-screen z-10 bg-white;
+    @apply flex flex-col absolute top-0 left-0 w-screen min-h-screen z-10;
   }
-  .container {
-    @apply max-w-none w-screen p-1 flex flex-row flex-no-wrap flex-grow;
+  main.container {
+    @apply max-w-none w-screen p-1 flex flex-row flex-no-wrap flex-grow bg-gray-100;
   }
 
   .active {
@@ -84,8 +84,8 @@
 <Tailwind />
 {#if showApp}
   <div class="app-container" transition:blur={{ amount: 10 }}>
-    <header class="text-gray-700 body-font border-b">
-      <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+    <header class="bg-white text-gray-700 body-font border-b">
+      <div class=" mx-auto flex flex-wrap p-2 flex-col md:flex-row items-center w-full">
         <a href="#/" class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -100,7 +100,6 @@
           </svg>
           <span class="ml-3 text-xl">{title}</span>
         </a>
-        <!-- <nav class="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center"> -->
         <nav
           class="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400 flex flex-wrap
           items-center text-base justify-center">
@@ -133,13 +132,13 @@
       </div>
     </header>
 
-    <div class="container">
+    <main class="container">
       {#if showSettings}
         <Settings on:quit={quit} />
       {:else if currentDashboard}
         <Dashboard dashboard={dashboards[currentDashboard]} />
       {/if}
-    </div>
+    </main>
 
     <footer class="text-gray-700 body-font border-t">
       <div class="px-5 py-2 mx-full flex items-center justify-end sm:flex-row">

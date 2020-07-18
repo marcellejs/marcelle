@@ -13,4 +13,7 @@ export { capture } from './modules/capture';
 export { dataset } from './modules/dataset';
 export { faker } from './modules/faker';
 export { mobilenet } from './modules/mobilenet';
+export { toggle } from './modules/toggle';
 export { webcam } from './modules/webcam';
+
+export { mlp } from './models/mlp';

@@ -1,20 +1,20 @@
-import { empty } from '@most/core';
 import { Module } from '../../core/module';
-import Component from './button.svelte';
+import Component from './toggle.svelte';
 import { Stream } from '../../core/stream';
 
-export interface ButtonOptions {
+export interface ToggleOptions {
   text: string;
 }
 
-export class Button extends Module {
-  name = 'button';
-  description = 'just a button...';
+export class Toggle extends Module {
+  name = 'toggle';
+  description = 'just a toggle...';
 
   $text: Stream<string>;
-  $click = new Stream(empty());
+  $checked = new Stream(false, true);
+  $disabled = new Stream(false, true);
 
-  constructor({ text = 'click me' }: Partial<ButtonOptions> = {}) {
+  constructor({ text = 'toggle me' }: Partial<ToggleOptions> = {}) {
     super();
     this.$text = new Stream(text, true);
     this.start();
@@ -28,8 +28,9 @@ export class Button extends Module {
       props: {
         title: this.name,
         text: this.$text,
+        checked: this.$checked,
+        disabled: this.$disabled,
       },
     });
-    this.$$.app.$on('click', this.$click.set);
   }
 }

@@ -62,6 +62,11 @@
     node-fetch "~2.1.2"
     seedrandom "2.4.3"
 
+"@tensorflow/tfjs-layers@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-layers/-/tfjs-layers-2.0.1.tgz#4b48841fe1b2831dabcb06fd7cb69c98c92a4596"
+  integrity sha512-ih7/KyhC2Ci/31UfB9frYbqUW59Zj5UVp22apyscyIqrRdBXhVtJIUnd4O5OXis0j9BOdzAQnBoOAa8S/T8JsA==
+
 "@types/offscreencanvas@~2019.3.0":
   version "2019.3.0"
   resolved "https://registry.yarnpkg.com/@types/offscreencanvas/-/offscreencanvas-2019.3.0.tgz#3336428ec7e9180cf4566dfea5da04eb586a6553"
@@ -81,6 +86,11 @@
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/@types/webgl2/-/webgl2-0.0.4.tgz#c3b0f9d6b465c66138e84e64cb3bdf8373c2c279"
   integrity sha512-PACt1xdErJbMUOUweSrbVM7gSIYm1vTncW2hF6Os/EeWi6TXYAYMPp+8v6rzHmypE5gHrxaxZNXgMkJVIdZpHw==
+
+dequal@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/dequal/-/dequal-1.0.1.tgz#dbbf9795ec626e9da8bd68782f4add1d23700d8b"
+  integrity sha512-Fx8jxibzkJX2aJgyfSdLhr9tlRoTnHKrRJuu2XHlAgKioN2j19/Bcbe0d4mFXYZ3+wpE2KVobUVTfDutcD17xQ==
 
 fsevents@~2.1.2:
   version "2.1.3"

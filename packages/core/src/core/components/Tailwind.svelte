@@ -40,7 +40,7 @@
   }
 
   .card {
-    @apply border border-indigo-500 rounded-lg relative p-1 m-1;
+    @apply bg-white border border-indigo-500 rounded-lg relative p-1 m-1;
   }
 
   .card:hover {

@@ -988,9 +988,9 @@
     "@types/node" ">= 8"
 
 "@octokit/types@^5.0.0", "@octokit/types@^5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@octokit/types/-/types-5.0.1.tgz#5459e9a5e9df8565dcc62c17a34491904d71971e"
-  integrity sha512-GorvORVwp244fGKEt3cgt/P+M0MGy4xEDbckw+K5ojEezxyMDgCaYPKVct+/eWQfZXOT7uq0xRpmrl/+hliabA==
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@octokit/types/-/types-5.1.0.tgz#4377a3f39edad3e60753fb5c3c310756f1ded57f"
+  integrity sha512-OFxUBgrEllAbdEmWp/wNmKIu5EuumKHG4sgy56vjZ8lXPgMhF05c76hmulfOdFHHYRpPj49ygOZJ8wgVsPecuA==
   dependencies:
     "@types/node" ">= 8"
 
@@ -1848,9 +1848,9 @@ chardet@^0.7.0:
   integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
 
 chokidar@^3.3.0:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.4.0.tgz#b30611423ce376357c765b9b8f904b9fba3c0be8"
-  integrity sha512-aXAaho2VJtisB/1fg1+3nlLJqGOuewTzQpd/Tz0yTg2R0e4IGtshYvtjowyEumcBv2z+y4+kc75Mz7j5xJskcQ==
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.4.1.tgz#e905bdecf10eaa0a0b1db0c664481cc4cbc22ba1"
+  integrity sha512-TQTJyr2stihpC4Sya9hs2Xh+O2wf+igjL36Y75xx2WdHuiICcn/XJza46Jwt0eT5hVpQOzo3FpY3cj3RVYLX0g==
   dependencies:
     anymatch "~3.1.1"
     braces "~3.0.2"
@@ -4061,9 +4061,9 @@ lines-and-columns@^1.1.6:
   integrity sha1-HADHQ7QzzQpOgHWPe2SldEDZ/wA=
 
 livereload-js@^3.1.0:
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/livereload-js/-/livereload-js-3.2.3.tgz#64beff07ce5b2a74485d1a08c2ec04ac68e021bc"
-  integrity sha512-dXL/WgTGI2K3oeYX/z1lngFXSKtjCB2j7n9WSSluoU6/6+N4LWNoMiCBFNgn8dh3luBn4JBajVSvM5I7Xn6SLA==
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/livereload-js/-/livereload-js-3.2.4.tgz#21a05f8a7bd04c9531a7c63dfb6ff4b677d30f43"
+  integrity sha512-kgTCrrYAfwnb5469+7bB2hxIct8Giq0RemDnxOESIzyRwRqYGGMZh5VIveYqJiDvpglH0dpd074BU1zJj4NaNw==
 
 livereload@^0.9.1:
   version "0.9.1"
@@ -6528,9 +6528,9 @@ table@^5.2.3:
     string-width "^3.0.0"
 
 tailwindcss@^1.4.6:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-1.5.0.tgz#c36bd1574db70499b1f582a305a945defb704df0"
-  integrity sha512-c2l1rXfePM7PR6SPwDYDrKoejhl0LAbiBaX51EVz3nadk3oJ4FpbHGik9Nsb9GAafZRfZ0bIXlFsVjVIubrqiQ==
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-1.5.1.tgz#a3eb10024f8e10786b8b6badcf9665b013bd03ee"
+  integrity sha512-mBOxIk+U+9xECC6wllWiupPVfLuwTDvHb4d+8XTdZ8oYrZEH+NpFSlbATF5xWuCJQxDOZ1Dz7C0KN5tylcFhFg==
   dependencies:
     "@fullhuman/postcss-purgecss" "^2.1.2"
     autoprefixer "^9.4.5"
