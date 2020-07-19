@@ -35,7 +35,7 @@ tog.$checked.subscribe((x) => {
         mostCore.map(async (img) => classifier.predict(await mobilenet.process(img)), w.$images),
       ),
     );
-    predictions.subscribe((y) => console.log('real-time features', y));
+    predictions.subscribe((y) => console.log('prediction:', y));
   } else {
     predictions.stop();
   }
@@ -45,9 +45,9 @@ const app = marcelle.createApp({
   title: 'Marcelle Starter',
   author: 'Marcelle Pirates Crew',
 });
-app
-  .dashboard('Data Management')
-  .useLeft(w, mobilenet)
-  .use(cap, trainingSet, marcelle.parameters(classifier), b, tog);
+
+app.dashboard('Data Management').useLeft(w, mobilenet).use(cap, trainingSet);
+app.dashboard('Training').use(marcelle.parameters(classifier), b);
+app.dashboard('Real-time prediction').useLeft(w).use(tog);
 
 app.start();
