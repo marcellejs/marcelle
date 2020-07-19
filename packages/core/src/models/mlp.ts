@@ -4,7 +4,17 @@ import { sequential, layers as tfLayers, Sequential } from '@tensorflow/tfjs-lay
 import { Dataset } from '../modules/dataset/dataset.module';
 import { Stream } from '../core/stream';
 
-export interface MLPParameters {
+export interface Parameters {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [name: string]: Stream<any>;
+}
+
+export interface MLPParameters extends Parameters {
+  layers: Stream<number[]>;
+  epochs: Stream<number>;
+}
+
+export interface MLPOptions {
   layers: number[];
   epochs: number;
 }
@@ -107,8 +117,11 @@ export class MLP {
 
   $training = new Stream<TrainingStatus>({ status: 'idle' });
 
-  constructor({ layers = [64, 32], epochs = 20 }: Partial<MLPParameters> = {}) {
-    this.parameters = { layers, epochs };
+  constructor({ layers = [64, 32], epochs = 20 }: Partial<MLPOptions> = {}) {
+    this.parameters = {
+      layers: new Stream(layers, true),
+      epochs: new Stream(epochs, true),
+    };
   }
 
   train(dataset: Dataset): void {
@@ -129,7 +142,7 @@ export class MLP {
   buildModel(inputDim: number, numClasses: number): void {
     console.log('[MLP] Building a model with layers:', this.parameters.layers);
     this.model = sequential();
-    this.parameters.layers.forEach((units, i) => {
+    this.parameters.layers.value.forEach((units, i) => {
       const layerParams: DenseLayerArgs = {
         units,
         activation: 'relu', // potentially add kernel init
@@ -154,7 +167,7 @@ export class MLP {
   }
 
   fit(data: TrainingData, epochs = -1): void {
-    const numEpochs = epochs > 0 ? epochs : this.parameters.epochs;
+    const numEpochs = epochs > 0 ? epochs : this.parameters.epochs.value;
     this.model
       .fit(data.training.x, data.training.y, {
         batchSize: BATCH_SIZE,
@@ -200,6 +213,6 @@ export class MLP {
   }
 }
 
-export function mlp(parameters: Partial<MLPParameters>): MLP {
-  return new MLP(parameters);
+export function mlp(options: Partial<MLPOptions>): MLP {
+  return new MLP(options);
 }

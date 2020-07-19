@@ -7,7 +7,6 @@ interface ModuleInternals {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   streams: Array<Stream<any>>;
   app: SvelteComponent | undefined;
-  readonly isModule: boolean;
   readonly moduleType: string;
   [key: string]: unknown;
 }
@@ -15,13 +14,13 @@ interface ModuleInternals {
 export abstract class Module {
   public abstract name: string;
   public abstract description: string;
+  readonly isModule = true;
 
   id = `module-${String(nextId++).padStart(3, '0')}`;
 
   protected $$: ModuleInternals = {
     streams: [],
     app: undefined,
-    isModule: true,
     moduleType: 'generic',
   };
 

@@ -45,6 +45,9 @@ const app = marcelle.createApp({
   title: 'Marcelle Starter',
   author: 'Marcelle Pirates Crew',
 });
-app.dashboard('Data Management').useLeft(w, mobilenet).use(cap, trainingSet, b, tog);
+app
+  .dashboard('Data Management')
+  .useLeft(w, mobilenet)
+  .use(cap, trainingSet, marcelle.parameters(classifier), b, tog);
 
 app.start();

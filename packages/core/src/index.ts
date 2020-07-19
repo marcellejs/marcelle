@@ -17,3 +17,5 @@ export { toggle } from './modules/toggle';
 export { webcam } from './modules/webcam';
 
 export { mlp } from './models/mlp';
+
+export { parameters } from './interfaces/parameters';
