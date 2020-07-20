@@ -12,7 +12,7 @@ function dummySubscriber<T>(value: T): void {
 const scheduler = newDefaultScheduler();
 
 function isMostStream<T>(s: MostStream<T> | unknown): s is MostStream<T> {
-  return (s as Stream<T>).run !== undefined;
+  return s && typeof s === 'object' && (s as Stream<T>).run !== undefined;
 }
 
 export function isStream<T>(s: Stream<T> | T): s is Stream<T> {

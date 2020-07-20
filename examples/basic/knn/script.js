@@ -26,6 +26,12 @@ classifier.$training.subscribe(console.log);
 
 const tog = marcelle.toggle({ text: 'toggle prediction' });
 
+// ////////////////////////
+const d = document.createElement('h2');
+document.querySelector('#app').appendChild(d);
+d.innerText = 'Waiting for predictions...';
+// ////////////////////////
+
 const results = marcelle.text({ text: 'waiting for predictions...' });
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 let predictions = { stop() {} };
@@ -37,6 +43,7 @@ tog.$checked.subscribe((x) => {
       ),
     );
     predictions.subscribe((y) => {
+      d.innerText = `predicted label: ${y.label}`;
       results.$text.set(
         `<h2>predicted label: ${y.label}</h2><p>Confidences: ${Object.values(y.confidences)}</p>`,
       );
