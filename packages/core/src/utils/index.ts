@@ -1,4 +1,5 @@
-import notify from './core/util/notify';
+import './polyfill';
+import notify from '../core/util/notify';
 
 window.onerror = (message) => {
   if (typeof message === 'string') {

@@ -1,6 +1,5 @@
 import { Stream as MostStream } from '@most/types';
 import { Stream } from './core/stream';
-import './polyfill';
 import './utils';
 
 export function createStream<T>(s: MostStream<T>): Stream<T> {
@@ -13,6 +12,7 @@ export { capture } from './modules/capture';
 export { dataset } from './modules/dataset';
 export { faker } from './modules/faker';
 export { mobilenet } from './modules/mobilenet';
+export { text } from './modules/text';
 export { toggle } from './modules/toggle';
 export { webcam } from './modules/webcam';
 

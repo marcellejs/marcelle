@@ -26,6 +26,7 @@ classifier.$training.subscribe(console.log);
 
 const tog = marcelle.toggle({ text: 'toggle prediction' });
 
+const results = marcelle.text({ text: 'waiting for predictions...' });
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 let predictions = { stop() {} };
 tog.$checked.subscribe((x) => {
@@ -35,7 +36,11 @@ tog.$checked.subscribe((x) => {
         mostCore.map(async (img) => classifier.predict(await mobilenet.process(img)), w.$images),
       ),
     );
-    predictions.subscribe((y) => console.log('prediction:', y));
+    predictions.subscribe((y) => {
+      results.$text.set(
+        `<h2>predicted label: ${y.label}</h2><p>Confidences: ${Object.values(y.confidences)}</p>`,
+      );
+    });
   } else {
     predictions.stop();
   }
@@ -48,6 +53,6 @@ const app = marcelle.createApp({
 
 app.dashboard('Data Management').useLeft(w, mobilenet).use(cap, trainingSet);
 app.dashboard('Training').use(marcelle.parameters(classifier), b);
-app.dashboard('Real-time prediction').useLeft(w).use(tog);
+app.dashboard('Real-time prediction').useLeft(w).use(tog, results);
 
 app.start();
