@@ -28,7 +28,7 @@ export class Dataset extends Module {
   $instances: Stream<number[]> = new Stream([], true);
   $classes = new Stream<Record<string, number[]>>({}, true);
   $labels: Stream<string[]>;
-  $count = new Stream(0, true);
+  $count: Stream<number>;
 
   constructor({ name }: DatasetOptions) {
     super();
@@ -43,6 +43,10 @@ export class Dataset extends Module {
       ),
     );
     this.$labels = new Stream(skipRepeatsWith(dequal, map(Object.keys, this.$classes)));
+    this.$count = new Stream(
+      map((x) => x.length, this.$instances),
+      true,
+    );
     this.start();
   }
 
