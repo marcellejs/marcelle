@@ -85,9 +85,10 @@ export class Dataset extends Module {
     return this.#instanceData[id];
   }
 
-  mount(targetId?: string): void {
-    const target = document.querySelector(`#${targetId || this.id}`);
-    if (!target || !Component) return;
+  mount(targetSelector?: string): void {
+    const target = document.querySelector(targetSelector || `#${this.id}`);
+    if (!target) return;
+    this.destroy();
     this.$$.app = new Component({
       target,
       props: {

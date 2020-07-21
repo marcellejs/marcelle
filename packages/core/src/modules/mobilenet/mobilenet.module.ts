@@ -104,10 +104,10 @@ export class Mobilenet extends Module {
     return this.#mobilenet.infer(await this.#convert(image), true).arraySync();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  mount(targetId?: string): void {
-    const target = document.querySelector(`#${targetId || this.id}`);
+  mount(targetSelector?: string): void {
+    const target = document.querySelector(targetSelector || `#${this.id}`);
     if (!target) return;
+    this.destroy();
     this.$$.app = new Component({
       target,
       props: {

@@ -65,9 +65,10 @@ export class Webcam extends Module {
     return this.#width;
   }
 
-  mount(targetId?: string): void {
-    const target = document.querySelector(`#${targetId || this.id}`);
+  mount(targetSelector?: string): void {
+    const target = document.querySelector(targetSelector || `#${this.id}`);
     if (!target) return;
+    this.destroy();
     this.$$.app = new Component({
       target,
       props: {

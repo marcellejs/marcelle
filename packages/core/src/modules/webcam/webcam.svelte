@@ -44,6 +44,7 @@
   .webcam {
     @apply mt-2;
     width: 100%;
+    max-width: 350px;
     display: flex;
     flex-direction: column;
   }
