@@ -83,8 +83,10 @@ export class Stream<T> {
   start(): void {
     if (!this.running) {
       Stream.numActive++;
+      // console.log('active streams: ', Stream.numActive);
       runEffects(this.stream, scheduler).then(() => {
         Stream.numActive--;
+        // console.log('active streams: ', Stream.numActive);
       });
       this.running = true;
     }

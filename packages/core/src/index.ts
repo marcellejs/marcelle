@@ -7,6 +7,8 @@ export function createStream<T>(s: MostStream<T>): Stream<T> {
 }
 
 export { createApp } from './core/application';
+export { createWizard } from './core/wizard';
+
 export { button } from './modules/button';
 export { capture } from './modules/capture';
 export { dataset } from './modules/dataset';

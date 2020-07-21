@@ -24,6 +24,15 @@
     @apply bg-teal-600;
   }
 
+  button:disabled,
+  .btn:disabled,
+  button[disabled],
+  .btn[disabled],
+  button:hover[disabled],
+  .btn:hover[disabled] {
+    @apply bg-gray-200 border-gray-400 cursor-default text-gray-600;
+  }
+
   button.danger,
   .btn.danger {
     @apply text-red-600 border-red-600;
@@ -49,5 +58,9 @@
 
   .card-title {
     @apply bg-indigo-500 text-white px-2 py-1 text-xs absolute right-0 top-0 rounded-bl-lg rounded-tr-md z-10;
+  }
+
+  .wizard .card-title {
+    display: none;
   }
 </style>
