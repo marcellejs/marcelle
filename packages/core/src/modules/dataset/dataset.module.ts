@@ -29,6 +29,7 @@ export class Dataset extends Module {
   $classes = new Stream<Record<string, number[]>>({}, true);
   $labels: Stream<string[]>;
   $count: Stream<number>;
+  $countPerClass: Stream<Record<string, number>>;
 
   constructor({ name }: DatasetOptions) {
     super();
@@ -45,6 +46,17 @@ export class Dataset extends Module {
     this.$labels = new Stream(skipRepeatsWith(dequal, map(Object.keys, this.$classes)));
     this.$count = new Stream(
       map((x) => x.length, this.$instances),
+      true,
+    );
+    this.$countPerClass = new Stream(
+      map(
+        (x) =>
+          Object.entries(x).reduce(
+            (y, [label, instances]) => ({ ...y, [label]: instances.length }),
+            {},
+          ),
+        this.$classes,
+      ),
       true,
     );
     this.start();
