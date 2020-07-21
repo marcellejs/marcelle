@@ -44,7 +44,9 @@ marcelle.createStream(mostCore.skipRepeats(tog.$checked)).subscribe((x) => {
     let PrevLabel = '';
     predictions.subscribe((y) => {
       results.$text.set(
-        `<h2>predicted label: ${y.label}</h2><p>Confidences: ${Object.values(y.confidences)}</p>`,
+        `<h2>predicted label: ${y.label}</h2><p>Confidences: ${Object.values(
+          y.confidences,
+        ).map((z) => z.toFixed(2))}</p>`,
       );
       if (y.label !== PrevLabel) {
         d.innerText = `predicted label: ${y.label}`;

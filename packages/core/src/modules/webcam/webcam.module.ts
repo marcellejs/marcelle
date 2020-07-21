@@ -5,6 +5,30 @@ import { Stream } from '../../core/stream';
 import notify from '../../core/util/notify';
 import Component from './webcam.svelte';
 
+function requestInterval(fn: () => void, delay: number) {
+  let start = new Date().getTime();
+  let stop = false;
+  let animationFrame: number;
+  function loop(): void {
+    if (stop) {
+      return;
+    }
+    const current = new Date().getTime();
+    // console.log('interval', current - start);
+    if (current - start >= delay) {
+      fn();
+      start = new Date().getTime();
+    }
+    animationFrame = window.requestAnimationFrame(loop);
+  }
+  animationFrame = window.requestAnimationFrame(loop);
+  return function clear() {
+    console.log('clear interval');
+    window.cancelAnimationFrame(animationFrame);
+    stop = true;
+  };
+}
+
 export interface WebcamOptions {
   width?: number;
   height?: number;
@@ -25,15 +49,13 @@ export class Webcam extends Module {
   #height: number;
   #webcamWidth: number;
   #webcamHeight: number;
-  // #ready = false;
   #videoElement = document.createElement('video');
   #cameras: MediaDeviceInfo[] = [];
   #camerasListEmitted = false;
   #deviceId: string;
   #thumbnailWidth = 80;
-  // #unsubStreaming = noop;
   #unsubActive = noop;
-  #animationFrame: number;
+  #stopStreaming = noop;
   #thumbnailCanvas: HTMLCanvasElement;
   #thumbnailCtx: CanvasRenderingContext2D;
   #captureCanvas: HTMLCanvasElement;
@@ -47,14 +69,14 @@ export class Webcam extends Module {
     this.start();
     this.#videoElement.autoplay = true;
     this.#unsubActive = this.$active.subscribe((v) => {
-      cancelAnimationFrame(this.#animationFrame);
+      this.#stopStreaming();
       if (v) {
         if (!this.#camerasListEmitted) {
           this.loadCameras();
         } else {
           this.startCamera();
         }
-        this.process();
+        this.#stopStreaming = requestInterval(this.process.bind(this), 50);
       } else {
         this.stopCamera();
       }
@@ -84,10 +106,8 @@ export class Webcam extends Module {
 
   stop(): void {
     super.stop();
-    cancelAnimationFrame(this.#animationFrame);
+    this.#stopStreaming();
     this.#unsubActive();
-    // this.#unsubActive();
-    // this.#unsubStreaming();
     if (this.$mediastream.value) {
       this.$mediastream.value.getTracks().forEach((track) => {
         track.stop();
@@ -105,15 +125,6 @@ export class Webcam extends Module {
     this.#captureCanvas.height = this.#height;
     this.#captureCtx = this.#captureCanvas.getContext('2d');
   }
-
-  // setupStreaming(): void {
-  //   this.#unsubStreaming = this.$mediastream.subscribe((s) => {
-  //     cancelAnimationFrame(this.#animationFrame);
-  //     if (s) {
-  //       this.process();
-  //     }
-  //   });
-  // }
 
   async loadCamera(deviceId: string): Promise<void> {
     const constraints = {
@@ -180,7 +191,6 @@ export class Webcam extends Module {
       tracks.forEach((track) => {
         track.stop();
         this.#videoElement.srcObject = null;
-        // source = null;
       });
       this.$ready.set(false);
     }
@@ -189,7 +199,6 @@ export class Webcam extends Module {
   process(): void {
     this.$images.set(this.captureImage());
     this.$thumbnails.set(this.captureThumbnail());
-    this.#animationFrame = requestAnimationFrame(this.process.bind(this));
   }
 
   captureThumbnail(): string {
@@ -218,7 +227,7 @@ export class Webcam extends Module {
     return this.#thumbnailCanvas.toDataURL('image/jpeg');
   }
 
-  captureImage(): string {
+  captureImage(): ImageData {
     if (!this.$ready.value) return null;
     const hRatio = this.#height / this.#webcamHeight;
     const wRatio = this.#width / this.#webcamWidth;
@@ -229,6 +238,7 @@ export class Webcam extends Module {
       const h = (this.#width * this.#webcamHeight) / this.#webcamWidth;
       this.#captureCtx.drawImage(this.#videoElement, 0, this.#height / 2 - h / 2, this.#width, h);
     }
-    return this.#captureCanvas.toDataURL('image/jpeg');
+    // return this.#captureCanvas.toDataURL('image/jpeg');
+    return this.#captureCtx.getImageData(0, 0, this.#width, this.#height);
   }
 }

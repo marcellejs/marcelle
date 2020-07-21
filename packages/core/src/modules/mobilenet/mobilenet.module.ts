@@ -10,42 +10,43 @@ import Component from './mobilenet.svelte';
 import { Stream } from '../../core/stream';
 
 export interface MobilenetOptions {
-  input?: Stream<string>;
+  input?: Stream<ImageData>;
   version?: MobileNetVersion;
   alpha?: MobileNetAlpha;
 }
 
-function createImageConverter() {
-  const canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d');
-  const image = new Image();
-  return function convertURIToImageData(URI: string): Promise<ImageData> {
-    return new Promise((resolve, reject) => {
-      if (!URI) {
-        reject();
-      } else {
-        image.addEventListener(
-          'load',
-          () => {
-            canvas.width = image.width;
-            canvas.height = image.height;
-            context?.drawImage(image, 0, 0, canvas.width, canvas.height);
-            resolve(context?.getImageData(0, 0, canvas.width, canvas.height));
-          },
-          false,
-        );
-        image.src = URI;
-      }
-    });
-  };
-}
+// function createImageConverter() {
+//   const canvas = document.createElement('canvas');
+//   const context = canvas.getContext('2d');
+//   const image = new Image();
+//   return function convertURIToImageData(URI: string): Promise<ImageData> {
+//     console.count('convertURIToImageData');
+//     return new Promise((resolve, reject) => {
+//       if (!URI) {
+//         reject();
+//       } else {
+//         image.addEventListener(
+//           'load',
+//           () => {
+//             canvas.width = image.width;
+//             canvas.height = image.height;
+//             context?.drawImage(image, 0, 0, canvas.width, canvas.height);
+//             resolve(context?.getImageData(0, 0, canvas.width, canvas.height));
+//           },
+//           false,
+//         );
+//         image.src = URI;
+//       }
+//     });
+//   };
+// }
 
 export class Mobilenet extends Module {
   name = 'mobilenet';
   description = 'Mobilenet input module';
 
   #mobilenet: MobileNet | undefined;
-  #convert = createImageConverter();
+  // #convert = createImageConverter();
   loading = true;
   readonly version: MobileNetVersion;
   readonly alpha: MobileNetAlpha;
@@ -90,7 +91,7 @@ export class Mobilenet extends Module {
   }
 
   async process(
-    image: string,
+    image: ImageData,
   ): Promise<
     | number
     | number[]
@@ -101,7 +102,8 @@ export class Mobilenet extends Module {
     | number[][][][][][]
   > {
     if (!this.#mobilenet) return [];
-    return this.#mobilenet.infer(await this.#convert(image), true).arraySync();
+    // return this.#mobilenet.infer(await this.#convert(image), true).arraySync();
+    return this.#mobilenet.infer(image, true).arraySync();
   }
 
   mount(targetSelector?: string): void {
