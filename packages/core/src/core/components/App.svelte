@@ -122,20 +122,30 @@
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20">
               <path
-                d="M3.94 6.5L2.22 3.64l1.42-1.42L6.5 3.94c.52-.3 1.1-.54 1.7-.7L9 0h2l.8 3.24c.6.16
-                1.18.4 1.7.7l2.86-1.72 1.42 1.42-1.72 2.86c.3.52.54 1.1.7 1.7L20
-                9v2l-3.24.8c-.16.6-.4 1.18-.7 1.7l1.72 2.86-1.42
-                1.42-2.86-1.72c-.52.3-1.1.54-1.7.7L11 20H9l-.8-3.24c-.6-.16-1.18-.4-1.7-.7l-2.86
-                1.72-1.42-1.42 1.72-2.86c-.3-.52-.54-1.1-.7-1.7L0
-                11V9l3.24-.8c.16-.6.4-1.18.7-1.7zM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                d="M17 16v4h-2v-4h-2v-3h6v3h-2zM1 9h6v3H1V9zm6-4h6v3H7V5zM3 0h2v8H3V0zm12
+                0h2v12h-2V0zM9 0h2v4H9V0zM3 12h2v8H3v-8zm6-4h2v12H9V8z" />
             </svg>
           </a>
+          <button
+            on:click={quit}
+            class="text-red-500 bg-transparent font-bold uppercase text-xs px-2 py-2 rounded-full
+            outline-none mr-1 mb-1 hover:bg-red-500 hover:text-white">
+            <svg
+              class="fill-current inline-block h-5 w-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M4.16 4.16l1.42 1.42A6.99 6.99 0 0 0 10 18a7 7 0 0 0 4.42-12.42l1.42-1.42a9 9 0 1
+                1-11.69 0zM9 0h2v8H9V0z" />
+            </svg>
+          </button>
         </div>
       </header>
 
       <main class="container">
         {#if showSettings}
-          <Settings on:quit={quit} />
+          <Settings />
         {:else if currentDashboard}
           <Dashboard dashboard={dashboards[currentDashboard]} />
         {/if}

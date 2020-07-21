@@ -41,32 +41,38 @@
       <div class="flex mr-2">
         <button
           on:click={() => decrement(i)}
-          class="py-1 px-2 m-0 rounded-r-none bg-gray-200 border-gray-500 text-gray-700 font-normal">
+          class="bg-transparent border border-solid uppercase text-xs rounded outline-none py-1 px-2
+          m-0 rounded-r-none bg-gray-100 border-gray-400 text-gray-700 font-normal
+          hover:border-blue-500 hover:text-blue-500">
           -
         </button>
         <input
           type="text"
           value={$values[i]}
           on:change={e => changeValue(e, i)}
-          class="text-sm text-gray-800 text-center border-t border-b border-solid border-gray-500"
+          class="text-sm text-gray-800 text-center border-t border-b border-solid border-gray-400"
           style="width: 80px" />
         <button
           on:click={() => increment(i)}
-          class="py-1 px-2 m-0 rounded-l-none bg-gray-200 border-gray-500 text-gray-700 font-normal">
+          class="bg-transparent border border-solid uppercase text-xs rounded outline-none py-1 px-2
+          m-0 rounded-l-none bg-gray-100 border-gray-400 text-gray-700 font-normal
+          hover:border-blue-500 hover:text-blue-500">
           +
         </button>
       </div>
     {/each}
     <button
       on:click={() => reduce()}
-      class="py-1 px-2 m-0 bg-gray-200 rounded-lg rounded-r-none border-gray-500 text-gray-700
-      font-normal">
+      class="bg-transparent border border-solid uppercase text-xs rounded outline-none py-1 px-2 m-0
+      rounded-r-none bg-gray-100 border-gray-400 text-gray-700 font-normal hover:border-blue-500
+      hover:text-blue-500">
       -
     </button>
     <button
       on:click={() => extend()}
-      class="py-1 px-2 m-0 bg-gray-200 border-l-0 rounded-lg rounded-l-none border-gray-500
-      text-gray-700 font-normal">
+      class="bg-transparent border border-solid uppercase text-xs rounded outline-none py-1 px-2 m-0
+      rounded-l-none border-l-0 bg-gray-100 border-gray-400 text-gray-700 font-normal
+      hover:border-blue-500 hover:text-blue-500">
       +
     </button>
   </div>

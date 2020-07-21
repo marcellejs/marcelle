@@ -14,7 +14,6 @@ function requestInterval(fn: () => void, delay: number) {
       return;
     }
     const current = new Date().getTime();
-    // console.log('interval', current - start);
     if (current - start >= delay) {
       fn();
       start = new Date().getTime();
@@ -23,7 +22,6 @@ function requestInterval(fn: () => void, delay: number) {
   }
   animationFrame = window.requestAnimationFrame(loop);
   return function clear() {
-    console.log('clear interval');
     window.cancelAnimationFrame(animationFrame);
     stop = true;
   };

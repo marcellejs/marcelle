@@ -27,6 +27,8 @@
       bind:value={$label} />
   </div>
   <div class="md:flex md:items-center">
-    <button class="w-full" on:mousedown={startCapture}>{$capturing ? 'Stop' : 'Capture'}</button>
+    <button class="btn w-full" on:mousedown={startCapture}>
+      {$capturing ? 'Stop' : 'Capture'}
+    </button>
   </div>
 </div>

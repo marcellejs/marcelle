@@ -15,4 +15,4 @@
 <svelte:body on:mouseup={$down && stopDown} />
 
 <span class="card-title">{title}</span>
-<button on:click on:mousedown={startDown}>{$text}</button>
+<button class="btn" on:click on:mousedown={startDown}>{$text}</button>

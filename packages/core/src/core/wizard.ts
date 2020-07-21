@@ -53,9 +53,6 @@ export class Wizard {
     });
     this.app.$on('quit', () => {
       this.app?.$destroy();
-      // this.steps.forEach((step) => {
-      //   step.destroy();
-      // });
       this.app = undefined;
     });
   }

@@ -1,9 +1,7 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
 
-  const dispatch = createEventDispatcher();
 </script>
 
-<div>
-  <button class="danger" on:click={() => dispatch('quit')}>Quit</button>
+<div class="m-4">
+  <h2>There will be some serious settings here.</h2>
 </div>

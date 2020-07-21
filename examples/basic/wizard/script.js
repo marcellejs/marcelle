@@ -133,3 +133,5 @@ app.dashboard('Real-time prediction').useLeft(w).use(tog, results);
 w.$mediastream.subscribe((s) => {
   document.querySelector('#my-webcam').srcObject = s;
 });
+
+app.start();
