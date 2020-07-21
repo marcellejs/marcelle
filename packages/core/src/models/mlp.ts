@@ -136,7 +136,7 @@ export class MLP {
       const data = dataSplit(dataset, 0.75);
       this.buildModel(data.training.x.shape[1], data.training.y.shape[1]);
       this.fit(data);
-    }, 1);
+    }, 100);
   }
 
   buildModel(inputDim: number, numClasses: number): void {

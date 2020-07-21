@@ -1,9 +1,13 @@
 /* global marcelle mostCore */
 
+// -----------------------------------------------------------
+// INPUT PIPELINE & CAPTURE TO DATASET
+// -----------------------------------------------------------
+
 const w = marcelle.webcam();
+const mobilenet = marcelle.mobilenet();
 
 const cap = marcelle.capture({ input: w.$images, thumbnail: w.$thumbnails });
-const mobilenet = marcelle.mobilenet();
 const instances = marcelle.createStream(
   mostCore.awaitPromises(
     mostCore.map(
@@ -16,22 +20,34 @@ const instances = marcelle.createStream(
     ),
   ),
 );
+
 const trainingSet = marcelle.dataset({ name: 'TrainingSet' });
 trainingSet.capture(instances);
+
+// -----------------------------------------------------------
+// TRAINING
+// -----------------------------------------------------------
 
 const b = marcelle.button({ text: 'Train' });
 const classifier = marcelle.mlp({ layers: [128, 64], epochs: 30 });
 b.$click.subscribe(() => classifier.train(trainingSet));
+
 classifier.$training.subscribe(console.log);
 
-const tog = marcelle.toggle({ text: 'toggle prediction' });
+const params = marcelle.parameters(classifier);
+const prog = marcelle.progress(classifier);
 
-// ////////////////////////
+// -----------------------------------------------------------
+// PREDICTION
+// -----------------------------------------------------------
+
+const tog = marcelle.toggle({ text: 'toggle prediction' });
+const results = marcelle.text({ text: 'waiting for predictions...' });
+
+// DOM Stuff for the app
 const d = document.querySelector('#results');
 const resultImg = document.querySelector('#result-img');
-// ////////////////////////
 
-const results = marcelle.text({ text: 'waiting for predictions...' });
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 let predictions = { stop() {} };
 marcelle.createStream(mostCore.skipRepeats(tog.$checked)).subscribe((x) => {
@@ -62,6 +78,23 @@ marcelle.createStream(mostCore.skipRepeats(tog.$checked)).subscribe((x) => {
   }
 });
 
+// -----------------------------------------------------------
+// DASHBOARDS
+// -----------------------------------------------------------
+
+const app = marcelle.createApp({
+  title: 'Marcelle Starter',
+  author: 'Marcelle Pirates Crew',
+});
+
+app.dashboard('Data Management').useLeft(w, mobilenet).use(cap, trainingSet);
+app.dashboard('Training').use(params, b, prog);
+app.dashboard('Real-time prediction').useLeft(w).use(tog, results);
+
+// -----------------------------------------------------------
+// WIZARD
+// -----------------------------------------------------------
+
 const bbb = marcelle.button({ text: 'Record Examples (class a)' });
 const ttt = marcelle.text({ text: 'Waiting for examples...' });
 bbb.$down.subscribe((x) => {
@@ -72,66 +105,51 @@ trainingSet.$countPerClass.subscribe((c) => {
   ttt.$text.set(`Recorded ${c[label]} examples of "${label}"`);
 });
 
-setTimeout(() => {
-  w.$active.set(true);
-}, 200);
-
 const wizard = marcelle.createWizard();
 
 wizard
   .step()
   .title('Record examples for class A')
   .description('Ich bin ein description')
-  .use(w, bbb, ttt);
-
-wizard
+  .use(w, bbb, ttt)
   .step()
   .title('Record examples for class B')
   .description('Ich bin ein description')
-  .use(w, bbb, ttt);
-
-wizard
+  .use(w, bbb, ttt)
   .step()
   .title('Train the model')
   .description('Ich bin ein MLP')
-  .use(marcelle.parameters(classifier), b);
-
-wizard
+  .use(params, b, prog)
   .step()
   .title('Test the classifier')
   .description('Ich bin ein classifier')
   .use(w, tog, results);
 
+function configureWizard(label) {
+  cap.$label.set(label);
+  bbb.$text.set(`Record Examples (class ${label})`);
+  const numExamples = trainingSet.$countPerClass.value[label];
+  ttt.$text.set(
+    numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
+  );
+}
+
 wizard.$current.subscribe((stepIndex) => {
   if (stepIndex === 0) {
-    cap.$label.set('A');
-    bbb.$text.set('Record Examples (class A)');
-    const numExamples = trainingSet.$countPerClass.value.A;
-    ttt.$text.set(
-      numExamples ? `Recorded ${numExamples} examples of "A"` : 'Waiting for examples...',
-    );
+    configureWizard('A');
   } else if (stepIndex === 1) {
-    cap.$label.set('B');
-    bbb.$text.set('Record Examples (class B)');
-    const numExamples = trainingSet.$countPerClass.value.B;
-    ttt.$text.set(
-      numExamples ? `Recorded ${numExamples} examples of "B"` : 'Waiting for examples...',
-    );
+    configureWizard('B');
   }
 });
 
-const app = marcelle.createApp({
-  title: 'Marcelle Starter',
-  author: 'Marcelle Pirates Crew',
-});
+// -----------------------------------------------------------
+// MAIN APP STUFF
+// -----------------------------------------------------------
 
-app.dashboard('Data Management').useLeft(w, mobilenet).use(cap, trainingSet);
-app.dashboard('Training').use(marcelle.parameters(classifier), b);
-app.dashboard('Real-time prediction').useLeft(w).use(tog, results);
-
-// w.mount('my-webcam');
 w.$mediastream.subscribe((s) => {
   document.querySelector('#my-webcam').srcObject = s;
 });
 
-app.start();
+setTimeout(() => {
+  w.$active.set(true);
+}, 200);
