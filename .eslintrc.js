@@ -91,6 +91,7 @@ module.exports = {
     'implicit-arrow-linebreak': 'off',
     'no-plusplus': 'off',
     'operator-linebreak': 'off',
+    'function-paren-newline': 'off',
     // Place to specify ESLint rules. Can be used to overwrite rules specified
     // from the extended configs
     // e.g. "@typescript-eslint/explicit-function-return-type": "off",

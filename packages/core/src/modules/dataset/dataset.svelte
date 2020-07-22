@@ -2,7 +2,7 @@
   export let title;
   export let count;
   export let instances;
-  export let instanceData;
+  export let backend;
 </script>
 
 <span class="card-title">{title}</span>
@@ -10,6 +10,8 @@
 
 <div class="flex flex-wrap">
   {#each $instances as id}
-    <img src={instanceData[id].thumbnail} alt="thumbnail" class="p-1" />
+    {#await backend.instances.get(id, { query: { $select: ['thumbnail'] } }) then instance}
+      <img src={instance.thumbnail} alt="thumbnail" class="p-1" />
+    {/await}
   {/each}
 </div>

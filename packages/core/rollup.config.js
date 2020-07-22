@@ -24,6 +24,7 @@ const plugins = [
   }),
   resolve({
     browser: true,
+    preferBuiltins: false,
     dedupe: ['svelte'],
   }),
   commonjs(),

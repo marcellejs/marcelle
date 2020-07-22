@@ -40,6 +40,15 @@
   .tred {
     @apply text-red-600;
   }
+  .xgray {
+    @apply bg-gray-500;
+  }
+  .xgreen {
+    @apply bg-green-500;
+  }
+  .xred {
+    @apply bg-red-500;
+  }
 </style>
 
 <span class="card-title">{title}</span>
@@ -74,8 +83,8 @@
       style="width:{percent}%"
       class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center
       bg-teal-500"
-      class:gray={status === 'idle'}
-      class:green={status === 'success'}
-      class:red={status === 'error'} />
+      class:xgray={status === 'idle'}
+      class:xgreen={status === 'success'}
+      class:xred={status === 'error'} />
   </div>
 </div>

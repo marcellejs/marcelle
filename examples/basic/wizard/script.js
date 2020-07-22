@@ -21,7 +21,7 @@ const instances = marcelle.createStream(
   ),
 );
 
-const trainingSet = marcelle.dataset({ name: 'TrainingSet' });
+const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend: 'localStorage' });
 trainingSet.capture(instances);
 
 // -----------------------------------------------------------
@@ -31,8 +31,6 @@ trainingSet.capture(instances);
 const b = marcelle.button({ text: 'Train' });
 const classifier = marcelle.mlp({ layers: [128, 64], epochs: 30 });
 b.$click.subscribe(() => classifier.train(trainingSet));
-
-classifier.$training.subscribe(console.log);
 
 const params = marcelle.parameters(classifier);
 const prog = marcelle.progress(classifier);
@@ -119,7 +117,7 @@ wizard
   .step()
   .title('Train the model')
   .description('Ich bin ein MLP')
-  .use(params, b, prog)
+  .use(b, prog)
   .step()
   .title('Test the classifier')
   .description('Ich bin ein classifier')

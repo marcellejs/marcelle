@@ -3,6 +3,7 @@ import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core';
 import { sequential, layers as tfLayers, Sequential } from '@tensorflow/tfjs-layers';
 import { Dataset } from '../modules/dataset/dataset.module';
 import { Stream } from '../core/stream';
+import notify from '../core/util/notify';
 
 export interface Parameters {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -52,7 +53,7 @@ function shuffleArray<T>(a: T[]): T[] {
   return b;
 }
 
-function dataSplit(dataset: Dataset, trainProportion: number, numClasses = -1) {
+async function dataSplit(dataset: Dataset, trainProportion: number, numClasses = -1) {
   // split is an interval, between 0 and 1
   const labels = dataset.$labels.value;
   const nClasses = numClasses < 0 ? labels.length : numClasses;
@@ -66,6 +67,11 @@ function dataSplit(dataset: Dataset, trainProportion: number, numClasses = -1) {
       y: tensor2d([], [0, nClasses]),
     },
   };
+  const allInstances = await Promise.all(
+    dataset.$instances.value.map((id) =>
+      dataset.backend.instances.get(id, { query: { $select: ['id', 'features'] } }),
+    ),
+  );
   labels.forEach((label: string) => {
     const instances = dataset.$classes.value[label];
     const numInstances = instances.length;
@@ -76,7 +82,7 @@ function dataSplit(dataset: Dataset, trainProportion: number, numClasses = -1) {
     const y = Array(nClasses).fill(0);
     y[labels.indexOf(label)] = 1;
     trainingIds.forEach((id) => {
-      const { features } = dataset.getInstance(id);
+      const { features } = allInstances.find((x) => x.id === id);
       if (data.training.x.shape[1] === 0) {
         data.training.x.shape[1] = features[0].length;
       }
@@ -84,7 +90,7 @@ function dataSplit(dataset: Dataset, trainProportion: number, numClasses = -1) {
       data.training.y = data.training.y.concat(tensor2d([y]));
     });
     validationIds.forEach((id) => {
-      const { features } = dataset.getInstance(id);
+      const { features } = allInstances.find((x) => x.id === id);
       if (data.validation.x.shape[1] === 0) {
         data.validation.x.shape[1] = features[0].length;
       }
@@ -125,15 +131,14 @@ export class MLP {
   }
 
   train(dataset: Dataset): void {
-    console.log('Train model from dataset', dataset, 'with parameters', this.parameters);
     this.labels = dataset.$labels.value;
     if (this.labels.length < 2) {
       this.$training.set({ status: 'error' });
       throw new Error('Cannot train a MLP with less than 2 classes');
     }
     this.$training.set({ status: 'start' });
-    setTimeout(() => {
-      const data = dataSplit(dataset, 0.75);
+    setTimeout(async () => {
+      const data = await dataSplit(dataset, 0.75);
       this.buildModel(data.training.x.shape[1], data.training.y.shape[1]);
       this.fit(data);
     }, 100);
@@ -194,8 +199,9 @@ export class MLP {
         console.log('[MLP] Training has ended with results:', results);
         this.$training.set({ status: 'success', data: results.history });
       })
-      .catch(() => {
+      .catch((error) => {
         this.$training.set({ status: 'error' });
+        notify({ title: 'Training error', message: error, duration: 0, type: 'danger' });
       });
   }
 

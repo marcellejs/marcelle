@@ -4,11 +4,14 @@ import { Module } from '../../core/module';
 import Component from './dataset.svelte';
 import { Stream } from '../../core/stream';
 import { Instance, InstanceId } from './dataset.common';
-import { InMemoryBackend } from './dataset_backend';
+import { BaseBackend } from './base.backend';
+import { MemoryBackend } from './memory.backend';
+// import { DefaultBackend } from './default.backend';
+import { LocalStorageBackend } from './localstorage.backend';
 
 export interface DatasetOptions {
   name: string;
-  backend: InMemoryBackend;
+  backend: 'default' | 'localStorage';
 }
 
 export class Dataset extends Module {
@@ -16,7 +19,7 @@ export class Dataset extends Module {
   description = 'Dataset';
 
   #unsubscribe: () => void;
-  #backend: InMemoryBackend;
+  backend: BaseBackend;
 
   $instances: Stream<InstanceId[]> = new Stream([], true);
   $classes = new Stream<Record<string, InstanceId[]>>({}, true);
@@ -24,19 +27,26 @@ export class Dataset extends Module {
   $count: Stream<number>;
   $countPerClass: Stream<Record<string, number>>;
 
-  constructor({ name, backend }: DatasetOptions) {
+  constructor({ name, backend = 'default' }: DatasetOptions) {
     super();
     this.name = name;
-    this.#backend = backend || new InMemoryBackend();
-    // this.$classes.set(
-    //   Object.values(this.#instanceData).reduce(
-    //     (c: Record<string, number[]>, instance: Instance) => {
-    //       const x = Object.keys(c).includes(instance.label) ? c[instance.label] : [];
-    //       return { ...c, [instance.label]: x.concat([instance.id]) };
-    //     },
-    //     {},
-    //   ),
-    // );
+    switch (backend) {
+      case 'localStorage':
+        this.backend = new LocalStorageBackend(name);
+        break;
+      default:
+        this.backend = new MemoryBackend(name);
+        break;
+    }
+    this.backend.instances.find({ query: { $select: ['id', 'label'] } }).then(({ data }) => {
+      this.$instances.set(data.map((x) => x.id));
+      this.$classes.set(
+        data.reduce((c: Record<string, InstanceId[]>, instance: Instance) => {
+          const x = Object.keys(c).includes(instance.label) ? c[instance.label] : [];
+          return { ...c, [instance.label]: x.concat([instance.id]) };
+        }, {}),
+      );
+    });
     this.$labels = new Stream(skipRepeatsWith(dequal, map(Object.keys, this.$classes)));
     this.$count = new Stream(
       map((x) => x.length, this.$instances),
@@ -57,9 +67,9 @@ export class Dataset extends Module {
   }
 
   capture(instanceStream: Stream<Instance>): void {
-    this.#unsubscribe = instanceStream.subscribe((instance: Instance) => {
+    this.#unsubscribe = instanceStream.subscribe(async (instance: Instance) => {
       if (!instance) return;
-      const id = this.#backend.addInstance(instance);
+      const { id } = await this.backend.instances.create(instance);
       const x = Object.keys(this.$classes.value).includes(instance.label)
         ? this.$classes.value[instance.label]
         : [];
@@ -68,14 +78,9 @@ export class Dataset extends Module {
     });
   }
 
-  // forEach(callback: (instance: Instance, index: number) => void): void {
-  //   this.$instances.value.forEach((id, i) => {
-  //     callback(this.#instanceData[id], i);
-  //   });
-  // }
-
-  getInstance(id: InstanceId): Instance {
-    return this.#backend.getInstance(id);
+  async clear(): Promise<void> {
+    const { data } = await this.backend.instances.find({ query: { $select: ['id'] } });
+    await Promise.all(data.map(({ id }) => this.backend.instances.remove(id)));
   }
 
   mount(targetSelector?: string): void {
@@ -88,7 +93,7 @@ export class Dataset extends Module {
         title: this.name,
         count: this.$count,
         instances: this.$instances,
-        instanceData: this.#backend.instanceData,
+        backend: this.backend,
       },
     });
   }
