@@ -3,17 +3,12 @@ import dequal from 'dequal';
 import { Module } from '../../core/module';
 import Component from './dataset.svelte';
 import { Stream } from '../../core/stream';
+import { Instance, InstanceId } from './dataset.common';
+import { InMemoryBackend } from './dataset_backend';
 
 export interface DatasetOptions {
   name: string;
-}
-
-export interface Instance {
-  id?: number;
-  label: string;
-  data: unknown;
-  thumbnail?: string;
-  features?: number[][];
+  backend: InMemoryBackend;
 }
 
 export class Dataset extends Module {
@@ -21,28 +16,27 @@ export class Dataset extends Module {
   description = 'Dataset';
 
   #unsubscribe: () => void;
-  #instanceData: Record<string, Instance> = {};
+  #backend: InMemoryBackend;
 
-  #nextId = 0;
-
-  $instances: Stream<number[]> = new Stream([], true);
-  $classes = new Stream<Record<string, number[]>>({}, true);
+  $instances: Stream<InstanceId[]> = new Stream([], true);
+  $classes = new Stream<Record<string, InstanceId[]>>({}, true);
   $labels: Stream<string[]>;
   $count: Stream<number>;
   $countPerClass: Stream<Record<string, number>>;
 
-  constructor({ name }: DatasetOptions) {
+  constructor({ name, backend }: DatasetOptions) {
     super();
     this.name = name;
-    this.$classes.set(
-      Object.values(this.#instanceData).reduce(
-        (c: Record<string, number[]>, instance: Instance) => {
-          const x = Object.keys(c).includes(instance.label) ? c[instance.label] : [];
-          return { ...c, [instance.label]: x.concat([instance.id]) };
-        },
-        {},
-      ),
-    );
+    this.#backend = backend || new InMemoryBackend();
+    // this.$classes.set(
+    //   Object.values(this.#instanceData).reduce(
+    //     (c: Record<string, number[]>, instance: Instance) => {
+    //       const x = Object.keys(c).includes(instance.label) ? c[instance.label] : [];
+    //       return { ...c, [instance.label]: x.concat([instance.id]) };
+    //     },
+    //     {},
+    //   ),
+    // );
     this.$labels = new Stream(skipRepeatsWith(dequal, map(Object.keys, this.$classes)));
     this.$count = new Stream(
       map((x) => x.length, this.$instances),
@@ -65,8 +59,7 @@ export class Dataset extends Module {
   capture(instanceStream: Stream<Instance>): void {
     this.#unsubscribe = instanceStream.subscribe((instance: Instance) => {
       if (!instance) return;
-      const id = this.#nextId++;
-      this.#instanceData[id] = { ...instance, id };
+      const id = this.#backend.addInstance(instance);
       const x = Object.keys(this.$classes.value).includes(instance.label)
         ? this.$classes.value[instance.label]
         : [];
@@ -75,14 +68,14 @@ export class Dataset extends Module {
     });
   }
 
-  forEach(callback: (instance: Instance, index: number) => void): void {
-    this.$instances.value.forEach((id, i) => {
-      callback(this.#instanceData[id], i);
-    });
-  }
+  // forEach(callback: (instance: Instance, index: number) => void): void {
+  //   this.$instances.value.forEach((id, i) => {
+  //     callback(this.#instanceData[id], i);
+  //   });
+  // }
 
-  getInstance(id: number): Instance {
-    return this.#instanceData[id];
+  getInstance(id: InstanceId): Instance {
+    return this.#backend.getInstance(id);
   }
 
   mount(targetSelector?: string): void {
@@ -95,7 +88,7 @@ export class Dataset extends Module {
         title: this.name,
         count: this.$count,
         instances: this.$instances,
-        instanceData: this.#instanceData,
+        instanceData: this.#backend.instanceData,
       },
     });
   }
