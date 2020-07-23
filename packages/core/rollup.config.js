@@ -1,15 +1,17 @@
 import css from 'rollup-plugin-css-only';
-import typescript from '@rollup/plugin-typescript';
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import { plugin as analyze } from 'rollup-plugin-analyzer';
-import { terser } from 'rollup-plugin-terser';
-import filesize from 'rollup-plugin-filesize';
 import svelte from 'rollup-plugin-svelte';
 import preprocess from 'svelte-preprocess';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import typescript from '@rollup/plugin-typescript';
+import progress from 'rollup-plugin-progress';
+import { terser } from 'rollup-plugin-terser';
+import filesize from 'rollup-plugin-filesize';
+import sizes from 'rollup-plugin-sizes';
 import pkg from './package.json';
 
 const production = !process.env.ROLLUP_WATCH;
+const analyze = false;
 
 const plugins = [
   css({ output: 'dist/extra.css' }),
@@ -29,10 +31,19 @@ const plugins = [
   }),
   commonjs(),
   typescript(),
+  progress(),
   production && terser(),
   production && filesize(),
-  production && analyze(),
+  analyze && sizes(),
 ];
+
+const globals = {
+  '@tensorflow/tfjs-core': 'tf',
+  '@tensorflow/tfjs-converter': 'tf',
+  '@tensorflow/tfjs-layers': 'tf',
+  '@most/prelude': 'mostPrelude',
+  '@most/core': 'mostCore',
+};
 
 const esOutput = {
   file: pkg.module,
@@ -45,24 +56,12 @@ const umdOutput = {
   format: 'umd',
   name: 'marcelle',
   sourcemap: true,
-  globals: {
-    '@tensorflow/tfjs-core': 'tf',
-    '@tensorflow/tfjs-converter': 'tf',
-    '@tensorflow/tfjs-layers': 'tf',
-    '@most/prelude': 'mostPrelude',
-    '@most/core': 'mostCore',
-  },
+  globals,
 };
 
 export default {
   input: 'src/index.ts',
   plugins,
-  external: [
-    '@tensorflow/tfjs-core',
-    '@tensorflow/tfjs-converter',
-    '@tensorflow/tfjs-layers',
-    '@most/core',
-    '@most/prelude',
-  ],
+  external: Object.keys(globals),
   output: [esOutput, umdOutput],
 };

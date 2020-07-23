@@ -1,17 +1,19 @@
 import css from 'rollup-plugin-css-only';
-import typescript from '@rollup/plugin-typescript';
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import copy from 'rollup-plugin-copy';
-// import { plugin as analyze } from 'rollup-plugin-analyzer';
-import { terser } from 'rollup-plugin-terser';
-import filesize from 'rollup-plugin-filesize';
-import livereload from 'rollup-plugin-livereload';
 import svelte from 'rollup-plugin-svelte';
 import preprocess from 'svelte-preprocess';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import typescript from '@rollup/plugin-typescript';
+import progress from 'rollup-plugin-progress';
+import copy from 'rollup-plugin-copy';
+import livereload from 'rollup-plugin-livereload';
+import { terser } from 'rollup-plugin-terser';
+import filesize from 'rollup-plugin-filesize';
+import sizes from 'rollup-plugin-sizes';
 import pkg from './package.json';
 
 const production = !process.env.ROLLUP_WATCH;
+const analyze = false;
 
 function serve() {
   let started = false;
@@ -49,6 +51,7 @@ const plugins = [
   }),
   commonjs(),
   typescript(),
+  progress(),
   copy({
     targets: [
       { src: 'src/index.html', dest: 'public' },
@@ -71,7 +74,7 @@ const plugins = [
   // instead of npm run dev), minify
   production && terser(),
   production && filesize(),
-  // production && analyze(),
+  analyze && sizes(),
 ];
 
 const umdOutput = {
