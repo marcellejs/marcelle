@@ -5,10 +5,10 @@ import { BaseBackend } from './base.backend';
 
 export class LocalStorageBackend extends BaseBackend {
   constructor(name: string) {
-    super();
+    super(name);
     const app = feathers();
     app.use(
-      `/${name}`,
+      '/instances',
       localStorageService({
         storage: window.localStorage,
         // id: '_id',
@@ -19,7 +19,9 @@ export class LocalStorageBackend extends BaseBackend {
         },
       }),
     );
-    this.instances = app.service(name);
+    this.instances = app.service('instances');
+    this.generateId = true;
+    this.convertImageData = true;
     this.setupHooks();
   }
 }

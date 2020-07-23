@@ -5,10 +5,10 @@ import { BaseBackend } from './base.backend';
 
 export class MemoryBackend extends BaseBackend {
   constructor(name: string) {
-    super();
+    super(name);
     const app = feathers();
     app.use(
-      `/${name}`,
+      '/instances',
       memoryService({
         // id: '_id',
         matcher: sift,
@@ -18,7 +18,8 @@ export class MemoryBackend extends BaseBackend {
         },
       }),
     );
-    this.instances = app.service(name);
+    this.instances = app.service('instances');
+    this.generateId = true;
     this.setupHooks();
   }
 }

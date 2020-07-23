@@ -21,7 +21,9 @@ const instances = marcelle.createStream(
   ),
 );
 
+// const trainingSet = marcelle.dataset({ name: 'TrainingSet' });
 const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend: 'localStorage' });
+// const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend: 'remote' });
 trainingSet.capture(instances);
 
 // -----------------------------------------------------------
@@ -100,7 +102,10 @@ bbb.$down.subscribe((x) => {
 });
 trainingSet.$countPerClass.subscribe((c) => {
   const label = cap.$label.value;
-  ttt.$text.set(`Recorded ${c[label]} examples of "${label}"`);
+  const numExamples = c[label];
+  ttt.$text.set(
+    numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
+  );
 });
 
 const wizard = marcelle.createWizard();

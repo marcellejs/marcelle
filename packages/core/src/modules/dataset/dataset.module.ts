@@ -6,12 +6,12 @@ import { Stream } from '../../core/stream';
 import { Instance, InstanceId } from './dataset.common';
 import { BaseBackend } from './base.backend';
 import { MemoryBackend } from './memory.backend';
-// import { DefaultBackend } from './default.backend';
 import { LocalStorageBackend } from './localstorage.backend';
+import { RemoteBackend } from './remote.backend';
 
 export interface DatasetOptions {
   name: string;
-  backend: 'default' | 'localStorage';
+  backend: 'default' | 'localStorage' | 'remote';
 }
 
 export class Dataset extends Module {
@@ -31,6 +31,9 @@ export class Dataset extends Module {
     super();
     this.name = name;
     switch (backend) {
+      case 'remote':
+        this.backend = new RemoteBackend(name);
+        break;
       case 'localStorage':
         this.backend = new LocalStorageBackend(name);
         break;
@@ -38,7 +41,7 @@ export class Dataset extends Module {
         this.backend = new MemoryBackend(name);
         break;
     }
-    this.backend.instances.find({ query: { $select: ['id', 'label'] } }).then(({ data }) => {
+    this.backend.instances.find({ query: { $select: ['id', '_id', 'label'] } }).then(({ data }) => {
       this.$instances.set(data.map((x) => x.id));
       this.$classes.set(
         data.reduce((c: Record<string, InstanceId[]>, instance: Instance) => {

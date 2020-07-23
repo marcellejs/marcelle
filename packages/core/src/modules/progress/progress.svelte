@@ -52,7 +52,7 @@
 </style>
 
 <span class="card-title">{title}</span>
-<div class="relative pt-6">
+<div class="relative pt-6 w-full" style="min-width: 250px;">
   <div class="flex mb-2 items-center justify-between">
     <div>
       <span
