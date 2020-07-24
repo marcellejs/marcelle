@@ -20,7 +20,9 @@ Marcelle is an experimental framework for building interactive machine learning 
 
 [Full Documentation](https://marcelle.netlify.com)
 
-### Installation
+## Installation
+
+<p style="color: crimson;">TODO: Publish on NPM</p>
 
 [See online documentation](https://marcelle.netlify.com/installation.html)
 
