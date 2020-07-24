@@ -51,15 +51,7 @@ export class Mobilenet extends Module {
   readonly version: MobileNetVersion;
   readonly alpha: MobileNetAlpha;
 
-  $features: Stream<
-    | number
-    | number[]
-    | number[][]
-    | number[][][]
-    | number[][][][]
-    | number[][][][][]
-    | number[][][][][][]
-  >;
+  $features: Stream<number[][]>;
 
   constructor({ input = undefined, version = 1, alpha = 1 }: MobilenetOptions = {}) {
     super();
@@ -90,20 +82,9 @@ export class Mobilenet extends Module {
     return this;
   }
 
-  async process(
-    image: ImageData,
-  ): Promise<
-    | number
-    | number[]
-    | number[][]
-    | number[][][]
-    | number[][][][]
-    | number[][][][][]
-    | number[][][][][][]
-  > {
+  async process(image: ImageData): Promise<number[][]> {
     if (!this.#mobilenet) return [];
-    // return this.#mobilenet.infer(await this.#convert(image), true).arraySync();
-    return this.#mobilenet.infer(image, true).arraySync();
+    return this.#mobilenet.infer(image, true).arraySync() as number[][];
   }
 
   mount(targetSelector?: string): void {

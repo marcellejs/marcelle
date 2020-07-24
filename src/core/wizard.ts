@@ -21,7 +21,7 @@ class Step {
     return this;
   }
 
-  use(...modules: [Module]): Step {
+  use(...modules: Module[]): Step {
     this.modules = this.modules.concat(modules);
     return this;
   }

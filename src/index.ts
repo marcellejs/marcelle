@@ -2,6 +2,7 @@ import { Stream as MostStream } from '@most/types';
 import { Stream } from './core/stream';
 import './utils';
 
+export { Stream };
 export function createStream<T>(s: MostStream<T>): Stream<T> {
   return new Stream(s);
 }
@@ -11,7 +12,7 @@ export { createWizard } from './core/wizard';
 
 export { button } from './modules/button';
 export { capture } from './modules/capture';
-export { dataset } from './modules/dataset';
+export * from './modules/dataset';
 export { faker } from './modules/faker';
 export { mobilenet } from './modules/mobilenet';
 export { parameters } from './modules/parameters';
@@ -20,4 +21,4 @@ export { text } from './modules/text';
 export { toggle } from './modules/toggle';
 export { webcam } from './modules/webcam';
 
-export { mlp } from './models/mlp';
+export * from './models/mlp';

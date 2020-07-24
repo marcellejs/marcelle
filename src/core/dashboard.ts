@@ -6,12 +6,12 @@ export class Dashboard {
 
   constructor(public name: string) {}
 
-  use(...modules: [Module]): Dashboard {
+  use(...modules: Module[]): Dashboard {
     this.modules = this.modules.concat(modules);
     return this;
   }
 
-  useLeft(...modules: [Module]): Dashboard {
+  useLeft(...modules: Module[]): Dashboard {
     this.modulesLeft = this.modulesLeft.concat(modules);
     return this;
   }

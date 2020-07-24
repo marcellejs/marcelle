@@ -37,7 +37,7 @@ interface TrainingData {
   };
 }
 
-interface MLPResults {
+export interface MLPResults {
   label: string;
   confidences: { [key: string]: number };
 }
@@ -82,7 +82,7 @@ async function dataSplit(dataset: Dataset, trainProportion: number, numClasses =
     const y = Array(nClasses).fill(0);
     y[labels.indexOf(label)] = 1;
     trainingIds.forEach((id) => {
-      const { features } = allInstances.find((x) => x.id === id);
+      const { features } = allInstances.find((x) => x.id === id) as { features: number[][] };
       if (data.training.x.shape[1] === 0) {
         data.training.x.shape[1] = features[0].length;
       }
@@ -90,7 +90,7 @@ async function dataSplit(dataset: Dataset, trainProportion: number, numClasses =
       data.training.y = data.training.y.concat(tensor2d([y]));
     });
     validationIds.forEach((id) => {
-      const { features } = allInstances.find((x) => x.id === id);
+      const { features } = allInstances.find((x) => x.id === id) as { features: number[][] };
       if (data.validation.x.shape[1] === 0) {
         data.validation.x.shape[1] = features[0].length;
       }
@@ -145,6 +145,7 @@ export class MLP {
   }
 
   buildModel(inputDim: number, numClasses: number): void {
+    // eslint-disable-next-line no-console
     console.log('[MLP] Building a model with layers:', this.parameters.layers);
     this.model = sequential();
     this.parameters.layers.value.forEach((units, i) => {

@@ -2,17 +2,12 @@ import { empty, snapshot, combine, filter } from '@most/core';
 import { Module } from '../../core/module';
 import Component from './capture.svelte';
 import { Stream } from '../../core/stream';
+import { Instance } from '../dataset/dataset.common';
 
 export interface CaptureOptions {
   input: Stream<unknown>;
   thumbnail?: Stream<string>;
   label?: Stream<string>;
-}
-
-interface Instance {
-  data: unknown;
-  thumbnail: string;
-  label: string;
 }
 
 export class Capture extends Module {
@@ -31,7 +26,7 @@ export class Capture extends Module {
     this.$label = label || new Stream('default', true);
     this.$instances = new Stream(
       snapshot(
-        (x: { thumbnail: string; label: string }, data) => ({ ...x, data }),
+        (x: { thumbnail?: string; label: string }, data) => ({ ...x, data }),
         combine(
           (t: string, l: string) => ({ thumbnail: t, label: l }),
           this.$thumbnail,

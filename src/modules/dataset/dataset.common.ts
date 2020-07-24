@@ -6,4 +6,6 @@ export interface Instance {
   data: unknown;
   thumbnail?: string;
   features?: number[][];
+  type?: string;
+  [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
