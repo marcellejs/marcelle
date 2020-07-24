@@ -1,18 +1,22 @@
 <h2 align="center">Marcelle.js</h2>
 
-<p align="center"> A framework for building interactive machine learning applications</p>
+<p align="center">A reactive framework for building interactive machine learning applications</p>
 <div align="center">
 
-  [![Status](https://img.shields.io/badge/status-active-success.svg)]()
-  [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
+[![Status](https://img.shields.io/badge/status-active-success.svg)]()
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 
 </div>
 
 ## About
 
-Marcelle is an experimental framework for building interactive machine learning applications. Its compact API was design to support rapid prototyping of custom graphical user interfaces for interacting with the machine learning process. It allows users to manage datasets and train models, evaluate and compare their results, and interact in real-time with trained machine learning models. Marcelle can easily be extended through custom Vue components.
+Marcelle is an experimental framework for building interactive machine learning applications.
+
+<p style="color: crimson;">TODO: Description</p>
 
 > Marcelle was designed as supporting material for the "Interactive Machine Learning" elective class of the Interaction specialty of Université Paris-Sud Master's degree.
+
+<p style="color: crimson;">TODO: Update docs</p>
 
 [Full Documentation](https://marcelle.netlify.com)
 
@@ -21,13 +25,15 @@ Marcelle is an experimental framework for building interactive machine learning 
 [See online documentation](https://marcelle.netlify.com/installation.html)
 
 Using NPM:
+
 ```bash
-npm install @marcellejs/core --save
+npm install marcellejs --save
 ```
 
 Using Yarn:
+
 ```bash
-yarn add @marcellejs/core
+yarn add marcellejs
 ```
 
 ## Usage
@@ -35,60 +41,63 @@ yarn add @marcellejs/core
 [See the online documentation](https://marcelle.netlify.com/installation.html) for more examples:
 
 ```js
-/* global marcelle */
-const app = marcelle.create();
-
-app.input.use(marcelle.inputs.Webcam);
-app.input.use(marcelle.inputs.Mobilenet);
-
-app.dataset('trainingSet');
-app.dataset('validationSet');
-
-app.model('knn').use(marcelle.models.KNN, { k: 4 });
-
-app.prediction('knn');
-
-app
-  .tab('Training')
-  .withDataset('trainingSet')
-  .use(marcelle.data.DatasetCapture)
-  .use(marcelle.data.DatasetBrowser)
-  .withModel('knn')
-  .use(marcelle.training.Parameters, { params: ['k', 'autotrain'] })
-  .use(marcelle.training.Launcher);
-
-app
-  .tab('Real-time!')
-  .withModel('knn')
-  .withPrediction('knn')
-  .use(marcelle.Button, {
-    text: 'Toggle Real-time Interaction',
-    onClick() {
-      if (!this.$prediction.running) {
-        this.$prediction.startOnlinePrediction(this.$model, () =>
-          this.$input.getFeatures()
-        );
-      } else {
-        this.$prediction.stopOnlinePrediction();
-      }
-    },
-  })
-  .use(marcelle.prediction.Label)
-  .use(marcelle.prediction.Confidences);
-
-app.run();
+// TODO: EXAMPLE
 ```
 
-## ⛏️ Built Using
+## 🔨 Built Using
+
+- [TypeScript](https://www.typescriptlang.org/)
 - [Tensorflow.js](https://js.tensorflow.org/)
-- [VueJs](https://vuejs.org/)
-- [Element-UI](https://element.eleme.io/#/en-US)
-- [Apexcharts](Apexcharts)
+- [Most](https://github.com/mostjs/core)
+- [Svelte](https://svelte.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
+<!-- - [Apexcharts](Apexcharts) -->
+
+## 🛠 Developing
+
+### Setting up VSCode
+
+[Download VSCode](https://code.visualstudio.com/) and install the following extensions:
+
+- [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
+- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
+
+### Building the library
+
+To build for production:
+
+```bash
+yarn build # OR npm run build
+```
+
+To build for development (watch mode):
+
+```bash
+yarn dev # OR npm run dev
+```
+
+To generate the typescript declaration files (useful for the rollup example), run `yarn build:types` in production, or `yarn dev:types` in development.
+
+### Building the Rollup example
+
+The best is to use a symlink to the local library to install the rollup example. From the root:
+
+```bash
+yarn link
+cd examples/rollup
+yarn link marcellejs
+```
 
 ## ✍️ Authors
-- [@JulesFrancoise](https://github.com/JulesFrancoise)
-- [@bcaramiaux/](https://github.com/bcaramiaux/)
+
+- [@JulesFrancoise](https://github.com/JulesFrancoise/)
+- [@bcaramiaux](https://github.com/bcaramiaux/)
 
 ## 🎉 Acknowledgements
+
 - [Teachable Machine](https://teachablemachine.withgoogle.com/)
 - [Wekinator](http://www.wekinator.org/)
+
+<p style="color: crimson;">TODO: Update references</p>
