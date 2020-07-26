@@ -6,8 +6,8 @@
   const dispatch = createEventDispatcher();
 
   import Routie from './routie';
-  import Tailwind from './Tailwind.svelte';
-  import Dashboard from './Dashboard.svelte';
+  import Tailwind from '../ui/style/Tailwind.svelte';
+  import DashboardPage from './DashboardPage.svelte';
   import Settings from './Settings.svelte';
 
   export let title;
@@ -147,7 +147,7 @@
         {#if showSettings}
           <Settings />
         {:else if currentDashboard}
-          <Dashboard dashboard={dashboards[currentDashboard]} />
+          <DashboardPage dashboard={dashboards[currentDashboard]} />
         {/if}
       </main>
 

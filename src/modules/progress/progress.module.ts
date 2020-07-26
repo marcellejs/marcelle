@@ -1,6 +1,6 @@
 import { Module } from '../../core/module';
 import Component from './progress.svelte';
-import { MLP } from '../../models/mlp';
+import { MLP } from '../mlp';
 
 export class Progress extends Module {
   name = 'progress';

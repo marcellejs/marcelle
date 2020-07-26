@@ -1,5 +1,5 @@
 import { Progress } from './progress.module';
-import { MLP } from '../../models/mlp';
+import { MLP } from '../mlp';
 
 export function progress(m: MLP): Progress {
   if (!m.$training) {

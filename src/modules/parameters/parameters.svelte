@@ -11,7 +11,7 @@
 <span class="card-title">{title}</span>
 
 <div class="m-2">
-  {#each Object.entries(parameters) as [key, stream], i}
+  {#each Object.entries(parameters) as [key, stream]}
     <div class="flex my-1">
       <p class="w-32">{key}</p>
       {#if typeof stream.value === 'number'}

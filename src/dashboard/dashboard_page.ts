@@ -1,17 +1,17 @@
-import { Module } from './module';
+import { Module } from '../core/module';
 
-export class Dashboard {
+export class DashboardPage {
   modules: Module[] = [];
   modulesLeft: Module[] = [];
 
   constructor(public name: string) {}
 
-  use(...modules: Module[]): Dashboard {
+  use(...modules: Module[]): DashboardPage {
     this.modules = this.modules.concat(modules);
     return this;
   }
 
-  useLeft(...modules: Module[]): Dashboard {
+  useLeft(...modules: Module[]): DashboardPage {
     this.modulesLeft = this.modulesLeft.concat(modules);
     return this;
   }

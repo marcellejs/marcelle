@@ -2,7 +2,7 @@ import { noop } from 'svelte/internal';
 import { empty } from '@most/core';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
-import notify from '../../core/util/notify';
+import notify from '../../ui/util/notify';
 import Component from './webcam.svelte';
 
 function requestInterval(fn: () => void, delay: number) {

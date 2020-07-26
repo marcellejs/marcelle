@@ -1,8 +1,8 @@
 <script>
   import { noop } from 'svelte/internal';
   import { onMount, onDestroy } from 'svelte';
-  import Spinner from '../../core/components/Spinner.svelte';
-  import Switch from '../../core/components/Switch.svelte';
+  import Spinner from '../../ui/widgets/Spinner.svelte';
+  import Switch from '../../ui/widgets/Switch.svelte';
 
   export let title;
   export let width;
@@ -28,7 +28,7 @@
         }
       }, 200);
     });
-    unSub = mediaStream.subscribe(s => {
+    unSub = mediaStream.subscribe((s) => {
       if (s) {
         videoElement.srcObject = s;
       }

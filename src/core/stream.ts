@@ -97,3 +97,7 @@ export class Stream<T> {
     this.running = false;
   }
 }
+
+export function createStream<T>(s: MostStream<T>): Stream<T> {
+  return new Stream(s);
+}

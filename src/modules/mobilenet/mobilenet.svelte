@@ -1,5 +1,5 @@
 <script>
-  import Spinner from '../../core/components/Spinner.svelte';
+  import Spinner from '../../ui/widgets/Spinner.svelte';
 
   export let title;
   export let loading = true;

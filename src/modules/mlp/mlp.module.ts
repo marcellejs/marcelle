@@ -1,16 +1,14 @@
 import { tensor2d, train, Tensor2D } from '@tensorflow/tfjs-core';
 import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core';
 import { sequential, layers as tfLayers, Sequential } from '@tensorflow/tfjs-layers';
-import { Dataset } from '../modules/dataset/dataset.module';
-import { Stream } from '../core/stream';
-import notify from '../core/util/notify';
+import { Dataset } from '../dataset/dataset.module';
+import { Stream } from '../../core/stream';
+import notify from '../../ui/util/notify';
+import { Module } from '../../core/module';
+import { Parametrable, TrainingStatus } from '../../core/types';
 
-export interface Parameters {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [name: string]: Stream<any>;
-}
-
-export interface MLPParameters extends Parameters {
+type StreamParams = Parametrable['parameters'];
+export interface MLPParameters extends StreamParams {
   layers: Stream<number[]>;
   epochs: Stream<number>;
 }
@@ -18,12 +16,6 @@ export interface MLPParameters extends Parameters {
 export interface MLPOptions {
   layers: number[];
   epochs: number;
-}
-
-export interface TrainingStatus {
-  status: 'idle' | 'start' | 'epoch' | 'success' | 'error';
-  epoch?: number;
-  data?: Record<string, unknown>;
 }
 
 interface TrainingData {
@@ -116,7 +108,10 @@ function arrayArgMax(softmaxes: number[]): number {
 
 const BATCH_SIZE = 8;
 
-export class MLP {
+export class MLP extends Module implements Parametrable {
+  name = 'MLP';
+  description = 'Multilayer Perceptron';
+
   parameters: MLPParameters;
   labels: string[];
   model: Sequential;
@@ -124,6 +119,7 @@ export class MLP {
   $training = new Stream<TrainingStatus>({ status: 'idle' });
 
   constructor({ layers = [64, 32], epochs = 20 }: Partial<MLPOptions> = {}) {
+    super();
     this.parameters = {
       layers: new Stream(layers, true),
       epochs: new Stream(epochs, true),
@@ -218,8 +214,9 @@ export class MLP {
     const confidences = softmaxes.reduce((c, y, i) => ({ ...c, [this.labels[i]]: y }), {});
     return { label, confidences };
   }
-}
 
-export function mlp(options: Partial<MLPOptions>): MLP {
-  return new MLP(options);
+  // eslint-disable-next-line class-methods-use-this
+  mount(): void {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+  }
 }

@@ -3,7 +3,7 @@ import dequal from 'dequal';
 import { Module } from '../../core/module';
 import Component from './dataset.svelte';
 import { Stream } from '../../core/stream';
-import { Instance, InstanceId } from './dataset.common';
+import type { Instance, InstanceId } from '../../core/types';
 import { BaseBackend } from './base.backend';
 import { MemoryBackend } from './memory.backend';
 import { LocalStorageBackend } from './localstorage.backend';

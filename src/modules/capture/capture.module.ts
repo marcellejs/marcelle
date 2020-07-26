@@ -2,7 +2,7 @@ import { empty, snapshot, combine, filter } from '@most/core';
 import { Module } from '../../core/module';
 import Component from './capture.svelte';
 import { Stream } from '../../core/stream';
-import { Instance } from '../dataset/dataset.common';
+import type { Instance } from '../../core/types';
 
 export interface CaptureOptions {
   input: Stream<unknown>;

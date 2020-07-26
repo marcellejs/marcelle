@@ -1,5 +1,5 @@
 <script>
-  import Switch from '../../core/components/Switch.svelte';
+  import Switch from '../../ui/widgets/Switch.svelte';
 
   export let title;
   export let text;

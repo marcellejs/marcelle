@@ -1,5 +1,5 @@
 import { Service } from '@feathersjs/feathers';
-import { Instance } from './dataset.common';
+import type { Instance } from '../../core/types';
 import {
   addObjectId,
   dataURL2ImageData,

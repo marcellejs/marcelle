@@ -1,15 +1,7 @@
-import { SvelteComponent } from 'svelte';
-import { Stream, isStream } from './stream';
+import { isStream } from './stream';
+import { ModuleInternals } from './types';
 
 let nextId = 0;
-
-interface ModuleInternals {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  streams: Array<Stream<any>>;
-  app: SvelteComponent | undefined;
-  readonly moduleType: string;
-  [key: string]: unknown;
-}
 
 export abstract class Module {
   public abstract name: string;

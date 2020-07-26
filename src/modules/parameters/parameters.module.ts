@@ -1,9 +1,6 @@
 import { Module } from '../../core/module';
 import Component from './parameters.svelte';
-
-export interface Parametrable {
-  parameters: Record<string, unknown>;
-}
+import { Parametrable } from '../../core/types';
 
 export class Parameters extends Module {
   name = 'parameters';

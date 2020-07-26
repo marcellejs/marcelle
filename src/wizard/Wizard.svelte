@@ -2,14 +2,14 @@
   import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte';
   import WizardStep from './WizardStep.svelte';
 
-  import Tailwind from './Tailwind.svelte';
+  import Tailwind from '../ui/style/Tailwind.svelte';
 
   export let steps;
   export let current;
 
   function stepTo(index) {
     if (index >= 0 && index <= steps.length - 1) {
-      steps[current.value].modules.forEach(m => {
+      steps[current.value].modules.forEach((m) => {
         m.destroy();
       });
       current.set(index);
@@ -17,13 +17,13 @@
   }
 
   afterUpdate(() => {
-    steps[current.value].modules.forEach(m => {
+    steps[current.value].modules.forEach((m) => {
       m.mount();
     });
   });
 
   onDestroy(() => {
-    steps[current.value].modules.forEach(m => {
+    steps[current.value].modules.forEach((m) => {
       m.destroy();
     });
   });

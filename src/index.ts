@@ -1,24 +1,24 @@
-import { Stream as MostStream } from '@most/types';
-import { Stream } from './core/stream';
 import './utils';
 
-export { Stream };
-export function createStream<T>(s: MostStream<T>): Stream<T> {
-  return new Stream(s);
-}
+// Core library
+export * from './core/stream';
+export * from './core/types';
 
-export { createApp } from './core/application';
-export { createWizard } from './core/wizard';
+// Core library
+export * from './dashboard';
+export * from './wizard';
 
-export { button } from './modules/button';
-export { capture } from './modules/capture';
+// Modules
+export * from './modules/button';
+export * from './modules/capture';
 export * from './modules/dataset';
-export { faker } from './modules/faker';
-export { mobilenet } from './modules/mobilenet';
-export { parameters } from './modules/parameters';
-export { progress } from './modules/progress';
-export { text } from './modules/text';
-export { toggle } from './modules/toggle';
-export { webcam } from './modules/webcam';
+export * from './modules/faker';
+export * from './modules/mobilenet';
+export * from './modules/parameters';
+export * from './modules/progress';
+export * from './modules/text';
+export * from './modules/toggle';
+export * from './modules/webcam';
 
-export * from './models/mlp';
+// Models
+export * from './modules/mlp';

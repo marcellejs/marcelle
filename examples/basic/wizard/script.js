@@ -1,48 +1,48 @@
-/* global marcelle mostCore */
+/* eslint-disable no-undef */
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CAPTURE TO DATASET
 // -----------------------------------------------------------
 
-const w = marcelle.webcam();
-const mobilenet = marcelle.mobilenet();
+const w = webcam();
+const m = mobilenet();
 
-const cap = marcelle.capture({ input: w.$images, thumbnail: w.$thumbnails });
-const instances = marcelle.createStream(
-  mostCore.awaitPromises(
-    mostCore.map(
+const cap = capture({ input: w.$images, thumbnail: w.$thumbnails });
+const instances = createStream(
+  awaitPromises(
+    map(
       async (instance) => ({
         ...instance,
         type: 'image',
-        features: await mobilenet.process(instance.data),
+        features: await m.process(instance.data),
       }),
       cap.$instances,
     ),
   ),
 );
 
-// const trainingSet = marcelle.dataset({ name: 'TrainingSet' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend: 'localStorage' });
-// const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend: 'remote' });
+// const trainingSet = dataset({ name: 'TrainingSet' });
+const trainingSet = dataset({ name: 'TrainingSet', backend: 'localStorage' });
+// const trainingSet = dataset({ name: 'TrainingSet', backend: 'remote' });
 trainingSet.capture(instances);
 
 // -----------------------------------------------------------
 // TRAINING
 // -----------------------------------------------------------
 
-const b = marcelle.button({ text: 'Train' });
-const classifier = marcelle.mlp({ layers: [128, 64], epochs: 30 });
+const b = button({ text: 'Train' });
+const classifier = mlp({ layers: [128, 64], epochs: 30 });
 b.$click.subscribe(() => classifier.train(trainingSet));
 
-const params = marcelle.parameters(classifier);
-const prog = marcelle.progress(classifier);
+const params = parameters(classifier);
+const prog = progress(classifier);
 
 // -----------------------------------------------------------
 // PREDICTION
 // -----------------------------------------------------------
 
-const tog = marcelle.toggle({ text: 'toggle prediction' });
-const results = marcelle.text({ text: 'waiting for predictions...' });
+const tog = toggle({ text: 'toggle prediction' });
+const results = text({ text: 'waiting for predictions...' });
 
 // DOM Stuff for the app
 const d = document.querySelector('#results');
@@ -50,12 +50,10 @@ const resultImg = document.querySelector('#result-img');
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 let predictions = { stop() {} };
-marcelle.createStream(mostCore.skipRepeats(tog.$checked)).subscribe((x) => {
+createStream(skipRepeats(tog.$checked)).subscribe((x) => {
   if (x) {
-    predictions = marcelle.createStream(
-      mostCore.awaitPromises(
-        mostCore.map(async (img) => classifier.predict(await mobilenet.process(img)), w.$images),
-      ),
+    predictions = createStream(
+      awaitPromises(map(async (img) => classifier.predict(await m.process(img)), w.$images)),
     );
     let PrevLabel = '';
     predictions.subscribe((y) => {
@@ -82,21 +80,21 @@ marcelle.createStream(mostCore.skipRepeats(tog.$checked)).subscribe((x) => {
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const app = marcelle.createApp({
+const dashboard = createDashboard({
   title: 'Marcelle Starter',
   author: 'Marcelle Pirates Crew',
 });
 
-app.dashboard('Data Management').useLeft(w, mobilenet).use(cap, trainingSet);
-app.dashboard('Training').use(params, b, prog);
-app.dashboard('Real-time prediction').useLeft(w).use(tog, results);
+dashboard.page('Data Management').useLeft(w, m).use(cap, trainingSet);
+dashboard.page('Training').use(params, b, prog);
+dashboard.page('Real-time prediction').useLeft(w).use(tog, results);
 
 // -----------------------------------------------------------
 // WIZARD
 // -----------------------------------------------------------
 
-const bbb = marcelle.button({ text: 'Record Examples (class a)' });
-const ttt = marcelle.text({ text: 'Waiting for examples...' });
+const bbb = button({ text: 'Record Examples (class a)' });
+const ttt = text({ text: 'Waiting for examples...' });
 bbb.$down.subscribe((x) => {
   cap.$capturing.set(x);
 });
@@ -108,7 +106,7 @@ trainingSet.$countPerClass.subscribe((c) => {
   );
 });
 
-const wizard = marcelle.createWizard();
+const wizard = createWizard();
 
 wizard
   .step()

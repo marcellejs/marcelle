@@ -1,4 +1,5 @@
-import { Parameters, Parametrable } from './parameters.module';
+import { Parameters } from './parameters.module';
+import type { Parametrable } from '../../core/types';
 
 export function parameters(m: Parametrable): Parameters {
   if (!m.parameters) {
@@ -6,3 +7,5 @@ export function parameters(m: Parametrable): Parameters {
   }
   return new Parameters(m);
 }
+
+export type { Parameters };
