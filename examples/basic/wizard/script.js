@@ -21,8 +21,12 @@ const instances = createStream(
   ),
 );
 
+// const backend = createBackend({ location: 'http://localhost:3030' });
+const backend = createBackend({ location: 'localStorage' });
+backend.createService('training');
+
 // const trainingSet = dataset({ name: 'TrainingSet' });
-const trainingSet = dataset({ name: 'TrainingSet', backend: 'localStorage' });
+const trainingSet = dataset({ name: 'TrainingSet', backend });
 // const trainingSet = dataset({ name: 'TrainingSet', backend: 'remote' });
 trainingSet.capture(instances);
 
@@ -32,7 +36,16 @@ trainingSet.capture(instances);
 
 const b = button({ text: 'Train' });
 const classifier = mlp({ layers: [128, 64], epochs: 30 });
-b.$click.subscribe(() => classifier.train(trainingSet));
+b.$click.subscribe(() => {
+  classifier.train(trainingSet);
+});
+
+// Record training start/success/error to a log in the database
+classifier.$training.subscribe((x) => {
+  if (x.status !== 'idle' && x.status !== 'epoch') {
+    backend.service('training').create(x);
+  }
+});
 
 const params = parameters(classifier);
 const prog = progress(classifier);
@@ -62,6 +75,7 @@ createStream(skipRepeats(tog.$checked)).subscribe((x) => {
           y.confidences,
         ).map((z) => z.toFixed(2))}</p>`,
       );
+      // backend.service('results').create(y);
       if (y.label !== PrevLabel) {
         d.innerText = `predicted label: ${y.label}`;
         resultImg.src =

@@ -3,6 +3,7 @@ import './utils';
 // Core library
 export * from './core/stream';
 export * from './core/types';
+export * from './backend';
 
 // Core library
 export * from './dashboard';

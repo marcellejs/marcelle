@@ -21,7 +21,8 @@ const instances = new Stream(
   ),
 );
 
-const trainingSet = dataset({ name: 'TrainingSet', backend: 'localStorage' });
+const backend = createBackend({ location: 'localStorage' });
+const trainingSet = dataset({ name: 'TrainingSet', backend });
 trainingSet.capture(instances);
 
 // -----------------------------------------------------------

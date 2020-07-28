@@ -61,7 +61,7 @@ async function dataSplit(dataset: Dataset, trainProportion: number, numClasses =
   };
   const allInstances = await Promise.all(
     dataset.$instances.value.map((id) =>
-      dataset.backend.instances.get(id, { query: { $select: ['id', 'features'] } }),
+      dataset.instanceService.get(id, { query: { $select: ['id', 'features'] } }),
     ),
   );
   labels.forEach((label: string) => {

@@ -1,17 +1,21 @@
 import { map, skipRepeatsWith } from '@most/core';
+import { Service } from '@feathersjs/feathers';
 import dequal from 'dequal';
 import { Module } from '../../core/module';
 import Component from './dataset.svelte';
 import { Stream } from '../../core/stream';
 import type { Instance, InstanceId } from '../../core/types';
-import { BaseBackend } from './base.backend';
-import { MemoryBackend } from './memory.backend';
-import { LocalStorageBackend } from './localstorage.backend';
-import { RemoteBackend } from './remote.backend';
+import { Backend, BackendType } from '../../backend/backend';
+import {
+  addDatasetName,
+  imageData2DataURL,
+  limitToDataset,
+  dataURL2ImageData,
+} from './dataset.hooks';
 
 export interface DatasetOptions {
   name: string;
-  backend: 'default' | 'localStorage' | 'remote';
+  backend?: Backend;
 }
 
 export class Dataset extends Module {
@@ -19,7 +23,9 @@ export class Dataset extends Module {
   description = 'Dataset';
 
   #unsubscribe: () => void;
-  backend: BaseBackend;
+  #backend: Backend;
+
+  instanceService: Service<Instance>;
 
   $instances: Stream<InstanceId[]> = new Stream([], true);
   $classes = new Stream<Record<string, InstanceId[]>>({}, true);
@@ -27,21 +33,35 @@ export class Dataset extends Module {
   $count: Stream<number>;
   $countPerClass: Stream<Record<string, number>>;
 
-  constructor({ name, backend = 'default' }: DatasetOptions) {
+  constructor({ name, backend = new Backend() }: DatasetOptions) {
     super();
     this.name = name;
-    switch (backend) {
-      case 'remote':
-        this.backend = new RemoteBackend(name);
-        break;
-      case 'localStorage':
-        this.backend = new LocalStorageBackend(name);
-        break;
-      default:
-        this.backend = new MemoryBackend(name);
-        break;
-    }
-    this.backend.instances.find({ query: { $select: ['id', '_id', 'label'] } }).then(({ data }) => {
+    this.#backend = backend;
+    this.#backend.createService('instances');
+    this.instanceService = this.#backend.service('instances') as Service<Instance>;
+    this.instanceService.hooks({
+      before: {
+        create: [
+          addDatasetName(this.name),
+          this.#backend.backendType === BackendType.Memory && imageData2DataURL,
+        ].filter((x) => !!x),
+        find: [limitToDataset(this.name)],
+        get: [limitToDataset(this.name)],
+        update: [limitToDataset(this.name)],
+        patch: [limitToDataset(this.name)],
+        remove: [limitToDataset(this.name)],
+      },
+      after: {
+        find: [this.#backend.backendType === BackendType.Memory && dataURL2ImageData].filter(
+          (x) => !!x,
+        ),
+        get: [this.#backend.backendType === BackendType.Memory && dataURL2ImageData].filter(
+          (x) => !!x,
+        ),
+      },
+    });
+
+    this.instanceService.find({ query: { $select: ['id', '_id', 'label'] } }).then(({ data }) => {
       this.$instances.set(data.map((x) => x.id));
       this.$classes.set(
         data.reduce((c: Record<string, InstanceId[]>, instance: Instance) => {
@@ -72,7 +92,7 @@ export class Dataset extends Module {
   capture(instanceStream: Stream<Instance>): void {
     this.#unsubscribe = instanceStream.subscribe(async (instance: Instance) => {
       if (!instance) return;
-      const { id } = await this.backend.instances.create(instance);
+      const { id } = await this.instanceService.create(instance);
       const x = Object.keys(this.$classes.value).includes(instance.label)
         ? this.$classes.value[instance.label]
         : [];
@@ -82,8 +102,8 @@ export class Dataset extends Module {
   }
 
   async clear(): Promise<void> {
-    const { data } = await this.backend.instances.find({ query: { $select: ['id'] } });
-    await Promise.all(data.map(({ id }) => this.backend.instances.remove(id)));
+    const { data } = await this.instanceService.find({ query: { $select: ['id'] } });
+    await Promise.all(data.map(({ id }) => this.instanceService.remove(id)));
   }
 
   mount(targetSelector?: string): void {
@@ -96,7 +116,7 @@ export class Dataset extends Module {
         title: this.name,
         count: this.$count,
         instances: this.$instances,
-        backend: this.backend,
+        instanceService: this.instanceService,
       },
     });
   }

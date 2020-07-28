@@ -1,30 +1,4 @@
 import { HookContext } from '@feathersjs/feathers';
-import genId from './objectid';
-
-export function renameIdField(context: HookContext): HookContext {
-  const { result } = context;
-  if (!result) return context;
-
-  // eslint-disable-next-line no-underscore-dangle
-  if (result._id) {
-    // eslint-disable-next-line no-underscore-dangle
-    result.id = result._id;
-    // eslint-disable-next-line no-underscore-dangle
-    delete result._id;
-  } else if (result.total && Array.isArray(result.data)) {
-    (result.data as [{ _id?: string }]).forEach((x, i) => {
-      // eslint-disable-next-line no-underscore-dangle
-      if (x._id) {
-        // eslint-disable-next-line no-underscore-dangle
-        result.data[i].id = result.data[i]._id;
-        // eslint-disable-next-line no-underscore-dangle
-        delete result.data[i]._id;
-      }
-    });
-  }
-
-  return context;
-}
 
 export function addDatasetName(datasetName: string) {
   return (context: HookContext): HookContext => {
@@ -47,17 +21,6 @@ export function limitToDataset(datasetName: string) {
 
     return context;
   };
-}
-
-export function addObjectId(context: HookContext): HookContext {
-  const { data, service } = context;
-
-  context.data = {
-    [service.id]: genId(),
-    ...data,
-  };
-
-  return context;
 }
 
 const canvas1 = document.createElement('canvas');

@@ -10,7 +10,8 @@ import {
   toggle,
   text,
   mlp,
-  createApp,
+  createBackend,
+  createDashboard,
   createWizard,
   MLPResults,
   Stream,
@@ -39,7 +40,8 @@ const instances = createStream(
   ),
 );
 
-const trainingSet = dataset({ name: 'TrainingSet', backend: 'localStorage' });
+const backend = createBackend({ location: 'localStorage' });
+const trainingSet = dataset({ name: 'TrainingSet', backend });
 trainingSet.capture(instances);
 
 // -----------------------------------------------------------
@@ -98,14 +100,14 @@ createStream(skipRepeats(tog.$checked)).subscribe((x: boolean) => {
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const app = createApp({
+const app = createDashboard({
   title: 'Marcelle Starter',
   author: 'Marcelle Pirates Crew',
 });
 
-app.dashboard('Data Management').useLeft(w, m).use(cap, trainingSet);
-app.dashboard('Training').use(params, b, prog);
-app.dashboard('Real-time prediction').useLeft(w).use(tog, results);
+app.page('Data Management').useLeft(w, m).use(cap, trainingSet);
+app.page('Training').use(params, b, prog);
+app.page('Real-time prediction').useLeft(w).use(tog, results);
 
 // -----------------------------------------------------------
 // WIZARD
