@@ -23,3 +23,4 @@ export * from './modules/webcam';
 
 // Models
 export * from './modules/mlp';
+export * from './modules/knn';

@@ -228,6 +228,11 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
+"@tensorflow-models/knn-classifier@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@tensorflow-models/knn-classifier/-/knn-classifier-1.2.2.tgz#a5a9045b3d225a06e60f2b1cc2de56bdac6748e8"
+  integrity sha512-QRnkCf7ErOxSRtvJ6yCwhlLREPcBJGaXRanF46f0iY6ii3Sybjb6Ux0qnNPTrHZChD0izPa3Z4GQEgSAykiHkQ==
+
 "@tensorflow-models/mobilenet@^2.0.4":
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@tensorflow-models/mobilenet/-/mobilenet-2.0.4.tgz#7f40771fcc650f50febd49be72372d39c15f6f95"

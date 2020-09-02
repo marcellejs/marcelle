@@ -30,7 +30,7 @@ trainingSet.capture(instances);
 // -----------------------------------------------------------
 
 const b = button({ text: 'Train' });
-const classifier = mlp({ layers: [128, 64], epochs: 30 });
+const classifier = knn({ k: 2 });
 b.$click.subscribe(() => classifier.train(trainingSet));
 
 const params = parameters(classifier);
