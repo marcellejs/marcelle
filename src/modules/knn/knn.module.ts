@@ -6,36 +6,32 @@ import { Module } from '../../core/module';
 import { Parametrable, TrainingStatus } from '../../core/types';
 
 type StreamParams = Parametrable['parameters'];
-export interface kNNParameters extends StreamParams {
+export interface KNNParameters extends StreamParams {
   k: Stream<number>;
-  epochs: Stream<number>;
 }
 
-export interface kNNOptions {
+export interface KNNOptions {
   k: number;
 }
 
-export interface kNNResults {
+export interface KNNResults {
   label: string;
   confidences: { [key: string]: number };
 }
 
+export class KNN extends Module implements Parametrable {
+  name = 'KNN';
+  description = 'K-Nearest Neighbours';
 
-export class kNN extends Module implements Parametrable {
-  name = 'kNN';
-  description = 'k Nearest Neighbours';
-
-  parameters: kNNParameters;
+  parameters: KNNParameters;
   labels: string[];
   $classifier = new KNNClassifier();
   $training = new Stream<TrainingStatus>({ status: 'idle' });
 
-  constructor({ k = 3 }: Partial<kNNOptions> = {}) {
+  constructor({ k = 3 }: Partial<KNNOptions> = {}) {
     super();
-    const epoch = 10;
     this.parameters = {
       k: new Stream(k, true),
-      epochs: new Stream(epoch, true)
     };
   }
 
@@ -45,7 +41,7 @@ export class kNN extends Module implements Parametrable {
         dataset.instanceService.get(id, { query: { $select: ['id', 'features'] } }),
       ),
     );
-    dataset.$classes.value[label].forEach(id => {
+    dataset.$classes.value[label].forEach((id) => {
       const { features } = allInstances.find((x) => x.id === id) as { features: number[][] };
       this.$classifier.addExample(tensor2d(features), label);
     });
@@ -58,22 +54,24 @@ export class kNN extends Module implements Parametrable {
       this.$training.set({ status: 'error' });
       throw new Error('Cannot train a kNN with no classes');
     }
-    this.$training.set({ status: 'start' });
+    this.$training.set({ status: 'start', epochs: this.labels.length });
     setTimeout(async () => {
       this.$classifier.clearAllClasses();
-        this.labels.forEach((label, i) => {
-          this.activateClass(dataset, label);
-          this.$training.set({
-              status: 'epoch',
-              epoch: 10 / this.labels.length * (i + 1),
-              data: {
-                accuracy: 0,
-                loss: 0,
-                accuracyVal: 0,
-                lossVal: 0,
-              }})
-          console.log(i, this.$training.value);
+      this.labels.forEach((label, i) => {
+        this.activateClass(dataset, label);
+        this.$training.set({
+          status: 'epoch',
+          epoch: i,
+          epochs: this.labels.length,
+          data: {
+            accuracy: 0,
+            loss: 0,
+            accuracyVal: 0,
+            lossVal: 0,
+          },
         });
+      });
+      this.$training.set({ status: 'success' });
     }, 100);
   }
 
@@ -81,10 +79,9 @@ export class kNN extends Module implements Parametrable {
     delete this.$classifier;
   }
 
-  async predict(x: number[][]): Promise<kNNResults> {
+  async predict(x: number[][]): Promise<KNNResults> {
     const pred = await this.$classifier.predictClass(tensor2d(x), this.parameters.k.value);
-    const label = pred.label;
-    const confidences = pred.confidences;
+    const { label, confidences } = pred;
     return { label, confidences };
   }
 

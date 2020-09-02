@@ -132,7 +132,7 @@ export class MLP extends Module implements Parametrable {
       this.$training.set({ status: 'error' });
       throw new Error('Cannot train a MLP with less than 2 classes');
     }
-    this.$training.set({ status: 'start' });
+    this.$training.set({ status: 'start', epochs: this.parameters.epochs.value });
     setTimeout(async () => {
       const data = await dataSplit(dataset, 0.75);
       this.buildModel(data.training.x.shape[1], data.training.y.shape[1]);
@@ -181,6 +181,7 @@ export class MLP extends Module implements Parametrable {
             this.$training.set({
               status: 'epoch',
               epoch,
+              epochs: this.parameters.epochs.value,
               data: {
                 accuracy: logs.acc,
                 loss: logs.loss,

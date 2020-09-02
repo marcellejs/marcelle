@@ -3,19 +3,18 @@
 
   export let title;
   export let training;
-  export let epochs = 1;
 
   let status = 'idle';
   let percent = 0;
   onMount(() => {
-    training.subscribe(s => {
+    training.subscribe((s) => {
       status = s.status;
       if (status === 'start' || status === 'error') {
         percent = 0;
       } else if (status === 'success') {
         percent = 100;
       } else {
-        percent = Math.floor((100 * s.epoch) / epochs);
+        percent = Math.floor((100 * (s.epoch + 1)) / s.epochs);
       }
     });
   });
@@ -57,7 +56,7 @@
     <div>
       <span
         class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-teal-600
-        bg-teal-200"
+          bg-teal-200"
         class:gray={status === 'idle'}
         class:green={status === 'success'}
         class:red={status === 'error'}>
@@ -82,7 +81,7 @@
     <div
       style="width:{percent}%"
       class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center
-      bg-teal-500"
+        bg-teal-500"
       class:xgray={status === 'idle'}
       class:xgreen={status === 'success'}
       class:xred={status === 'error'} />

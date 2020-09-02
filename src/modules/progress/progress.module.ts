@@ -22,7 +22,6 @@ export class Progress extends Module {
       props: {
         title: this.name,
         training: this.#model.$training,
-        epochs: this.#model.parameters.epochs.value,
       },
     });
   }
