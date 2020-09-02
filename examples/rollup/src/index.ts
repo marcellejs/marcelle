@@ -1,4 +1,5 @@
 import {
+  browser,
   webcam,
   mobilenet,
   capture,
@@ -43,6 +44,8 @@ const instances = createStream(
 const backend = createBackend({ location: 'localStorage' });
 const trainingSet = dataset({ name: 'TrainingSet', backend });
 trainingSet.capture(instances);
+
+const trainingSetBrowser = browser(trainingSet);
 
 // -----------------------------------------------------------
 // TRAINING
@@ -105,7 +108,7 @@ const app = createDashboard({
   author: 'Marcelle Pirates Crew',
 });
 
-app.page('Data Management').useLeft(w, m).use(cap, trainingSet);
+app.page('Data Management').useLeft(w, m).use(cap, trainingSetBrowser);
 app.page('Training').use(params, b, prog);
 app.page('Real-time prediction').useLeft(w).use(tog, results);
 

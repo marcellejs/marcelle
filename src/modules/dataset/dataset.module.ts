@@ -2,7 +2,6 @@ import { map, skipRepeatsWith } from '@most/core';
 import { Service, Paginated } from '@feathersjs/feathers';
 import dequal from 'dequal';
 import { Module } from '../../core/module';
-import Component from './dataset.svelte';
 import { Stream } from '../../core/stream';
 import type { Instance, InstanceId } from '../../core/types';
 import { Backend, BackendType } from '../../backend/backend';
@@ -108,20 +107,8 @@ export class Dataset extends Module {
     await Promise.all(data.map(({ id }) => this.instanceService.remove(id)));
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
-    this.destroy();
-    this.$$.app = new Component({
-      target,
-      props: {
-        title: this.name,
-        count: this.$count,
-        instances: this.$instances,
-        instanceService: this.instanceService,
-      },
-    });
-  }
+  // eslint-disable-next-line class-methods-use-this
+  mount(): void {}
 
   stop(): void {
     super.stop();

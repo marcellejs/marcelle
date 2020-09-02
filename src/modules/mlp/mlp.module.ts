@@ -217,7 +217,5 @@ export class MLP extends Module implements Parametrable {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  mount(): void {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-  }
+  mount(): void {}
 }

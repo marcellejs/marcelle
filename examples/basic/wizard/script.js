@@ -30,6 +30,8 @@ const trainingSet = dataset({ name: 'TrainingSet', backend });
 // const trainingSet = dataset({ name: 'TrainingSet', backend: 'remote' });
 trainingSet.capture(instances);
 
+const trainingSetBrowser = browser(trainingSet);
+
 // -----------------------------------------------------------
 // TRAINING
 // -----------------------------------------------------------
@@ -99,7 +101,7 @@ const dashboard = createDashboard({
   author: 'Marcelle Pirates Crew',
 });
 
-dashboard.page('Data Management').useLeft(w, m).use(cap, trainingSet);
+dashboard.page('Data Management').useLeft(w, m).use(cap, trainingSetBrowser);
 dashboard.page('Training').use(params, b, prog);
 dashboard.page('Real-time prediction').useLeft(w).use(tog, results);
 
