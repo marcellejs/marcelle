@@ -1,4 +1,3 @@
-import { noop } from 'svelte/internal';
 import { empty } from '@most/core';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
@@ -52,8 +51,8 @@ export class Webcam extends Module {
   #camerasListEmitted = false;
   #deviceId: string;
   #thumbnailWidth = 80;
-  #unsubActive = noop;
-  #stopStreaming = noop;
+  #unsubActive = (): void => {};
+  #stopStreaming = (): void => {};
   #thumbnailCanvas: HTMLCanvasElement;
   #thumbnailCtx: CanvasRenderingContext2D;
   #captureCanvas: HTMLCanvasElement;

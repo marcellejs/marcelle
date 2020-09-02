@@ -2,7 +2,6 @@ import { runEffects, multicast, until, tap, merge, now } from '@most/core';
 import { newDefaultScheduler } from '@most/scheduler';
 import { createAdapter } from '@most/adapter';
 import { Stream as MostStream, Disposable, Scheduler, Sink } from '@most/types';
-import { noop } from 'svelte/internal';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function dummySubscriber<T>(value: T): void {
@@ -62,7 +61,7 @@ export class Stream<T> {
     });
   }
 
-  subscribe(run: (value: T) => void = dummySubscriber, invalidate = noop): () => void {
+  subscribe(run: (value: T) => void = dummySubscriber, invalidate = () => {}): () => void {
     if (this.#hold && this.running && this.#hasValue) {
       run(this.value);
     }

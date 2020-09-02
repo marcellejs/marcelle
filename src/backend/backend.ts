@@ -4,7 +4,6 @@ import socketio from '@feathersjs/socketio-client';
 import memoryService from 'feathers-memory';
 import localStorageService from 'feathers-localstorage';
 import sift from 'sift';
-import { noop } from 'svelte/internal';
 import { addObjectId, renameIdField, createDate, updateDate } from './hooks';
 
 function isValidUrl(str: string) {
@@ -35,7 +34,7 @@ export class Backend {
 
   backendType: BackendType;
 
-  createService: (name: string) => void = noop;
+  createService: (name: string) => void = () => {};
 
   constructor({ location = 'memory' }: BackendOptions = {}) {
     this.#app = feathers();
@@ -77,6 +76,7 @@ export class Backend {
   }
 
   service(name: string): Service<unknown> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.#app.service(name);
   }
 

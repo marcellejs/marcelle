@@ -1,5 +1,5 @@
 import { map, skipRepeatsWith } from '@most/core';
-import { Service } from '@feathersjs/feathers';
+import { Service, Paginated } from '@feathersjs/feathers';
 import dequal from 'dequal';
 import { Module } from '../../core/module';
 import Component from './dataset.svelte';
@@ -61,7 +61,8 @@ export class Dataset extends Module {
       },
     });
 
-    this.instanceService.find({ query: { $select: ['id', '_id', 'label'] } }).then(({ data }) => {
+    this.instanceService.find({ query: { $select: ['id', '_id', 'label'] } }).then((result) => {
+      const { data } = result as Paginated<Instance>;
       this.$instances.set(data.map((x) => x.id));
       this.$classes.set(
         data.reduce((c: Record<string, InstanceId[]>, instance: Instance) => {
@@ -102,7 +103,8 @@ export class Dataset extends Module {
   }
 
   async clear(): Promise<void> {
-    const { data } = await this.instanceService.find({ query: { $select: ['id'] } });
+    const result = await this.instanceService.find({ query: { $select: ['id'] } });
+    const { data } = result as Paginated<Instance>;
     await Promise.all(data.map(({ id }) => this.instanceService.remove(id)));
   }
 
