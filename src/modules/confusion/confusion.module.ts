@@ -46,6 +46,7 @@ export class Confusion extends Module {
           return confusion;
         }, this.#prediction.$predictions),
       ),
+      true,
     );
     this.start();
   }

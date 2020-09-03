@@ -39,10 +39,6 @@
   });
 </script>
 
-<style>
-
-</style>
-
 <span class="card-title">{title}</span>
 
 <div use:chart={options} />
