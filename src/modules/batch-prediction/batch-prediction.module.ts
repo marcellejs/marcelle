@@ -68,13 +68,16 @@ export class BatchPrediction extends Module {
     });
     const { data } = result as Paginated<Instance>;
     const predictionIds = await Promise.all(
-      data.map(({ id, features, label }) => {
-        const prediction = model.predict(features);
-        return this.predictionService.create(
-          { ...prediction, instanceId: id, trueLabel: label },
-          { query: { $select: ['id'] } },
-        );
-      }),
+      data.map(({ id, features, label }) =>
+        model
+          .predict(features)
+          .then((prediction) =>
+            this.predictionService.create(
+              { ...prediction, instanceId: id, trueLabel: label },
+              { query: { $select: ['id'] } },
+            ),
+          ),
+      ),
     );
     this.$predictions.set(predictionIds.map((x) => x.id));
   }

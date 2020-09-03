@@ -207,7 +207,7 @@ export class MLP extends Module implements Parametrable {
     delete this.model;
   }
 
-  predict(x: number[][]): MLPResults {
+  async predict(x: number[][]): Promise<MLPResults> {
     const pred = this.model.predict(tensor2d(x)) as Tensor2D;
     const softmaxes = pred.arraySync()[0];
     const ypred = arrayArgMax(softmaxes);
