@@ -100,6 +100,8 @@ export class Dataset extends Module {
     const result = await this.instanceService.find({ query: { $select: ['id'] } });
     const { data } = result as Paginated<Instance>;
     await Promise.all(data.map(({ id }) => this.instanceService.remove(id)));
+    this.$instances.set([]);
+    this.$classes.set({});
   }
 
   // eslint-disable-next-line class-methods-use-this
