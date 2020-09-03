@@ -44,16 +44,18 @@ export class Backend {
       this.#app.configure(socketio(socket));
     } else if (location === 'localStorage') {
       this.backendType = BackendType.LocalStorage;
-      const storageService = localStorageService({
-        storage: window.localStorage,
-        matcher: sift,
-        paginate: {
-          default: 100,
-          max: 200,
-        },
-      });
+      const storageService = (name: string) =>
+        localStorageService({
+          storage: window.localStorage,
+          matcher: sift,
+          name,
+          paginate: {
+            default: 100,
+            max: 200,
+          },
+        });
       this.createService = (name: string) => {
-        this.#app.use(`/${name}`, storageService);
+        this.#app.use(`/${name}`, storageService(name));
       };
     } else if (location === 'memory') {
       this.backendType = BackendType.Memory;
