@@ -9,7 +9,7 @@
 
 <span class="card-title">{title}</span>
 
-<p class="mt-6 p-2 text-sm text-gray-600">
+<p class="p-2 text-sm text-gray-600">
   {#if loading}
     &nbsp;
     <Spinner />

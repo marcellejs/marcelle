@@ -79,17 +79,9 @@ predictButton.$click.subscribe(async () => {
   await batchKNN.predict(classifierKNN, trainingSet);
 });
 
-batchMLP.$predictions.subscribe((x) => {
-  console.log('batchMLP.$predictions', x);
-});
-batchKNN.$predictions.subscribe((x) => {
-  console.log('batchKNN.$predictions', x);
-});
 createStream(merge(batchMLP.$predictions, batchKNN.$predictions)).subscribe(async () => {
   const { data: predictionsMLP } = await batchMLP.predictionService.find();
-  console.log('predictionsMLP', predictionsMLP);
   const { data: predictionsKNN } = await batchKNN.predictionService.find();
-  console.log('predictionsKNN', predictionsKNN);
   const accuracyMLP =
     predictionsMLP
       .map(({ label, trueLabel }) => (label === trueLabel ? 1 : 0))
@@ -98,8 +90,6 @@ createStream(merge(batchMLP.$predictions, batchKNN.$predictions)).subscribe(asyn
     predictionsKNN
       .map(({ label, trueLabel }) => (label === trueLabel ? 1 : 0))
       .reduce((x, y) => x + y, 0) / predictionsKNN.length;
-  console.log('accuracyMLP', accuracyMLP);
-  console.log('accuracyKNN', accuracyKNN);
   predictionAccuracy.$text.set(
     `Global Accuracy (MLP): ${accuracyMLP}<br>Global Accuracy (KNN): ${accuracyKNN}`,
   );
@@ -155,10 +145,20 @@ const dashboard = createDashboard({
 });
 
 dashboard.page('Data Management').useLeft(w, m).use(cap, trainingSetBrowser);
-dashboard.page('Training').use(b, paramsMLP, progressMLP, paramsKNN, progressKNN);
+dashboard
+  .page('Training')
+  .use(
+    b,
+    'MLP (Multilayer Perceptron)',
+    paramsMLP,
+    progressMLP,
+    'KNN (k-Nearest Neighbors)',
+    paramsKNN,
+    progressKNN,
+  );
 dashboard
   .page('Batch Prediction')
-  .use(predictButton, predictionAccuracy, confusionMLP, confusionKNN);
+  .use(predictButton, predictionAccuracy, [confusionMLP, confusionKNN]);
 dashboard.page('Real-time prediction').useLeft(w).use(tog, results);
 
 // -----------------------------------------------------------

@@ -1,4 +1,5 @@
 <script>
+  import { isArray } from 'sift/lib/utils';
   import { afterUpdate } from 'svelte';
 
   export let dashboard;
@@ -26,8 +27,18 @@
     {/each}
   </div>
   <div class="right">
-    {#each dashboard.modules as { id }}
-      <div {id} class="card" />
+    {#each dashboard.modules as m}
+      {#if Array.isArray(m)}
+        <div class="flex flex-row flex-wrap items-stretch">
+          {#each m as { id }}
+            <div {id} class="card flex-grow" />
+          {/each}
+        </div>
+      {:else if typeof m === 'string'}
+        <h2>{m}</h2>
+      {:else}
+        <div id={m.id} class="card" />
+      {/if}
     {/each}
   </div>
 {/if}

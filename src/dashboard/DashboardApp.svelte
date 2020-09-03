@@ -73,7 +73,8 @@
     @apply flex flex-col absolute top-0 left-0 w-screen min-h-screen z-10;
   }
   main.container {
-    @apply max-w-none w-screen p-1 flex flex-row flex-no-wrap flex-grow bg-gray-100;
+    @apply max-w-none w-screen p-1 flex flex-row flex-no-wrap flex-grow bg-gray-200;
+    /* @apply  bg-white; */
   }
 
   .active {
@@ -86,7 +87,7 @@
   <div style="position: fixed; height: 100vh; overflow: scroll; width: 100vw; top:0; left:0">
     <div class="app-container" transition:blur={{ amount: 10 }}>
       <header class="bg-white text-gray-700 body-font border-b">
-        <div class=" mx-auto flex flex-wrap p-2 flex-col md:flex-row items-center w-full">
+        <div class="mx-auto flex flex-wrap p-2 flex-col md:flex-row items-center w-full">
           <a href="#/" class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -103,7 +104,7 @@
           </a>
           <nav
             class="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400 flex flex-wrap
-            items-center text-base justify-center">
+              items-center text-base justify-center">
             {#each dashboardNames as dashboardName, index}
               <a
                 href={`#${dashboardSlugs[index]}`}
@@ -116,7 +117,7 @@
           <a
             href="#settings"
             class="text-teal-500 bg-transparent font-bold uppercase text-xs px-2 py-2 rounded-full
-            outline-none mr-1 mb-1 hover:bg-teal-500 hover:text-white">
+              outline-none mr-1 mb-1 hover:bg-teal-500 hover:text-white">
             <svg
               class="fill-current inline-block h-5 w-5"
               xmlns="http://www.w3.org/2000/svg"
@@ -129,7 +130,7 @@
           <button
             on:click={quit}
             class="text-red-500 bg-transparent font-bold uppercase text-xs px-2 py-2 rounded-full
-            outline-none mr-1 mb-1 hover:bg-red-500 hover:text-white">
+              outline-none mr-1 mb-1 hover:bg-red-500 hover:text-white">
             <svg
               class="fill-current inline-block h-5 w-5"
               xmlns="http://www.w3.org/2000/svg"
