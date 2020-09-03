@@ -17,27 +17,27 @@
     @apply inline-block transition-all duration-300 ease-in-out absolute top-0 left-0 w-5 h-5 bg-white border-2 border-gray-600 rounded-full;
   }
 
-  input[type='checkbox']:checked ~ .thumb {
+  input[type='checkbox']:checked ~ .switch .thumb {
     @apply transform translate-x-full border-green-500;
   }
 
-  input[type='checkbox']:checked ~ .track {
+  input[type='checkbox']:checked ~ .switch .track {
     @apply transform transition-colors bg-green-500;
   }
 
-  input[type='checkbox']:disabled ~ .track {
+  input[type='checkbox']:disabled ~ .switch .track {
     @apply bg-gray-500 cursor-default;
   }
-  input[type='checkbox']:disabled:active + .track {
+  input[type='checkbox']:disabled:active + .switch .track {
     @apply shadow-none;
   }
 
-  input[type='checkbox']:disabled ~ .thumb {
+  input[type='checkbox']:disabled ~ .switch .thumb {
     @apply bg-gray-100 border-gray-500;
   }
 
-  input[type='checkbox']:focus + .track,
-  input[type='checkbox']:active + .track {
+  input[type='checkbox']:focus + .switch .track,
+  input[type='checkbox']:active + .switch .track {
     @apply shadow-outline;
   }
 </style>
