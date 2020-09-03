@@ -16,10 +16,10 @@ export interface Parametrable {
   };
 }
 
-export type InstanceId = string;
+export type ObjectId = string;
 
 export interface Instance {
-  id?: InstanceId;
+  id?: ObjectId;
   label: string;
   data: unknown;
   thumbnail?: string;
@@ -33,4 +33,13 @@ export interface TrainingStatus {
   epoch?: number;
   epochs?: number;
   data?: Record<string, unknown>;
+}
+
+export interface Prediction {
+  id?: ObjectId;
+  instanceId: ObjectId;
+  label?: string;
+  trueLabel?: string;
+  confidences?: Record<string, number>;
+  [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }

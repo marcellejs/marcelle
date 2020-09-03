@@ -42,42 +42,22 @@ const prog = progress(classifier);
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-backend.createService('predictions');
+const batchMLP = batchPrediction({ name: 'mlp', backend });
 const predictButton = button({ text: 'Update predictions' });
 const predictionAccuracy = text({ text: 'Waiting for predictions...' });
 
-async function clearPredictions() {
-  const { data } = await backend.service('predictions').find({
-    query: { $select: ['id'] },
-  });
-  return Promise.all(data.map(({ id }) => backend.service('predictions').remove(id)));
-}
-
-async function computeAccuracy(predictions) {
-  const pred = await Promise.all(
-    predictions.map(({ label, instanceId }) =>
-      trainingSet.instanceService
-        .get(instanceId, { query: { $select: ['label'] } })
-        .then((x) => (x.label === label ? 1 : 0)),
-    ),
-  );
-  const accuracy = pred.reduce((x, y) => x + y, 0) / predictions.length;
-  predictionAccuracy.$text.set(`Global Accuracy: ${accuracy}`);
-}
-
 predictButton.$click.subscribe(async () => {
-  await clearPredictions();
-  const { data } = await trainingSet.instanceService.find({
-    query: { $select: ['id', 'features'] },
-  });
-  await Promise.all(
-    data.map(({ id, features }) => {
-      const prediction = classifier.predict(features);
-      return backend.service('predictions').create({ ...prediction, instanceId: id });
-    }),
-  );
-  const pred = await backend.service('predictions').find();
-  computeAccuracy(pred.data);
+  await batchMLP.clear();
+  await batchMLP.predict(classifier, trainingSet);
+});
+
+batchMLP.$predictions.subscribe(async () => {
+  const { data: predictions } = await batchMLP.predictionService.find();
+  const accuracy =
+    predictions
+      .map(({ label, trueLabel }) => (label === trueLabel ? 1 : 0))
+      .reduce((x, y) => x + y, 0) / predictions.length;
+  predictionAccuracy.$text.set(`Global Accuracy: ${accuracy}`);
 });
 
 // -----------------------------------------------------------

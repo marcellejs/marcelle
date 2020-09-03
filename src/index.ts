@@ -10,6 +10,7 @@ export * from './dashboard';
 export * from './wizard';
 
 // Modules
+export * from './modules/batch-prediction';
 export * from './modules/browser';
 export * from './modules/button';
 export * from './modules/capture';
