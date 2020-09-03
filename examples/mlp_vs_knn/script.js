@@ -30,11 +30,14 @@ const trainingSet = dataset({ name: 'TrainingSet', backend });
 // const trainingSet = dataset({ name: 'TrainingSet', backend: 'remote' });
 trainingSet.capture(instances);
 
+const trainingSetBrowser = browser(trainingSet);
+
 // -----------------------------------------------------------
 // TRAINING
 // -----------------------------------------------------------
 
 const b = button({ text: 'Train' });
+b.name = 'Training Launcher';
 
 // MLP
 const classifierMLP = mlp({ layers: [128, 64], epochs: 30 });
@@ -42,7 +45,9 @@ b.$click.subscribe(() => {
   classifierMLP.train(trainingSet);
 });
 const paramsMLP = parameters(classifierMLP);
+paramsMLP.name = 'MLP: Parameters';
 const progressMLP = progress(classifierMLP);
+progressMLP.name = 'MLP: Training Progress';
 
 // KNN
 const classifierKNN = knn({ k: 3 });
@@ -50,7 +55,55 @@ b.$click.subscribe(() => {
   classifierKNN.train(trainingSet);
 });
 const paramsKNN = parameters(classifierKNN);
+paramsKNN.name = 'KNN: Parameters';
 const progressKNN = progress(classifierKNN);
+progressKNN.name = 'KNN: Training Progress';
+
+// -----------------------------------------------------------
+// BATCH PREDICTION
+// -----------------------------------------------------------
+
+const batchMLP = batchPrediction({ name: 'mlp', backend });
+const batchKNN = batchPrediction({ name: 'knn', backend });
+const predictButton = button({ text: 'Update predictions' });
+const predictionAccuracy = text({ text: 'Waiting for predictions...' });
+const confusionMLP = confusion(batchMLP);
+confusionMLP.name = 'MLP: Confusion Matrix';
+const confusionKNN = confusion(batchKNN);
+confusionKNN.name = 'KNN: Confusion Matrix';
+
+predictButton.$click.subscribe(async () => {
+  await batchMLP.clear();
+  await batchMLP.predict(classifierMLP, trainingSet);
+  await batchKNN.clear();
+  await batchKNN.predict(classifierKNN, trainingSet);
+});
+
+batchMLP.$predictions.subscribe((x) => {
+  console.log('batchMLP.$predictions', x);
+});
+batchKNN.$predictions.subscribe((x) => {
+  console.log('batchKNN.$predictions', x);
+});
+createStream(merge(batchMLP.$predictions, batchKNN.$predictions)).subscribe(async () => {
+  const { data: predictionsMLP } = await batchMLP.predictionService.find();
+  console.log('predictionsMLP', predictionsMLP);
+  const { data: predictionsKNN } = await batchKNN.predictionService.find();
+  console.log('predictionsKNN', predictionsKNN);
+  const accuracyMLP =
+    predictionsMLP
+      .map(({ label, trueLabel }) => (label === trueLabel ? 1 : 0))
+      .reduce((x, y) => x + y, 0) / predictionsMLP.length;
+  const accuracyKNN =
+    predictionsKNN
+      .map(({ label, trueLabel }) => (label === trueLabel ? 1 : 0))
+      .reduce((x, y) => x + y, 0) / predictionsKNN.length;
+  console.log('accuracyMLP', accuracyMLP);
+  console.log('accuracyKNN', accuracyKNN);
+  predictionAccuracy.$text.set(
+    `Global Accuracy (MLP): ${accuracyMLP}<br>Global Accuracy (KNN): ${accuracyKNN}`,
+  );
+});
 
 // -----------------------------------------------------------
 // PREDICTION
@@ -101,8 +154,11 @@ const dashboard = createDashboard({
   author: 'Marcelle Pirates Crew',
 });
 
-dashboard.page('Data Management').useLeft(w, m).use(cap, trainingSet);
+dashboard.page('Data Management').useLeft(w, m).use(cap, trainingSetBrowser);
 dashboard.page('Training').use(b, paramsMLP, progressMLP, paramsKNN, progressKNN);
+dashboard
+  .page('Batch Prediction')
+  .use(predictButton, predictionAccuracy, confusionMLP, confusionKNN);
 dashboard.page('Real-time prediction').useLeft(w).use(tog, results);
 
 // -----------------------------------------------------------
