@@ -39,13 +39,36 @@ const params = parameters(classifier);
 const prog = progress(classifier);
 
 // -----------------------------------------------------------
-// PREDICTION
+// BATCH PREDICTION
+// -----------------------------------------------------------
+
+const batchMLP = batchPrediction({ name: 'mlp', backend });
+const predictButton = button({ text: 'Update predictions' });
+const predictionAccuracy = text({ text: 'Waiting for predictions...' });
+const confusionMatrix = confusion(batchMLP);
+confusionMatrix.$confusion.subscribe(console.log);
+
+predictButton.$click.subscribe(async () => {
+  await batchMLP.clear();
+  await batchMLP.predict(classifier, trainingSet);
+});
+
+batchMLP.$predictions.subscribe(async () => {
+  const { data: predictions } = await batchMLP.predictionService.find();
+  const accuracy =
+    predictions
+      .map(({ label, trueLabel }) => (label === trueLabel ? 1 : 0))
+      .reduce((x, y) => x + y, 0) / predictions.length;
+  predictionAccuracy.$text.set(`Global Accuracy: ${accuracy}`);
+});
+
+// -----------------------------------------------------------
+// REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
 const tog = toggle({ text: 'toggle prediction' });
 const results = text({ text: 'waiting for predictions...' });
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 let predictions = { stop() {} };
 createStream(skipRepeats(tog.$checked)).subscribe((x) => {
   if (x) {
@@ -75,6 +98,7 @@ const dashboard = createDashboard({
 
 dashboard.page('Data Management').useLeft(w, m).use(cap, trainingSetBrowser);
 dashboard.page('Training').use(params, b, prog);
-dashboard.page('Real-time prediction').useLeft(w).use(tog, results);
+dashboard.page('Batch Prediction').use(predictButton, predictionAccuracy, confusionMatrix);
+dashboard.page('Real-time Prediction').useLeft(w).use(tog, results);
 
 dashboard.start();

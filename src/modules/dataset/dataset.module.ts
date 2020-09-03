@@ -3,14 +3,9 @@ import { Service, Paginated } from '@feathersjs/feathers';
 import dequal from 'dequal';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
-import type { Instance, InstanceId } from '../../core/types';
+import type { Instance, ObjectId } from '../../core/types';
 import { Backend, BackendType } from '../../backend/backend';
-import {
-  addDatasetName,
-  imageData2DataURL,
-  limitToDataset,
-  dataURL2ImageData,
-} from './dataset.hooks';
+import { addScope, imageData2DataURL, limitToScope, dataURL2ImageData } from '../../backend/hooks';
 
 export interface DatasetOptions {
   name: string;
@@ -26,8 +21,8 @@ export class Dataset extends Module {
 
   instanceService: Service<Instance>;
 
-  $instances: Stream<InstanceId[]> = new Stream([], true);
-  $classes = new Stream<Record<string, InstanceId[]>>({}, true);
+  $instances: Stream<ObjectId[]> = new Stream([], true);
+  $classes = new Stream<Record<string, ObjectId[]>>({}, true);
   $labels: Stream<string[]>;
   $count: Stream<number>;
   $countPerClass: Stream<Record<string, number>>;
@@ -41,14 +36,14 @@ export class Dataset extends Module {
     this.instanceService.hooks({
       before: {
         create: [
-          addDatasetName(this.name),
+          addScope('datasetName', this.name),
           this.#backend.backendType === BackendType.Memory && imageData2DataURL,
         ].filter((x) => !!x),
-        find: [limitToDataset(this.name)],
-        get: [limitToDataset(this.name)],
-        update: [limitToDataset(this.name)],
-        patch: [limitToDataset(this.name)],
-        remove: [limitToDataset(this.name)],
+        find: [limitToScope('datasetName', this.name)],
+        get: [limitToScope('datasetName', this.name)],
+        update: [limitToScope('datasetName', this.name)],
+        patch: [limitToScope('datasetName', this.name)],
+        remove: [limitToScope('datasetName', this.name)],
       },
       after: {
         find: [this.#backend.backendType === BackendType.Memory && dataURL2ImageData].filter(
@@ -64,7 +59,7 @@ export class Dataset extends Module {
       const { data } = result as Paginated<Instance>;
       this.$instances.set(data.map((x) => x.id));
       this.$classes.set(
-        data.reduce((c: Record<string, InstanceId[]>, instance: Instance) => {
+        data.reduce((c: Record<string, ObjectId[]>, instance: Instance) => {
           const x = Object.keys(c).includes(instance.label) ? c[instance.label] : [];
           return { ...c, [instance.label]: x.concat([instance.id]) };
         }, {}),
@@ -105,6 +100,8 @@ export class Dataset extends Module {
     const result = await this.instanceService.find({ query: { $select: ['id'] } });
     const { data } = result as Paginated<Instance>;
     await Promise.all(data.map(({ id }) => this.instanceService.remove(id)));
+    this.$instances.set([]);
+    this.$classes.set({});
   }
 
   // eslint-disable-next-line class-methods-use-this
