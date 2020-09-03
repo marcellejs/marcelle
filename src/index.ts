@@ -14,6 +14,7 @@ export * from './modules/batch-prediction';
 export * from './modules/browser';
 export * from './modules/button';
 export * from './modules/capture';
+export * from './modules/confusion';
 export * from './modules/dataset';
 export * from './modules/faker';
 export * from './modules/mobilenet';

@@ -45,6 +45,8 @@ const prog = progress(classifier);
 const batchMLP = batchPrediction({ name: 'mlp', backend });
 const predictButton = button({ text: 'Update predictions' });
 const predictionAccuracy = text({ text: 'Waiting for predictions...' });
+const confusionMatrix = confusion(batchMLP);
+confusionMatrix.$confusion.subscribe(console.log);
 
 predictButton.$click.subscribe(async () => {
   await batchMLP.clear();
@@ -96,7 +98,7 @@ const dashboard = createDashboard({
 
 dashboard.page('Data Management').useLeft(w, m).use(cap, trainingSetBrowser);
 dashboard.page('Training').use(params, b, prog);
-dashboard.page('Batch Prediction').use(predictButton, predictionAccuracy);
+dashboard.page('Batch Prediction').use(predictButton, predictionAccuracy, confusionMatrix);
 dashboard.page('Real-time Prediction').useLeft(w).use(tog, results);
 
 dashboard.start();

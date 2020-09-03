@@ -56,11 +56,13 @@
     "@tensorflow/tfjs-core": "^2.0.1",
     "@tensorflow/tfjs-layers": "^2.0.1",
     "@types/socket.io-client": "^1.4.33",
+    "apexcharts": "^3.20.0",
     "dequal": "^1.0.1",
     "feathers-localstorage": "^5.1.1",
     "feathers-memory": "^4.1.0",
     "sift": "^13.2.0",
     "socket.io-client": "^2.3.0",
-    "svelte": "^3.24.1"
+    "svelte": "^3.24.1",
+    "svelte-apexcharts": "^1.0.2"
   }
 }
