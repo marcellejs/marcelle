@@ -47,6 +47,10 @@
   .actions:hover {
     @apply text-gray-800;
   }
+
+  .visible {
+    @apply block;
+  }
 </style>
 
 <svelte:body
@@ -64,9 +68,8 @@
   </button>
   <div
     bind:this={popperElement}
-    class:hidden={!dropdownPopoverShow}
-    class:block={dropdownPopoverShow}
-    class="bg-white float-left text-base z-50 py-2 list-none border border-gray-100 text-left
+    class:visible={dropdownPopoverShow}
+    class="bg-white hidden float-left text-base z-50 py-2 list-none border border-gray-100 text-left
       rounded shadow-2xl"
     role="tooltip">
     {#each actions as action}
