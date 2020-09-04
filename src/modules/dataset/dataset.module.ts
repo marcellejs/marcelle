@@ -96,6 +96,33 @@ export class Dataset extends Module {
     });
   }
 
+  async renameClass(label: string, newLabel: string): Promise<void> {
+    const classes = this.$classes.value;
+    if (!Object.keys(classes).includes(label)) return;
+    await Promise.all(
+      classes[label].map((id) => this.instanceService.patch(id, { label: newLabel })),
+    );
+    if (Object.keys(classes).includes(newLabel)) {
+      classes[newLabel] = classes[newLabel].concat(classes[label]);
+    } else {
+      classes[newLabel] = classes[label];
+    }
+    delete classes[label];
+    this.$classes.set(classes);
+    this.$instances.set(this.$instances.value);
+  }
+
+  async deleteClass(label: string): Promise<void> {
+    const classes = this.$classes.value;
+    if (!Object.keys(classes).includes(label)) return;
+    const delIns = classes[label];
+    delete classes[label];
+    await Promise.all(delIns.map((id) => this.instanceService.remove(id)));
+    const newInstances = this.$instances.value.filter((x) => !delIns.includes(x));
+    this.$classes.set(classes);
+    this.$instances.set(newInstances);
+  }
+
   async clear(): Promise<void> {
     const result = await this.instanceService.find({ query: { $select: ['id'] } });
     const { data } = result as Paginated<Instance>;

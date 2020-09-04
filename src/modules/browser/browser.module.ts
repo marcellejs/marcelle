@@ -24,7 +24,7 @@ export class Browser extends Module {
         title: this.name,
         count: this.#dataset.$count,
         classes: this.#dataset.$classes,
-        instanceService: this.#dataset.instanceService,
+        dataset: this.#dataset,
       },
     });
   }

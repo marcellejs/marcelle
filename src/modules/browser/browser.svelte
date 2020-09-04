@@ -1,26 +1,103 @@
 <script>
+  import PopMenu from '../../ui/widgets/PopMenu.svelte';
+
   export let title;
   export let count;
   export let classes;
-  export let instanceService;
+  export let dataset;
+
+  function onClassAction(label, code) {
+    switch (code) {
+      case 'edit':
+        const result = window.prompt('Enter the new label', label);
+        if (result) {
+          dataset.renameClass(label, result);
+        }
+        break;
+
+      case 'delete':
+        dataset.deleteClass(label);
+        break;
+
+      default:
+        alert(`Class ${label}: ${code}`);
+        break;
+    }
+  }
 </script>
 
 <style>
   .browser-class {
-    @apply relative flex flex-wrap justify-center flex-grow;
-    @apply m-2 p-1 pt-8;
-    @apply border-indigo-200 border-4 rounded-bl-lg rounded-tr-lg z-10;
+    @apply relative m-2 w-1/3 flex-grow;
+    @apply border-gray-600 border rounded-lg;
     min-width: 400px;
   }
 
-  .browser-class img {
+  .browser-class-header {
+    @apply flex flex-row justify-between w-full;
+  }
+
+  .browser-class-title {
+    @apply text-sm px-2 py-1 bg-gray-600 text-white rounded-br-md rounded-tl-md;
+  }
+
+  .browser-class-body {
+    @apply flex flex-wrap justify-center;
+    @apply p-1;
+  }
+
+  .browser-class-body img {
     width: 60px;
     @apply border-gray-200 rounded-md;
   }
 
-  .browser-class-title {
-    @apply absolute top-0 pt-1 w-full text-center underline;
+  /* .browser-class:nth-child(6n + 1) {
+    @apply border-orange-400;
   }
+
+  .browser-class:nth-child(6n + 1) .browser-class-title {
+    @apply bg-orange-400;
+  }
+
+  .browser-class:nth-child(6n + 2) {
+    @apply border-green-400;
+  }
+
+  .browser-class:nth-child(6n + 2) .browser-class-title {
+    @apply bg-green-400;
+  }
+
+  .browser-class:nth-child(6n + 3) {
+    @apply border-pink-400;
+  }
+
+  .browser-class:nth-child(6n + 3) .browser-class-title {
+    @apply bg-pink-400;
+  }
+
+  .browser-class:nth-child(6n + 4) {
+    @apply border-blue-400;
+  }
+
+  .browser-class:nth-child(6n + 4) .browser-class-title {
+    @apply bg-blue-400;
+  }
+
+  .browser-class:nth-child(6n + 5) {
+    @apply border-yellow-400;
+  }
+
+  .browser-class:nth-child(6n + 5) .browser-class-title {
+    @apply bg-yellow-400;
+  }
+
+  .browser-class:nth-child(6n + 0) {
+    @apply border-purple-400;
+  }
+
+  .browser-class:nth-child(6n + 0) .browser-class-title {
+    @apply bg-purple-400;
+  } */
 </style>
 
 <span class="card-title">{title}</span>
@@ -33,12 +110,21 @@
 <div class="flex flex-wrap">
   {#each Object.entries($classes) as [key, classInstances]}
     <div class="browser-class">
-      <span class="browser-class-title">label: {key}</span>
-      {#each classInstances as id}
-        {#await instanceService.get(id, { query: { $select: ['thumbnail'] } }) then instance}
-          <img src={instance.thumbnail} alt="thumbnail" class="p-1" />
-        {/await}
-      {/each}
+      <div class="browser-class-header">
+        <span class="browser-class-title">{key}</span>
+        <PopMenu
+          actions={[{ code: 'edit', text: 'Edit Label' }, { code: 'delete', text: 'Delete Class' }]}
+          on:select={(e) => onClassAction(key, e.detail)} />
+      </div>
+      <div class="browser-class-body">
+        {#each classInstances as id}
+          {#await dataset.instanceService.get(id, {
+            query: { $select: ['thumbnail'] },
+          }) then instance}
+            <img src={instance.thumbnail} alt="thumbnail" class="p-1" />
+          {/await}
+        {/each}
+      </div>
     </div>
   {/each}
 </div>
