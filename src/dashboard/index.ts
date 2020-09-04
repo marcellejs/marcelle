@@ -1,16 +1,22 @@
 import { DashboardPage } from './dashboard_page';
 import DashboardAppComponent from './DashboardApp.svelte';
+import { Dataset } from '../modules/dataset';
 
 export interface DashboardOptions {
   title: string;
   author: string;
+  datasets: Dataset[];
 }
 
 export class DashboardApp {
   panels: Record<string, DashboardPage> = {};
   app?: DashboardAppComponent;
 
-  constructor(private title = 'Hello, Marcelle!', private author = 'author') {}
+  constructor(
+    private title = 'Hello, Marcelle!',
+    private author = 'author',
+    private datasets: Dataset[] = [],
+  ) {}
 
   page(name: string): DashboardPage {
     if (!Object.keys(this.panels).includes(name)) {
@@ -26,6 +32,7 @@ export class DashboardApp {
         title: this.title,
         author: this.author,
         dashboards: this.panels,
+        datasets: this.datasets,
       },
     });
     this.app.$on('quit', () => {
@@ -43,5 +50,5 @@ export class DashboardApp {
 }
 
 export function createDashboard(options: DashboardOptions): DashboardApp {
-  return new DashboardApp(options.title, options.author);
+  return new DashboardApp(options.title, options.author, options.datasets);
 }

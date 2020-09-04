@@ -13,6 +13,7 @@
   export let title;
   export let author;
   export let dashboards = {};
+  export let datasets = [];
 
   let showApp = false;
 
@@ -146,7 +147,7 @@
 
       <main class="container">
         {#if showSettings}
-          <Settings />
+          <Settings {datasets} />
         {:else if currentDashboard}
           <DashboardPage dashboard={dashboards[currentDashboard]} />
         {/if}

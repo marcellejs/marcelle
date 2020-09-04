@@ -46,7 +46,6 @@ const batchMLP = batchPrediction({ name: 'mlp', backend });
 const predictButton = button({ text: 'Update predictions' });
 const predictionAccuracy = text({ text: 'Waiting for predictions...' });
 const confusionMatrix = confusion(batchMLP);
-confusionMatrix.$confusion.subscribe(console.log);
 
 predictButton.$click.subscribe(async () => {
   await batchMLP.clear();
@@ -94,6 +93,7 @@ createStream(skipRepeats(tog.$checked)).subscribe((x) => {
 const dashboard = createDashboard({
   title: 'Marcelle Starter',
   author: 'Marcelle Pirates Crew',
+  datasets: [trainingSet],
 });
 
 dashboard.page('Data Management').useLeft(w, m).use(cap, trainingSetBrowser);

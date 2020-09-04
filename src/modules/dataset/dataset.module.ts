@@ -6,6 +6,7 @@ import { Stream } from '../../core/stream';
 import type { Instance, ObjectId } from '../../core/types';
 import { Backend, BackendType } from '../../backend/backend';
 import { addScope, imageData2DataURL, limitToScope, dataURL2ImageData } from '../../backend/hooks';
+import { saveBlob } from '../../utils/file-io';
 
 export interface DatasetOptions {
   name: string;
@@ -129,6 +130,20 @@ export class Dataset extends Module {
     await Promise.all(data.map(({ id }) => this.instanceService.remove(id)));
     this.$instances.set([]);
     this.$classes.set({});
+  }
+
+  async download(): Promise<void> {
+    const instances = await this.instanceService.find();
+    const fileContents = {
+      marcelleMeta: {
+        type: 'dataset',
+      },
+      classes: this.$classes.value,
+      instances: (instances as Paginated<Instance>).data,
+    };
+    const today = new Date(Date.now());
+    const fileName = `${this.name}-${today.toISOString()}.json`;
+    await saveBlob(JSON.stringify(fileContents), fileName, 'text/plain');
   }
 
   // eslint-disable-next-line class-methods-use-this

@@ -1,5 +1,4 @@
 <script>
-  import { isArray } from 'sift/lib/utils';
   import { afterUpdate } from 'svelte';
 
   export let dashboard;

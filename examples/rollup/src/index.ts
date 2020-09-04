@@ -106,6 +106,7 @@ createStream(skipRepeats(tog.$checked)).subscribe((x: boolean) => {
 const app = createDashboard({
   title: 'Marcelle Starter',
   author: 'Marcelle Pirates Crew',
+  datasets: [trainingSet],
 });
 
 app.page('Data Management').useLeft(w, m).use(cap, trainingSetBrowser);
