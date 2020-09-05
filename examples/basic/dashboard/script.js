@@ -37,6 +37,31 @@ b.$click.subscribe(() => classifier.train(trainingSet));
 
 const params = parameters(classifier);
 const prog = progress(classifier);
+const plotLosses = plotter('losses');
+const plotAccuracies = plotter('accuracies');
+
+createStream(b.$click).subscribe((x) => {
+  if (x) {
+    let trainingLoss = [];
+    let validationLoss = [];
+    let trainingAcc = [];
+    let validationAcc = [];
+    classifier.$training.subscribe((y) => {
+      if (y.status === 'epoch') {
+        trainingLoss.push(y.data.loss);
+        validationLoss.push(y.data.lossVal);
+        plotLosses.plotting([
+          { name: 'training loss', data: trainingLoss },
+          { name: 'validation loss', data: validationLoss }]);
+        trainingAcc.push(y.data.accuracy);
+        validationAcc.push(y.data.accuracyVal);
+        plotAccuracies.plotting([
+          { name: 'training acc', data: trainingAcc },
+          { name: 'validation acc', data: validationAcc }]);
+      }
+    })
+  }
+})
 
 // -----------------------------------------------------------
 // BATCH PREDICTION
@@ -68,7 +93,7 @@ batchMLP.$predictions.subscribe(async () => {
 const tog = toggle({ text: 'toggle prediction' });
 const results = text({ text: 'waiting for predictions...' });
 
-let predictions = { stop() {} };
+let predictions = { stop() { } };
 createStream(skipRepeats(tog.$checked)).subscribe((x) => {
   if (x) {
     predictions = createStream(
@@ -97,7 +122,7 @@ const dashboard = createDashboard({
 });
 
 dashboard.page('Data Management').useLeft(w, m).use(cap, trainingSetBrowser);
-dashboard.page('Training').use(params, b, prog);
+dashboard.page('Training').use(params, b, prog, [plotLosses, plotAccuracies]);
 dashboard.page('Batch Prediction').use(predictButton, predictionAccuracy, confusionMatrix);
 dashboard.page('Real-time Prediction').useLeft(w).use(tog, results);
 

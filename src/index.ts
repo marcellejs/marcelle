@@ -19,6 +19,7 @@ export * from './modules/dataset';
 export * from './modules/faker';
 export * from './modules/mobilenet';
 export * from './modules/parameters';
+export * from './modules/plotter';
 export * from './modules/progress';
 export * from './modules/text';
 export * from './modules/toggle';
