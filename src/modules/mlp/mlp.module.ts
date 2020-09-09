@@ -195,7 +195,15 @@ export class MLP extends Module implements Parametrable {
       .then((results) => {
         // eslint-disable-next-line no-console
         console.log('[MLP] Training has ended with results:', results);
-        this.$training.set({ status: 'success', data: results.history });
+        this.$training.set({
+          status: 'success',
+          data: {
+            accuracy: results.history.acc,
+            loss: results.history.loss,
+            accuracyVal: results.history.val_acc,
+            lossVal: results.history.val_loss,
+          },
+        });
       })
       .catch((error) => {
         this.$training.set({ status: 'error' });
