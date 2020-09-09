@@ -74,8 +74,12 @@
     @apply flex flex-col absolute top-0 left-0 w-screen min-h-screen z-10;
   }
   main.container {
-    @apply max-w-none w-screen p-1 flex flex-row flex-no-wrap flex-grow bg-gray-200;
-    /* @apply  bg-white; */
+    @apply max-w-none w-screen p-1 flex flex-col flex-no-wrap flex-grow bg-gray-200;
+  }
+  @screen lg {
+    main.container {
+      @apply flex-row;
+    }
   }
 
   .active {

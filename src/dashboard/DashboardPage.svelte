@@ -30,7 +30,7 @@
       {#if Array.isArray(m)}
         <div class="flex flex-row flex-wrap items-stretch">
           {#each m as { id }}
-            <div {id} class="card flex-grow" />
+            <div {id} class="card flex-none xl:flex-1 w-full xl:w-auto" />
           {/each}
         </div>
       {:else if typeof m === 'string'}
