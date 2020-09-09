@@ -32,36 +32,53 @@ const trainingSetBrowser = browser(trainingSet);
 // -----------------------------------------------------------
 
 const b = button({ text: 'Train' });
-const classifier = mlp({ layers: [128, 64], epochs: 30 });
+const classifier = mlp({ layers: [64, 32], epochs: 20 });
 b.$click.subscribe(() => classifier.train(trainingSet));
 
 const params = parameters(classifier);
 const prog = progress(classifier);
-const plotLosses = plotter('losses');
-const plotAccuracies = plotter('accuracies');
 
-createStream(b.$click).subscribe((x) => {
-  if (x) {
-    let trainingLoss = [];
-    let validationLoss = [];
-    let trainingAcc = [];
-    let validationAcc = [];
-    classifier.$training.subscribe((y) => {
-      if (y.status === 'epoch') {
-        trainingLoss.push(y.data.loss);
-        validationLoss.push(y.data.lossVal);
-        plotLosses.plotting([
-          { name: 'training loss', data: trainingLoss },
-          { name: 'validation loss', data: validationLoss }]);
-        trainingAcc.push(y.data.accuracy);
-        validationAcc.push(y.data.accuracyVal);
-        plotAccuracies.plotting([
-          { name: 'training acc', data: trainingAcc },
-          { name: 'validation acc', data: validationAcc }]);
-      }
-    })
+const trainingLoss = createStream([], true);
+const validationLoss = createStream([], true);
+const plotLosses = plotter({
+  series: [
+    { name: 'training loss', data: trainingLoss },
+    { name: 'validation loss', data: validationLoss },
+  ],
+  options: {
+    xaxis: { title: { text: 'Epoch' } },
+    yaxis: { title: { text: 'Loss' } },
+  },
+});
+plotLosses.name = 'losses';
+
+const trainingAccuracy = createStream([], true);
+const validationAccuracy = createStream([], true);
+const plotAccuracies = plotter({
+  series: [
+    { name: 'training accuracy', data: trainingAccuracy },
+    { name: 'validation accuracy', data: validationAccuracy },
+  ],
+  options: {
+    xaxis: { title: { text: 'Epoch' } },
+    yaxis: { title: { text: 'Accuracy' }, min: 0, max: 1 },
+  },
+});
+plotAccuracies.name = 'accuracies';
+
+createStream(classifier.$training).subscribe((x) => {
+  if (x.status === 'start') {
+    trainingLoss.set([]);
+    validationLoss.set([]);
+    trainingAccuracy.set([]);
+    validationAccuracy.set([]);
+  } else if (x.status === 'epoch') {
+    trainingLoss.set(trainingLoss.value.concat([x.data.loss]));
+    validationLoss.set(validationLoss.value.concat([x.data.lossVal]));
+    trainingAccuracy.set(trainingAccuracy.value.concat([x.data.accuracy]));
+    validationAccuracy.set(validationAccuracy.value.concat([x.data.accuracyVal]));
   }
-})
+});
 
 // -----------------------------------------------------------
 // BATCH PREDICTION
@@ -93,7 +110,16 @@ batchMLP.$predictions.subscribe(async () => {
 const tog = toggle({ text: 'toggle prediction' });
 const results = text({ text: 'waiting for predictions...' });
 
-let predictions = { stop() { } };
+const confidenceStream = createStream([], true);
+const plotConfidences = plotter({
+  series: [{ name: 'Confidence', data: confidenceStream }],
+  options: {
+    chart: { type: 'bar' },
+  },
+});
+plotConfidences.name = 'confidences';
+
+let predictions = { stop() {} };
 createStream(skipRepeats(tog.$checked)).subscribe((x) => {
   if (x) {
     predictions = createStream(
@@ -104,6 +130,9 @@ createStream(skipRepeats(tog.$checked)).subscribe((x) => {
         `<h2>predicted label: ${y.label}</h2><p>Confidences: ${Object.values(
           y.confidences,
         ).map((z) => z.toFixed(2))}</p>`,
+      );
+      confidenceStream.set(
+        Object.entries(y.confidences).map(([label, value]) => ({ x: label, y: value })),
       );
     });
   } else {
@@ -124,6 +153,6 @@ const dashboard = createDashboard({
 dashboard.page('Data Management').useLeft(w, m).use(cap, trainingSetBrowser);
 dashboard.page('Training').use(params, b, prog, [plotLosses, plotAccuracies]);
 dashboard.page('Batch Prediction').use(predictButton, predictionAccuracy, confusionMatrix);
-dashboard.page('Real-time Prediction').useLeft(w).use(tog, results);
+dashboard.page('Real-time Prediction').useLeft(w).use(tog, results, plotConfidences);
 
 dashboard.start();

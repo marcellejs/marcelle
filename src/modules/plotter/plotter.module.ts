@@ -1,4 +1,4 @@
-// import { empty } from '@most/core';
+import { ApexOptions } from 'apexcharts';
 import { Module } from '../../core/module';
 import Component from './plotter.svelte';
 import { Stream } from '../../core/stream';
@@ -7,61 +7,50 @@ import { Stream } from '../../core/stream';
 //   text: string;
 // }
 
+type PlotterSeries = Array<{ name: string; data: Stream<number[]> }>;
+
+export interface PlotterOptions {
+  series?: PlotterSeries;
+  options?: ApexOptions;
+}
+
 export class Plotter extends Module {
   name = 'plots';
   description = 'plots from apexchart';
 
-  $title: Stream<string>;
-  $options: Stream<{ chart: {}, series: [{ name: string, data: number[] }] }>;
+  series: PlotterSeries;
+  #options: ApexOptions;
 
-  // constructor(inputStreams: Stream<number[]>[], title: string) {
-  constructor(title: string) {
+  constructor({ series = [], options = {} }: PlotterOptions) {
     super();
-    this.$title = new Stream(title, true);
-    this.$options = new Stream({ chart: {}, series: [{ name: 'loss', data: [] }] }, true);
+    this.series = series;
+    this.#options = options;
     this.start();
   }
 
-  plotting(inputs: { name: string, data: number[] }[]): void {
-    for (let i = 0; i < inputs.length; i++) {
-      const x = this.$options.value;
-      if (x.series.length < i) {
-        x.series.push(inputs[i]);
-      }
-      else {
-        x.series[i] = inputs[i];
-      }
-      this.$options.set(x);
-      console.log(i, inputs.length, inputs);
-    }
-  }
-
+  // plotting(inputs: { name: string; data: number[] }[]): void {
+  //   for (let i = 0; i < inputs.length; i++) {
+  //     const x = this.$options.value;
+  //     if (x.series.length < i) {
+  //       x.series.push(inputs[i]);
+  //     } else {
+  //       x.series[i] = inputs[i];
+  //     }
+  //     this.$options.set(x);
+  //   }
+  // }
 
   mount(targetSelector?: string): void {
     const target = document.querySelector(targetSelector || `#${this.id}`);
-
-    this.$options.set({
-      chart: {
-        height: 350,
-        type: 'line',
-        zoom: {
-          enabled: false
-        }
-      },
-      series: [
-        {
-          name: 'void',
-          data: [],
-        }],
-    })
-
+    if (!target) return;
+    this.destroy();
     this.$$.app = new Component({
       target,
       props: {
         title: this.name,
-        options: this.$options,
+        options: this.#options,
+        series: this.series,
       },
     });
   }
-
 }
