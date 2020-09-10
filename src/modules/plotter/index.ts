@@ -1,11 +1,7 @@
-import { Plotter } from './plotter.module';
-// import { Stream } from '../../core/stream';
+import { Plotter, PlotterOptions } from './plotter.module';
 
-// export function plotter(inputStreams: [Stream<number[]>], title: string): Plotter {
-//   return new Plotter(inputStreams, title);
-// }
-export function plotter(title: string): Plotter {
-  return new Plotter(title);
+export function plotter(options: PlotterOptions): Plotter {
+  return new Plotter(options);
 }
 
-export type { Plotter };
+export type { Plotter, PlotterOptions };

@@ -24,6 +24,7 @@ export * from './modules/plotter';
 export * from './modules/progress';
 export * from './modules/text';
 export * from './modules/toggle';
+export * from './modules/training-plotter';
 export * from './modules/webcam';
 
 // Models
