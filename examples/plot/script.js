@@ -37,7 +37,48 @@ b.$click.subscribe(() => classifier.train(trainingSet));
 
 const params = parameters(classifier);
 const prog = progress(classifier);
-const plotTraining = trainingPlotter(classifier);
+
+const trainingLoss = createStream([], true);
+const validationLoss = createStream([], true);
+const plotLosses = plotter({
+  series: [
+    { name: 'training loss', data: trainingLoss },
+    { name: 'validation loss', data: validationLoss },
+  ],
+  options: {
+    xaxis: { title: { text: 'Epoch' } },
+    yaxis: { title: { text: 'Loss' } },
+  },
+});
+plotLosses.name = 'losses';
+
+const trainingAccuracy = createStream([], true);
+const validationAccuracy = createStream([], true);
+const plotAccuracies = plotter({
+  series: [
+    { name: 'training accuracy', data: trainingAccuracy },
+    { name: 'validation accuracy', data: validationAccuracy },
+  ],
+  options: {
+    xaxis: { title: { text: 'Epoch' } },
+    yaxis: { title: { text: 'Accuracy' }, min: 0, max: 1 },
+  },
+});
+plotAccuracies.name = 'accuracies';
+
+createStream(classifier.$training).subscribe((x) => {
+  if (x.status === 'start') {
+    trainingLoss.set([]);
+    validationLoss.set([]);
+    trainingAccuracy.set([]);
+    validationAccuracy.set([]);
+  } else if (x.status === 'epoch') {
+    trainingLoss.set(trainingLoss.value.concat([x.data.loss]));
+    validationLoss.set(validationLoss.value.concat([x.data.lossVal]));
+    trainingAccuracy.set(trainingAccuracy.value.concat([x.data.accuracy]));
+    validationAccuracy.set(validationAccuracy.value.concat([x.data.accuracyVal]));
+  }
+});
 
 // -----------------------------------------------------------
 // BATCH PREDICTION
@@ -110,7 +151,7 @@ const dashboard = createDashboard({
 });
 
 dashboard.page('Data Management').useLeft(w, m).use(cap, trainingSetBrowser);
-dashboard.page('Training').use(params, b, prog, plotTraining);
+dashboard.page('Training').use(params, b, prog, [plotLosses, plotAccuracies]);
 dashboard.page('Batch Prediction').use(predictButton, predictionAccuracy, confusionMatrix);
 dashboard.page('Real-time Prediction').useLeft(w).use(tog, results, plotConfidences);
 
