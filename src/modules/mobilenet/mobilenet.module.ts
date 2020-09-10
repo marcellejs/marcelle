@@ -13,6 +13,12 @@ export interface MobilenetOptions {
   input?: Stream<ImageData>;
   version?: MobileNetVersion;
   alpha?: MobileNetAlpha;
+  mode?: 'string';
+}
+
+export interface MobilenetResults {
+  label: string;
+  confidences: { [key: string]: number };
 }
 
 export class Mobilenet extends Module {
@@ -61,6 +67,17 @@ export class Mobilenet extends Module {
     return this.#mobilenet.infer(image, true).arraySync() as number[][];
   }
 
+  async predict(image: ImageData): Promise<MobilenetResults> {
+    if (!this.#mobilenet) {
+      throw new Error('Mobilenet is not loaded');
+    }
+    const results = await this.#mobilenet.classify(image, 5);
+    return {
+      label: results[0].className,
+      confidences: results.reduce((x, y) => ({ ...x, [y.className]: y.probability }), {}),
+    };
+  }
+
   mount(targetSelector?: string): void {
     const target = document.querySelector(targetSelector || `#${this.id}`);
     if (!target) return;
@@ -74,5 +91,5 @@ export class Mobilenet extends Module {
         alpha: this.alpha,
       },
     });
-  } // eslint-disable-line class-methods-use-this
+  }
 }

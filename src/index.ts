@@ -17,6 +17,7 @@ export * from './modules/capture';
 export * from './modules/confusion';
 export * from './modules/dataset';
 export * from './modules/faker';
+export * from './modules/image-drop';
 export * from './modules/mobilenet';
 export * from './modules/parameters';
 export * from './modules/plotter';

@@ -87,7 +87,12 @@
   }
 </style>
 
+<svelte:head>
+  <title>{title}</title>
+</svelte:head>
+
 <Tailwind />
+
 {#if showApp}
   <div style="position: fixed; height: 100vh; overflow: scroll; width: 100vw; top:0; left:0">
     <div class="app-container" transition:blur={{ amount: 10 }}>

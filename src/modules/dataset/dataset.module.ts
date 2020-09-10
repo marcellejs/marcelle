@@ -4,7 +4,7 @@ import dequal from 'dequal';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import type { Instance, ObjectId } from '../../core/types';
-import { Backend, BackendType } from '../../backend/backend';
+import { Backend } from '../../backend/backend';
 import { addScope, imageData2DataURL, limitToScope, dataURL2ImageData } from '../../backend/hooks';
 import { saveBlob } from '../../utils/file-io';
 
@@ -17,7 +17,7 @@ export class Dataset extends Module {
   name = 'dataset';
   description = 'Dataset';
 
-  #unsubscribe: () => void;
+  #unsubscribe: () => void = () => {};
   #backend: Backend;
 
   instanceService: Service<Instance>;
@@ -38,7 +38,8 @@ export class Dataset extends Module {
       before: {
         create: [
           addScope('datasetName', this.name),
-          this.#backend.backendType === BackendType.Memory && imageData2DataURL,
+          imageData2DataURL,
+          // this.#backend.backendType !== BackendType.Memory && imageData2DataURL,
         ].filter((x) => !!x),
         find: [limitToScope('datasetName', this.name)],
         get: [limitToScope('datasetName', this.name)],
@@ -47,12 +48,10 @@ export class Dataset extends Module {
         remove: [limitToScope('datasetName', this.name)],
       },
       after: {
-        find: [this.#backend.backendType === BackendType.Memory && dataURL2ImageData].filter(
-          (x) => !!x,
-        ),
-        get: [this.#backend.backendType === BackendType.Memory && dataURL2ImageData].filter(
-          (x) => !!x,
-        ),
+        // find: [this.#backend.backendType !== BackendType.Memory && dataURL2ImageData].filter(
+        find: [dataURL2ImageData].filter((x) => !!x),
+        // get: [this.#backend.backendType !== BackendType.Memory && dataURL2ImageData].filter(
+        get: [dataURL2ImageData].filter((x) => !!x),
       },
     });
 
@@ -86,6 +85,11 @@ export class Dataset extends Module {
   }
 
   capture(instanceStream: Stream<Instance>): void {
+    this.#unsubscribe();
+    if (!instanceStream) {
+      this.#unsubscribe = () => {};
+      return;
+    }
     this.#unsubscribe = instanceStream.subscribe(async (instance: Instance) => {
       if (!instance) return;
       const { id } = await this.instanceService.create(instance);

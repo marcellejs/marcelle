@@ -1,5 +1,6 @@
 import { HookContext } from '@feathersjs/feathers';
 import genId from './objectid';
+import { convertURIToImageData } from '../utils/image';
 
 export function addObjectId(context: HookContext): HookContext {
   const { data, service } = context;
@@ -94,29 +95,6 @@ export async function imageData2DataURL(context: HookContext): Promise<HookConte
   }
 
   return context;
-}
-
-const canvas2 = document.createElement('canvas');
-const ctx2 = canvas2.getContext('2d');
-const image2 = new Image();
-function convertURIToImageData(URI: string): Promise<ImageData> {
-  return new Promise((resolve, reject) => {
-    if (!URI) {
-      reject();
-    } else {
-      image2.addEventListener(
-        'load',
-        () => {
-          canvas2.width = image2.width;
-          canvas2.height = image2.height;
-          ctx2?.drawImage(image2, 0, 0, canvas2.width, canvas2.height);
-          resolve(ctx2?.getImageData(0, 0, canvas2.width, canvas2.height));
-        },
-        false,
-      );
-      image2.src = URI;
-    }
-  });
 }
 
 export async function dataURL2ImageData(context: HookContext): Promise<HookContext> {

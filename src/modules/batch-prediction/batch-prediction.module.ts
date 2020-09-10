@@ -62,13 +62,13 @@ export class BatchPrediction extends Module {
     this.start();
   }
 
-  async predict(model: MLP, dataset: Dataset): Promise<void> {
+  async predict(model: MLP, dataset: Dataset, inputField = 'features'): Promise<void> {
     const result = await dataset.instanceService.find({
-      query: { $select: ['id', 'features', 'label'] },
+      query: { $select: ['id', inputField, 'label'] },
     });
     const { data } = result as Paginated<Instance>;
     const predictionIds = await Promise.all(
-      data.map(({ id, features, label }) =>
+      data.map(({ id, [inputField]: features, label }) =>
         model
           .predict(features)
           .then((prediction) =>
