@@ -30,6 +30,10 @@
     @apply bg-gray-200 border-gray-400 cursor-default text-gray-600;
   }
 
+  .btn.small {
+    @apply px-2 py-1;
+  }
+
   .btn.danger {
     @apply text-red-600 border-red-600;
   }

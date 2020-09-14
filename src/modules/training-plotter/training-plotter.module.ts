@@ -73,6 +73,12 @@ export class TrainingPlotter extends Module {
     target.appendChild(divAcc);
     this.plotLosses.mount(`#${divLoss.id}`);
     this.plotAccuracies.mount(`#${divAcc.id}`);
+    this.destroy = () => {
+      target.removeChild(divLoss);
+      target.removeChild(divAcc);
+      this.plotLosses.destroy();
+      this.plotAccuracies.destroy();
+    };
   }
 
   destroy(): void {

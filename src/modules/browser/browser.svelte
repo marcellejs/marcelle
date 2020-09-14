@@ -30,7 +30,7 @@
   .browser-class {
     @apply relative m-2 w-1/3 flex-grow;
     @apply border-gray-600 border rounded-lg;
-    min-width: 400px;
+    min-width: 300px;
   }
 
   .browser-class-header {

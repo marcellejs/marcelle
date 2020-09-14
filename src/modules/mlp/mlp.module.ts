@@ -127,10 +127,15 @@ export class MLP extends Module implements Parametrable {
   }
 
   train(dataset: Dataset): void {
-    this.labels = dataset.$labels.value;
+    this.labels = dataset.$labels.value || [];
     if (this.labels.length < 2) {
       this.$training.set({ status: 'error' });
-      throw new Error('Cannot train a MLP with less than 2 classes');
+      notify({
+        title: 'Training error',
+        message: 'Cannot train a MLP with less than 2 classes',
+        type: 'danger',
+      });
+      return;
     }
     this.$training.set({ status: 'start', epochs: this.parameters.epochs.value });
     setTimeout(async () => {
@@ -216,6 +221,7 @@ export class MLP extends Module implements Parametrable {
   }
 
   async predict(x: number[][]): Promise<MLPResults> {
+    if (!this.model) return null;
     const pred = this.model.predict(tensor2d(x)) as Tensor2D;
     const softmaxes = pred.arraySync()[0];
     const ypred = arrayArgMax(softmaxes);

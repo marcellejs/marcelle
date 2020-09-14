@@ -18,11 +18,6 @@
     dataLabels: {
       enabled: false,
     },
-    plotOptions: {
-      bar: {
-        distributed: true,
-      },
-    },
     theme: {
       palette: 'palette1', // upto palette10
     },
@@ -48,7 +43,16 @@
     chartOptions = mergeDeep(defaultOptions, options);
     unSub = series.map((s) =>
       s.data.subscribe((values) => {
-        chartOptions.series = series.map((x) => ({ name: x.name, data: x.data.value }));
+        if (values) {
+          chartOptions = mergeDeep(defaultOptions, options, {
+            plotOptions: {
+              bar: {
+                distributed: true,
+              },
+            },
+          });
+          chartOptions.series = series.map((x) => ({ name: x.name, data: x.data.value }));
+        }
       }),
     );
   });

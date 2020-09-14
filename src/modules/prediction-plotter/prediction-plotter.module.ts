@@ -1,4 +1,4 @@
-import { map } from '@most/core';
+import { map, startWith } from '@most/core';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import { Prediction } from '../../core/types';
@@ -11,7 +11,7 @@ export class PredictionPlotter extends Module {
 
   $confidenceStream: Stream<{ x: string; y: number }[]>;
   #plotConfidences: Plotter;
-  #displayAccuracy: Text;
+  #displayLabel: Text;
 
   constructor(predictionStream: Stream<Prediction>) {
     super();
@@ -31,16 +31,20 @@ export class PredictionPlotter extends Module {
       },
     });
     this.#plotConfidences.name = '';
-    this.#displayAccuracy = text({ text: 'Waiting for predictions...' });
-    this.#displayAccuracy.name = this.name;
-    this.#displayAccuracy.$text = new Stream(
-      map(({ label, trueLabel }: Prediction) => {
-        let t = `<h2>Predicted Label: <code>${label}</code></h2>`;
-        if (trueLabel !== undefined) {
-          t += `<p>True Label: ${trueLabel} (${label === trueLabel ? 'Correct' : 'Incorrect'})</p>`;
-        }
-        return t;
-      }, predictionStream),
+    this.#displayLabel = text({ text: 'Waiting for predictions...' });
+    this.#displayLabel.name = this.name;
+    this.#displayLabel.$text = new Stream(
+      startWith('Waiting for predictions...')(
+        map(({ label, trueLabel }: Prediction) => {
+          let t = `<h2>Predicted Label: <code>${label}</code></h2>`;
+          if (trueLabel !== undefined) {
+            t += `<p>True Label: ${trueLabel} (${
+              label === trueLabel ? 'Correct' : 'Incorrect'
+            })</p>`;
+          }
+          return t;
+        }, predictionStream),
+      ),
       true,
     );
     this.start();
@@ -48,22 +52,25 @@ export class PredictionPlotter extends Module {
 
   mount(targetSelector?: string): void {
     const target = document.querySelector(targetSelector || `#${this.id}`);
-    // target.classList.add('flex', 'flex-row', 'flex-wrap', 'items-stretch');
     if (!target) return;
-    const divLoss = document.createElement('div');
-    divLoss.id = `${target.id}-${this.#displayAccuracy.id}`;
-    // divLoss.classList.add('card', 'flex-none', 'xl:flex-1', 'w-full', 'xl:w-auto');
-    const divAcc = document.createElement('div');
-    divAcc.id = `${target.id}-${this.#plotConfidences.id}`;
-    // divAcc.classList.add('card', 'flex-none', 'xl:flex-1', 'w-full', 'xl:w-auto');
-    target.appendChild(divLoss);
-    target.appendChild(divAcc);
-    this.#displayAccuracy.mount(`#${divLoss.id}`);
-    this.#plotConfidences.mount(`#${divAcc.id}`);
+    const divLab = document.createElement('div');
+    divLab.id = `${target.id}-${this.#displayLabel.id}`;
+    const divConf = document.createElement('div');
+    divConf.id = `${target.id}-${this.#plotConfidences.id}`;
+    target.appendChild(divLab);
+    target.appendChild(divConf);
+    this.#displayLabel.mount(`#${divLab.id}`);
+    this.#plotConfidences.mount(`#${divConf.id}`);
+    this.destroy = () => {
+      target.removeChild(divLab);
+      target.removeChild(divConf);
+      this.#displayLabel.destroy();
+      this.#plotConfidences.destroy();
+    };
   }
 
   destroy(): void {
-    this.#displayAccuracy.destroy();
+    this.#displayLabel.destroy();
     this.#plotConfidences.destroy();
   }
 }
