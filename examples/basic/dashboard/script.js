@@ -1,25 +1,33 @@
 /* eslint-disable no-undef */
 
 // -----------------------------------------------------------
-// INPUT PIPELINE & CAPTURE TO DATASET
+// INPUT PIPELINE & DATA CAPTURE
 // -----------------------------------------------------------
 
-const w = webcam();
-const m = mobilenet();
+const input = webcam();
+const featureExtractor = mobilenet();
 
-const cap = capture({ input: w.$images, thumbnail: w.$thumbnails });
+const cap = capture({ input: input.$images, thumbnail: input.$thumbnails });
 const instances = new Stream(
   awaitPromises(
     map(
       async (instance) => ({
         ...instance,
         type: 'image',
-        features: await m.process(instance.data),
+        features: await featureExtractor.process(instance.data),
       }),
       cap.$instances,
     ),
   ),
 );
+
+// const instances = cap.$instances
+//   .map(async (instance) => ({
+//     ...instance,
+//     type: 'image',
+//     features: await m.process(instance.data),
+//   }))
+//   .awaitPromises();
 
 const backend = createBackend({ location: 'localStorage' });
 const trainingSet = dataset({ name: 'TrainingSet', backend });
@@ -44,22 +52,12 @@ const plotTraining = trainingPlotter(classifier);
 // -----------------------------------------------------------
 
 const batchMLP = batchPrediction({ name: 'mlp', backend });
-const predictButton = button({ text: 'Update predictions' });
-const predictionAccuracy = text({ text: 'Waiting for predictions...' });
 const confusionMatrix = confusion(batchMLP);
 
+const predictButton = button({ text: 'Update predictions' });
 predictButton.$click.subscribe(async () => {
   await batchMLP.clear();
   await batchMLP.predict(classifier, trainingSet);
-});
-
-batchMLP.$predictions.subscribe(async () => {
-  const { data: predictions } = await batchMLP.predictionService.find();
-  const accuracy =
-    predictions
-      .map(({ label, trueLabel }) => (label === trueLabel ? 1 : 0))
-      .reduce((x, y) => x + y, 0) / predictions.length;
-  predictionAccuracy.$text.set(`Global Accuracy: ${accuracy}`);
 });
 
 // -----------------------------------------------------------
@@ -67,37 +65,22 @@ batchMLP.$predictions.subscribe(async () => {
 // -----------------------------------------------------------
 
 const tog = toggle({ text: 'toggle prediction' });
-const results = text({ text: 'waiting for predictions...' });
 
-const confidenceStream = createStream([], true);
-const plotConfidences = plotter({
-  series: [{ name: 'Confidence', data: confidenceStream }],
-  options: {
-    chart: { type: 'bar' },
-  },
-});
-plotConfidences.name = 'confidences';
+const predictionStream = createStream(
+  awaitPromises(
+    map(
+      async (img) => classifier.predict(await featureExtractor.process(img)),
+      filter(() => tog.$checked.value, input.$images),
+    ),
+  ),
+);
 
-let predictions = { stop() {} };
-createStream(skipRepeats(tog.$checked)).subscribe((x) => {
-  if (x) {
-    predictions = createStream(
-      awaitPromises(map(async (img) => classifier.predict(await m.process(img)), w.$images)),
-    );
-    predictions.subscribe((y) => {
-      results.$text.set(
-        `<h2>predicted label: ${y.label}</h2><p>Confidences: ${Object.values(
-          y.confidences,
-        ).map((z) => z.toFixed(2))}</p>`,
-      );
-      confidenceStream.set(
-        Object.entries(y.confidences).map(([label, value]) => ({ x: label, y: value })),
-      );
-    });
-  } else {
-    predictions.stop();
-  }
-});
+// const predictionStream = input.$images
+//   .filter(() => tog.$checked.value)
+//   .map(async (img) => classifier.predict(await m.process(img)))
+//   .awaitPromises();
+
+const plotResults = predictionPlotter(predictionStream);
 
 // -----------------------------------------------------------
 // DASHBOARDS
@@ -109,9 +92,9 @@ const dashboard = createDashboard({
   datasets: [trainingSet],
 });
 
-dashboard.page('Data Management').useLeft(w, m).use(cap, trainingSetBrowser);
+dashboard.page('Data Management').useLeft(input, featureExtractor).use(cap, trainingSetBrowser);
 dashboard.page('Training').use(params, b, prog, plotTraining);
-dashboard.page('Batch Prediction').use(predictButton, predictionAccuracy, confusionMatrix);
-dashboard.page('Real-time Prediction').useLeft(w).use(tog, results, plotConfidences);
+dashboard.page('Batch Prediction').use(predictButton, confusionMatrix);
+dashboard.page('Real-time Prediction').useLeft(input).use(tog, plotResults);
 
 dashboard.start();

@@ -21,13 +21,8 @@ const instances = createStream(
   ),
 );
 
-// const backend = createBackend({ location: 'http://localhost:3030' });
 const backend = createBackend({ location: 'localStorage' });
-backend.createService('training');
-
-// const trainingSet = dataset({ name: 'TrainingSet' });
 const trainingSet = dataset({ name: 'TrainingSet', backend });
-// const trainingSet = dataset({ name: 'TrainingSet', backend: 'remote' });
 trainingSet.capture(instances);
 
 const trainingSetBrowser = browser(trainingSet);
@@ -37,23 +32,38 @@ const trainingSetBrowser = browser(trainingSet);
 // -----------------------------------------------------------
 
 const b = button({ text: 'Train' });
-const classifier = mlp({ layers: [128, 64], epochs: 30 });
-b.$click.subscribe(() => {
-  classifier.train(trainingSet);
-});
-
-// Record training start/success/error to a log in the database
-classifier.$training.subscribe((x) => {
-  if (x.status !== 'idle' && x.status !== 'epoch') {
-    backend.service('training').create(x);
-  }
-});
+const classifier = mlp({ layers: [64, 32], epochs: 20 });
+b.$click.subscribe(() => classifier.train(trainingSet));
 
 const params = parameters(classifier);
 const prog = progress(classifier);
+const plotTraining = trainingPlotter(classifier);
 
 // -----------------------------------------------------------
-// PREDICTION
+// BATCH PREDICTION
+// -----------------------------------------------------------
+
+const batchMLP = batchPrediction({ name: 'mlp', backend });
+const predictButton = button({ text: 'Update predictions' });
+const predictionAccuracy = text({ text: 'Waiting for predictions...' });
+const confusionMatrix = confusion(batchMLP);
+
+predictButton.$click.subscribe(async () => {
+  await batchMLP.clear();
+  await batchMLP.predict(classifier, trainingSet);
+});
+
+batchMLP.$predictions.subscribe(async () => {
+  const { data: predictions } = await batchMLP.predictionService.find();
+  const accuracy =
+    predictions
+      .map(({ label, trueLabel }) => (label === trueLabel ? 1 : 0))
+      .reduce((x, y) => x + y, 0) / predictions.length;
+  predictionAccuracy.$text.set(`Global Accuracy: ${accuracy}`);
+});
+
+// -----------------------------------------------------------
+// REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
 const tog = toggle({ text: 'toggle prediction' });
@@ -63,33 +73,33 @@ const results = text({ text: 'waiting for predictions...' });
 const d = document.querySelector('#results');
 const resultImg = document.querySelector('#result-img');
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-let predictions = { stop() {} };
-createStream(skipRepeats(tog.$checked)).subscribe((x) => {
-  if (x) {
-    predictions = createStream(
-      awaitPromises(map(async (img) => classifier.predict(await m.process(img)), w.$images)),
-    );
-    let PrevLabel = '';
-    predictions.subscribe((y) => {
-      results.$text.set(
-        `<h2>predicted label: ${y.label}</h2><p>Confidences: ${Object.values(
-          y.confidences,
-        ).map((z) => z.toFixed(2))}</p>`,
-      );
-      // backend.service('results').create(y);
-      if (y.label !== PrevLabel) {
-        d.innerText = `predicted label: ${y.label}`;
-        resultImg.src =
-          y.label === 'A'
-            ? 'https://media.giphy.com/media/zlVf2eSgXIFFuTnEhz/giphy.gif'
-            : 'https://media.giphy.com/media/Oc8lIQHZsXqDu/giphy.gif';
-        PrevLabel = y.label;
-      }
-    });
-  } else {
-    predictions.stop();
+const confidenceStream = createStream([], true);
+const plotConfidences = plotter({
+  series: [{ name: 'Confidence', data: confidenceStream }],
+  options: {
+    chart: { type: 'bar' },
+  },
+});
+plotConfidences.name = 'confidences';
+
+let PrevLabel = '';
+createStream(filter(() => tog.$checked.value, w.$images)).subscribe(async (img) => {
+  const { label, confidences } = await classifier.predict(await m.process(img));
+  results.$text.set(
+    `<h2>predicted label: ${label}</h2>
+      <p>Confidences: ${Object.values(confidences).map((z) => z.toFixed(2))}</p>`,
+  );
+  if (y.label !== PrevLabel) {
+    d.innerText = `predicted label: ${y.label}`;
+    resultImg.src =
+      y.label === 'A'
+        ? 'https://media.giphy.com/media/zlVf2eSgXIFFuTnEhz/giphy.gif'
+        : 'https://media.giphy.com/media/Oc8lIQHZsXqDu/giphy.gif';
+    PrevLabel = y.label;
   }
+  confidenceStream.set(
+    Object.entries(confidences).map(([label, value]) => ({ x: label, y: value })),
+  );
 });
 
 // -----------------------------------------------------------

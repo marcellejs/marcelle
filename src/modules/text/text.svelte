@@ -7,5 +7,7 @@
 
 <span class="card-title">{title}</span>
 <div>
-  {@html $text}
+  {#if $text}
+    {@html $text}
+  {/if}
 </div>

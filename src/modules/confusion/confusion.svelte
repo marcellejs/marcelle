@@ -4,6 +4,7 @@
 
   export let title;
   export let confusion;
+  export let accuracy;
 
   let options = {
     chart: { type: 'heatmap', width: '300px', height: '300px' },
@@ -14,6 +15,8 @@
     title: {
       text: 'Confusion Matrix',
     },
+    xaxis: { title: { text: 'True Label' } },
+    yaxis: { title: { text: 'Predicted Label' } },
     series: [],
   };
 
@@ -41,4 +44,9 @@
 
 <span class="card-title">{title}</span>
 
-<div use:chart={options} />
+{#if $accuracy}
+  <p class="m-2">Global Accuracy: {$accuracy.toFixed(2)}</p>
+  <div use:chart={options} />
+{:else}
+  <p class="m-2">Waiting for predictions...</p>
+{/if}

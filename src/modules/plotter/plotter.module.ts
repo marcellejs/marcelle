@@ -7,7 +7,10 @@ import { Stream } from '../../core/stream';
 //   text: string;
 // }
 
-type PlotterSeries = Array<{ name: string; data: Stream<number[]> }>;
+type PlotterSeries = Array<{
+  name: string;
+  data: Stream<number[]> | Stream<{ x: string; y: number }[]>;
+}>;
 
 export interface PlotterOptions {
   series?: PlotterSeries;

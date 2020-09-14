@@ -21,6 +21,7 @@ export * from './modules/image-drop';
 export * from './modules/mobilenet';
 export * from './modules/parameters';
 export * from './modules/plotter';
+export * from './modules/prediction-plotter';
 export * from './modules/progress';
 export * from './modules/text';
 export * from './modules/toggle';

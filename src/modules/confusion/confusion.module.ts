@@ -3,6 +3,7 @@ import { Module } from '../../core/module';
 import Component from './confusion.svelte';
 import { BatchPrediction } from '../batch-prediction';
 import { Stream } from '../../core/stream';
+import { Prediction } from '../../core/types';
 
 export type ConfusionMatrix = {
   name: string;
@@ -19,35 +20,52 @@ export class Confusion extends Module {
   #prediction: BatchPrediction;
 
   $confusion: Stream<ConfusionMatrix>;
+  $accuracy: Stream<number>;
 
   constructor(prediction: BatchPrediction) {
     super();
     this.#prediction = prediction;
-    this.$confusion = new Stream(
+    const predStream = new Stream(
       awaitPromises(
-        map(async (predictionIds: string[]) => {
-          const predictions = await Promise.all(
-            predictionIds.map((id) => this.#prediction.predictionService.get(id)),
-          );
-          const labels = predictions.map((x) => x.label);
-          const trueLabels = predictions.map((x) => x.trueLabel);
-          const uniqueLabels = Array.from(new Set(labels.concat(trueLabels)));
-          const labIndices: Record<string, number> = uniqueLabels.reduce(
-            (x, l, i) => ({ ...x, [l]: i }),
-            {},
-          );
-          const confusion = uniqueLabels.map((label1) => ({
-            name: label1,
-            data: uniqueLabels.map((label2) => ({ x: label2, y: 0 })),
-          }));
-          for (let i = 0; i < labels.length; i += 1) {
-            confusion[labIndices[labels[i]]].data[labIndices[trueLabels[i]]].y += 1;
-          }
-          return confusion;
-        }, this.#prediction.$predictions),
+        map(
+          async (predictionIds: string[]) =>
+            Promise.all(predictionIds.map((id) => this.#prediction.predictionService.get(id))),
+          this.#prediction.$predictions,
+        ),
+      ),
+    );
+    this.$confusion = new Stream(
+      map((predictions: Prediction[]) => {
+        const labels = predictions.map((x) => x.label);
+        const trueLabels = predictions.map((x) => x.trueLabel);
+        const uniqueLabels = Array.from(new Set(labels.concat(trueLabels)));
+        const labIndices: Record<string, number> = uniqueLabels.reduce(
+          (x, l, i) => ({ ...x, [l]: i }),
+          {},
+        );
+        const confusion = uniqueLabels.map((label1) => ({
+          name: label1,
+          data: uniqueLabels.map((label2) => ({ x: label2, y: 0 })),
+        }));
+        for (let i = 0; i < labels.length; i += 1) {
+          confusion[labIndices[labels[i]]].data[labIndices[trueLabels[i]]].y += 1;
+        }
+        return confusion;
+      }, predStream),
+      true,
+    );
+    this.$accuracy = new Stream(
+      map(
+        (predictions: Prediction[]) =>
+          predictions.reduce(
+            (correct, { label, trueLabel }) => correct + (label === trueLabel ? 1 : 0),
+            0,
+          ) / predictions.length,
+        predStream,
       ),
       true,
     );
+
     this.start();
   }
 
@@ -60,6 +78,7 @@ export class Confusion extends Module {
       props: {
         title: this.name,
         confusion: this.$confusion,
+        accuracy: this.$accuracy,
       },
     });
   }
