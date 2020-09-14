@@ -1,5 +1,4 @@
 /* global marcelle, mostCore */
-// /* eslint-disable no-undef */
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
@@ -88,7 +87,7 @@ const plotResults = marcelle.predictionPlotter(predictionStream);
 // -----------------------------------------------------------
 
 const dashboard = marcelle.createDashboard({
-  title: 'Marcelle Starter',
+  title: 'Marcelle Example - Dashboard',
   author: 'Marcelle Pirates Crew',
   datasets: [trainingSet],
 });

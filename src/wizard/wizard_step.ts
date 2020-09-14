@@ -1,7 +1,7 @@
 import { Module } from '../core/module';
 
 export class Step {
-  modules: Module[] = [];
+  modules: Array<Module | Module[] | string> = [];
 
   attr = { title: '', description: '' };
 
@@ -17,7 +17,7 @@ export class Step {
     return this;
   }
 
-  use(...modules: Module[]): Step {
+  use(...modules: Array<Module | Module[] | string>): Step {
     this.modules = this.modules.concat(modules);
     return this;
   }

@@ -145,7 +145,7 @@ createStream(skipRepeats(tog.$checked)).subscribe((x) => {
 // -----------------------------------------------------------
 
 const dashboard = createDashboard({
-  title: 'Marcelle Starter',
+  title: 'Marcelle Example - Plots',
   author: 'Marcelle Pirates Crew',
   datasets: [trainingSet],
 });

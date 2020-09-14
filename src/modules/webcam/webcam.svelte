@@ -42,18 +42,12 @@
 
 <style lang="postcss">
   .webcam {
-    @apply mt-2;
-    width: 100%;
-    max-width: 350px;
-    display: flex;
-    flex-direction: column;
+    @apply mt-2 w-full text-center flex flex-col items-center;
   }
 
   .webcam .webcam-container {
-    @apply rounded-md overflow-hidden bg-gray-200 m-2;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
+    @apply rounded-md overflow-hidden bg-gray-200 m-2 w-full flex justify-center;
+    max-width: 350px;
   }
 
   video {
