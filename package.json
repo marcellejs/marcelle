@@ -26,6 +26,7 @@
     "@rollup/plugin-typescript": "^5.0.2",
     "@typescript-eslint/eslint-plugin": "^3.7.0",
     "eslint": "^7.8.1",
+    "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-airbnb-typescript": "^9.0.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-svelte3": "^2.7.3",

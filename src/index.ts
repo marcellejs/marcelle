@@ -6,8 +6,10 @@ export * from './core/types';
 export * from './backend';
 
 // Core library
-export * from './dashboard';
-export * from './wizard';
+export { createDashboard } from './dashboard';
+export type { DashboardOptions, DashboardApp } from './dashboard';
+export { createWizard } from './wizard';
+export type { Wizard } from './wizard';
 
 // Modules
 export * from './modules/batch-prediction';

@@ -1,27 +1,9 @@
 module.exports = {
   root: true,
-  parser: '@typescript-eslint/parser',
   env: {
     browser: true,
   },
-  parserOptions: {
-    ecmaVersion: 2020,
-    sourceType: 'module',
-    project: './tsconfig.json',
-  },
-  plugins: ['svelte3'],
-  extends: ['airbnb-typescript/base', 'plugin:@typescript-eslint/recommended'],
-  overrides: [
-    {
-      files: ['**/*.svelte'],
-      processor: 'svelte3/svelte3',
-      rules: {
-        'import/first': 'off',
-        'import/no-mutable-exports': 'off',
-        '@typescript-eslint/explicit-module-boundary-types': 'off',
-      },
-    },
-  ],
+  extends: ['airbnb-base'],
   rules: {
     'import/extensions': [
       'error',

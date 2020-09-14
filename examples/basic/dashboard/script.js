@@ -1,16 +1,17 @@
-/* eslint-disable no-undef */
+/* global marcelle, mostCore */
+// /* eslint-disable no-undef */
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
 // -----------------------------------------------------------
 
-const input = webcam();
-const featureExtractor = mobilenet();
+const input = marcelle.webcam();
+const featureExtractor = marcelle.mobilenet();
 
-const cap = capture({ input: input.$images, thumbnail: input.$thumbnails });
-const instances = new Stream(
-  awaitPromises(
-    map(
+const cap = marcelle.capture({ input: input.$images, thumbnail: input.$thumbnails });
+const instances = marcelle.createStream(
+  mostCore.awaitPromises(
+    mostCore.map(
       async (instance) => ({
         ...instance,
         type: 'image',
@@ -29,32 +30,32 @@ const instances = new Stream(
 //   }))
 //   .awaitPromises();
 
-const backend = createBackend({ location: 'localStorage' });
-const trainingSet = dataset({ name: 'TrainingSet', backend });
+const backend = marcelle.createBackend({ location: 'localStorage' });
+const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
 trainingSet.capture(instances);
 
-const trainingSetBrowser = browser(trainingSet);
+const trainingSetBrowser = marcelle.browser(trainingSet);
 
 // -----------------------------------------------------------
 // TRAINING
 // -----------------------------------------------------------
 
-const b = button({ text: 'Train' });
-const classifier = mlp({ layers: [64, 32], epochs: 20 });
+const b = marcelle.button({ text: 'Train' });
+const classifier = marcelle.mlp({ layers: [64, 32], epochs: 20 });
 b.$click.subscribe(() => classifier.train(trainingSet));
 
-const params = parameters(classifier);
-const prog = progress(classifier);
-const plotTraining = trainingPlotter(classifier);
+const params = marcelle.parameters(classifier);
+const prog = marcelle.progress(classifier);
+const plotTraining = marcelle.trainingPlotter(classifier);
 
 // -----------------------------------------------------------
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchMLP = batchPrediction({ name: 'mlp', backend });
-const confusionMatrix = confusion(batchMLP);
+const batchMLP = marcelle.batchPrediction({ name: 'mlp', backend });
+const confusionMatrix = marcelle.confusion(batchMLP);
 
-const predictButton = button({ text: 'Update predictions' });
+const predictButton = marcelle.button({ text: 'Update predictions' });
 predictButton.$click.subscribe(async () => {
   await batchMLP.clear();
   await batchMLP.predict(classifier, trainingSet);
@@ -64,13 +65,13 @@ predictButton.$click.subscribe(async () => {
 // REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
-const tog = toggle({ text: 'toggle prediction' });
+const tog = marcelle.toggle({ text: 'toggle prediction' });
 
-const predictionStream = createStream(
-  awaitPromises(
-    map(
+const predictionStream = marcelle.createStream(
+  mostCore.awaitPromises(
+    mostCore.map(
       async (img) => classifier.predict(await featureExtractor.process(img)),
-      filter(() => tog.$checked.value, input.$images),
+      mostCore.filter(() => tog.$checked.value, input.$images),
     ),
   ),
 );
@@ -80,13 +81,13 @@ const predictionStream = createStream(
 //   .map(async (img) => classifier.predict(await m.process(img)))
 //   .awaitPromises();
 
-const plotResults = predictionPlotter(predictionStream);
+const plotResults = marcelle.predictionPlotter(predictionStream);
 
 // -----------------------------------------------------------
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const dashboard = createDashboard({
+const dashboard = marcelle.createDashboard({
   title: 'Marcelle Starter',
   author: 'Marcelle Pirates Crew',
   datasets: [trainingSet],

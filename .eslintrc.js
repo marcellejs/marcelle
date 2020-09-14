@@ -9,11 +9,7 @@ module.exports = {
     project: './tsconfig.json',
   },
   plugins: ['svelte3'],
-  extends: [
-    'airbnb-typescript/base',
-    'plugin:@typescript-eslint/recommended',
-    // 'plugin:@typescript-eslint/recommended-requiring-type-checking',
-  ],
+  extends: ['airbnb-typescript/base', 'plugin:@typescript-eslint/recommended'],
   overrides: [
     {
       files: ['**/*.svelte'],
