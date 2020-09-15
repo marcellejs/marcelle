@@ -59,6 +59,7 @@ export class PredictionPlotter extends Module {
     divConf.id = `${target.id}-${this.#plotConfidences.id}`;
     target.appendChild(divLab);
     target.appendChild(divConf);
+    this.#displayLabel.name = this.name;
     this.#displayLabel.mount(`#${divLab.id}`);
     this.#plotConfidences.mount(`#${divConf.id}`);
     this.destroy = () => {

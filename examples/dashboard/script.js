@@ -40,6 +40,7 @@ const trainingSetBrowser = marcelle.browser(trainingSet);
 // -----------------------------------------------------------
 
 const b = marcelle.button({ text: 'Train' });
+b.name = 'Training Launcher';
 const classifier = marcelle.mlp({ layers: [64, 32], epochs: 20 });
 b.$click.subscribe(() => classifier.train(trainingSet));
 
