@@ -145,6 +145,7 @@ export class Webcam extends Module {
 
   async loadCameras(): Promise<void> {
     try {
+      await navigator.mediaDevices.getUserMedia({ video: true });
       const deviceInfos = await navigator.mediaDevices.enumerateDevices();
       for (let i = 0; i !== deviceInfos.length; i++) {
         const deviceInfo = deviceInfos[i];

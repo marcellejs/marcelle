@@ -164,9 +164,11 @@ input.$mediastream.subscribe((s) => {
   document.querySelector('#my-webcam').srcObject = s;
 });
 
-setTimeout(() => {
+function startCamera() {
   input.$active.set(true);
-}, 200);
+  document.body.removeEventListener('mousemove', startCamera);
+}
+document.body.addEventListener('mousemove', startCamera);
 
 // Update the GIFs with real-time recognition
 const d = document.querySelector('#results');

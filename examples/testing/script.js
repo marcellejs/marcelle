@@ -11,19 +11,20 @@ const classifier = marcelle.mobilenet();
 // CAPTURE TO DATASET
 // -----------------------------------------------------------
 
-const instances = marcelle.createStream(
-  mostCore.snapshot(
-    (img, thumb) => ({ data: img, label: 'unlabeled', thumbnail: thumb }),
-    source.$images,
-    source.$thumbnails,
-  ),
+const instances = source.$thumbnails.thru(
+  mostCore.map((thumbnail) => ({
+    type: 'image',
+    data: source.$images.value,
+    label: 'unlabeled',
+    thumbnail,
+  })),
 );
 
 const backend = marcelle.createBackend({ location: 'memory' });
 const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
 
 const tog = marcelle.toggle({ text: 'Capture to dataset' });
-marcelle.createStream(mostCore.skipRepeats(tog.$checked)).subscribe((x) => {
+tog.$checked.thru(mostCore.skipRepeats).subscribe((x) => {
   if (x) {
     trainingSet.capture(instances);
   } else {
