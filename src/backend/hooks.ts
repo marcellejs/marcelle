@@ -89,7 +89,7 @@ export async function imageData2DataURL(context: HookContext): Promise<HookConte
     const h = data.data.height;
     canvas1.width = w;
     canvas1.height = h;
-    ctx1.putImageData(data.data, w, h); // synchronous
+    ctx1.putImageData(data.data, 0, 0); // synchronous
 
     context.data.data = canvas1.toDataURL('image/jpeg');
   }

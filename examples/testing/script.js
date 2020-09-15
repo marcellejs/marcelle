@@ -1,29 +1,29 @@
-/* eslint-disable no-undef */
+/* global marcelle, mostCore */
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CLASSIFICATION
 // -----------------------------------------------------------
 
-const source = imageDrop();
-const classifier = mobilenet();
+const source = marcelle.imageDrop();
+const classifier = marcelle.mobilenet();
 
 // -----------------------------------------------------------
 // CAPTURE TO DATASET
 // -----------------------------------------------------------
 
-const instances = createStream(
-  snapshot(
+const instances = marcelle.createStream(
+  mostCore.snapshot(
     (img, thumb) => ({ data: img, label: 'unlabeled', thumbnail: thumb }),
     source.$images,
     source.$thumbnails,
   ),
 );
 
-const backend = createBackend({ location: 'memory' });
-const trainingSet = dataset({ name: 'TrainingSet', backend });
+const backend = marcelle.createBackend({ location: 'memory' });
+const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
 
-const tog = toggle({ text: 'Capture to dataset' });
-createStream(skipRepeats(tog.$checked)).subscribe((x) => {
+const tog = marcelle.toggle({ text: 'Capture to dataset' });
+marcelle.createStream(mostCore.skipRepeats(tog.$checked)).subscribe((x) => {
   if (x) {
     trainingSet.capture(instances);
   } else {
@@ -31,16 +31,16 @@ createStream(skipRepeats(tog.$checked)).subscribe((x) => {
   }
 });
 
-const trainingSetBrowser = browser(trainingSet);
+const trainingSetBrowser = marcelle.browser(trainingSet);
 
 // -----------------------------------------------------------
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchTesting = batchPrediction({ name: 'mobilenet', backend });
-const predictButton = button({ text: 'Update predictions' });
-const predictionAccuracy = text({ text: 'Waiting for predictions...' });
-const confusionMatrix = confusion(batchTesting);
+const batchTesting = marcelle.batchPrediction({ name: 'mobilenet', backend });
+const predictButton = marcelle.button({ text: 'Update predictions' });
+const predictionAccuracy = marcelle.text({ text: 'Waiting for predictions...' });
+const confusionMatrix = marcelle.confusion(batchTesting);
 confusionMatrix.name = 'Mobilenet: Confusion Matrix';
 
 predictButton.$click.subscribe(async () => {
@@ -60,29 +60,82 @@ batchTesting.$predictions.subscribe(async () => {
 // REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
-const results = text({ text: 'Drop an image to evaluate the model...' });
-
-createStream(awaitPromises(map(async (img) => classifier.predict(img), source.$images))).subscribe(
-  (y) => {
-    results.$text.set(
-      `<h2>predicted label: ${y.label}</h2><p>Confidences: ${Object.values(y.confidences).map((z) =>
-        z.toFixed(2),
-      )}</p>`,
-    );
-  },
+const predictionStream = marcelle.createStream(
+  mostCore.awaitPromises(mostCore.map(async (img) => classifier.predict(img), source.$images)),
 );
+const plotResults = marcelle.predictionPlotter(predictionStream);
+
+const instanceViewer = {
+  id: 'my-instance-viewer',
+  mount(targetSelector) {
+    const target = document.querySelector(targetSelector || '#my-instance-viewer');
+    const instanceCanvas = document.createElement('canvas');
+    instanceCanvas.classList.add('w-full', 'max-w-full');
+    const instanceCtx = instanceCanvas.getContext('2d');
+    target.appendChild(instanceCanvas);
+    const unSub = source.$images.subscribe((img) => {
+      instanceCanvas.width = img.width;
+      instanceCanvas.height = img.height;
+      instanceCtx.putImageData(img, 0, 0);
+    });
+    this.destroy = () => {
+      target.removeChild(instanceCanvas);
+      unSub();
+    };
+  },
+};
+
+const buttonCorrect = marcelle.button({ text: 'Yes! 😛' });
+buttonCorrect.name = '';
+const buttonIncorrect = marcelle.button({ text: 'No... 🤔' });
+buttonIncorrect.name = '';
+
+let numCorrect = 0;
+let numIncorrect = 0;
+const quality = marcelle.text({ text: 'Waiting for predictions...' });
+function updateQuality() {
+  const percent = (100 * numCorrect) / (numCorrect + numIncorrect);
+  quality.$text.set(
+    `You evaluated ${percent.toFixed(0)}% of tested images as correct. ${
+      percent > 50 ? '😛' : '🤔'
+    }`,
+  );
+}
+buttonCorrect.$click.subscribe(() => {
+  numCorrect += 1;
+  updateQuality();
+});
+buttonIncorrect.$click.subscribe(() => {
+  numIncorrect += 1;
+  updateQuality();
+});
 
 // -----------------------------------------------------------
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const dashboard = createDashboard({
+const dashboard = marcelle.createDashboard({
   title: 'Marcelle: Interactive Model Testing',
   author: 'Marcelle Pirates Crew',
   datasets: [trainingSet],
 });
 
-dashboard.page('Real-time Testing').useLeft(source, classifier).use(results);
+const help = marcelle.text({
+  text:
+    'In this example, you can test an existing trained model (mobilenet), by uploading your own images to assess the quality of the predictions.',
+});
+help.name = 'Test Mobilenet with your images!';
+
+dashboard
+  .page('Real-time Testing')
+  .useLeft(source, classifier)
+  .use(
+    help,
+    [instanceViewer, plotResults],
+    'Is this prediction Correct?',
+    [buttonCorrect, buttonIncorrect],
+    quality,
+  );
 dashboard
   .page('Batch Testing')
   .useLeft(source, classifier)
