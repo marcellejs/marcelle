@@ -16,6 +16,7 @@
     "build": "rollup -c",
     "dev:types": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir dist --watch",
     "build:types": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir dist",
+    "serve:examples": "serve -c examples/serve.json",
     "lint": "eslint src",
     "clean": "rm -rf node_modules dist examples/rollup/node_modules examples/rollup/public"
   },
@@ -40,6 +41,7 @@
     "rollup-plugin-sizes": "^1.0.3",
     "rollup-plugin-svelte": "^5.2.3",
     "rollup-plugin-terser": "^6.1.0",
+    "serve": "^11.3.2",
     "svelte-preprocess": "^4.2.1",
     "tailwindcss": "^1.7.6",
     "typescript": "^4.0.2"
