@@ -7,40 +7,27 @@
 const input = marcelle.sketchpad();
 const featureExtractor = marcelle.mobilenet();
 
-const instances = marcelle.createStream(
-  mostCore.awaitPromises(
-    mostCore.map(
-      async (instance) => ({
-        ...instance,
-        type: 'sketch',
-        label: 'default',
-        features: await featureExtractor.process(instance.data),
-      }),
-      mostCore.snapshot(
-        (thumbnail, data) => ({ thumbnail, data }),
-        input.$thumbnails,
-        input.$images,
-      ),
-    ),
-  ),
-  true,
-);
+const label = marcelle.textfield();
+label.name = 'Instance label';
+const capture = marcelle.button({ text: 'Capture this drawing' });
+capture.name = 'Capture instances to the training set';
+
+const instances = capture.$click
+  .thru(mostCore.sample(input.$images))
+  .thru(
+    mostCore.map(async (img) => ({
+      type: 'sketch',
+      data: img,
+      label: label.$text.value,
+      thumbnail: input.$thumbnails.value,
+      features: await featureExtractor.process(img),
+    })),
+  )
+  .thru(mostCore.awaitPromises);
 
 const backend = marcelle.createBackend({ location: 'localStorage' });
 const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
-const labelField = marcelle.textfield();
-labelField.name = 'label';
-labelField.$text.set('...');
-const addToDataset = marcelle.button({ text: 'Add to Dataset' });
-trainingSet.capture(
-  marcelle.createStream(
-    mostCore.snapshot(
-      (instance) => ({ ...instance, label: labelField.$text.value }),
-      instances,
-      addToDataset.$click,
-    ),
-  ),
-);
+trainingSet.capture(instances);
 
 const trainingSetBrowser = marcelle.browser(trainingSet);
 
@@ -75,19 +62,10 @@ predictButton.$click.subscribe(async () => {
 
 const tog = marcelle.toggle({ text: 'toggle prediction' });
 
-const predictionStream = marcelle.createStream(
-  mostCore.awaitPromises(
-    mostCore.map(
-      async (img) => classifier.predict(await featureExtractor.process(img)),
-      mostCore.filter(() => tog.$checked.value, input.$images),
-    ),
-  ),
-);
-
-// const predictionStream = input.$images
-//   .filter(() => tog.$checked.value)
-//   .map(async (img) => classifier.predict(await m.process(img)))
-//   .awaitPromises();
+const predictionStream = input.$images
+  .thru(mostCore.filter(() => tog.$checked.value))
+  .thru(mostCore.map(async (img) => classifier.predict(await featureExtractor.process(img))))
+  .thru(mostCore.awaitPromises);
 
 const plotResults = marcelle.predictionPlotter(predictionStream);
 
@@ -104,7 +82,7 @@ const dashboard = marcelle.createDashboard({
 dashboard
   .page('Data Management')
   .useLeft(input, featureExtractor)
-  .use([labelField, addToDataset], trainingSetBrowser);
+  .use([label, capture], trainingSetBrowser);
 dashboard.page('Training').use(params, b, prog, plotTraining);
 dashboard.page('Batch Prediction').use(predictButton, confusionMatrix);
 dashboard.page('Real-time Prediction').useLeft(input).use(tog, plotResults);

@@ -7,27 +7,23 @@
 const input = marcelle.webcam();
 const featureExtractor = marcelle.mobilenet();
 
-const cap = marcelle.capture({ input: input.$images, thumbnail: input.$thumbnails });
-const instances = marcelle.createStream(
-  mostCore.awaitPromises(
-    mostCore.map(
-      async (instance) => ({
-        ...instance,
-        type: 'image',
-        features: await featureExtractor.process(instance.data),
-      }),
-      cap.$instances,
-    ),
-  ),
-);
+const label = marcelle.textfield();
+label.name = 'Instance label';
+const capture = marcelle.button({ text: 'Hold to record instances' });
+capture.name = 'Capture instances to the training set';
 
-// const instances = cap.$instances
-//   .map(async (instance) => ({
-//     ...instance,
-//     type: 'image',
-//     features: await m.process(instance.data),
-//   }))
-//   .awaitPromises();
+const instances = input.$images
+  .thru(mostCore.filter(() => capture.$down.value))
+  .thru(
+    mostCore.map(async (img) => ({
+      type: 'image',
+      data: img,
+      label: label.$text.value,
+      thumbnail: input.$thumbnails.value,
+      features: await featureExtractor.process(img),
+    })),
+  )
+  .thru(mostCore.awaitPromises);
 
 const backend = marcelle.createBackend({ location: 'localStorage' });
 const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
@@ -67,19 +63,10 @@ predictButton.$click.subscribe(async () => {
 
 const tog = marcelle.toggle({ text: 'toggle prediction' });
 
-const predictionStream = marcelle.createStream(
-  mostCore.awaitPromises(
-    mostCore.map(
-      async (img) => classifier.predict(await featureExtractor.process(img)),
-      mostCore.filter(() => tog.$checked.value, input.$images),
-    ),
-  ),
-);
-
-// const predictionStream = input.$images
-//   .filter(() => tog.$checked.value)
-//   .map(async (img) => classifier.predict(await m.process(img)))
-//   .awaitPromises();
+const predictionStream = input.$images
+  .thru(mostCore.filter(() => tog.$checked.value))
+  .thru(mostCore.map(async (img) => classifier.predict(await featureExtractor.process(img))))
+  .thru(mostCore.awaitPromises);
 
 const plotResults = marcelle.predictionPlotter(predictionStream);
 
@@ -93,7 +80,10 @@ const dashboard = marcelle.createDashboard({
   datasets: [trainingSet],
 });
 
-dashboard.page('Data Management').useLeft(input, featureExtractor).use(cap, trainingSetBrowser);
+dashboard
+  .page('Data Management')
+  .useLeft(input, featureExtractor)
+  .use([label, capture], trainingSetBrowser);
 dashboard.page('Training').use(params, b, prog, plotTraining);
 dashboard.page('Batch Prediction').use(predictButton, confusionMatrix);
 dashboard.page('Real-time Prediction').useLeft(input).use(tog, plotResults);

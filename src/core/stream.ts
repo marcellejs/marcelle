@@ -95,6 +95,15 @@ export class Stream<T> {
     this.stopStream(undefined);
     this.running = false;
   }
+
+  hold(): Stream<T> {
+    this.#hold = true;
+    return this;
+  }
+
+  thru<B>(f: (s: Stream<T>) => MostStream<B>): Stream<B> {
+    return new Stream<B>(f(this));
+  }
 }
 
 export function createStream<T>(s: MostStream<T>): Stream<T> {

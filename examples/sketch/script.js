@@ -7,24 +7,18 @@
 const input = marcelle.sketchpad();
 const featureExtractor = marcelle.mobilenet();
 
-const instances = marcelle.createStream(
-  mostCore.awaitPromises(
-    mostCore.map(
-      async (instance) => ({
-        ...instance,
-        type: 'sketch',
-        label: 'default',
-        features: await featureExtractor.process(instance.data),
-      }),
-      mostCore.snapshot(
-        (thumbnail, data) => ({ thumbnail, data }),
-        input.$thumbnails,
-        input.$images,
-      ),
-    ),
-  ),
-  true,
-);
+const instances = input.$images
+  .hold()
+  .thru(mostCore.snapshot((thumbnail, data) => ({ thumbnail, data }), input.$thumbnails))
+  .thru(
+    mostCore.map(async (instance) => ({
+      ...instance,
+      type: 'sketch',
+      label: 'default',
+      features: await featureExtractor.process(instance.data),
+    })),
+  )
+  .thru(mostCore.awaitPromises);
 
 const backend = marcelle.createBackend({ location: 'localStorage' });
 const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
@@ -34,12 +28,8 @@ labelField.$text.set('...');
 const addToDataset = marcelle.button({ text: 'Add to Dataset and Train' });
 addToDataset.name = 'Improve the classifier';
 trainingSet.capture(
-  marcelle.createStream(
-    mostCore.snapshot(
-      (instance) => ({ ...instance, label: labelField.$text.value }),
-      instances,
-      addToDataset.$click,
-    ),
+  addToDataset.$click.thru(
+    mostCore.snapshot((instance) => ({ ...instance, label: labelField.$text.value }), instances),
   ),
 );
 
@@ -63,23 +53,14 @@ const plotTraining = marcelle.trainingPlotter(classifier);
 // REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
-const predictionStream = marcelle.createStream(
-  mostCore.filter(
-    (x) => !!x,
-    mostCore.awaitPromises(
-      mostCore.map(
-        async ({ features }) => classifier.predict(features),
-        mostCore.merge(
-          instances,
-          mostCore.sample(
-            instances,
-            mostCore.filter((x) => x.status === 'success', classifier.$training),
-          ),
-        ),
-      ),
-    ),
-  ),
-);
+const predictionStream = classifier.$training
+  .thru(mostCore.filter((x) => x.status === 'success'))
+  .thru(mostCore.sample(instances))
+  .thru(mostCore.merge(instances))
+  .thru(mostCore.map(async ({ features }) => classifier.predict(features)))
+  .thru(mostCore.awaitPromises)
+  .thru(mostCore.filter((x) => !!x));
+
 predictionStream.subscribe(({ label }) => {
   labelField.$text.set(label);
 });

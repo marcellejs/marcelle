@@ -7,19 +7,23 @@
 const input = marcelle.webcam();
 const featureExtractor = marcelle.mobilenet();
 
-const cap = marcelle.capture({ input: input.$images, thumbnail: input.$thumbnails });
-const instances = marcelle.createStream(
-  mostCore.awaitPromises(
-    mostCore.map(
-      async (instance) => ({
-        ...instance,
-        type: 'image',
-        features: await featureExtractor.process(instance.data),
-      }),
-      cap.$instances,
-    ),
-  ),
-);
+const label = marcelle.textfield();
+label.name = 'Instance label';
+const capture = marcelle.button({ text: 'Hold to record instances' });
+capture.name = 'Capture instances to the training set';
+
+const instances = input.$images
+  .thru(mostCore.filter(() => capture.$down.value))
+  .thru(
+    mostCore.map(async (img) => ({
+      type: 'image',
+      data: img,
+      label: label.$text.value,
+      thumbnail: input.$thumbnails.value,
+      features: await featureExtractor.process(img),
+    })),
+  )
+  .thru(mostCore.awaitPromises);
 
 const backend = marcelle.createBackend({ location: 'localStorage' });
 const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
@@ -81,25 +85,17 @@ predictButton.$click.subscribe(async () => {
 
 const tog = marcelle.toggle({ text: 'toggle prediction' });
 
-const rtFeatureStream = marcelle.createStream(
-  mostCore.awaitPromises(
-    mostCore.map(
-      async (img) => featureExtractor.process(img),
-      mostCore.filter(() => tog.$checked.value, input.$images),
-    ),
-  ),
-);
+const rtFeatureStream = input.$images
+  .thru(mostCore.filter(() => tog.$checked.value))
+  .thru(mostCore.map(async (img) => featureExtractor.process(img)))
+  .thru(mostCore.awaitPromises);
 
-const predictionStreamMLP = marcelle.createStream(
-  mostCore.awaitPromises(
-    mostCore.map(async (features) => classifierMLP.predict(features), rtFeatureStream),
-  ),
-);
-const predictionStreamKNN = marcelle.createStream(
-  mostCore.awaitPromises(
-    mostCore.map(async (features) => classifierKNN.predict(features), rtFeatureStream),
-  ),
-);
+const predictionStreamMLP = rtFeatureStream
+  .thru(mostCore.map(async (features) => classifierMLP.predict(features)))
+  .thru(mostCore.awaitPromises);
+const predictionStreamKNN = rtFeatureStream
+  .thru(mostCore.map(async (features) => classifierKNN.predict(features)))
+  .thru(mostCore.awaitPromises);
 
 const plotResultsMLP = marcelle.predictionPlotter(predictionStreamMLP);
 plotResultsMLP.name = 'Predictions: MLP';
@@ -116,7 +112,10 @@ const dashboard = marcelle.createDashboard({
   datasets: [trainingSet],
 });
 
-dashboard.page('Data Management').useLeft(input, featureExtractor).use(cap, trainingSetBrowser);
+dashboard
+  .page('Data Management')
+  .useLeft(input, featureExtractor)
+  .use([label, capture], trainingSetBrowser);
 dashboard
   .page('Training')
   .use(
