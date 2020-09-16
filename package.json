@@ -14,8 +14,10 @@
   "scripts": {
     "dev": "rollup -c -w",
     "build": "rollup -c",
-    "dev:types": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir dist --watch",
-    "build:types": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir dist",
+    "types:dev": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir dist --watch",
+    "types:build": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir dist",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs",
     "serve:examples": "serve -c examples/serve.json",
     "lint": "eslint src",
     "clean": "rm -rf node_modules dist examples/rollup/node_modules examples/rollup/public"
@@ -44,7 +46,8 @@
     "serve": "^11.3.2",
     "svelte-preprocess": "^4.2.1",
     "tailwindcss": "^1.7.6",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.2",
+    "vuepress": "^1.5.4"
   },
   "dependencies": {
     "@feathersjs/authentication-client": "^4.5.7",
