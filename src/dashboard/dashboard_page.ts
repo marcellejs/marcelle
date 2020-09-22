@@ -43,7 +43,6 @@ export class DashboardPage {
         m.destroy();
       }
     });
-    // this.modules.forEach((m) => m.destroy());
     this.modulesLeft.forEach((m) => m.destroy());
   }
 }

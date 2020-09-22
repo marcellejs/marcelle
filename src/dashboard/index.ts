@@ -1,5 +1,5 @@
 import { DashboardPage } from './dashboard_page';
-import DashboardAppComponent from './DashboardApp.svelte';
+import DashboardComponent from './Dashboard.svelte';
 import { Dataset } from '../modules/dataset';
 
 export interface DashboardOptions {
@@ -8,9 +8,9 @@ export interface DashboardOptions {
   datasets: Dataset[];
 }
 
-export class DashboardApp {
+export class Dashboard {
   panels: Record<string, DashboardPage> = {};
-  app?: DashboardAppComponent;
+  app?: DashboardComponent;
 
   constructor(
     private title = 'Hello, Marcelle!',
@@ -26,7 +26,7 @@ export class DashboardApp {
   }
 
   start(): void {
-    this.app = new DashboardAppComponent({
+    this.app = new DashboardComponent({
       target: document.body,
       props: {
         title: this.title,
@@ -49,6 +49,6 @@ export class DashboardApp {
   }
 }
 
-export function createDashboard(options: DashboardOptions): DashboardApp {
-  return new DashboardApp(options.title, options.author, options.datasets);
+export function createDashboard(options: DashboardOptions): Dashboard {
+  return new Dashboard(options.title, options.author, options.datasets);
 }

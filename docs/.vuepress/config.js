@@ -21,16 +21,17 @@ module.exports = {
         link: '/api/',
       },
       {
+        text: 'Modules Reference',
+        link: '/modules/',
+      },
+      {
         text: 'Examples',
         link: '/examples/',
       },
     ],
     sidebar: {
-      '/api/': [
-        '',
-        'modules',
-        //'internals'
-      ],
+      '/api/': ['', 'streams', 'dashboards', 'wizards', 'backends', 'modules'],
+      '/modules/': ['', 'sources', 'data', 'models', 'predictions'],
       '/': [
         '/installation',
         '/',

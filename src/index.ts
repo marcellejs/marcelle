@@ -7,7 +7,7 @@ export * from './backend';
 
 // Core library
 export { createDashboard } from './dashboard';
-export type { DashboardOptions, DashboardApp } from './dashboard';
+export type { DashboardOptions, Dashboard } from './dashboard';
 export { createWizard } from './wizard';
 export type { Wizard } from './wizard';
 

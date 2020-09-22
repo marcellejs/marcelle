@@ -1,15 +1,15 @@
 import WizardComponent from './Wizard.svelte';
 import { Stream } from '../core/stream';
-import { Step } from './wizard_step';
+import { WizardStep } from './wizard_step';
 
 export class Wizard {
-  steps: Step[] = [];
+  steps: WizardStep[] = [];
   app: WizardComponent | undefined = undefined;
 
   $current = new Stream(0, true);
 
-  step(): Step {
-    const s = new Step(this.step.bind(this));
+  step(): WizardStep {
+    const s = new WizardStep(this.step.bind(this));
     this.steps.push(s);
     return s;
   }

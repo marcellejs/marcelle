@@ -21,11 +21,18 @@ While modules have heterogeneous purposes, their unified interface makes it easy
 
 Finally, Marcelle's API allows a practitioner to both create ML pipelines and their associated user interfaces. The versatility and accessibility of this API has been one of the most important challenge in the design of Marcelle.
 
-## basic Example
+## Basic Example
 
-The following script is a simple example of application definition, that will produce
+The following is a simple example of application definition, that will produce
 the application presented in the next figure. You can run this example online [here](https://glitch.com/~marcelle-v2-dashboard).
 
-<<< @/examples/dashboard/script.js
-
 ![Screenshot of an example marcelle Application](./marcelle_dashboard_01.png)
+
+<div class="glitch-embed-wrap" style="height: 420px; width: 100%;">
+  <iframe
+    src="https://glitch.com/embed/#!/embed/marcelle-v2-dashboard?path=script.js&previewSize=0&attributionHidden=true&sidebarCollapsed=true"
+    title="marcelle-v2-dashboard on Glitch"
+    allow="geolocation; microphone; camera; midi; vr; encrypted-media"
+    style="height: 100%; width: 100%; border: 0;">
+  </iframe>
+</div>

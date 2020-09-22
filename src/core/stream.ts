@@ -106,6 +106,6 @@ export class Stream<T> {
   }
 }
 
-export function createStream<T>(s: MostStream<T>): Stream<T> {
-  return new Stream(s);
+export function createStream<T>(s: MostStream<T> | T, hold = false): Stream<T> {
+  return new Stream(s, hold);
 }

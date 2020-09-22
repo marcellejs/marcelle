@@ -2,60 +2,16 @@
 sidebarDepth: 2
 ---
 
-# API Reference
+# API
 
-This section describes Marcelle's main API.
+_Marcelle_ presents itself as a collection of reactive **modules** embedding the state and logic for particular tasks. Modules are the building blocks of a _Marcelle_ application and handle various tasks such as capturing images from a webcam, defining a new dataset, instancing a Deep Neural Network (DNN), displaying a confusion matrix, or monitoring the confidence of a model prediction, to name a few. _Marcelle_ provides two mechanisms to build user interfaces with modules: **dashboards** and **wizards**. Dashboards are applications containing multiple pages where developers can display the views of various modules. Wizards can be programmed to guide end-users or novices through a series of steps.
 
-## createDashboard()
+![Marcelle: Principle](./images/toolkit.png)
 
-```ts
-marcelle.createDashboard({
-  title: string;
-  author: string;
-  datasets: Dataset[];
-}): DashboardApp
-```
+## Contents
 
-Create and return an empty marcelle dashboard Application.
-
-| Parameter | Type             | Description                             | Required |
-| --------- | ---------------- | --------------------------------------- | :------: |
-| title     | String           | The application's title.                |          |
-| author    | String           | The application's authors/credits.      |          |
-| datasets  | Array\<Dataset\> | The datasets present in the application |          |
-
-**Example**
-
-```js
-const dashboard = marcelle.createDashboard({
-  title: 'Marcelle Example - Dashboard',
-  author: 'Marcelle Pirates Crew',
-  datasets: [trainingSet],
-});
-```
-
-## DashboardApp
-
-### .page
-
-```ts
-DashboardApp.page(name: string): DashboardPage
-```
-
-TODO
-
-### .start()
-
-```ts
-DashboardApp.start(): void
-```
-
-TODO
-
-### .destroy()
-
-```ts
-DashboardApp.destroy(): void
-```
-
-TODO
+- [Streams](./streams)
+- [Dashboards](./dashboards)
+- [Wizards](./wizards)
+- [Backends](./backends)
+- [Module Reference](./modules)
