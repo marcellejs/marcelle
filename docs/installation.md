@@ -4,7 +4,9 @@
 Marcelle remains unpublished and will be available shortly on NPM.
 :::
 
-## Direct Download / CDN
+The easiest way to start is using Glitch, by remixing one of the examples available online: [https://glitch.com/@marcelle.crew/marcelle-examples](https://glitch.com/@marcelle.crew/marcelle-examples)
+
+<!-- ## Direct Download / CDN
 
 [https://unpkg.com/marcellejs](https://unpkg.com/marcellejs)
 
@@ -29,4 +31,4 @@ yarn add marcellejs
 
 ## Use with Rollup
 
-An example webpack configuration is available on Github, [in the examples folder](https://github.com/marcellejs/marcelle-next/tree/develop/examples/rollup).
+An example webpack configuration is available on Github, [in the examples folder](https://github.com/marcellejs/marcelle-next/tree/develop/examples/rollup). -->

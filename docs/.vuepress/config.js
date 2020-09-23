@@ -30,7 +30,7 @@ module.exports = {
       },
     ],
     sidebar: {
-      '/api/': ['', 'streams', 'dashboards', 'wizards', 'backends', 'modules'],
+      '/api/': ['', 'modules', 'streams', 'dashboards', 'wizards', 'backends'],
       '/modules/': ['', 'sources', 'data', 'models', 'predictions'],
       '/': [
         '/installation',

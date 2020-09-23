@@ -9,6 +9,12 @@ Marcelle is a versatile interactive machine learning toolkit that has been desig
 
 Marcelle is a web-based reactive toolkit facilitating the design of custom ML pipelines and personalized user interfaces enabling user interactions on the pipeline's constitutive elements.
 
+## Example
+
+The following screenshot shows a simple example of application with an interactive dashboard dedicated to training an image recognizer using training examples captured from the webcam. The application, along with the source code, is available online on [Glitch](https://glitch.com/~marcelle-v2-dashboard).
+
+![Screenshot of an example marcelle Application](./marcelle_dashboard_01.png)
+
 ## Architecture
 
 Marcelle presents itself as a collection of reactive modules embedding the state and logic for particular tasks. Modules are the building blocks of a Marcelle application and handle various tasks such as capturing images from a webcam, defining a new dataset, instancing a Deep Neural Network (DNN), displaying a confusion matrix, or monitoring the confidence of a model prediction, to name a few.
@@ -20,19 +26,3 @@ On the other hand, the modularity of the toolkit allows ML practitioners for cus
 While modules have heterogeneous purposes, their unified interface makes it easy for developers to link together various parts of the processing. Marcelle relies on a reactive programming paradigm to facilitate the definition of such custom pipelines linking together the various tasks of a machine learning workflow. Each module exposes a set of data streams containing the various events produced by the module. These data streams can easily be manipulated (filtered, transformed, combined) and plugged into other modules to define pipelines.
 
 Finally, Marcelle's API allows a practitioner to both create ML pipelines and their associated user interfaces. The versatility and accessibility of this API has been one of the most important challenge in the design of Marcelle.
-
-## Basic Example
-
-The following is a simple example of application definition, that will produce
-the application presented in the next figure. You can run this example online [here](https://glitch.com/~marcelle-v2-dashboard).
-
-![Screenshot of an example marcelle Application](./marcelle_dashboard_01.png)
-
-<div class="glitch-embed-wrap" style="height: 420px; width: 100%;">
-  <iframe
-    src="https://glitch.com/embed/#!/embed/marcelle-v2-dashboard?path=script.js&previewSize=0&attributionHidden=true&sidebarCollapsed=true"
-    title="marcelle-v2-dashboard on Glitch"
-    allow="geolocation; microphone; camera; midi; vr; encrypted-media"
-    style="height: 100%; width: 100%; border: 0;">
-  </iframe>
-</div>
