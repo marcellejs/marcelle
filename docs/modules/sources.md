@@ -6,7 +6,7 @@ sidebarDepth: 1
 
 ## Faker
 
-```ts
+```tsx
 marcelle.faker({ size?: number, period?: number }): Faker;
 ```
 
@@ -40,7 +40,7 @@ faker.$frames.subscribe((x) => console.log('faker $frames:', x));
 
 ## ImageDrop
 
-```ts
+```tsx
 marcelle.imageDrop(): ImageDrop;
 ```
 
@@ -68,7 +68,7 @@ imgDrop.$images.subscribe((x) => console.log('imageDrop $images:', x));
 
 ## Sketchpad
 
-```ts
+```tsx
 marcelle.sketchpad(): Sketchpad;
 ```
 
@@ -99,7 +99,7 @@ sketch.$strokeEnd.subscribe(() => console.log('imageDrop $strokeEnd'));
 
 ## Webcam
 
-```ts
+```tsx
 marcelle.webcam({ width: number, height: number }): Button;
 ```
 

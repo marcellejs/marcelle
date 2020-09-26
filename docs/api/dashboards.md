@@ -12,7 +12,7 @@ In Marcelle, dashboards are applications that can be displayed on demand on top 
 
 The following factory function creates and returns an empty Dashboard Application:
 
-```ts
+```tsx
 marcelle.createDashboard({
   title: string;
   author: string;
@@ -57,7 +57,7 @@ dashboard
 
 ### .page()
 
-```ts
+```tsx
 Dashboard.page(name: string): DashboardPage
 ```
 
@@ -65,7 +65,7 @@ Create a new page on the dashboard entitled `name`, and returns the correspondin
 
 ### .start()
 
-```ts
+```tsx
 Dashboard.start(): void
 ```
 
@@ -73,7 +73,7 @@ Starts the dashboard application. The application, a Svelte component instance, 
 
 ### .destroy()
 
-```ts
+```tsx
 Dashboard.destroy(): void
 ```
 
@@ -85,7 +85,7 @@ Dashboard pages are simply modules containers. They are created using the [`page
 
 ### .use()
 
-```ts
+```tsx
 use(...modules: Array<Module | Module[] | string>): DashboardPage
 ```
 
@@ -97,7 +97,7 @@ The `use` method takes an arbitrary number of arguments specifying the modules t
 
 ### .useLeft()
 
-```ts
+```tsx
 useLeft(...modules: Module[]): DashboardPage {
   this.modulesLeft = this.modulesLeft.concat(modules);
   return this;

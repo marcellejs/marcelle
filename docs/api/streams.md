@@ -45,7 +45,7 @@ Marcelle's main Stream class is a wrapper around [Most.js](https://github.com/mo
 
 The following factory function creates and returns a Marcelle Stream from a Most.js Stream:
 
-```ts
+```tsx
 createStream<T>(s: MostStream<T> | T, hold: boolean): Stream<T>
 ```
 
@@ -69,7 +69,7 @@ $rnd.subscribe(console.log);
 
 ### .subscribe()
 
-```ts
+```tsx
 subscribe(run: (value: T) => void = dummySubscriber, invalidate = () => {}): () => void
 ```
 
@@ -77,7 +77,7 @@ The `subscribe` method must accept as its argument a subscription function. All 
 
 ### .start()
 
-```ts
+```tsx
 start(): void
 ```
 
@@ -85,7 +85,7 @@ Start the stream processing, even if no subscriber has been registered. This met
 
 ### .stop()
 
-```ts
+```tsx
 stop(): void
 ```
 
@@ -93,7 +93,7 @@ Imperatively stop the stream processing. Calling `stop` will result in an `end` 
 
 ### .hold()
 
-```ts
+```tsx
 hold(): Stream<T>
 ```
 
@@ -101,7 +101,7 @@ Hold the stream values. When called, all new subscribers will receive the latest
 
 ### .thru()
 
-```ts
+```tsx
 thru<B>(f: (s: Stream<T>) => MostStream<B>): Stream<B>
 ```
 

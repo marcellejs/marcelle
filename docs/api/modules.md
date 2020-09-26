@@ -26,7 +26,7 @@ mlp.$training;
 
 ### Views
 
-```ts
+```tsx
 Module.mount(targetSelector?: string): void;
 ```
 

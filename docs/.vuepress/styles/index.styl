@@ -1,4 +1,4 @@
-div.language-ts
+div.language-tsx
   background: none
   border-top-width 4px
   border-top-style solid
@@ -8,11 +8,14 @@ div.language-ts
   font-size: 1.2em
   &::before
     content: ""
-  pre.language-ts
+  pre.language-tsx
     padding: 8px 12px
     margin: 0
     code
       color: #476582
+
+div.language-ts::before
+  content: 'ts'
 
 .theme-default-content
   code

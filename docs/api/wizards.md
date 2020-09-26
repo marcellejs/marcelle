@@ -10,7 +10,7 @@ Wizards are dedicated to the creation of step-by-step guides for beginners or en
 
 The following factory function creates and returns an empty Wizard:
 
-```ts
+```tsx
 createWizard(): Wizard
 ```
 
@@ -40,7 +40,7 @@ wizard
 
 ### .step()
 
-```ts
+```tsx
 step(): Step
 ```
 
@@ -48,7 +48,7 @@ Add a new step to the wizard, and returns the corresponding `WizardStep` instanc
 
 ### .start()
 
-```ts
+```tsx
 start(): void
 ```
 
@@ -56,7 +56,7 @@ Starts the dashboard application. The application, a Svelte component instance, 
 
 ### .destroy()
 
-```ts
+```tsx
 destroy(): void
 ```
 
@@ -64,48 +64,40 @@ Destroys the dashboard application. This destroys the current view, if it exists
 
 ## WizardStep
 
-::: warning TODO
-Description
-:::
-
 They are created using the [`step`](#step) method of a Dashboard.
 
 ### .title()
 
-```ts
+```tsx
 title(title: string): WizardStep
 ```
 
-::: warning TODO
-Description + Example
-:::
+Define the title of the step.
 
 ### .description()
 
-```ts
+```tsx
 description(desc: string): WizardStep
 ```
 
-::: warning TODO
-Description + Example
-:::
+Specifies the description, or help, of the current step.
 
 ### .use()
 
-```ts
+```tsx
 use(...modules: Array<Module | Module[] | string>): WizardStep
 ```
 
-::: warning TODO
-Description + Example
-:::
+Add a set of modules to the step. The syntax is similar to the one for Dashoards. By default, modules are stacked vertically in the right column of the page. Each argument can either be:
+
+- A module ([`Module`](/api/modules)), displayed full-width on the right column
+- An array of module, which are then distributed horizontally
+- A string, which defines a section title
 
 ### .step()
 
-```ts
+```tsx
 step(): WizardStep
 ```
 
-::: warning TODO
-Description + Example
-:::
+Add a step to the parent wizard.

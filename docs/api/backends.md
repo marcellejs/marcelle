@@ -13,7 +13,7 @@ We use the [Feathers](https://feathersjs.com/) framework to facilitate the creat
 
 The following factory function creates and returns a Marcelle backend:
 
-```ts
+```tsx
 createBackend({ location: string }): Backend
 ```
 
@@ -25,7 +25,7 @@ The `location` argument can either be:
 
 ### .createService()
 
-```ts
+```tsx
 createService: (name: string): void;
 ```
 
@@ -33,7 +33,7 @@ Create a new service with the given `name`.If a service with the same name alrea
 
 ### .service()
 
-```ts
+```tsx
 service(name: string): Service<unknown>
 ```
 
@@ -47,7 +47,7 @@ Get the Feathers Service instance, which API is documented on [Feathers' wesite]
 
 Let's create a new directory for our app and in it, generate a new application:
 
-```shell
+```bash
 mkdir marcelle-server
 cd marcelle-server
 feathers generate app
@@ -63,7 +63,7 @@ Once you confirm the last prompt, the final selection should look like this:
 
 In our newly generated application, we can create database backed services with the following command:
 
-```shell
+```bash
 feathers generate service
 ```
 

@@ -6,7 +6,7 @@ sidebarDepth: 1
 
 ## Button
 
-```ts
+```tsx
 marcelle.button({ text: string }): Button;
 ```
 
@@ -43,7 +43,7 @@ capture.$click.subscribe((x) => console.log('button $click:', x));
 
 ## Plotter
 
-```ts
+```tsx
 marcelle.plotter({
   series?: PlotterSeries;
   options?: ApexOptions;
@@ -95,7 +95,7 @@ const plotterExample = marcelle.plotter({
 
 ## Text
 
-```ts
+```tsx
 marcelle.text({ text: string }): Text;
 ```
 
@@ -130,7 +130,7 @@ const t = marcelle.text({
 
 ## Textfield
 
-```ts
+```tsx
 marcelle.textfield(): Textfield;
 ```
 
@@ -160,7 +160,7 @@ label.$text.set('myLabel');
 
 ## Toggle​
 
-```ts
+```tsx
 marcelle.toggle({ text: string }): Toggle;
 ```
 

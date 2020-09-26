@@ -1,4 +1,3 @@
-import { empty, map, awaitPromises } from '@most/core';
 import {
   load as loadMobilenet,
   MobileNet,
@@ -7,10 +6,8 @@ import {
 } from '@tensorflow-models/mobilenet';
 import { Module } from '../../core/module';
 import Component from './mobilenet.svelte';
-import { Stream } from '../../core/stream';
 
 export interface MobilenetOptions {
-  input?: Stream<ImageData>;
   version?: MobileNetVersion;
   alpha?: MobileNetAlpha;
   mode?: 'string';
@@ -31,9 +28,7 @@ export class Mobilenet extends Module {
   readonly version: MobileNetVersion;
   readonly alpha: MobileNetAlpha;
 
-  $features: Stream<number[][]>;
-
-  constructor({ input = undefined, version = 1, alpha = 1 }: MobilenetOptions = {}) {
+  constructor({ version = 1, alpha = 1 }: MobilenetOptions = {}) {
     super();
     if (![1, 2].includes(version)) {
       throw new Error('Mobilenet version must be 1 or 2');
@@ -43,11 +38,6 @@ export class Mobilenet extends Module {
     }
     this.version = version;
     this.alpha = alpha;
-    if (input) {
-      this.$features = new Stream(awaitPromises(map(this.process.bind(this), input)));
-    } else {
-      this.$features = new Stream(empty());
-    }
     this.setup();
   }
 

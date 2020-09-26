@@ -25,7 +25,7 @@ export class KNN extends Module implements Parametrable {
 
   parameters: KNNParameters;
   labels: string[];
-  $classifier = new KNNClassifier();
+  classifier = new KNNClassifier();
   $training = new Stream<TrainingStatus>({ status: 'idle' });
 
   constructor({ k = 3 }: Partial<KNNOptions> = {}) {
@@ -43,7 +43,7 @@ export class KNN extends Module implements Parametrable {
     );
     dataset.$classes.value[label].forEach((id) => {
       const { features } = allInstances.find((x) => x.id === id) as { features: number[][] };
-      this.$classifier.addExample(tensor2d(features), label);
+      this.classifier.addExample(tensor2d(features), label);
     });
   }
 
@@ -56,7 +56,7 @@ export class KNN extends Module implements Parametrable {
     }
     this.$training.set({ status: 'start', epochs: this.labels.length });
     setTimeout(async () => {
-      this.$classifier.clearAllClasses();
+      this.classifier.clearAllClasses();
       this.labels.forEach((label, i) => {
         this.activateClass(dataset, label);
         this.$training.set({
@@ -76,11 +76,11 @@ export class KNN extends Module implements Parametrable {
   }
 
   clear(): void {
-    delete this.$classifier;
+    delete this.classifier;
   }
 
   async predict(x: number[][]): Promise<KNNResults> {
-    const pred = await this.$classifier.predictClass(tensor2d(x), this.parameters.k.value);
+    const pred = await this.classifier.predictClass(tensor2d(x), this.parameters.k.value);
     const { label, confidences } = pred;
     return { label, confidences };
   }

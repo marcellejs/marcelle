@@ -86,6 +86,28 @@ const webcam = marcelle.webcam();
 webcam.$images.subscribe((x) => console.log('webcam $images:', x));
 
 // -----------------------------------------------------------
+// DATASET
+// -----------------------------------------------------------
+
+const instances = webcam.$images
+  .thru(mostCore.filter(() => capture.$down.value))
+  .thru(
+    mostCore.map(async (img) => ({
+      type: 'image',
+      data: img,
+      label: label.$text.value,
+      thumbnail: webcam.$thumbnails.value,
+    })),
+  )
+  .thru(mostCore.awaitPromises);
+
+const backend = marcelle.createBackend({ location: 'localStorage' });
+const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
+trainingSet.capture(instances);
+
+const trainingSetBrowser = marcelle.browser(trainingSet);
+
+// -----------------------------------------------------------
 // DASHBOARDS
 // -----------------------------------------------------------
 
@@ -96,5 +118,6 @@ const dashboard = marcelle.createDashboard({
 
 dashboard.page('Widgets').use(capture, label, tog, text, plotterExample);
 dashboard.page('Sources').useLeft(faker, imgDrop, sketch, webcam);
+dashboard.page('Data Management').useLeft(webcam).use([label, capture], trainingSetBrowser);
 
 dashboard.start();
