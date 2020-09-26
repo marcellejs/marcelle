@@ -16,10 +16,10 @@
 </style>
 
 <div class="left">
+  <!-- <h2>There will be some serious settings here.</h2> -->
+</div>
+<div class="right">
   {#each datasets as dataset}
     <DatasetSettings {dataset} count={dataset.$count} classes={dataset.$classes} />
   {/each}
-</div>
-<div class="right">
-  <h2>There will be some serious settings here.</h2>
 </div>

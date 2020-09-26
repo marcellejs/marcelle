@@ -19,7 +19,7 @@
 <div class="card">
   <span class="card-title">{dataset.name}</span>
   {#if $count}
-    <p>
+    <p class="pb-2">
       This dataset contains {$count} instance{$count ? 's' : ''} from {Object.keys($classes).length}
       classe{Object.keys($classes).length ? 's' : ''}.
     </p>
