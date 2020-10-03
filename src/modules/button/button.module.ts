@@ -14,6 +14,7 @@ export class Button extends Module {
   $text: Stream<string>;
   $click = new Stream(empty());
   $down = new Stream(false, true);
+  $loading = new Stream(false, true);
 
   constructor({ text = 'click me' }: Partial<ButtonOptions> = {}) {
     super();
@@ -31,6 +32,7 @@ export class Button extends Module {
         title: this.name,
         text: this.$text,
         down: this.$down,
+        loading: this.$loading,
       },
     });
     this.$$.app.$on('click', this.$click.set);

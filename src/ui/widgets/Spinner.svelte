@@ -77,9 +77,6 @@
   }
 </style>
 
-<div class="spinner-container">
-  <div class="spinner">
-    <div class="dot1" />
-    <div class="dot2" />
-  </div>
-</div>
+<span class="spinner-container">
+  <span class="spinner"> <span class="dot1" /> <span class="dot2" /> </span>
+</span>
