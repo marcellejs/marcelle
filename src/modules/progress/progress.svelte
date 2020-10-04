@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import ModuleBase from '../../core/ModuleBase.svelte';
 
   export let title;
   export let training;
@@ -50,40 +51,42 @@
   }
 </style>
 
-<span class="card-title">{title}</span>
-<div class="relative pt-6 w-full" style="min-width: 250px;">
-  <div class="flex mb-2 items-center justify-between">
-    <div>
-      <span
-        class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-teal-600
+<ModuleBase {title}>
+  <div class="relative pt-6 w-full" style="min-width: 250px;">
+    <div class="flex mb-2 items-center justify-between">
+      <div>
+        <span
+          class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-teal-600
           bg-teal-200"
-        class:gray={status === 'idle'}
-        class:green={status === 'success'}
-        class:red={status === 'error'}>
-        Status: {status}
-      </span>
+          class:gray={status === 'idle'}
+          class:green={status === 'success'}
+          class:red={status === 'error'}>
+          Status:
+          {status}
+        </span>
+      </div>
+      <div class="text-right">
+        <span
+          class="text-xs font-semibold inline-block text-teal-600"
+          class:tgray={status === 'idle'}
+          class:tgreen={status === 'success'}
+          class:tred={status === 'error'}>
+          {percent}%
+        </span>
+      </div>
     </div>
-    <div class="text-right">
-      <span
-        class="text-xs font-semibold inline-block text-teal-600"
-        class:tgray={status === 'idle'}
-        class:tgreen={status === 'success'}
-        class:tred={status === 'error'}>
-        {percent}%
-      </span>
-    </div>
-  </div>
-  <div
-    class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-teal-200"
-    class:gray={status === 'idle'}
-    class:green={status === 'success'}
-    class:red={status === 'error'}>
     <div
-      style="width:{percent}%"
-      class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center
+      class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-teal-200"
+      class:gray={status === 'idle'}
+      class:green={status === 'success'}
+      class:red={status === 'error'}>
+      <div
+        style="width:{percent}%"
+        class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center
         bg-teal-500"
-      class:xgray={status === 'idle'}
-      class:xgreen={status === 'success'}
-      class:xred={status === 'error'} />
+        class:xgray={status === 'idle'}
+        class:xgreen={status === 'success'}
+        class:xred={status === 'error'} />
+    </div>
   </div>
-</div>
+</ModuleBase>

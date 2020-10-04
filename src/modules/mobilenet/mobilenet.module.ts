@@ -5,6 +5,7 @@ import {
   MobileNetAlpha,
 } from '@tensorflow-models/mobilenet';
 import { Module } from '../../core/module';
+import { Stream } from '../../core/stream';
 import Component from './mobilenet.svelte';
 
 export interface MobilenetOptions {
@@ -24,7 +25,7 @@ export class Mobilenet extends Module {
 
   #mobilenet: MobileNet | undefined;
   // #convert = createImageConverter();
-  loading = true;
+  $loading = new Stream(true, true);
   readonly version: MobileNetVersion;
   readonly alpha: MobileNetAlpha;
 
@@ -46,9 +47,8 @@ export class Mobilenet extends Module {
       version: this.version,
       alpha: this.alpha,
     });
-    this.loading = false;
+    this.$loading.set(false);
     this.start();
-    this.$$.app?.$set({ loading: false });
     return this;
   }
 
@@ -76,7 +76,7 @@ export class Mobilenet extends Module {
       target,
       props: {
         title: this.name,
-        loading: this.loading,
+        loading: this.$loading,
         version: this.version,
         alpha: this.alpha,
       },

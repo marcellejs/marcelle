@@ -15,10 +15,13 @@ export class Button extends Module {
   $click = new Stream(empty());
   $down = new Stream(false, true);
   $loading = new Stream(false, true);
+  $disabled: Stream<boolean>;
+  $type = new Stream('deafult', true);
 
   constructor({ text = 'click me' }: Partial<ButtonOptions> = {}) {
     super();
     this.$text = new Stream(text, true);
+    this.$disabled = new Stream(this.$loading, true);
     this.start();
   }
 
@@ -33,6 +36,8 @@ export class Button extends Module {
         text: this.$text,
         down: this.$down,
         loading: this.$loading,
+        disabled: this.$disabled,
+        type: this.$type,
       },
     });
     this.$$.app.$on('click', this.$click.set);

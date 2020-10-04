@@ -1,5 +1,6 @@
 <script>
   import { onMount, createEventDispatcher } from 'svelte';
+  import ModuleBase from '../../core/ModuleBase.svelte';
 
   export let title;
   export let strokeStart;
@@ -92,18 +93,19 @@
 
 <svelte:body on:mouseup={stopDrawing} />
 
-<span class="card-title">{title}</span>
-<div class="sketchpad">
-  <canvas
-    id="fxid"
-    ref="drawingarea"
-    class="sketchpad-container"
-    width="300"
-    height="300"
-    bind:this={canvasElement}
-    on:mousemove={draw}
-    on:mousedown={startDrawing} />
-  <div class="controls">
-    <button class="btn small danger" on:click={clearDrawing}> Clear </button>
+<ModuleBase {title}>
+  <div class="sketchpad">
+    <canvas
+      id="fxid"
+      ref="drawingarea"
+      class="sketchpad-container"
+      width="300"
+      height="300"
+      bind:this={canvasElement}
+      on:mousemove={draw}
+      on:mousedown={startDrawing} />
+    <div class="controls">
+      <button class="btn small danger" on:click={clearDrawing}> Clear </button>
+    </div>
   </div>
-</div>
+</ModuleBase>

@@ -1,6 +1,7 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
   import { chart } from 'svelte-apexcharts';
+  import ModuleBase from '../../core/ModuleBase.svelte';
 
   export let title;
   export let confusion;
@@ -42,11 +43,11 @@
   });
 </script>
 
-<span class="card-title">{title}</span>
-
-{#if $accuracy}
-  <p class="m-2">Global Accuracy: {$accuracy.toFixed(2)}</p>
-  <div use:chart={options} />
-{:else}
-  <p class="m-2">Waiting for predictions...</p>
-{/if}
+<ModuleBase {title}>
+  {#if $accuracy}
+    <p class="m-2">Global Accuracy: {$accuracy.toFixed(2)}</p>
+    <div use:chart={options} />
+  {:else}
+    <p class="m-2">Waiting for predictions...</p>
+  {/if}
+</ModuleBase>

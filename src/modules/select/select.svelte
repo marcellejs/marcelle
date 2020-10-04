@@ -1,10 +1,12 @@
 <script>
   import Select from '../../ui/widgets/Select.svelte';
+  import ModuleBase from '../../core/ModuleBase.svelte';
 
   export let title;
   export let options;
   export let value;
 </script>
 
-<span class="card-title">{title}</span>
-<Select {options} {value} />
+<ModuleBase {title}>
+  <Select {options} {value} />
+</ModuleBase>

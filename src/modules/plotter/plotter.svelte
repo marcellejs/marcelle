@@ -2,6 +2,7 @@
   import { onMount, onDestroy } from 'svelte';
   import { chart } from 'svelte-apexcharts';
   import { mergeDeep } from '../../utils/object.ts';
+  import ModuleBase from '../../core/ModuleBase.svelte';
 
   export let title;
   export let options;
@@ -62,5 +63,6 @@
   });
 </script>
 
-<span class="card-title">{title}</span>
-<div use:chart={chartOptions} />
+<ModuleBase {title}>
+  <div use:chart={chartOptions} />
+</ModuleBase>
