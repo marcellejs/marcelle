@@ -1,5 +1,5 @@
-import { runEffects, multicast, until, tap, merge, now } from '@most/core';
-import { newDefaultScheduler } from '@most/scheduler';
+import { runEffects, multicast, until, tap, merge, now, map } from '@most/core';
+import { asap, newDefaultScheduler } from '@most/scheduler';
 import { createAdapter } from '@most/adapter';
 import { Stream as MostStream, Disposable, Scheduler, Sink } from '@most/types';
 
@@ -25,11 +25,13 @@ export class Stream<T> {
   private stream: MostStream<T>;
   private stopStream: (event: undefined) => void;
   private subscribers: Array<(x: T) => void> = [];
-  private running = false;
 
   value: T = undefined;
+  ready = false;
   #hasValue = false;
   #hold: boolean;
+  #running = false;
+  #startPromise: Promise<undefined>;
 
   set: (value: T) => void;
 
@@ -38,9 +40,15 @@ export class Stream<T> {
     const [stopStream, stopEvents] = createAdapter<undefined>();
     const [induce, events] = createAdapter<T>();
     this.stopStream = stopStream;
-    this.set = induce;
-    const stream = isMostStream(s) ? s : now(s);
-    if (!isMostStream(s)) {
+    this.set = (v) => {
+      this.value = v;
+      if (!hold || this.ready) induce(v);
+    };
+    let stream;
+    if (isMostStream(s)) {
+      stream = s;
+    } else {
+      stream = map(() => this.value, now(s));
       this.value = s;
       this.#hasValue = true;
     }
@@ -62,7 +70,7 @@ export class Stream<T> {
   }
 
   subscribe(run: (value: T) => void = dummySubscriber, invalidate = () => {}): () => void {
-    if (this.#hold && this.running && this.#hasValue) {
+    if (this.#hold && this.#running && this.#hasValue) {
       run(this.value);
     }
     const subscriber = (x: T) => {
@@ -70,7 +78,7 @@ export class Stream<T> {
       run(x);
     };
     this.subscribers.push(subscriber);
-    if (!this.running) {
+    if (!this.#running) {
       this.start();
     }
     return () => {
@@ -79,21 +87,37 @@ export class Stream<T> {
     };
   }
 
-  start(): void {
-    if (!this.running) {
+  async start(): Promise<undefined> {
+    if (!this.#running) {
       Stream.numActive++;
       // console.log('active streams: ', Stream.numActive);
       runEffects(this.stream, scheduler).then(() => {
         Stream.numActive--;
         // console.log('active streams: ', Stream.numActive);
       });
-      this.running = true;
+      this.#running = true;
+      this.#startPromise = new Promise((resolve, reject) => {
+        asap(
+          {
+            run: () => {
+              this.ready = true;
+              resolve();
+            },
+            error(e) {
+              reject(e);
+            },
+            dispose() {},
+          },
+          scheduler,
+        );
+      });
     }
+    return this.#startPromise;
   }
 
   stop(): void {
     this.stopStream(undefined);
-    this.running = false;
+    this.#running = false;
   }
 
   hold(): Stream<T> {
