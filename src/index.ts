@@ -30,6 +30,7 @@ export * from './modules/textfield';
 export * from './modules/toggle';
 export * from './modules/training-plotter';
 export * from './modules/select';
+export * from './modules/slider';
 export * from './modules/webcam';
 
 // Models

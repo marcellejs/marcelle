@@ -71,6 +71,7 @@
     "sift": "^13.2.0",
     "socket.io-client": "^2.3.0",
     "svelte": "^3.24.1",
-    "svelte-apexcharts": "^1.0.2"
+    "svelte-apexcharts": "^1.0.2",
+    "svelte-range-slider-pips": "^1.4.0"
   }
 }

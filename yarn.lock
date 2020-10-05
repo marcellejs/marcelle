@@ -9394,6 +9394,11 @@ svelte-preprocess@^4.2.1:
     detect-indent "^6.0.0"
     strip-indent "^3.0.0"
 
+svelte-range-slider-pips@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/svelte-range-slider-pips/-/svelte-range-slider-pips-1.4.0.tgz#8cd7a0bc228287ba3e2b1ed2f4017adb29869485"
+  integrity sha512-iBtfANAbmr9X+vObdLbgghh0UOWUEBXstWyTzKsO6pVnz/5txDgoF+S1X6bepQKWqqy1CtUQuK7dW35pXIZuBg==
+
 svelte@^3.24.1:
   version "3.24.1"
   resolved "https://registry.yarnpkg.com/svelte/-/svelte-3.24.1.tgz#aca364937dd1df27fe131e2a4c234acb6061db4b"
