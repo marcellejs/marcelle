@@ -36,6 +36,12 @@ export class GanTrainer {
       switch (type) {
         case 'trainingStatus':
           this.$training.set(data);
+          if (data.status === 'start') {
+            this.$models.set([]);
+          }
+          if (data.model) {
+            this.$models.set(this.$models.value.concat([data.model]));
+          }
           break;
 
         case 'models':

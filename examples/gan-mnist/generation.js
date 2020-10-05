@@ -1,8 +1,8 @@
-/* global marcelle, tf, mostCore */
+/* global tf, mostCore */
 
 let model;
 export async function loadModel(name) {
-  model = await tf.loadLayersModel(`./tfjs_models/${name}/model.json`);
+  model = await tf.loadLayersModel(name);
   return model;
 }
 

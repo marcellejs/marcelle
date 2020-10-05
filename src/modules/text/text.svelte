@@ -8,7 +8,7 @@
 <svelte:options accessors />
 
 <ModuleBase {title}>
-  <div>
+  <div class="flex-grow flex">
     {#if $text}
       {@html $text}
     {/if}

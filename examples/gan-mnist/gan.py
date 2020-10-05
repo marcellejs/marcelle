@@ -175,7 +175,9 @@ class GAN:
                         self.discriminator,
                         "tfjs_models/discriminator_%i.h5" % epoch,
                     )
-                    epochMessage["model"] = "tfjs_models/generator_%i.h5" % epoch
+                    epochMessage["model"] = (
+                        "tfjs_models/generator_%i.h5/model.json" % epoch
+                    )
                 if epoch % sample_images_interval == 0:
                     self.sample_images(epoch)
                     epochMessage["sample"] = "images/%i.png" % epoch

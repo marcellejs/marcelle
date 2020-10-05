@@ -47,7 +47,7 @@
   }
 
   .card {
-    @apply bg-white rounded-lg relative mx-1 my-2 p-2 shadow-sm;
+    @apply bg-white rounded-lg relative mx-1 my-2 p-2 shadow-sm flex flex-col;
   }
 
   .card:hover {
