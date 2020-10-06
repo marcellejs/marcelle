@@ -12,7 +12,7 @@ export class Button extends Module {
   description = 'just a button...';
 
   $text: Stream<string>;
-  $click = new Stream(empty());
+  $click = new Stream<CustomEvent<unknown>>(empty());
   $down = new Stream(false, true);
   $loading = new Stream(false, true);
   $disabled: Stream<boolean>;

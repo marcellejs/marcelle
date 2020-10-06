@@ -1,6 +1,6 @@
 import { empty, map, skipRepeatsWith } from '@most/core';
 import { Service, Paginated } from '@feathersjs/feathers';
-import dequal from 'dequal';
+import { dequal } from 'dequal';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import type { Instance, ObjectId } from '../../core/types';
@@ -22,8 +22,8 @@ export class Dataset extends Module {
 
   instanceService: Service<Instance>;
 
-  $created: Stream<ObjectId> = new Stream(empty());
-  $instances: Stream<ObjectId[]> = new Stream(empty(), true);
+  $created: Stream<ObjectId> = new Stream<ObjectId>(empty());
+  $instances: Stream<ObjectId[]> = new Stream<ObjectId[]>(empty(), true);
   $classes = new Stream<Record<string, ObjectId[]>>({}, true);
   $labels: Stream<string[]>;
   $count: Stream<number>;

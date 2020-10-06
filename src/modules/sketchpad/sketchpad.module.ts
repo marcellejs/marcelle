@@ -7,8 +7,8 @@ export class Sketchpad extends Module {
   name = 'sketchpad';
   description = 'Sketch input component';
 
-  $images = new Stream(empty());
-  $thumbnails = new Stream(empty());
+  $images = new Stream<ImageData>(empty());
+  $thumbnails = new Stream<string>(empty());
   $strokeStart = new Stream(empty());
   $strokeEnd = new Stream(empty());
 

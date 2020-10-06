@@ -38,8 +38,8 @@ export class Webcam extends Module {
   $active = new Stream(false, true);
   $ready = new Stream(false, true);
   $mediastream = new Stream<MediaStream>(undefined, true);
-  $images = new Stream(empty());
-  $thumbnails = new Stream(empty());
+  $images = new Stream<ImageData>(empty());
+  $thumbnails = new Stream<string>(empty());
 
   // Webcam stuff
   #width: number;
