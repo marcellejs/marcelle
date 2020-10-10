@@ -20,11 +20,11 @@ const plugins = [
       ? JSON.stringify('development')
       : JSON.stringify('production'),
   }),
-  css({ output: 'dist/extra.css' }),
+  css({ output: 'extra.css' }),
   svelte({
     dev: !production,
     css: (c) => {
-      c.write('dist/bundle.css');
+      c.write('bundle.css');
     },
     preprocess: preprocess({
       postcss: true,
@@ -40,7 +40,7 @@ const plugins = [
   progress(),
   production && terser(),
   production && filesize(),
-  analyze && sizes(),
+  analyze && sizes({ details: false }),
 ];
 
 const globals = {

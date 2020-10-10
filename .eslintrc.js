@@ -39,5 +39,6 @@ module.exports = {
     'no-plusplus': 'off',
     'implicit-arrow-linebreak': 'off',
     'function-paren-newline': 'off',
+    '@typescript-eslint/comma-dangle': 'off',
   },
 };
