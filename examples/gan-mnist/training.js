@@ -26,9 +26,14 @@ export class GanTrainer {
     this.$training = marcelle.createStream({ status: 'idle' }, true);
     this.ws = new WebSocket('ws://127.0.0.1:8765/');
     this.ws.onopen = () => {
-      // eslint-disable-next-line no-console
-      console.log('Websocket connexion open');
+      marcelle.logger.log('Websocket connection open');
       this.ws.send(JSON.stringify({ action: 'list' }));
+    };
+
+    this.ws.onerror = (e) => {
+      e.name = 'Websocket connection error';
+      e.message = `Connection failed with websocket server ${e.target.url}`;
+      marcelle.throwError(e);
     };
 
     this.ws.onmessage = (event) => {
@@ -53,6 +58,8 @@ export class GanTrainer {
       }
     };
   }
+
+  connect() {}
 
   train() {
     const parameters = Object.entries(this.parameters).reduce(

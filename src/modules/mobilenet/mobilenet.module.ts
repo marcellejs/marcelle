@@ -4,6 +4,7 @@ import {
   MobileNetVersion,
   MobileNetAlpha,
 } from '@tensorflow-models/mobilenet';
+import { logger } from '../../core/logger';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import Component from './mobilenet.svelte';
@@ -47,6 +48,7 @@ export class Mobilenet extends Module {
       version: this.version,
       alpha: this.alpha,
     });
+    logger.info(`Mobilenet v${this.version} loaded with alpha = ${this.alpha}`);
     this.$loading.set(false);
     this.start();
     return this;

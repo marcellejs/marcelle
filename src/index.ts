@@ -4,6 +4,8 @@ import './utils';
 export * from './core/stream';
 export * from './core/types';
 export * from './backend';
+export * from './core/logger';
+export { throwError } from './utils/error-handling';
 
 // Core library
 export { createDashboard } from './dashboard';

@@ -2,6 +2,7 @@
   /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
   import { onMount, createEventDispatcher } from 'svelte';
   import { blur } from 'svelte/transition';
+  import { getLogStream, LogLevel } from '../core/logger';
 
   const dispatch = createEventDispatcher();
 
@@ -14,6 +15,8 @@
   export let author;
   export let dashboards = {};
   export let datasets = [];
+
+  const logStream = getLogStream();
 
   let showApp = false;
 
@@ -69,21 +72,65 @@
   });
 </script>
 
-<style type="text/postcss">
+<style lang="postcss">
   .app-container {
     @apply flex flex-col absolute top-0 left-0 w-screen min-h-screen z-10;
   }
-  main.container {
+
+  .main-container {
     @apply max-w-none w-screen p-1 flex flex-col flex-no-wrap flex-grow bg-gray-200;
   }
+
   @screen lg {
-    main.container {
+    .main-container {
       @apply flex-row;
     }
   }
 
   .active {
     @apply text-gray-900 border-b;
+  }
+
+  footer {
+    @apply bg-white text-gray-600 border-t;
+  }
+
+  .footer-container {
+    @apply px-5 py-2 flex items-center justify-between;
+  }
+
+  @screen sm {
+    .footer-container {
+      @apply flex-row;
+    }
+  }
+
+  .console {
+    @apply text-xs text-gray-600 relative pl-3;
+  }
+
+  .console.warning {
+    @apply text-yellow-600;
+  }
+
+  .console.error {
+    @apply text-red-700;
+  }
+
+  .console::before {
+    left: 0;
+    position: absolute;
+    content: '>';
+  }
+
+  .credits {
+    @apply text-sm text-gray-500  mt-4;
+  }
+
+  @screen sm {
+    .credits {
+      @apply ml-4 pl-4 border-gray-200 py-2 mt-0;
+    }
   }
 </style>
 
@@ -154,7 +201,7 @@
         </div>
       </header>
 
-      <main class="container">
+      <main class="main-container">
         {#if showSettings}
           <Settings {datasets} />
         {:else if currentDashboard}
@@ -162,11 +209,23 @@
         {/if}
       </main>
 
-      <footer class="bg-white text-gray-700 body-font border-t">
-        <div class="px-5 py-2 mx-full flex items-center justify-end sm:flex-row">
-          <p class="text-sm text-gray-500 sm:ml-4 sm:pl-4 sm:border-gray-200 sm:py-2 sm:mt-0 mt-4">
-            © 2020 {author}
+      <footer>
+        <div class="footer-container">
+          <p
+            class="console"
+            class:error={$logStream && $logStream[0] === LogLevel.Error}
+            class:warning={$logStream && $logStream[0] === LogLevel.Warning}>
+            {#if $logStream}
+              {#if $logStream[0] === LogLevel.Warning}
+                Warn:
+                {$logStream[1] || ''}
+              {:else if $logStream[0] === LogLevel.Error}
+                Err:
+                {$logStream[1] || ''}
+              {:else}{$logStream[1] || ''}{/if}
+            {:else}&nbsp;{/if}
           </p>
+          <p class="credits">© 2020 {author}</p>
         </div>
       </footer>
     </div>

@@ -3,9 +3,10 @@ import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core';
 import { sequential, layers as tfLayers, Sequential } from '@tensorflow/tfjs-layers';
 import { Dataset } from '../dataset/dataset.module';
 import { Stream } from '../../core/stream';
-import notify from '../../ui/util/notify';
 import { Module } from '../../core/module';
 import { Parametrable, TrainingStatus } from '../../core/types';
+import { Catch, TrainingError } from '../../utils/error-handling';
+import { logger } from '../../core/logger';
 
 type StreamParams = Parametrable['parameters'];
 export interface MLPParameters extends StreamParams {
@@ -126,16 +127,12 @@ export class MLP extends Module implements Parametrable {
     };
   }
 
+  @Catch
   train(dataset: Dataset): void {
     this.labels = dataset.$labels.value || [];
     if (this.labels.length < 2) {
       this.$training.set({ status: 'error' });
-      notify({
-        title: 'Training error',
-        message: 'Cannot train a MLP with less than 2 classes',
-        type: 'danger',
-      });
-      return;
+      throw new TrainingError('Cannot train a MLP with less than 2 classes');
     }
     this.$training.set({ status: 'start', epochs: this.parameters.epochs.value });
     setTimeout(async () => {
@@ -146,8 +143,7 @@ export class MLP extends Module implements Parametrable {
   }
 
   buildModel(inputDim: number, numClasses: number): void {
-    // eslint-disable-next-line no-console
-    console.log('[MLP] Building a model with layers:', this.parameters.layers);
+    logger.debug('[MLP] Building a model with layers:', this.parameters.layers);
     this.model = sequential();
     this.parameters.layers.value.forEach((units, i) => {
       const layerParams: DenseLayerArgs = {
@@ -198,8 +194,7 @@ export class MLP extends Module implements Parametrable {
         },
       })
       .then((results) => {
-        // eslint-disable-next-line no-console
-        console.log('[MLP] Training has ended with results:', results);
+        logger.debug('[MLP] Training has ended with results:', results);
         this.$training.set({
           status: 'success',
           data: {
@@ -211,8 +206,8 @@ export class MLP extends Module implements Parametrable {
         });
       })
       .catch((error) => {
-        this.$training.set({ status: 'error' });
-        notify({ title: 'Training error', message: error, duration: 0, type: 'danger' });
+        this.$training.set({ status: 'error', data: error });
+        throw new TrainingError(error.message);
       });
   }
 
