@@ -1,4 +1,4 @@
-import { empty, map, skipRepeatsWith } from '@most/core';
+import { never, map, skipRepeatsWith } from '@most/core';
 import { Service, Paginated } from '@feathersjs/feathers';
 import { dequal } from 'dequal';
 import { Module } from '../../core/module';
@@ -7,6 +7,7 @@ import type { Instance, ObjectId } from '../../core/types';
 import { Backend } from '../../backend/backend';
 import { addScope, imageData2DataURL, limitToScope, dataURL2ImageData } from '../../backend/hooks';
 import { saveBlob } from '../../utils/file-io';
+import Component from './dataset.svelte';
 
 export interface DatasetOptions {
   name: string;
@@ -22,8 +23,8 @@ export class Dataset extends Module {
 
   instanceService: Service<Instance>;
 
-  $created: Stream<ObjectId> = new Stream<ObjectId>(empty());
-  $instances: Stream<ObjectId[]> = new Stream<ObjectId[]>(empty(), true);
+  $created: Stream<ObjectId> = new Stream<ObjectId>(never());
+  $instances: Stream<ObjectId[]> = new Stream<ObjectId[]>([], true);
   $classes = new Stream<Record<string, ObjectId[]>>({}, true);
   $labels: Stream<string[]>;
   $count: Stream<number>;
@@ -33,6 +34,12 @@ export class Dataset extends Module {
     super();
     this.name = name;
     this.#backend = backend;
+    this.#backend.authenticate().then(() => {
+      this.setup();
+    });
+  }
+
+  async setup(): Promise<void> {
     this.#backend.createService('instances');
     this.instanceService = this.#backend.service('instances') as Service<Instance>;
     this.instanceService.hooks({
@@ -56,16 +63,6 @@ export class Dataset extends Module {
       },
     });
 
-    this.instanceService.find({ query: { $select: ['id', '_id', 'label'] } }).then((result) => {
-      const { data } = result as Paginated<Instance>;
-      this.$instances.set(data.map((x) => x.id));
-      this.$classes.set(
-        data.reduce((c: Record<string, ObjectId[]>, instance: Instance) => {
-          const x = Object.keys(c).includes(instance.label) ? c[instance.label] : [];
-          return { ...c, [instance.label]: x.concat([instance.id]) };
-        }, {}),
-      );
-    });
     this.$labels = new Stream(skipRepeatsWith(dequal, map(Object.keys, this.$classes)));
     this.$count = new Stream(
       map((x) => x.length, this.$instances),
@@ -83,6 +80,19 @@ export class Dataset extends Module {
       true,
     );
     this.start();
+
+    // Fetch instances
+    const resInstances = await this.instanceService.find({
+      query: { $select: ['id', '_id', 'label'] },
+    });
+    const { data } = resInstances as Paginated<Instance>;
+    this.$instances.set(data.map((x) => x.id));
+    this.$classes.set(
+      data.reduce((c: Record<string, ObjectId[]>, instance: Instance) => {
+        const x = Object.keys(c).includes(instance.label) ? c[instance.label] : [];
+        return { ...c, [instance.label]: x.concat([instance.id]) };
+      }, {}),
+    );
   }
 
   capture(instanceStream: Stream<Instance>): void {
@@ -152,8 +162,19 @@ export class Dataset extends Module {
     await saveBlob(JSON.stringify(fileContents), fileName, 'text/plain');
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  mount(): void {}
+  mount(targetSelector?: string): void {
+    const target = document.querySelector(targetSelector || `#${this.id}`);
+    if (!target) return;
+    this.destroy();
+    this.$$.app = new Component({
+      target,
+      props: {
+        dataset: this,
+        count: this.$count,
+        classes: this.$classes,
+      },
+    });
+  }
 
   stop(): void {
     super.stop();

@@ -1,4 +1,4 @@
-import { empty } from '@most/core';
+import { never } from '@most/core';
 import { Stream } from './stream';
 
 export enum LogLevel {
@@ -8,7 +8,7 @@ export enum LogLevel {
   Error,
 }
 
-const $log = new Stream<[LogLevel, string]>(empty());
+const $log = new Stream<[LogLevel, string]>(never());
 
 export const logger = {
   log(...messages: unknown[]): void {

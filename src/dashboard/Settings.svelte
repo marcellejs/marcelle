@@ -1,7 +1,6 @@
 <script>
-  import DatasetSettings from './DatasetSettings.svelte';
-
-  export let datasets = [];
+  export let settings;
+  $: console.log('settings', settings);
 </script>
 
 <style type="text/postcss">
@@ -15,11 +14,5 @@
   }
 </style>
 
-<div class="left">
-  <!-- <h2>There will be some serious settings here.</h2> -->
-</div>
-<div class="right">
-  {#each datasets as dataset}
-    <DatasetSettings {dataset} count={dataset.$count} classes={dataset.$classes} />
-  {/each}
-</div>
+<div class="left" />
+<div class="right">{JSON.stringify(settings)}</div>

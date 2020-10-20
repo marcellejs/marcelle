@@ -14,7 +14,7 @@
   export let title;
   export let author;
   export let dashboards = {};
-  export let datasets = [];
+  export let settings;
 
   const logStream = getLogStream();
 
@@ -203,7 +203,8 @@
 
       <main class="main-container">
         {#if showSettings}
-          <Settings {datasets} />
+          <!-- <Settings {settings} /> -->
+          <DashboardPage dashboard={settings} />
         {:else if currentDashboard}
           <DashboardPage dashboard={dashboards[currentDashboard]} />
         {/if}

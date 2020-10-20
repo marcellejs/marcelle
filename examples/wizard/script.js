@@ -85,7 +85,6 @@ const plotResults = marcelle.predictionPlotter(predictionStream);
 const dashboard = marcelle.createDashboard({
   title: 'Marcelle Example - Wizard',
   author: 'Marcelle Pirates Crew',
-  datasets: [trainingSet],
 });
 
 dashboard
@@ -95,6 +94,7 @@ dashboard
 dashboard.page('Training').use(params, b, prog, plotTraining);
 dashboard.page('Batch Prediction').use(predictButton, confusionMatrix);
 dashboard.page('Real-time Prediction').useLeft(input).use(tog, plotResults);
+dashboard.settings.use(trainingSet);
 
 // -----------------------------------------------------------
 // WIZARD

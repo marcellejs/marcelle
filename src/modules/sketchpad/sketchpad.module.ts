@@ -1,4 +1,4 @@
-import { empty } from '@most/core';
+import { never } from '@most/core';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import Component from './sketchpad.svelte';
@@ -7,10 +7,10 @@ export class Sketchpad extends Module {
   name = 'sketchpad';
   description = 'Sketch input component';
 
-  $images = new Stream<ImageData>(empty());
-  $thumbnails = new Stream<string>(empty());
-  $strokeStart = new Stream(empty());
-  $strokeEnd = new Stream(empty());
+  $images = new Stream<ImageData>(never());
+  $thumbnails = new Stream<string>(never());
+  $strokeStart = new Stream(never());
+  $strokeEnd = new Stream(never());
 
   sketchElement: HTMLCanvasElement;
 

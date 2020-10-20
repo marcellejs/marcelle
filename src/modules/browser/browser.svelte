@@ -54,31 +54,33 @@
 </style>
 
 <ModuleBase {title}>
-  {#if $count > 0}
-    <p class="ml-3 mt-2">This dataset contains {$count} instance{$count > 1 ? 's' : ''}.</p>
-  {:else}
-    <p class="ml-3 mt-2">This dataset is empty.</p>
-  {/if}
+  {#if $classes}
+    {#if $count > 0}
+      <p class="ml-3 mt-2">This dataset contains {$count} instance{$count > 1 ? 's' : ''}.</p>
+    {:else}
+      <p class="ml-3 mt-2">This dataset is empty.</p>
+    {/if}
 
-  <div class="flex flex-wrap">
-    {#each Object.entries($classes) as [key, classInstances]}
-      <div class="browser-class">
-        <div class="browser-class-header">
-          <span class="browser-class-title">{key}</span>
-          <PopMenu
-            actions={[{ code: 'edit', text: 'Edit Label' }, { code: 'delete', text: 'Delete Class' }]}
-            on:select={(e) => onClassAction(key, e.detail)} />
+    <div class="flex flex-wrap">
+      {#each Object.entries($classes) as [key, classInstances]}
+        <div class="browser-class">
+          <div class="browser-class-header">
+            <span class="browser-class-title">{key}</span>
+            <PopMenu
+              actions={[{ code: 'edit', text: 'Edit Label' }, { code: 'delete', text: 'Delete Class' }]}
+              on:select={(e) => onClassAction(key, e.detail)} />
+          </div>
+          <div class="browser-class-body">
+            {#each classInstances as id}
+              {#await dataset.instanceService.get(id, {
+                query: { $select: ['thumbnail'] },
+              }) then instance}
+                <img src={instance.thumbnail} alt="thumbnail" class="p-1" />
+              {/await}
+            {/each}
+          </div>
         </div>
-        <div class="browser-class-body">
-          {#each classInstances as id}
-            {#await dataset.instanceService.get(id, {
-              query: { $select: ['thumbnail'] },
-            }) then instance}
-              <img src={instance.thumbnail} alt="thumbnail" class="p-1" />
-            {/await}
-          {/each}
-        </div>
-      </div>
-    {/each}
-  </div>
+      {/each}
+    </div>
+  {/if}
 </ModuleBase>

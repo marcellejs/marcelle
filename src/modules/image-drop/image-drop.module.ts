@@ -1,4 +1,4 @@
-import { empty } from '@most/core';
+import { never } from '@most/core';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import Component from './image-drop.svelte';
@@ -7,8 +7,8 @@ export class ImageDrop extends Module {
   name = 'image-drop';
   description = 'Drop an image file to a stream';
 
-  $images = new Stream(empty());
-  $thumbnails = new Stream(empty());
+  $images = new Stream(never());
+  $thumbnails = new Stream(never());
 
   constructor() {
     super();

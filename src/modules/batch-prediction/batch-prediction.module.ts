@@ -27,8 +27,15 @@ export class BatchPrediction extends Module {
     super();
     this.name = name;
     this.#backend = backend;
-    this.#backend.createService(`prediction-${name}`);
-    this.predictionService = this.#backend.service(`prediction-${name}`) as Service<Prediction>;
+    this.#backend.authenticate().then(() => {
+      this.setup();
+    });
+  }
+
+  async setup(): Promise<void> {
+    const serviceName = `prediction-${this.name}`;
+    this.#backend.createService(serviceName);
+    this.predictionService = this.#backend.service(serviceName) as Service<Prediction>;
     this.predictionService.hooks({
       before: {
         create: [
@@ -51,15 +58,16 @@ export class BatchPrediction extends Module {
       },
     });
 
-    this.predictionService.find({ query: { $select: ['id', '_id', 'label'] } }).then((result) => {
-      const { data } = result as Paginated<Prediction>;
-      this.$predictions.set(data.map((x) => x.id));
-    });
     this.$count = new Stream(
       map((x) => x.length, this.$predictions),
       true,
     );
     this.start();
+    const result = await this.predictionService.find({
+      query: { $select: ['id', '_id', 'label'] },
+    });
+    const { data } = result as Paginated<Prediction>;
+    this.$predictions.set(data.map((x) => x.id));
   }
 
   async predict(model: MLP, dataset: Dataset, inputField = 'features'): Promise<void> {

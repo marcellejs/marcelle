@@ -16,17 +16,19 @@
   }
 </script>
 
-<div class="card">
-  <span class="card-title">{dataset.name}</span>
+<span class="card-title">{dataset.name}</span>
+<p class="pb-2">
   {#if $count}
-    <p class="pb-2">
-      This dataset contains {$count} instance{$count ? 's' : ''} from {Object.keys($classes).length}
-      classe{Object.keys($classes).length ? 's' : ''}.
-    </p>
-    <button class="btn" on:click={downloadDataset}>Download Dataset</button>
-  {:else}
-    <p>This dataset is empty</p>
-  {/if}
+    This dataset contains
+    {$count}
+    instance{$count ? 's' : ''}
+    from
+    {Object.keys($classes).length}
+    classe{Object.keys($classes).length ? 's' : ''}.
+  {:else}This dataset is empty{/if}
+</p>
+<div class="flex">
+  {#if $count}<button class="btn" on:click={downloadDataset}>Download Dataset</button>{/if}
   <button class="btn" on:click={uploadDataset}>Upload Dataset</button>
   <button class="btn danger" on:click={clearDataset}>Clear Dataset</button>
 </div>

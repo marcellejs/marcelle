@@ -118,7 +118,6 @@ buttonIncorrect.$click.subscribe(() => {
 const dashboard = marcelle.createDashboard({
   title: 'Marcelle: Interactive Model Testing',
   author: 'Marcelle Pirates Crew',
-  datasets: [trainingSet],
 });
 
 const help = marcelle.text({
@@ -141,4 +140,6 @@ dashboard
   .page('Batch Testing')
   .useLeft(source, classifier)
   .use(tog, trainingSetBrowser, predictButton, predictionAccuracy, confusionMatrix);
+dashboard.settings.use(trainingSet);
+
 dashboard.start();

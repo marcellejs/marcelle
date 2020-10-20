@@ -42,7 +42,9 @@ export class Stream<T> {
     this.stopStream = stopStream;
     this.set = (v) => {
       this.value = v;
-      if (!hold || this.ready) induce(v);
+      // Following line is not working for derived streams...
+      // if (!hold || this.ready) induce(v);
+      induce(v);
     };
     let stream;
     if (isMostStream(s)) {

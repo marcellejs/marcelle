@@ -109,7 +109,6 @@ plotResultsKNN.name = 'Predictions: KNN';
 const dashboard = marcelle.createDashboard({
   title: 'Marcelle Example - MLP vs KNN',
   author: 'Marcelle Pirates Crew',
-  datasets: [trainingSet],
 });
 
 dashboard
@@ -132,5 +131,6 @@ dashboard
   .page('Batch Prediction')
   .use(predictButton, predictionAccuracy, [confusionMLP, confusionKNN]);
 dashboard.page('Real-time prediction').useLeft(input).use(tog, [plotResultsMLP, plotResultsKNN]);
+dashboard.settings.use(trainingSet);
 
 dashboard.start();

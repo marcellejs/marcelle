@@ -119,5 +119,6 @@ const dashboard = marcelle.createDashboard({
 dashboard.page('Widgets').use(capture, label, tog, text, plotterExample);
 dashboard.page('Sources').useLeft(faker, imgDrop, sketch, webcam);
 dashboard.page('Data Management').useLeft(webcam).use([label, capture], trainingSetBrowser);
+dashboard.settings.use(trainingSet);
 
 dashboard.start();

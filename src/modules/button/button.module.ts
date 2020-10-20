@@ -1,4 +1,4 @@
-import { empty } from '@most/core';
+import { never } from '@most/core';
 import { Module } from '../../core/module';
 import Component from './button.svelte';
 import { Stream } from '../../core/stream';
@@ -12,7 +12,7 @@ export class Button extends Module {
   description = 'just a button...';
 
   $text: Stream<string>;
-  $click = new Stream<CustomEvent<unknown>>(empty());
+  $click = new Stream<CustomEvent<unknown>>(never());
   $down = new Stream(false, true);
   $loading = new Stream(false, true);
   $disabled: Stream<boolean>;

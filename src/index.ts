@@ -14,6 +14,7 @@ export { createWizard } from './wizard';
 export type { Wizard } from './wizard';
 
 // Modules
+export * from './modules/account';
 export * from './modules/batch-prediction';
 export * from './modules/browser';
 export * from './modules/button';

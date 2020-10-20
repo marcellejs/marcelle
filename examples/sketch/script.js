@@ -74,7 +74,6 @@ const plotResults = marcelle.predictionPlotter(predictionStream);
 const dashboard = marcelle.createDashboard({
   title: 'Marcelle Example - Dashboard',
   author: 'Marcelle Pirates Crew',
-  datasets: [trainingSet],
 });
 
 dashboard
@@ -82,6 +81,7 @@ dashboard
   .useLeft(input, featureExtractor)
   .use(plotResults, [labelField, addToDataset], prog, trainingSetBrowser);
 dashboard.page('Offline Training').useLeft(trainingSetBrowser).use(params, b, prog, plotTraining);
+dashboard.settings.use(trainingSet);
 
 dashboard.start();
 

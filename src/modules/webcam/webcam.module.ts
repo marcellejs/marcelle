@@ -1,4 +1,4 @@
-import { empty } from '@most/core';
+import { never } from '@most/core';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import notify from '../../ui/util/notify';
@@ -38,8 +38,8 @@ export class Webcam extends Module {
   $active = new Stream(false, true);
   $ready = new Stream(false, true);
   $mediastream = new Stream<MediaStream>(undefined, true);
-  $images = new Stream<ImageData>(empty());
-  $thumbnails = new Stream<string>(empty());
+  $images = new Stream<ImageData>(never());
+  $thumbnails = new Stream<string>(never());
 
   // Webcam stuff
   #width: number;
