@@ -1,4 +1,4 @@
-/* global marcelle, mostCore, Howl */
+/* global marcelle, Howl */
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
@@ -13,17 +13,15 @@ const capture = marcelle.button({ text: 'Hold to record instances' });
 capture.name = 'Capture instances to the training set';
 
 const instances = input.$images
-  .thru(mostCore.filter(() => capture.$down.value))
-  .thru(
-    mostCore.map(async (img) => ({
-      type: 'image',
-      data: img,
-      label: labelInput.$text.value,
-      thumbnail: input.$thumbnails.value,
-      features: await featureExtractor.process(img),
-    })),
-  )
-  .thru(mostCore.awaitPromises);
+  .filter(() => capture.$down.value)
+  .map(async (img) => ({
+    type: 'image',
+    data: img,
+    label: labelInput.$text.value,
+    thumbnail: input.$thumbnails.value,
+    features: await featureExtractor.process(img),
+  }))
+  .awaitPromises();
 
 const backend = marcelle.createBackend({ location: 'localStorage' });
 const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
@@ -63,9 +61,9 @@ predictButton.$click.subscribe(async () => {
 const tog = marcelle.toggle({ text: 'toggle prediction' });
 
 const predictionStream = input.$images
-  .thru(mostCore.filter(() => tog.$checked.value))
-  .thru(mostCore.map(async (img) => classifier.predict(await featureExtractor.process(img))))
-  .thru(mostCore.awaitPromises);
+  .filter(() => tog.$checked.value)
+  .map(async (img) => classifier.predict(await featureExtractor.process(img)))
+  .awaitPromises();
 
 const plotResults = marcelle.predictionPlotter(predictionStream);
 

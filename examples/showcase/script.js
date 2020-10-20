@@ -43,8 +43,8 @@ const text = marcelle.text({
 
 const series1 = marcelle
   .createStream(mostCore.periodic(500))
-  .thru(mostCore.map(() => Array.from(Array(12), Math.random)));
-const series2 = series1.thru(mostCore.map((x) => x.map((y) => 1 - y + 0.4 * Math.random())));
+  .map(() => Array.from(Array(12), Math.random));
+const series2 = series1.map((x) => x.map((y) => 1 - y + 0.4 * Math.random()));
 const plotterExample = marcelle.plotter({
   series: [
     { name: 'series 1', data: series1 },
@@ -90,16 +90,14 @@ webcam.$images.subscribe((x) => console.log('webcam $images:', x));
 // -----------------------------------------------------------
 
 const instances = webcam.$images
-  .thru(mostCore.filter(() => capture.$down.value))
-  .thru(
-    mostCore.map(async (img) => ({
-      type: 'image',
-      data: img,
-      label: label.$text.value,
-      thumbnail: webcam.$thumbnails.value,
-    })),
-  )
-  .thru(mostCore.awaitPromises);
+  .filter(() => capture.$down.value)
+  .map(async (img) => ({
+    type: 'image',
+    data: img,
+    label: label.$text.value,
+    thumbnail: webcam.$thumbnails.value,
+  }))
+  .awaitPromises();
 
 const backend = marcelle.createBackend({ location: 'localStorage' });
 const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });

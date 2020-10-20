@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-/* global tf, mostCore */
+/* global tf */
 
 let dtNextId = 0;
 class DisplayTensor {
@@ -45,10 +45,12 @@ class DisplaySamples {
     const p = document.createElement('p');
     const img = document.createElement('img');
     img.classList.add('w-full');
-    const unSub = this.ganModel.$training.thru(mostCore.filter((x) => x.sample)).subscribe((x) => {
-      p.innerText = `Samples (Generated at epoch ${x.epoch})`;
-      img.src = x.sample;
-    });
+    const unSub = this.ganModel.$training
+      .filter((x) => x.sample)
+      .subscribe((x) => {
+        p.innerText = `Samples (Generated at epoch ${x.epoch})`;
+        img.src = x.sample;
+      });
     target.appendChild(p);
     target.appendChild(img);
     this.destroy = () => {
@@ -66,12 +68,12 @@ class DisplaySamples {
 // ------------------------------
 // const samples = marcelle.text();
 // samples.name = 'Samples from the generator';
-// samples.$text = gan.$training.thru(mostCore.filter((x) => x.sample)).thru(
-//   mostCore.map(
+// samples.$text = gan.$training
+//   .filter((x) => x.sample)
+//   .map(
 //     (x) => `<p>Samples (Generated at epoch ${x.epoch})</p>
 //       <img src="${x.sample}" class="w-full">`,
-//   ),
-// );
+//   );
 // ------------------------------
 
 export function displayTensor(s, name) {

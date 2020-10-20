@@ -1,5 +1,5 @@
 /* eslint-disable import/extensions */
-/* global marcelle, mostCore, tf */
+/* global marcelle, tf */
 import { displaySamples, displayTensor } from './visualization.js';
 import { GanTrainer, plotGanTraining } from './training.js';
 // import { GanTrainer, plotGanTraining } from './training_emulator.js';
@@ -16,8 +16,8 @@ const [plotLosses, plotAccuracy] = plotGanTraining(gan);
 const trainingLauncher = marcelle.button({ text: 'Start Training' });
 trainingLauncher.name = 'Training Launcher';
 gan.$training
-  .thru(mostCore.map((x) => x.status))
-  .thru(mostCore.skipRepeats)
+  .map((x) => x.status)
+  .skipRepeats()
   .subscribe((x) => {
     if (['start', 'epoch'].includes(x)) {
       trainingLauncher.$text.set('Stop Training');
@@ -43,17 +43,14 @@ const genButton = marcelle.button({ text: 'Generate an Image' });
 const $imagesOneShot = genButton.$click.thru(generateNoise).thru(predict);
 
 const w = marcelle.webcam({ width: 10, height: 10 });
-const $webcamNoise = w.$images.thru(mostCore.filter(() => w.$ready.value)).thru(downsampleCamera);
+const $webcamNoise = w.$images.filter(() => w.$ready.value).thru(downsampleCamera);
 const $imagesWebcam = $webcamNoise
-  .thru(mostCore.map((input) => input.sub(tf.scalar(0.5).mul(tf.scalar(2))).reshape([1, 100])))
+  .map((input) => input.sub(tf.scalar(0.5).mul(tf.scalar(2))).reshape([1, 100]))
   .thru(predict);
 
 const displayInput = displayTensor($webcamNoise, 'Input Noise');
 
-const displayResult = displayTensor(
-  $imagesOneShot.thru(mostCore.merge($imagesWebcam)),
-  'Generated Image',
-);
+const displayResult = displayTensor($imagesOneShot.merge($imagesWebcam), 'Generated Image');
 
 const modelSlider = marcelle.slider({
   step: 1,
