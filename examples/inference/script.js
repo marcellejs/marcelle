@@ -52,7 +52,26 @@ predictButton.$click.subscribe(async () => {
 // -----------------------------------------------------------
 
 const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
-const plotResults = marcelle.predictionPlot(predictionStream);
+
+let labels;
+fetch('./imagenet_class_index.json')
+  .then((res) => res.json())
+  .then((res) => {
+    labels = Object.values(res).map((x) => x[1]);
+  });
+
+const betterPredictions = predictionStream.map(({ label, confidences }) => {
+  const conf = Object.entries(confidences)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10);
+  console.log('conf', conf);
+  return {
+    label: labels[parseInt(label, 10)],
+    confidences: conf.reduce((x, y) => ({ ...x, [labels[y[0]]]: y[1] }), {}),
+  };
+});
+
+const plotResults = marcelle.predictionPlot(betterPredictions);
 
 const instanceViewer = {
   id: 'my-instance-viewer',

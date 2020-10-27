@@ -143,17 +143,18 @@
         options: { scales: { y: { scaleLabel: { display: true, labelString: options.ylabel } } } },
       });
     }
-    let prevNumLabels = chartOptions.data.labels.length;
+    // let prevNumLabels = chartOptions.data.labels.length;
     unSub = datasets.map(({ dataStream, options }, i) =>
       dataStream.subscribe((values) => {
         if (values && chart) {
-          if (!options.labels && i === 0 && values.length !== prevNumLabels) {
+          if (!options.labels && i === 0) {
+            //&& values.length !== prevNumLabels
             if (values.length > 0 && typeof values[0] === 'number') {
               chartOptions.data.labels = Array.from(Array(values.length), (_, i) => i);
             } else {
               chartOptions.data.labels = values.map((o) => o.x);
             }
-            prevNumLabels = chartOptions.data.labels.length;
+            // prevNumLabels = chartOptions.data.labels.length;
           }
           chartOptions.data.datasets[i].data = values;
           chart.update();
