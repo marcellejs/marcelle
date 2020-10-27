@@ -1,7 +1,7 @@
-import { DNN, DNNOptions } from './dnn.module';
+import { DNN } from './dnn.module';
 
-export function dnn(options?: DNNOptions): DNN {
-  return new DNN(options);
+export function dnn(): DNN {
+  return new DNN();
 }
 
-export type { DNN, DNNOptions };
+export type { DNN };

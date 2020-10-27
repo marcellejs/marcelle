@@ -1,33 +1,9 @@
-// import {
-//   load as loadMobilenet,
-//   MobileNet,
-//   MobileNetVersion,
-//   MobileNetAlpha,
-// } from '@tensorflow-models/mobilenet';
-
-// import {
-//   loadLayersModel,
-//   LayersModel,
-//   fromPixels
-// } from '@tensorflow/tfjs';
-
-import * as tf from '@tensorflow/tfjs';
-
-// import { Tensor } from '@tensorflow/tfjs-core';
-
+import { browser, io, image as tfImage, Tensor1D } from '@tensorflow/tfjs-core';
+import { LayersModel, loadLayersModel } from '@tensorflow/tfjs-layers';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
+import { Catch } from '../../utils/error-handling';
 import Component from './dnn.svelte';
-
-
-
-
-export interface DNNOptions {
-  // version?: MobileNetVersion;
-  // alpha?: MobileNetAlpha;
-  modelUrl?: string;
-  mode?: 'string';
-}
 
 export interface DNNResults {
   label: string;
@@ -38,63 +14,58 @@ export class DNN extends Module {
   name = 'dnn';
   description = 'Generic Deep Neural Network module';
 
-  loading: Stream<number>;
-  modelFiles: Stream<[]>;
-  model: tf.LayersModel;
-  saveModelFlag: Stream<number>;
+  $modelFiles: Stream<[]> = new Stream([], true);
+  $loading: Stream<boolean> = new Stream(false as boolean, true);
+
+  model: LayersModel;
   inputShape: number[];
 
-  constructor({ modelUrl = 'https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_1.0_224/model.json' }: DNNOptions = {}) {
+  constructor() {
     super();
-    this.modelFiles = new Stream([], true);
-    this.saveModelFlag = new Stream(0, true);
-    this.loading = new Stream(0, true);
-    this.modelFiles.subscribe((s) => {
+    this.$modelFiles.subscribe((s) => {
       this.load(s);
     });
-    
+    this.start();
   }
 
-  async saveModel() {
-    this.model.save('localstorage://my-model-1');
+  async saveModel(): Promise<void> {
+    await this.model.save('localstorage://my-model-1');
   }
 
-  async load(urls : []): Promise<DNN> {
-    this.loading.set(0);
-    if (urls.length){
-        this.model = await tf.loadLayersModel(tf.io.browserFiles(urls)); 
-        console.log('load model', this.model.inputs[0].shape);
-        this.inputShape = Object.values(this.model.inputs[0].shape);
-        this.start();
-        this.$$.app?.$set({ loading: false });
-        this.loading.set(1);
-      }
-    return this;
+  async load(urls: []): Promise<void> {
+    this.$loading.set(false);
+    if (urls.length) {
+      this.model = await loadLayersModel(io.browserFiles(urls));
+      // console.log('load model', this.model.inputs[0].shape);
+      this.inputShape = Object.values(this.model.inputs[0].shape);
+      this.$loading.set(true);
+    }
   }
 
+  @Catch
   async predict(image: ImageData): Promise<DNNResults> {
-
     if (!this.model) {
       throw new Error('Model is not loaded');
     }
-    const tensorData = tf.image.resizeBilinear(tf.browser.fromPixels(image), [this.inputShape[1], this.inputShape[2]]);
-    const outputs: any = await this.model.predict(tensorData.expandDims(0)); // results is a Tensor<Rank> 
+    const tensorData = tfImage.resizeBilinear(browser.fromPixels(image), [
+      this.inputShape[1],
+      this.inputShape[2],
+    ]);
+    const outputs = this.model.predict(tensorData.expandDims(0)) as Tensor1D;
     const results: number = outputs.argMax(1).dataSync()[0];
-    
+
     return {
       label: results.toString(),
-      confidences: outputs.dataSync().reduce((x: {}, y: number, i: number) => ({...x, [i.toString()]: y}), {}),
-    }; 
-    
+      confidences: outputs
+        .arraySync()
+        .reduce(
+          (x: Record<string, number>, y: number, i: number) => ({ ...x, [i.toString()]: y }),
+          {},
+        ),
+    };
   }
 
   mount(targetSelector?: string): void {
-    this.saveModelFlag.subscribe((s) => {
-        if (s === 1) {
-          this.model.save('downloads://my-model-1');
-          s = 0;
-        }
-    });
     const target = document.querySelector(targetSelector || `#${this.id}`);
     if (!target) return;
     this.destroy();
@@ -102,10 +73,12 @@ export class DNN extends Module {
       target,
       props: {
         title: this.name,
-        loading: this.loading,
-        modelFiles: this.modelFiles,
-        saveModelFlag: this.saveModelFlag,
+        loading: this.$loading,
+        modelFiles: this.$modelFiles,
       },
+    });
+    this.$$.app.$on('save', () => {
+      this.saveModel();
     });
   }
 }

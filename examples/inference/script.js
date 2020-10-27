@@ -49,7 +49,6 @@ predictButton.$click.subscribe(async () => {
   await batchTesting.predict(classifier, trainingSet, 'data');
 });
 
-
 // -----------------------------------------------------------
 // REAL-TIME PREDICTION
 // -----------------------------------------------------------
@@ -98,11 +97,7 @@ help.name = 'Test generic DNN classifier';
 dashboard
   .page('Real-time Testing')
   .useLeft(source)
-  .use(
-    help,
-    classifier,
-    [instanceViewer, plotResults],
-  );
+  .use(help, classifier, [instanceViewer, plotResults]);
 dashboard
   .page('Batch Testing')
   .useLeft(source, classifier)
