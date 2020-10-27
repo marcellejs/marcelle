@@ -22,11 +22,13 @@ Run:
 python keras2tfjs_model_converter.py
 ```
 
-By default, the script import a `Resnet` modelk but you can change this model and use any models proposed here: [https://keras.io/api/applications](https://keras.io/api/applications). Also the tjfs model is saved locally in a `tjfsmodel` folder. 
+By default, the script imports a `ResNet50` model, but any model from [https://keras.io/api/applications](https://keras.io/api/applications) could be used. 
+
+The converted model in a tjfs-compatible format model is saved locally in folder `tjfsmodel`. 
 
 
 
-### Running the example
+## Running the example
 
 > Reminder: you need to build the library at least once with `yarn build`
 
