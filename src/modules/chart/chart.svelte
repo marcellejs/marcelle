@@ -107,7 +107,8 @@
         data: dataStream.value || [],
       };
       if (
-        (options.type === 'bar' || (globalOptions.type === 'bar' && !!options.type)) &&
+        (['bar', 'bar-fast'].includes(options.type) ||
+          (['bar', 'bar-fast'].includes(globalOptions.type) && !options.type)) &&
         datasets.length === 1
       ) {
         o.borderColor = defaultColors;
