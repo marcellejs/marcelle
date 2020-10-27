@@ -12,7 +12,7 @@
   }
 </style>
 
-<div class="flex flex-col justify-start flex-grow">
+<div class="flex flex-col justify-start flex-grow w-full">
   <span class="card-title">{title}</span>
   {#if loading}
     <Spinner />

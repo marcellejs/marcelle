@@ -52,11 +52,11 @@ async function dataSplit(dataset: Dataset, trainProportion: number, numClasses =
   const nClasses = numClasses < 0 ? labels.length : numClasses;
   const data: TrainingData = {
     training: {
-      x: tensor2d([[]]),
+      x: tensor2d([], [0, 1]),
       y: tensor2d([], [0, nClasses]),
     },
     validation: {
-      x: tensor2d([[]]),
+      x: tensor2d([], [0, 1]),
       y: tensor2d([], [0, nClasses]),
     },
   };

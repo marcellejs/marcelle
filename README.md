@@ -53,7 +53,7 @@ yarn add marcellejs
 - [Most](https://github.com/mostjs/core)
 - [Svelte](https://svelte.dev/)
 - [Tailwind CSS](https://tailwindcss.com/)
-<!-- - [Apexcharts](Apexcharts) -->
+- [Chartjs](https://www.chartjs.org/)
 
 ## 🛠 Developing
 

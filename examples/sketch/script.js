@@ -46,7 +46,7 @@ trainingSet.$created.subscribe(() => classifier.train(trainingSet));
 
 const params = marcelle.parameters(classifier);
 const prog = marcelle.progress(classifier);
-const plotTraining = marcelle.trainingPlotter(classifier);
+const plotTraining = marcelle.trainingPlot(classifier);
 
 // -----------------------------------------------------------
 // REAL-TIME PREDICTION
@@ -64,7 +64,7 @@ predictionStream.subscribe(({ label }) => {
   labelField.$text.set(label);
 });
 
-const plotResults = marcelle.predictionPlotter(predictionStream);
+const plotResults = marcelle.predictionPlot(predictionStream);
 
 // -----------------------------------------------------------
 // DASHBOARDS

@@ -41,7 +41,7 @@ b.$click.subscribe(() => classifier.train(trainingSet));
 
 const params = marcelle.parameters(classifier);
 const prog = marcelle.progress(classifier);
-const plotTraining = marcelle.trainingPlotter(classifier);
+const plotTraining = marcelle.trainingPlot(classifier);
 
 // -----------------------------------------------------------
 // BATCH PREDICTION
@@ -67,7 +67,7 @@ const predictionStream = input.$images
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
-const plotResults = marcelle.predictionPlotter(predictionStream);
+const plotResults = marcelle.predictionPlot(predictionStream);
 
 // -----------------------------------------------------------
 // DASHBOARDS

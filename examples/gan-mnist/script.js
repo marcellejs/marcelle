@@ -1,8 +1,8 @@
 /* eslint-disable import/extensions */
 /* global marcelle, tf */
 import { displaySamples, displayTensor } from './visualization.js';
-import { GanTrainer, plotGanTraining } from './training.js';
-// import { GanTrainer, plotGanTraining } from './training_emulator.js';
+// import { GanTrainer, plotGanTraining } from './training.js';
+import { GanTrainer, plotGanTraining } from './training_emulator.js';
 import { loadModel, predict, generateNoise, downsampleCamera } from './generation.js';
 
 // Create a GAN model trainer, that communicates with a Python training backend
@@ -86,10 +86,10 @@ const dashboard = marcelle.createDashboard({
   author: 'Marcelle Pirates Crew',
 });
 
-dashboard.page('Train').useLeft(marcelle.parameters(gan), trainingLauncher).use(
-  marcelle.progress(gan),
-  samples, // [plotLosses, plotAccuracy]
-);
+dashboard
+  .page('Train')
+  .useLeft(marcelle.parameters(gan), trainingLauncher)
+  .use(marcelle.progress(gan), samples, [plotLosses, plotAccuracy]);
 dashboard.page('Simple').use(modelSlider, [loadButton, genButton], displayResult);
 dashboard
   .page('Webcam')

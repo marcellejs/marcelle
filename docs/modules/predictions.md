@@ -85,10 +85,10 @@ const batchMLP = marcelle.batchPrediction({ name: 'mlp', backend });
 const confusionMatrix = marcelle.confusion(batchMLP);
 ```
 
-## PredictionPlotter
+## PredictionPlot
 
 ```tsx
-marcelle.predictionPlotter(predictionStream: Stream<Prediction>): PredictionPlotter;
+marcelle.predictionPlot(predictionStream: Stream<Prediction>): PredictionPlot;
 ```
 
 Plot prediction result in real-time from a reactive stream of predictions, where each event implements the following interface:
@@ -113,7 +113,7 @@ interface Prediction {
 ### Screenshot
 
 <div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
-  <img src="./images/predictionPlotter.png" alt="Screenshot of the predictionPlotter component">
+  <img src="./images/predictionPlot.png" alt="Screenshot of the predictionPlot component">
 </div>
 
 ### Example
@@ -123,5 +123,5 @@ const predictionStream = $features
   .thru(mostCore.map((feat) => classifier.predict(feat)))
   .thru(mostCore.awaitPromises);
 
-const plotResults = marcelle.predictionPlotter(predictionStream);
+const plotResults = marcelle.predictionPlot(predictionStream);
 ```

@@ -314,10 +314,10 @@ const classifier = marcelle.mlp({ layers: [64, 32], epochs: 20 });
 const prog = marcelle.progress(classifier);
 ```
 
-## TrainingPlotter
+## TrainingPlot
 
 ```tsx
-marcelle.trainingPlotter(m: Model): Progress;
+marcelle.trainingPlot(m: Model): Progress;
 ```
 
 Displays the training/validation loss and accuracies during the training of a neural network.
@@ -331,12 +331,12 @@ Displays the training/validation loss and accuracies during the training of a ne
 ### Screenshot
 
 <div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
-  <img src="./images/progress.png" alt="Screenshot of the progress component">
+  <img src="./images/trainingPlot.png" alt="Screenshot of the trainingPlot component">
 </div>
 
 ### Example
 
 ```js
 const classifier = marcelle.mlp({ layers: [64, 32], epochs: 20 });
-const prog = marcelle.progress(classifier);
+const prog = marcelle.trainingPlot(classifier);
 ```

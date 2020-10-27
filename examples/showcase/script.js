@@ -38,23 +38,21 @@ const text = marcelle.text({
 });
 
 // -----------------------------------------------------------
-// PLOTTER
+// CHART
 // -----------------------------------------------------------
 
 const series1 = marcelle
   .createStream(mostCore.periodic(500))
   .map(() => Array.from(Array(12), Math.random));
 const series2 = series1.map((x) => x.map((y) => 1 - y + 0.4 * Math.random()));
-const plotterExample = marcelle.plotter({
-  series: [
-    { name: 'series 1', data: series1 },
-    { name: 'series 2', data: series2 },
-  ],
+const chartExample = marcelle.chart({
   options: {
-    xaxis: { title: { text: 'x label' } },
-    yaxis: { title: { text: 'y label' } },
+    xlabel: 'x label',
+    ylabel: 'y label',
   },
 });
+chartExample.addSeries(series1, 'series 1');
+chartExample.addSeries(series2, 'series 2');
 
 // -----------------------------------------------------------
 // FAKER
@@ -114,7 +112,7 @@ const dashboard = marcelle.createDashboard({
   author: 'Marcelle Pirates Crew',
 });
 
-dashboard.page('Widgets').use(capture, label, tog, text, plotterExample);
+dashboard.page('Widgets').use(capture, label, tog, text, chartExample);
 dashboard.page('Sources').useLeft(faker, imgDrop, sketch, webcam);
 dashboard.page('Data Management').useLeft(webcam).use([label, capture], trainingSetBrowser);
 dashboard.settings.use(trainingSet);

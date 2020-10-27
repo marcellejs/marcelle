@@ -79,26 +79,26 @@ export class GanTrainer {
 export function plotGanTraining(ganModel) {
   const discriminatorLoss = marcelle.createStream([], true);
   const generatorLoss = marcelle.createStream([], true);
-  const plotLosses = marcelle.plotter({
-    series: [
-      { name: 'discriminator loss', data: discriminatorLoss },
-      { name: 'generator loss', data: generatorLoss },
-    ],
+  const plotLosses = marcelle.chart({
+    preset: 'line-fast',
     options: {
-      xaxis: { title: { text: 'Epoch' } },
-      yaxis: { title: { text: 'Loss' } },
+      xlabel: 'Epoch',
+      ylabel: 'Loss',
     },
   });
+  plotLosses.addSeries(discriminatorLoss, 'discriminator loss');
+  plotLosses.addSeries(generatorLoss, 'generator loss');
   plotLosses.name = 'losses';
 
   const discriminatorAccuracy = marcelle.createStream([], true);
-  const plotAccuracy = marcelle.plotter({
-    series: [{ name: 'discriminator accuracy', data: discriminatorAccuracy }],
+  const plotAccuracy = marcelle.chart({
+    preset: 'line-fast',
     options: {
-      xaxis: { title: { text: 'Epoch' } },
-      yaxis: { title: { text: 'Accuracy' }, min: 0, max: 1 },
+      xlabel: 'Epoch',
+      ylabel: 'Accuracy',
     },
   });
+  plotAccuracy.addSeries(discriminatorAccuracy, 'discriminator accuracy');
   plotAccuracy.name = 'discriminator accuracy';
 
   ganModel.$training.subscribe((x) => {

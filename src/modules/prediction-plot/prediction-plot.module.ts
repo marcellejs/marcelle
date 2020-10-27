@@ -2,15 +2,15 @@ import { map, startWith } from '@most/core';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import { Prediction } from '../../core/types';
-import { plotter, Plotter } from '../plotter';
+import { chart, Chart } from '../chart';
 import { text, Text } from '../text';
 
-export class PredictionPlotter extends Module {
-  name = 'prediction plotter';
+export class PredictionPlot extends Module {
+  name = 'prediction plot';
   description = 'Plot the confidences associated with a prediction';
 
   $confidenceStream: Stream<{ x: string; y: number }[]>;
-  #plotConfidences: Plotter;
+  #plotConfidences: Chart;
   #displayLabel: Text;
 
   constructor(predictionStream: Stream<Prediction>) {
@@ -22,14 +22,19 @@ export class PredictionPlotter extends Module {
         predictionStream,
       ),
     );
-    this.#plotConfidences = plotter({
-      series: [{ name: 'Confidence', data: this.$confidenceStream }],
+    this.#plotConfidences = chart({
+      preset: 'bar-fast',
       options: {
-        chart: { type: 'bar' },
-        xaxis: { title: { text: 'Label' } },
-        yaxis: { title: { text: 'Confidence' }, min: 0, max: 1 },
+        aspectRatio: 3,
+        xlabel: 'Label',
+        ylabel: 'Confidence',
+        scales: { y: { suggestedMax: 1 } },
       },
     });
+    this.#plotConfidences.addSeries(
+      this.$confidenceStream as Stream<number[] | Array<{ x: unknown; y: unknown }>>,
+      'Confidences',
+    );
     this.#plotConfidences.name = '';
     this.#displayLabel = text({ text: 'Waiting for predictions...' });
     this.#displayLabel.name = this.name;

@@ -49,7 +49,7 @@ const paramsMLP = marcelle.parameters(classifierMLP);
 paramsMLP.name = 'MLP: Parameters';
 const progressMLP = marcelle.progress(classifierMLP);
 progressMLP.name = 'MLP: Training Progress';
-const plotTrainingMLP = marcelle.trainingPlotter(classifierMLP);
+const plotTrainingMLP = marcelle.trainingPlot(classifierMLP);
 plotTrainingMLP.name = 'MLP: Training Monitoring';
 
 b.$click.subscribe(() => {
@@ -95,9 +95,9 @@ const predictionStreamKNN = rtFeatureStream
   .map(async (features) => classifierKNN.predict(features))
   .awaitPromises();
 
-const plotResultsMLP = marcelle.predictionPlotter(predictionStreamMLP);
+const plotResultsMLP = marcelle.predictionPlot(predictionStreamMLP);
 plotResultsMLP.name = 'Predictions: MLP';
-const plotResultsKNN = marcelle.predictionPlotter(predictionStreamKNN);
+const plotResultsKNN = marcelle.predictionPlot(predictionStreamKNN);
 plotResultsKNN.name = 'Predictions: KNN';
 
 // -----------------------------------------------------------

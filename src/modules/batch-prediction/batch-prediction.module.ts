@@ -27,9 +27,13 @@ export class BatchPrediction extends Module {
     super();
     this.name = name;
     this.#backend = backend;
-    this.#backend.authenticate().then(() => {
+    if (this.#backend.requiresAuth) {
+      this.#backend.authenticate().then(() => {
+        this.setup();
+      });
+    } else {
       this.setup();
-    });
+    }
   }
 
   async setup(): Promise<void> {

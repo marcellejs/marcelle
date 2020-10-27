@@ -10,12 +10,21 @@
 
 <style type="text/postcss">
   .left {
-    @apply flex-shrink-0 p-1;
-    width: 350px;
+    @apply flex-shrink-0 p-1 w-full;
   }
 
   .right {
     @apply flex-grow p-1;
+  }
+
+  @screen lg {
+    .left {
+      width: 350px;
+    }
+
+    .right {
+      max-width: calc(100% - 350px);
+    }
   }
 </style>
 

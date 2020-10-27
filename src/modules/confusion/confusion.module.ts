@@ -1,17 +1,16 @@
 import { awaitPromises, map } from '@most/core';
+import { dequal } from 'dequal';
 import { Module } from '../../core/module';
 import Component from './confusion.svelte';
 import { BatchPrediction } from '../batch-prediction';
 import { Stream } from '../../core/stream';
 import { Prediction } from '../../core/types';
 
-export type ConfusionMatrix = {
-  name: string;
-  data: {
-    x: string;
-    y: number;
-  }[];
-}[];
+export type ConfusionMatrix = Array<{
+  x: string;
+  y: string;
+  v: number;
+}>;
 
 export class Confusion extends Module {
   name = 'confusion matrix';
@@ -21,6 +20,7 @@ export class Confusion extends Module {
 
   $confusion: Stream<ConfusionMatrix>;
   $accuracy: Stream<number>;
+  $labels: Stream<string[]> = new Stream([], true);
 
   constructor(prediction: BatchPrediction) {
     super();
@@ -39,21 +39,27 @@ export class Confusion extends Module {
         const labels = predictions.map((x) => x.label);
         const trueLabels = predictions.map((x) => x.trueLabel);
         const uniqueLabels = Array.from(new Set(labels.concat(trueLabels)));
+        if (!dequal(uniqueLabels, this.$labels.value)) {
+          this.$labels.set(uniqueLabels);
+        }
+        const nLabels = uniqueLabels.length;
         const labIndices: Record<string, number> = uniqueLabels.reduce(
           (x, l, i) => ({ ...x, [l]: i }),
           {},
         );
-        const confusion = uniqueLabels.map((label1) => ({
-          name: label1,
-          data: uniqueLabels.map((label2) => ({ x: label2, y: 0 })),
-        }));
+        const confusion = Array.from(Array(nLabels ** 2), () => 0);
         for (let i = 0; i < labels.length; i += 1) {
-          confusion[labIndices[labels[i]]].data[labIndices[trueLabels[i]]].y += 1;
+          confusion[labIndices[labels[i]] * nLabels + labIndices[trueLabels[i]]] += 1;
         }
-        return confusion;
+        return confusion.map((v, i) => ({
+          x: uniqueLabels[Math.floor(i / nLabels)],
+          y: uniqueLabels[i % nLabels],
+          v,
+        }));
       }, predStream),
       true,
     );
+
     this.$accuracy = new Stream(
       map(
         (predictions: Prediction[]) =>
@@ -79,6 +85,7 @@ export class Confusion extends Module {
         title: this.name,
         confusion: this.$confusion,
         accuracy: this.$accuracy,
+        labels: this.$labels,
       },
     });
   }
