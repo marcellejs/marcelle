@@ -1,4 +1,4 @@
-import { browser, io, image as tfImage, Tensor1D } from '@tensorflow/tfjs-core';
+import { browser, io, image as tfImage, Tensor2D } from '@tensorflow/tfjs-core';
 import { LayersModel, loadLayersModel } from '@tensorflow/tfjs-layers';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
@@ -51,13 +51,13 @@ export class DNN extends Module {
       this.inputShape[1],
       this.inputShape[2],
     ]);
-    const outputs = this.model.predict(tensorData.expandDims(0)) as Tensor1D;
+    const outputs = this.model.predict(tensorData.expandDims(0)) as Tensor2D;
     const results: number = outputs.argMax(1).dataSync()[0];
 
     return {
       label: results.toString(),
       confidences: outputs
-        .arraySync()
+        .arraySync()[0]
         .reduce(
           (x: Record<string, number>, y: number, i: number) => ({ ...x, [i.toString()]: y }),
           {},

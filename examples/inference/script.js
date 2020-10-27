@@ -1,4 +1,4 @@
-/* global marcelle, mostCore */
+/* global marcelle */
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CLASSIFICATION
@@ -11,20 +11,18 @@ const classifier = marcelle.dnn();
 // CAPTURE TO DATASET
 // -----------------------------------------------------------
 
-const instances = source.$thumbnails.thru(
-  mostCore.map((thumbnail) => ({
-    type: 'image',
-    data: source.$images.value,
-    label: 'unlabeled',
-    thumbnail,
-  })),
-);
+const instances = source.$thumbnails.map((thumbnail) => ({
+  type: 'image',
+  data: source.$images.value,
+  label: 'unlabeled',
+  thumbnail,
+}));
 
 const backend = marcelle.createBackend({ location: 'memory' });
 const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
 
 const tog = marcelle.toggle({ text: 'Capture to dataset' });
-tog.$checked.thru(mostCore.skipRepeats).subscribe((x) => {
+tog.$checked.skipRepeats().subscribe((x) => {
   if (x) {
     trainingSet.capture(instances);
   } else {
@@ -53,10 +51,8 @@ predictButton.$click.subscribe(async () => {
 // REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
-const predictionStream = marcelle.createStream(
-  mostCore.awaitPromises(mostCore.map(async (img) => classifier.predict(img), source.$images)),
-);
-const plotResults = marcelle.predictionPlotter(predictionStream);
+const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
+const plotResults = marcelle.predictionPlot(predictionStream);
 
 const instanceViewer = {
   id: 'my-instance-viewer',
