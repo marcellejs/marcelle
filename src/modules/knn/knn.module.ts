@@ -1,32 +1,22 @@
-import { tensor2d } from '@tensorflow/tfjs-core';
+import { tensor, tensor2d, TensorLike } from '@tensorflow/tfjs-core';
 import { KNNClassifier } from '@tensorflow-models/knn-classifier';
 import { Dataset } from '../dataset/dataset.module';
 import { Stream } from '../../core/stream';
-import { Module } from '../../core/module';
-import { Parametrable, TrainingStatus } from '../../core/types';
-
-type StreamParams = Parametrable['parameters'];
-export interface KNNParameters extends StreamParams {
-  k: Stream<number>;
-}
+import { Classifier, ClassifierResults } from '../../core/classifier';
+import { Catch, throwError } from '../../utils/error-handling';
 
 export interface KNNOptions {
   k: number;
 }
 
-export interface KNNResults {
-  label: string;
-  confidences: { [key: string]: number };
-}
-
-export class KNN extends Module implements Parametrable {
+export class KNN extends Classifier<TensorLike, ClassifierResults> {
   name = 'KNN';
   description = 'K-Nearest Neighbours';
 
-  parameters: KNNParameters;
-  labels: string[];
+  parameters: {
+    k: Stream<number>;
+  };
   classifier = new KNNClassifier();
-  $training = new Stream<TrainingStatus>({ status: 'idle' });
 
   constructor({ k = 3 }: Partial<KNNOptions> = {}) {
     super();
@@ -35,21 +25,9 @@ export class KNN extends Module implements Parametrable {
     };
   }
 
-  async activateClass(dataset: Dataset, label: string): Promise<void> {
-    const allInstances = await Promise.all(
-      dataset.$instances.value.map((id) =>
-        dataset.instanceService.get(id, { query: { $select: ['id', 'features'] } }),
-      ),
-    );
-    dataset.$classes.value[label].forEach((id) => {
-      const { features } = allInstances.find((x) => x.id === id) as { features: number[][] };
-      this.classifier.addExample(tensor2d(features), label);
-    });
-  }
-
+  @Catch
   train(dataset: Dataset): void {
     this.labels = dataset.$labels.value;
-    // this.parameters.epochs.set(dataset.$labels.value.length);
     if (this.labels.length < 1) {
       this.$training.set({ status: 'error' });
       throw new Error('Cannot train a kNN with no classes');
@@ -75,16 +53,33 @@ export class KNN extends Module implements Parametrable {
     }, 100);
   }
 
-  clear(): void {
-    delete this.classifier;
-  }
-
-  async predict(x: number[][]): Promise<KNNResults> {
-    const pred = await this.classifier.predictClass(tensor2d(x), this.parameters.k.value);
-    const { label, confidences } = pred;
+  @Catch
+  async predict(x: TensorLike): Promise<ClassifierResults> {
+    if (!this.classifier) {
+      const e = new Error('Model is not defined');
+      e.name = '[KNN] Prediction Error';
+      throwError(e);
+    }
+    const { label, confidences } = await this.classifier.predictClass(
+      tensor(x),
+      this.parameters.k.value,
+    );
     return { label, confidences };
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  mount(): void {}
+  async activateClass(dataset: Dataset, label: string): Promise<void> {
+    const allInstances = await Promise.all(
+      dataset.$instances.value.map((id) =>
+        dataset.instanceService.get(id, { query: { $select: ['id', 'features'] } }),
+      ),
+    );
+    dataset.$classes.value[label].forEach((id) => {
+      const { features } = allInstances.find((x) => x.id === id) as { features: number[][] };
+      this.classifier.addExample(tensor2d(features), label);
+    });
+  }
+
+  clear(): void {
+    delete this.classifier;
+  }
 }
