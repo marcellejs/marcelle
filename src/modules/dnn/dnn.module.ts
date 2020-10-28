@@ -1,3 +1,4 @@
+import { empty } from '@most/core';
 import { io, image as tfImage, browser, Tensor2D } from '@tensorflow/tfjs-core';
 import { LayersModel, loadLayersModel } from '@tensorflow/tfjs-layers';
 import { ClassifierResults } from '../../core/classifier';
@@ -13,7 +14,7 @@ export class DNN extends Model<ImageData, ClassifierResults> {
 
   parameters = {};
 
-  $modelFiles: Stream<[]> = new Stream([], true);
+  $modelFiles: Stream<[]> = new Stream(empty() as Stream<[]>, false);
   $loading: Stream<boolean> = new Stream(false as boolean, true);
 
   model: LayersModel;
@@ -60,12 +61,14 @@ export class DNN extends Model<ImageData, ClassifierResults> {
   }
 
   async load(urls: []): Promise<void> {
-    this.$loading.set(false);
+    console.log('lo;ad', urls);
+    // if (!urls.length) return;
+    this.$loading.set(true);
     if (urls.length) {
       this.model = await loadLayersModel(io.browserFiles(urls));
       // console.log('load model', this.model.inputs[0].shape);
       this.inputShape = Object.values(this.model.inputs[0].shape);
-      this.$loading.set(true);
+      this.$loading.set(false);
     }
   }
 

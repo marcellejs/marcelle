@@ -37,8 +37,8 @@
   }
 </script>
 
-<!-- <ModuleBase {title} loading={$loading}> -->
-<ModuleBase {title}>
+<ModuleBase {title} loading={$loading}>
+  <!-- <ModuleBase {title}> -->
   <div style="display:inline-block;">
     <input type="file" id="fileUpload" multiple style="display:none" />
     <button
@@ -60,5 +60,4 @@
       <em>.bin</em>
       for the weights)</span>
   </div>
-  {#if loading.value === 0}<span>No model</span>{:else}<span>Model loaded!</span>{/if}
 </ModuleBase>
