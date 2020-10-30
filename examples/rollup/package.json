@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@most/core": "^1.5.0",
-    "marcellejs": "file:../../",
+    "@marcellejs/core": "file:../../",
     "sirv-cli": "^1.0.3"
   },
   "devDependencies": {
