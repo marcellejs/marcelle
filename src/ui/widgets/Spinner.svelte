@@ -1,6 +1,6 @@
 <style lang="postcss">
   .spinner-container {
-    position: absolute;
+    /* position: absolute;
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
@@ -8,8 +8,9 @@
     top: 0;
     left: 0;
     bottom: 0;
-    width: 100%;
+    width: 100%; */
     min-height: 40px;
+    @apply absolute flex flex-no-wrap items-center justify-center inset-0 w-full bg-white bg-opacity-50;
   }
 
   .spinner {
@@ -77,9 +78,6 @@
   }
 </style>
 
-<div class="spinner-container">
-  <div class="spinner">
-    <div class="dot1" />
-    <div class="dot2" />
-  </div>
-</div>
+<span class="spinner-container">
+  <span class="spinner"> <span class="dot1" /> <span class="dot2" /> </span>
+</span>

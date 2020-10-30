@@ -1,5 +1,4 @@
-import { noop } from 'svelte/internal';
-import { empty } from '@most/core';
+import { never } from '@most/core';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import notify from '../../ui/util/notify';
@@ -39,8 +38,8 @@ export class Webcam extends Module {
   $active = new Stream(false, true);
   $ready = new Stream(false, true);
   $mediastream = new Stream<MediaStream>(undefined, true);
-  $images = new Stream(empty());
-  $thumbnails = new Stream(empty());
+  $images = new Stream<ImageData>(never());
+  $thumbnails = new Stream<string>(never());
 
   // Webcam stuff
   #width: number;
@@ -52,8 +51,8 @@ export class Webcam extends Module {
   #camerasListEmitted = false;
   #deviceId: string;
   #thumbnailWidth = 80;
-  #unsubActive = noop;
-  #stopStreaming = noop;
+  #unsubActive = (): void => {};
+  #stopStreaming = (): void => {};
   #thumbnailCanvas: HTMLCanvasElement;
   #thumbnailCtx: CanvasRenderingContext2D;
   #captureCanvas: HTMLCanvasElement;
@@ -146,6 +145,7 @@ export class Webcam extends Module {
 
   async loadCameras(): Promise<void> {
     try {
+      await navigator.mediaDevices.getUserMedia({ video: true });
       const deviceInfos = await navigator.mediaDevices.enumerateDevices();
       for (let i = 0; i !== deviceInfos.length; i++) {
         const deviceInfo = deviceInfos[i];

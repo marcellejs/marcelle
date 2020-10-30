@@ -1,11 +1,16 @@
 <script>
+  import ModuleBase from '../../core/ModuleBase.svelte';
+
   export let title;
   export let text;
 </script>
 
 <svelte:options accessors />
 
-<span class="card-title">{title}</span>
-<div>
-  {@html $text}
-</div>
+<ModuleBase {title}>
+  <div class="flex-grow flex">
+    {#if $text}
+      {@html $text}
+    {/if}
+  </div>
+</ModuleBase>

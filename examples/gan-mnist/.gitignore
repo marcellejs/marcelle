@@ -1,0 +1,5 @@
+images
+tfjs_models
+__pycache__
+.python-version
+training_log.json

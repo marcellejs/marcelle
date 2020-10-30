@@ -1,22 +1,11 @@
-import { tensor2d, train, Tensor2D } from '@tensorflow/tfjs-core';
+import { tensor2d, train, Tensor2D, TensorLike, tensor } from '@tensorflow/tfjs-core';
 import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core';
 import { sequential, layers as tfLayers, Sequential } from '@tensorflow/tfjs-layers';
 import { Dataset } from '../dataset/dataset.module';
 import { Stream } from '../../core/stream';
-import notify from '../../ui/util/notify';
-import { Module } from '../../core/module';
-import { Parametrable, TrainingStatus } from '../../core/types';
-
-type StreamParams = Parametrable['parameters'];
-export interface MLPParameters extends StreamParams {
-  layers: Stream<number[]>;
-  epochs: Stream<number>;
-}
-
-export interface MLPOptions {
-  layers: number[];
-  epochs: number;
-}
+import { Catch, TrainingError } from '../../utils/error-handling';
+import { logger } from '../../core/logger';
+import { Classifier, ClassifierResults } from '../../core/classifier';
 
 interface TrainingData {
   training: {
@@ -27,11 +16,6 @@ interface TrainingData {
     x: Tensor2D;
     y: Tensor2D;
   };
-}
-
-export interface MLPResults {
-  label: string;
-  confidences: { [key: string]: number };
 }
 
 function shuffleArray<T>(a: T[]): T[] {
@@ -51,11 +35,11 @@ async function dataSplit(dataset: Dataset, trainProportion: number, numClasses =
   const nClasses = numClasses < 0 ? labels.length : numClasses;
   const data: TrainingData = {
     training: {
-      x: tensor2d([[]]),
+      x: tensor2d([], [0, 1]),
       y: tensor2d([], [0, nClasses]),
     },
     validation: {
-      x: tensor2d([[]]),
+      x: tensor2d([], [0, 1]),
       y: tensor2d([], [0, nClasses]),
     },
   };
@@ -93,46 +77,40 @@ async function dataSplit(dataset: Dataset, trainProportion: number, numClasses =
   return data;
 }
 
-function arrayArgMax(softmaxes: number[]): number {
-  if (softmaxes.length <= 0) return 0;
-  let ind = 0;
-  let mmax = softmaxes[0];
-  for (let i = 1; i < softmaxes.length; i += 1) {
-    if (mmax < softmaxes[i]) {
-      mmax = softmaxes[i];
-      ind = i;
-    }
-  }
-  return ind;
+export interface MLPOptions {
+  layers: number[];
+  epochs: number;
+  batchSize: number;
 }
 
-const BATCH_SIZE = 8;
-
-export class MLP extends Module implements Parametrable {
+export class MLP extends Classifier<TensorLike, ClassifierResults> {
   name = 'MLP';
   description = 'Multilayer Perceptron';
 
-  parameters: MLPParameters;
-  labels: string[];
+  parameters: {
+    layers: Stream<number[]>;
+    epochs: Stream<number>;
+    batchSize: Stream<number>;
+  };
   model: Sequential;
 
-  $training = new Stream<TrainingStatus>({ status: 'idle' });
-
-  constructor({ layers = [64, 32], epochs = 20 }: Partial<MLPOptions> = {}) {
+  constructor({ layers = [64, 32], epochs = 20, batchSize = 8 }: Partial<MLPOptions> = {}) {
     super();
     this.parameters = {
       layers: new Stream(layers, true),
       epochs: new Stream(epochs, true),
+      batchSize: new Stream(batchSize, true),
     };
   }
 
+  @Catch
   train(dataset: Dataset): void {
-    this.labels = dataset.$labels.value;
+    this.labels = dataset.$labels.value || [];
     if (this.labels.length < 2) {
       this.$training.set({ status: 'error' });
-      throw new Error('Cannot train a MLP with less than 2 classes');
+      throw new TrainingError('Cannot train a MLP with less than 2 classes');
     }
-    this.$training.set({ status: 'start' });
+    this.$training.set({ status: 'start', epochs: this.parameters.epochs.value });
     setTimeout(async () => {
       const data = await dataSplit(dataset, 0.75);
       this.buildModel(data.training.x.shape[1], data.training.y.shape[1]);
@@ -140,9 +118,21 @@ export class MLP extends Module implements Parametrable {
     }, 100);
   }
 
+  async predict(x: TensorLike): Promise<ClassifierResults> {
+    if (!this.model) return null;
+    const pred = this.model.predict(tensor(x)) as Tensor2D;
+    const label = this.labels[pred.gather(0).argMax().arraySync() as number];
+    const softmaxes = pred.arraySync()[0];
+    const confidences = softmaxes.reduce((c, y, i) => ({ ...c, [this.labels[i]]: y }), {});
+    return { label, confidences };
+  }
+
+  clear(): void {
+    delete this.model;
+  }
+
   buildModel(inputDim: number, numClasses: number): void {
-    // eslint-disable-next-line no-console
-    console.log('[MLP] Building a model with layers:', this.parameters.layers);
+    logger.debug('[MLP] Building a model with layers:', this.parameters.layers);
     this.model = sequential();
     this.parameters.layers.value.forEach((units, i) => {
       const layerParams: DenseLayerArgs = {
@@ -172,7 +162,7 @@ export class MLP extends Module implements Parametrable {
     const numEpochs = epochs > 0 ? epochs : this.parameters.epochs.value;
     this.model
       .fit(data.training.x, data.training.y, {
-        batchSize: BATCH_SIZE,
+        batchSize: this.parameters.batchSize.value,
         validationData: [data.validation.x, data.validation.y],
         epochs: numEpochs,
         shuffle: true,
@@ -181,6 +171,7 @@ export class MLP extends Module implements Parametrable {
             this.$training.set({
               status: 'epoch',
               epoch,
+              epochs: this.parameters.epochs.value,
               data: {
                 accuracy: logs.acc,
                 loss: logs.loss,
@@ -192,31 +183,20 @@ export class MLP extends Module implements Parametrable {
         },
       })
       .then((results) => {
-        // eslint-disable-next-line no-console
-        console.log('[MLP] Training has ended with results:', results);
-        this.$training.set({ status: 'success', data: results.history });
+        logger.debug('[MLP] Training has ended with results:', results);
+        this.$training.set({
+          status: 'success',
+          data: {
+            accuracy: results.history.acc,
+            loss: results.history.loss,
+            accuracyVal: results.history.val_acc,
+            lossVal: results.history.val_loss,
+          },
+        });
       })
       .catch((error) => {
-        this.$training.set({ status: 'error' });
-        notify({ title: 'Training error', message: error, duration: 0, type: 'danger' });
+        this.$training.set({ status: 'error', data: error });
+        throw new TrainingError(error.message);
       });
-  }
-
-  clear(): void {
-    delete this.model;
-  }
-
-  predict(x: number[][]): MLPResults {
-    const pred = this.model.predict(tensor2d(x)) as Tensor2D;
-    const softmaxes = pred.arraySync()[0];
-    const ypred = arrayArgMax(softmaxes);
-    const label = this.labels[ypred];
-    const confidences = softmaxes.reduce((c, y, i) => ({ ...c, [this.labels[i]]: y }), {});
-    return { label, confidences };
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  mount(): void {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
   }
 }

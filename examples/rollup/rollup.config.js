@@ -56,7 +56,7 @@ const plugins = [
     targets: [
       { src: 'src/index.html', dest: 'public' },
       {
-        src: 'node_modules/marcellejs/dist/bundle.css',
+        src: 'node_modules/@marcellejs/core/dist/bundle.css',
         dest: 'public',
         rename: 'marcelle.css',
       },

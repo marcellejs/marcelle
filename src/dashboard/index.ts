@@ -1,14 +1,15 @@
 import { DashboardPage } from './dashboard_page';
-import DashboardAppComponent from './DashboardApp.svelte';
+import DashboardComponent from './Dashboard.svelte';
 
 export interface DashboardOptions {
   title: string;
   author: string;
 }
 
-export class DashboardApp {
+export class Dashboard {
   panels: Record<string, DashboardPage> = {};
-  app?: DashboardAppComponent;
+  app?: DashboardComponent;
+  settings = new DashboardPage('settings');
 
   constructor(private title = 'Hello, Marcelle!', private author = 'author') {}
 
@@ -20,12 +21,13 @@ export class DashboardApp {
   }
 
   start(): void {
-    this.app = new DashboardAppComponent({
+    this.app = new DashboardComponent({
       target: document.body,
       props: {
         title: this.title,
         author: this.author,
         dashboards: this.panels,
+        settings: this.settings,
       },
     });
     this.app.$on('quit', () => {
@@ -42,6 +44,6 @@ export class DashboardApp {
   }
 }
 
-export function createDashboard(options: DashboardOptions): DashboardApp {
-  return new DashboardApp(options.title, options.author);
+export function createDashboard(options: DashboardOptions): Dashboard {
+  return new Dashboard(options.title, options.author);
 }

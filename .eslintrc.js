@@ -6,9 +6,10 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
+    project: './tsconfig.json',
   },
-  plugins: ['@typescript-eslint', 'svelte3'],
-  extends: ['airbnb/base', 'plugin:@typescript-eslint/recommended'],
+  plugins: ['svelte3'],
+  extends: ['airbnb-typescript/base', 'plugin:@typescript-eslint/recommended'],
   overrides: [
     {
       files: ['**/*.svelte'],
@@ -20,17 +21,6 @@ module.exports = {
       },
     },
   ],
-  settings: {
-    'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
-    'import/parsers': {
-      '@typescript-eslint/parser': ['.ts', '.tsx'],
-    },
-    'import/resolver': {
-      node: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
-      },
-    },
-  },
   rules: {
     'import/extensions': [
       'error',
@@ -44,16 +34,11 @@ module.exports = {
       },
     ],
     'import/prefer-default-export': 'off',
-    'lines-between-class-members': 'off',
-    'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
-    'no-useless-constructor': 'off',
-    '@typescript-eslint/no-unused-expressions': 'error',
-    'no-unused-expressions': 'off',
     'object-curly-newline': 'off',
-    'arrow-parens': 'off',
-    'implicit-arrow-linebreak': 'off',
+    '@typescript-eslint/lines-between-class-members': 'off',
     'no-plusplus': 'off',
-    'operator-linebreak': 'off',
+    'implicit-arrow-linebreak': 'off',
     'function-paren-newline': 'off',
+    '@typescript-eslint/comma-dangle': 'off',
   },
 };

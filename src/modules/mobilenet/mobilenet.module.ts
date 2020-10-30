@@ -1,18 +1,23 @@
-import { empty, map, awaitPromises } from '@most/core';
 import {
   load as loadMobilenet,
   MobileNet,
   MobileNetVersion,
   MobileNetAlpha,
 } from '@tensorflow-models/mobilenet';
+import { logger } from '../../core/logger';
 import { Module } from '../../core/module';
-import Component from './mobilenet.svelte';
 import { Stream } from '../../core/stream';
+import Component from './mobilenet.svelte';
 
 export interface MobilenetOptions {
-  input?: Stream<ImageData>;
   version?: MobileNetVersion;
   alpha?: MobileNetAlpha;
+  mode?: 'string';
+}
+
+export interface MobilenetResults {
+  label: string;
+  confidences: { [key: string]: number };
 }
 
 export class Mobilenet extends Module {
@@ -21,13 +26,11 @@ export class Mobilenet extends Module {
 
   #mobilenet: MobileNet | undefined;
   // #convert = createImageConverter();
-  loading = true;
+  $loading = new Stream(true, true);
   readonly version: MobileNetVersion;
   readonly alpha: MobileNetAlpha;
 
-  $features: Stream<number[][]>;
-
-  constructor({ input = undefined, version = 1, alpha = 1 }: MobilenetOptions = {}) {
+  constructor({ version = 1, alpha = 1 }: MobilenetOptions = {}) {
     super();
     if (![1, 2].includes(version)) {
       throw new Error('Mobilenet version must be 1 or 2');
@@ -37,11 +40,6 @@ export class Mobilenet extends Module {
     }
     this.version = version;
     this.alpha = alpha;
-    if (input) {
-      this.$features = new Stream(awaitPromises(map(this.process.bind(this), input)));
-    } else {
-      this.$features = new Stream(empty());
-    }
     this.setup();
   }
 
@@ -50,15 +48,26 @@ export class Mobilenet extends Module {
       version: this.version,
       alpha: this.alpha,
     });
-    this.loading = false;
+    logger.info(`Mobilenet v${this.version} loaded with alpha = ${this.alpha}`);
+    this.$loading.set(false);
     this.start();
-    this.$$.app?.$set({ loading: false });
     return this;
   }
 
   async process(image: ImageData): Promise<number[][]> {
     if (!this.#mobilenet) return [];
     return this.#mobilenet.infer(image, true).arraySync() as number[][];
+  }
+
+  async predict(image: ImageData): Promise<MobilenetResults> {
+    if (!this.#mobilenet) {
+      throw new Error('Mobilenet is not loaded');
+    }
+    const results = await this.#mobilenet.classify(image, 5);
+    return {
+      label: results[0].className,
+      confidences: results.reduce((x, y) => ({ ...x, [y.className]: y.probability }), {}),
+    };
   }
 
   mount(targetSelector?: string): void {
@@ -69,10 +78,10 @@ export class Mobilenet extends Module {
       target,
       props: {
         title: this.name,
-        loading: this.loading,
+        loading: this.$loading,
         version: this.version,
         alpha: this.alpha,
       },
     });
-  } // eslint-disable-line class-methods-use-this
+  }
 }

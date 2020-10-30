@@ -7,6 +7,7 @@ import typescript from '@rollup/plugin-typescript';
 import progress from 'rollup-plugin-progress';
 import { terser } from 'rollup-plugin-terser';
 import filesize from 'rollup-plugin-filesize';
+import replace from '@rollup/plugin-replace';
 import sizes from 'rollup-plugin-sizes';
 import pkg from './package.json';
 
@@ -14,11 +15,16 @@ const production = !process.env.ROLLUP_WATCH;
 const analyze = false;
 
 const plugins = [
-  css({ output: 'dist/extra.css' }),
+  replace({
+    'process.env.NODE_ENV': process.env.ROLLUP_WATCH
+      ? JSON.stringify('development')
+      : JSON.stringify('production'),
+  }),
+  css({ output: 'extra.css' }),
   svelte({
     dev: !production,
     css: (c) => {
-      c.write('dist/bundle.css');
+      c.write('bundle.css');
     },
     preprocess: preprocess({
       postcss: true,
@@ -34,7 +40,7 @@ const plugins = [
   progress(),
   production && terser(),
   production && filesize(),
-  analyze && sizes(),
+  analyze && sizes({ details: false }),
 ];
 
 const globals = {

@@ -1,28 +1,28 @@
 import { Module } from '../core/module';
 
-export class Step {
-  modules: Module[] = [];
+export class WizardStep {
+  modules: Array<Module | Module[] | string> = [];
 
   attr = { title: '', description: '' };
 
-  constructor(public stepFn: () => Step) {}
+  constructor(public stepFn: () => WizardStep) {}
 
-  title(title: string): Step {
+  title(title: string): WizardStep {
     this.attr.title = title;
     return this;
   }
 
-  description(desc: string): Step {
+  description(desc: string): WizardStep {
     this.attr.description = desc;
     return this;
   }
 
-  use(...modules: Module[]): Step {
+  use(...modules: Array<Module | Module[] | string>): WizardStep {
     this.modules = this.modules.concat(modules);
     return this;
   }
 
-  step(): Step {
+  step(): WizardStep {
     return this.stepFn();
   }
 }

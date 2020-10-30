@@ -1,0 +1,5 @@
+{
+  "cleanUrls": true,
+  "redirects": [{ "source": "/", "destination": "/examples" }],
+  "unlisted": [".*", "serve.json"]
+}

@@ -10,50 +10,36 @@
 
 ## About
 
-Marcelle is an experimental framework for building interactive machine learning applications.
+Marcelle is an interactive machine learning toolkit that has been designed to allow ML practitioners, with various levels of expertise, to explore ML and build applications embedding ML models. In particular, Marcelle aims to address the following use cases:
 
-<p style="color: crimson;">TODO: Description</p>
+1. interactively designing ML-based web applications with small datasets
+2. teaching ML to an audience without specific skills in ML or CS
+3. learning about ML concepts through exploratory interactive training and testing
+4. discovering and exploring expressive (big) ML models.
 
-> Marcelle was designed as supporting material for the "Interactive Machine Learning" elective class of the Interaction specialty of Université Paris-Sud Master's degree.
+Marcelle is a web-based reactive toolkit facilitating the design of custom ML pipelines and personalized user interfaces enabling user interactions on the pipeline's constitutive elements.
 
-<p style="color: crimson;">TODO: Update docs</p>
-
-[Full Documentation](https://marcelle.netlify.com)
+[Online Documentation](https://marcelle.netlify.com)
 
 ## Installation
-
-<p style="color: crimson;">TODO: Publish on NPM</p>
 
 [See online documentation](https://marcelle.netlify.com/installation.html)
 
 Using NPM:
 
 ```bash
-npm install marcellejs --save
+npm install @marcellejs/core@next --save
 ```
 
 Using Yarn:
 
 ```bash
-yarn add marcellejs
+yarn add @marcellejs/core@next
 ```
 
 ## Usage
 
-[See the online documentation](https://marcelle.netlify.com/installation.html) for more examples:
-
-```js
-// TODO: EXAMPLE
-```
-
-## 🔨 Built Using
-
-- [TypeScript](https://www.typescriptlang.org/)
-- [Tensorflow.js](https://js.tensorflow.org/)
-- [Most](https://github.com/mostjs/core)
-- [Svelte](https://svelte.dev/)
-- [Tailwind CSS](https://tailwindcss.com/)
-<!-- - [Apexcharts](Apexcharts) -->
+See [Online Documentation](https://marcelle.netlify.com) and [Examples](https://glitch.com/@marcelle.crew/marcelle-examples).
 
 ## 🛠 Developing
 
@@ -89,7 +75,7 @@ The best is to use a symlink to the local library to install the rollup example.
 ```bash
 yarn link
 cd examples/rollup
-yarn link marcellejs
+yarn link @marcellejs/core
 ```
 
 ## ✍️ Authors
@@ -97,9 +83,17 @@ yarn link marcellejs
 - [@JulesFrancoise](https://github.com/JulesFrancoise/)
 - [@bcaramiaux](https://github.com/bcaramiaux/)
 
+## 🔨 Built Using
+
+- [TypeScript](https://www.typescriptlang.org/)
+- [Most](https://github.com/mostjs/core)
+- [Svelte](https://svelte.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Tensorflow.js](https://js.tensorflow.org/)
+- [Chartjs](https://www.chartjs.org/)
+- And more...
+
 ## 🎉 Acknowledgements
 
 - [Teachable Machine](https://teachablemachine.withgoogle.com/)
 - [Wekinator](http://www.wekinator.org/)
-
-<p style="color: crimson;">TODO: Update references</p>
