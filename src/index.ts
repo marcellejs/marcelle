@@ -37,6 +37,6 @@ export * from './modules/slider';
 export * from './modules/webcam';
 
 // Models
-export * from './modules/dnn';
+export * from './modules/tfImageClassifier';
 export * from './modules/mlp';
 export * from './modules/knn';

@@ -6,9 +6,9 @@ import { logger } from '../../core/logger';
 import { Model } from '../../core/model';
 import { Stream } from '../../core/stream';
 import { Catch } from '../../utils/error-handling';
-import Component from './dnn.svelte';
+import Component from './tfImageClassifier.svelte';
 
-export class DNN extends Model<ImageData, ClassifierResults> {
+export class TfImageClassifier extends Model<ImageData, ClassifierResults> {
   name = 'dnn';
   description = 'Generic Deep Neural Network module';
 
@@ -61,12 +61,9 @@ export class DNN extends Model<ImageData, ClassifierResults> {
   }
 
   async load(urls: []): Promise<void> {
-    console.log('lo;ad', urls);
-    // if (!urls.length) return;
     this.$loading.set(true);
     if (urls.length) {
       this.model = await loadLayersModel(io.browserFiles(urls));
-      // console.log('load model', this.model.inputs[0].shape);
       this.inputShape = Object.values(this.model.inputs[0].shape);
       this.$loading.set(false);
     }
