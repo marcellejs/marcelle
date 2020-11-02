@@ -9,7 +9,7 @@ import { Catch } from '../../utils/error-handling';
 import Component from './tfImageClassifier.svelte';
 
 export class TfImageClassifier extends Model<ImageData, ClassifierResults> {
-  name = 'dnn';
+  name = 'tfImageClassifier';
   description = 'Generic Deep Neural Network module';
 
   parameters = {};
