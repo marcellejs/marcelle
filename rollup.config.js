@@ -47,8 +47,11 @@ const globals = {
   '@tensorflow/tfjs-core': 'tf',
   '@tensorflow/tfjs-converter': 'tf',
   '@tensorflow/tfjs-layers': 'tf',
+  '@tensorflow/tfjs-backend-webgl': 'tf',
   '@most/prelude': 'mostPrelude',
   '@most/core': 'mostCore',
+  '@most/scheduler': 'mostScheduler',
+  'chart.js': 'Chart',
 };
 
 const esOutput = {
