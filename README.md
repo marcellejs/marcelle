@@ -1,6 +1,6 @@
-<h2 align="center">Marcelle.js</h2>
+<h2 align="center">Marcelle</h2>
 
-<p align="center">A reactive framework for building interactive machine learning applications</p>
+<p align="center">An Interactive Machine Learning Toolkit</p>
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
