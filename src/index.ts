@@ -38,5 +38,6 @@ export * from './modules/webcam';
 
 // Models
 export * from './modules/tfImageClassifier';
+export * from './modules/tfObjectDetector';
 export * from './modules/mlp';
 export * from './modules/knn';
