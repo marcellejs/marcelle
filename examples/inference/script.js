@@ -5,7 +5,7 @@
 // -----------------------------------------------------------
 
 const source = marcelle.imageDrop();
-const classifier = marcelle.dnn();
+const classifier = marcelle.tfImageClassifier();
 
 // -----------------------------------------------------------
 // CAPTURE TO DATASET
@@ -64,7 +64,6 @@ const betterPredictions = predictionStream.map(({ label, confidences }) => {
   const conf = Object.entries(confidences)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 10);
-  console.log('conf', conf);
   return {
     label: labels[parseInt(label, 10)],
     confidences: conf.reduce((x, y) => ({ ...x, [labels[y[0]]]: y[1] }), {}),
