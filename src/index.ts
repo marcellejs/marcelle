@@ -41,4 +41,3 @@ export * from './modules/coco-ssd';
 export * from './modules/knn';
 export * from './modules/mlp';
 export * from './modules/tf-image-classifier';
-export * from './modules/tf-object-detector';
