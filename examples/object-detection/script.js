@@ -5,7 +5,7 @@
 // -----------------------------------------------------------
 
 const source = marcelle.imageDrop();
-const classifier = marcelle.tfObjectDetector();
+const cocoClassifier = marcelle.cocoSsd();
 
 // -----------------------------------------------------------
 // CAPTURE TO DATASET
@@ -31,20 +31,22 @@ tog.$checked.skipRepeats().subscribe((x) => {
 });
 
 // -----------------------------------------------------------
-// REAL-TIME PREDICTION
+// COCO REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
-const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
+const cocoPredictionStream = source.$images
+  .map(async (img) => cocoClassifier.predict(img))
+  .awaitPromises();
 
-const betterPredictions = predictionStream.map(({ outputs }) => ({
+const cocoBetterPredictions = cocoPredictionStream.map(({ outputs }) => ({
   label: outputs[0].class,
   confidences: outputs.reduce((x, y) => ({ ...x, [y.class]: y.confidence }), {}),
 }));
 
-const plotResults = marcelle.predictionPlot(betterPredictions);
+const cocoPlotResults = marcelle.predictionPlot(cocoBetterPredictions);
 
 // create new module?
-const instanceViewer = {
+const cocoInstanceViewer = {
   id: 'my-instance-viewer',
   mount(targetSelector) {
     const target = document.querySelector(targetSelector || '#my-instance-viewer');
@@ -57,7 +59,7 @@ const instanceViewer = {
       instanceCanvas.height = img.height;
       instanceCtx.putImageData(img, 0, 0);
     });
-    predictionStream.subscribe(({ outputs }) => {
+    cocoPredictionStream.subscribe(({ outputs }) => {
       for (let i = 0; i < outputs.length; i++) {
         instanceCtx.beginPath();
         instanceCtx.rect(...outputs[i].bbox);
@@ -96,5 +98,5 @@ const dashboard = marcelle.createDashboard({
   datasets: [trainingSet],
 });
 
-dashboard.page('Real-time Testing').useLeft(source).use(classifier, [instanceViewer, plotResults]);
+dashboard.page('Real-time Testing').useLeft(source).use([cocoInstanceViewer, cocoPlotResults]);
 dashboard.start();

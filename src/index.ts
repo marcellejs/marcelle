@@ -37,7 +37,8 @@ export * from './modules/slider';
 export * from './modules/webcam';
 
 // Models
-export * from './modules/tfImageClassifier';
-export * from './modules/tfObjectDetector';
-export * from './modules/mlp';
+export * from './modules/coco-ssd';
 export * from './modules/knn';
+export * from './modules/mlp';
+export * from './modules/tf-image-classifier';
+export * from './modules/tf-object-detector';

@@ -2,8 +2,6 @@ import { Dataset } from '../modules/dataset';
 import { Model } from './model';
 
 export interface ObjectDetectorResults {
-  // label: string;
-  // confidences: { [key: string]: number };
   outputs: {
     bbox: number[];
     class: string;
