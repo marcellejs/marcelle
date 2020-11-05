@@ -1,4 +1,4 @@
-import { CocoSsd } from './cocoSsd.module';
+import { CocoSsd } from './coco-ssd.module';
 
 export function cocoSsd(): CocoSsd {
   return new CocoSsd();

@@ -1,4 +1,4 @@
-import { VisObjectDetection } from './visObjectDetection.module';
+import { VisObjectDetection } from './vis-object-detection.module';
 import { Stream } from '../../core/stream';
 import { ObjectDetectorResults } from '../../core/objectDetector';
 

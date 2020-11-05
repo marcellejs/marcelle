@@ -3,7 +3,7 @@ import { Model } from './model';
 
 export interface ObjectDetectorResults {
   outputs: {
-    bbox: number[];
+    bbox: [number, number, number, number];
     class: string;
     confidence: number;
   }[];

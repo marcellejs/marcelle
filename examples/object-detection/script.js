@@ -20,21 +20,21 @@ const cocoBetterPredictions = cocoPredictionStream.map(({ outputs }) => ({
   confidences: outputs.reduce((x, y) => ({ ...x, [y.class]: y.confidence }), {}),
 }));
 
+const objDetectionVis = marcelle.visObjectDetection(source.$images, cocoPredictionStream);
 const cocoPlotResults = marcelle.predictionPlot(cocoBetterPredictions);
-
-const objDetectionPlot = marcelle.visObjectDetection(source.$images, cocoPredictionStream);
 
 // -----------------------------------------------------------
 // DASHBOARDS
 // -----------------------------------------------------------
 
 const dashboard = marcelle.createDashboard({
-  title: 'Marcelle: Interactive Model Testing',
+  title: 'Marcelle: Object Detection with COCO-SSD',
   author: 'Marcelle Pirates Crew',
 });
 
-dashboard.page('Real-time Testing').useLeft(source).use([objDetectionPlot, cocoPlotResults]);
-dashboard.start();
+dashboard
+  .page('Object Detection')
+  .useLeft(source, cocoClassifier)
+  .use([objDetectionVis, cocoPlotResults]);
 
-// eslint-disable-next-line no-undef
-imageStream.subscribe((img) => display(img));
+dashboard.start();

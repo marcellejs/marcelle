@@ -1,11 +1,11 @@
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import { ObjectDetectorResults } from '../../core/objectDetector';
-import Component from './visObjectDetection.svelte';
+import Component from './vis-object-detection.svelte';
 
 export class VisObjectDetection extends Module {
-  name = 'training plot';
-  description = 'Plot the loss/accuracy during training';
+  name = 'Visualize Object Detections';
+  description = 'Visualize the bounding box of detected objects';
 
   $objectDetectionResults: Stream<ObjectDetectorResults>;
   $imgStream: Stream<unknown>;
@@ -24,7 +24,7 @@ export class VisObjectDetection extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        id: target.id,
+        title: this.name,
         imageStream: this.$imgStream,
         objectDetectionResults: this.$objectDetectionResults,
       },
