@@ -1,7 +1,7 @@
 {
   "name": "@marcellejs/core",
   "description": "Marcelle Core API",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0-alpha.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/JulesFrancoise/marcelle-next"
@@ -31,6 +31,7 @@
     "eslint": "^7.10.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-airbnb-typescript": "^11.0.0",
+    "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-svelte3": "^2.7.3",
     "postcss": "^8.1.1",
