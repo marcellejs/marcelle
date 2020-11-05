@@ -39,9 +39,11 @@ export * from './modules/toggle';
 export * from './modules/training-plot';
 export * from './modules/select';
 export * from './modules/slider';
+export * from './modules/vis-object-detection';
 export * from './modules/webcam';
 
 // Models
-export * from './modules/tfImageClassifier';
-export * from './modules/mlp';
+export * from './modules/coco-ssd';
 export * from './modules/knn';
+export * from './modules/mlp';
+export * from './modules/tf-image-classifier';

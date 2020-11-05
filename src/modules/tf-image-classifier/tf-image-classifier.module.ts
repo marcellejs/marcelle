@@ -6,7 +6,7 @@ import { logger } from '../../core/logger';
 import { Model } from '../../core/model';
 import { Stream } from '../../core/stream';
 import { Catch } from '../../utils/error-handling';
-import Component from './tfImageClassifier.svelte';
+import Component from './tf-image-classifier.svelte';
 
 export class TfImageClassifier extends Model<ImageData, ClassifierResults> {
   name = 'tfImageClassifier';
