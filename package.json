@@ -62,6 +62,8 @@
     "@tensorflow-models/coco-ssd": "^2.1.0",
     "@tensorflow-models/knn-classifier": "^1.2.2",
     "@tensorflow-models/mobilenet": "^2.0.4",
+    "@tensorflow/tfjs-backend-webgl": "^2.7.0",
+    "@tensorflow/tfjs-converter": "^2.7.0",
     "@tensorflow/tfjs-core": "^2.4.0",
     "@tensorflow/tfjs-layers": "^2.4.0",
     "@types/socket.io-client": "^1.4.34",

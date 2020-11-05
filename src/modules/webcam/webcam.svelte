@@ -1,5 +1,4 @@
 <script>
-  import { noop } from 'svelte/internal';
   import { onMount, onDestroy } from 'svelte';
   import ModuleBase from '../../core/ModuleBase.svelte';
   import Spinner from '../../ui/widgets/Spinner.svelte';
@@ -15,7 +14,7 @@
   let videoElement = null;
   let webcamContainerWidth;
 
-  let unSub = noop;
+  let unSub = () => {};
   onMount(async () => {
     await new Promise((resolve, reject) => {
       const rej = setTimeout(() => {
