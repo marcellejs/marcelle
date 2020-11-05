@@ -1,6 +1,6 @@
 import { ObjectDetection, ObjectDetectionBaseModel } from '@tensorflow-models/coco-ssd';
 import { logger } from '../../core/logger';
-import { ObjectDetector, ObjectDetectorResults } from '../../core/objectDetector';
+import { ObjectDetector, ObjectDetectorResults } from '../../core/object-detector';
 import { Stream } from '../../core/stream';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './coco-ssd.svelte';

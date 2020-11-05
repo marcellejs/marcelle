@@ -9,7 +9,7 @@ module.exports = {
   ],
   serviceWorker: false,
   themeConfig: {
-    repo: 'marcellejs/marcelle-next',
+    repo: 'marcellejs/marcelle',
     docsDir: 'docs',
     nav: [
       {
