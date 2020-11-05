@@ -9,7 +9,7 @@ module.exports = {
     project: './tsconfig.json',
   },
   plugins: ['svelte3'],
-  extends: ['airbnb-typescript/base', 'plugin:@typescript-eslint/recommended'],
+  extends: ['airbnb-typescript/base', 'prettier', 'prettier/@typescript-eslint'],
   overrides: [
     {
       files: ['**/*.svelte'],
@@ -33,12 +33,8 @@ module.exports = {
         tsx: 'never',
       },
     ],
-    'import/prefer-default-export': 'off',
-    'object-curly-newline': 'off',
     '@typescript-eslint/lines-between-class-members': 'off',
+    'import/prefer-default-export': 'off',
     'no-plusplus': 'off',
-    'implicit-arrow-linebreak': 'off',
-    'function-paren-newline': 'off',
-    '@typescript-eslint/comma-dangle': 'off',
   },
 };

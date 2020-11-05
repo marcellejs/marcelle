@@ -28,7 +28,3 @@ npm install marcellejs --save
 ```bash
 yarn add marcellejs
 ```
-
-## Use with Rollup
-
-An example webpack configuration is available on Github, [in the examples folder](https://github.com/marcellejs/marcelle-next/tree/develop/examples/rollup). -->

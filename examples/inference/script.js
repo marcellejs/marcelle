@@ -5,7 +5,7 @@
 // -----------------------------------------------------------
 
 const source = marcelle.imageDrop();
-const classifier = marcelle.dnn();
+const classifier = marcelle.tfImageClassifier();
 
 // -----------------------------------------------------------
 // CAPTURE TO DATASET
@@ -64,7 +64,6 @@ const betterPredictions = predictionStream.map(({ label, confidences }) => {
   const conf = Object.entries(confidences)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 10);
-  console.log('conf', conf);
   return {
     label: labels[parseInt(label, 10)],
     confidences: conf.reduce((x, y) => ({ ...x, [labels[y[0]]]: y[1] }), {}),
@@ -100,7 +99,6 @@ const instanceViewer = {
 const dashboard = marcelle.createDashboard({
   title: 'Marcelle: Interactive Model Testing',
   author: 'Marcelle Pirates Crew',
-  datasets: [trainingSet],
 });
 
 const help = marcelle.text({
@@ -117,4 +115,6 @@ dashboard
   .page('Batch Testing')
   .useLeft(source, classifier)
   .use(tog, trainingSetBrowser, predictButton, predictionAccuracy, confusionMatrix);
+dashboard.settings.use(trainingSet);
+
 dashboard.start();

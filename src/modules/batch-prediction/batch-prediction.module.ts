@@ -79,7 +79,6 @@ export class BatchPrediction extends Module {
       query: { $select: ['id', inputField, 'label'] },
     });
     const { data } = result as Paginated<Instance>;
-    console.log('data', data);
     const predictionIds = await Promise.all(
       data.map(({ id, [inputField]: features, label }) =>
         model

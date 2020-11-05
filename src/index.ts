@@ -1,13 +1,12 @@
+import '@tensorflow/tfjs-backend-webgl';
 import './utils';
 
 // Core library
-export * from './core/stream';
-export * from './core/types';
+export * from './core';
 export * from './backend';
-export * from './core/logger';
 export { throwError } from './utils/error-handling';
 
-// Core library
+// Dashboards & Wizards
 export { createDashboard } from './dashboard';
 export type { DashboardOptions, Dashboard } from './dashboard';
 export { createWizard } from './wizard';
@@ -34,9 +33,11 @@ export * from './modules/toggle';
 export * from './modules/training-plot';
 export * from './modules/select';
 export * from './modules/slider';
+export * from './modules/vis-object-detection';
 export * from './modules/webcam';
 
 // Models
-export * from './modules/dnn';
-export * from './modules/mlp';
+export * from './modules/coco-ssd';
 export * from './modules/knn';
+export * from './modules/mlp';
+export * from './modules/tf-image-classifier';
