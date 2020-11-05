@@ -2,13 +2,7 @@ import '@tensorflow/tfjs-backend-webgl';
 import './utils';
 
 // Core library
-export * from './core/stream';
-export * from './core/module';
-export { default as ModuleBase } from './core/ModuleBase.svelte';
-export * from './core/model';
-export * from './core/classifier';
-export * from './core/types';
-export * from './core/logger';
+export * from './core';
 export * from './backend';
 export { throwError } from './utils/error-handling';
 
