@@ -34,6 +34,7 @@ export * from './modules/toggle';
 export * from './modules/training-plot';
 export * from './modules/select';
 export * from './modules/slider';
+export * from './modules/vis-object-detection';
 export * from './modules/webcam';
 
 // Models
