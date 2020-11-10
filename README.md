@@ -1,12 +1,18 @@
 <h2 align="center">Marcelle</h2>
 
 <p align="center">An Interactive Machine Learning Toolkit</p>
+<p align="center"><a href="https://marcelle.netlify.app" target="_blank">https://marcelle.netlify.app</a></p>
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
+[![npm version](https://img.shields.io/npm/v/@marcellejs/core/next)]()
 
 </div>
+
+## Status ⚠️
+
+Marcelle is still experimental and is currently under active development. Breaking changes are expected.
 
 ## About
 
@@ -19,11 +25,9 @@ Marcelle is an interactive machine learning toolkit that has been designed to al
 
 Marcelle is a web-based reactive toolkit facilitating the design of custom ML pipelines and personalized user interfaces enabling user interactions on the pipeline's constitutive elements.
 
-[Online Documentation](https://marcelle.netlify.com)
-
 ## Installation
 
-[See online documentation](https://marcelle.netlify.com/installation.html)
+[See online documentation](https://marcelle.netlify.app/installation.html)
 
 Using NPM:
 
@@ -39,7 +43,7 @@ yarn add @marcellejs/core@next
 
 ## Usage
 
-See [Online Documentation](https://marcelle.netlify.com) and [Examples](https://glitch.com/@marcelle.crew/marcelle-examples).
+See [Online Documentation](https://marcelle.netlify.app) and [Examples](https://glitch.com/@marcelle.crew/marcelle-examples).
 
 ## 🛠 Developing
 
@@ -67,16 +71,6 @@ yarn dev # OR npm run dev
 ```
 
 To generate the typescript declaration files (useful for the rollup example), run `yarn build:types` in production, or `yarn dev:types` in development.
-
-### Building the Rollup example
-
-The best is to use a symlink to the local library to install the rollup example. From the root:
-
-```bash
-yarn link
-cd examples/rollup
-yarn link @marcellejs/core
-```
 
 ## ✍️ Authors
 
