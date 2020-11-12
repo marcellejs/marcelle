@@ -8,6 +8,7 @@ import sift from 'sift';
 import { addObjectId, renameIdField, createDate, updateDate } from './hooks';
 import { logger } from '../core/logger';
 import Login from './Login.svelte';
+import { throwError } from '../utils/error-handling';
 
 function isValidUrl(str: string) {
   try {
@@ -31,7 +32,6 @@ interface User {
 
 export interface BackendOptions {
   location?: string;
-  auth?: boolean;
 }
 
 export class Backend {
@@ -42,19 +42,27 @@ export class Backend {
 
   requiresAuth = false;
   user: User;
-  #authenticationPromise: Promise<void>;
+  #location: string;
+  #connectPromise: Promise<User>;
+  #authenticationPromise: Promise<User>;
 
   backendType: BackendType;
 
   createService: (name: string) => void = () => {};
 
-  constructor({ location = 'memory', auth = false }: BackendOptions = {}) {
+  constructor({ location = 'memory' }: BackendOptions = {}) {
     this.#app = feathers();
-    this.requiresAuth = auth && !['memory', 'localStorage'].includes(location);
+    this.#location = location;
     if (isValidUrl(location)) {
       this.backendType = BackendType.Remote;
-      const socket = io(location);
-      this.#app.configure(socketio(socket));
+      const socket = io(location, { reconnectionAttempts: 3 });
+      this.#app.configure(socketio(socket, { timeout: 3000 }));
+      this.#app.io.on('init', ({ auth }: { auth: boolean }) => {
+        this.requiresAuth = auth;
+        if (auth) {
+          this.#app.configure(authentication());
+        }
+      });
     } else if (location === 'localStorage') {
       this.backendType = BackendType.LocalStorage;
       const storageService = (name: string) =>
@@ -88,9 +96,32 @@ export class Backend {
       throw new Error(`Cannot process backend location '${location}'`);
     }
     this.setupAppHooks();
-    if (auth) {
-      this.#app.configure(authentication());
+  }
+
+  async connect(): Promise<User> {
+    if (!this.#connectPromise) {
+      logger.log(`Connecting to backend ${this.#location}...`);
+      this.#connectPromise = new Promise((resolve, reject) => {
+        this.#app.io.on('connect', () => {
+          logger.log(`Connected to backend ${this.#location}!`);
+          resolve();
+        });
+        this.#app.io.on('reconnect_failed', () => {
+          const e = new Error(`Cannot reach backend at location ${
+            this.#location
+          }. Is the server running?
+          If using locally, run 'npm run backend'`);
+          e.name = 'Backend connection error';
+          reject();
+          throwError(e, { duration: 0 });
+        });
+      });
     }
+    await this.#connectPromise;
+    if (this.requiresAuth) {
+      await this.authenticate();
+    }
+    return this.requiresAuth ? this.user : { email: null };
   }
 
   async authenticate(): Promise<User> {

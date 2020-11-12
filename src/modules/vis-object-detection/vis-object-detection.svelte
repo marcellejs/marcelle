@@ -11,8 +11,6 @@
     const mycan = document.getElementById('can');
     const ctx = mycan.getContext('2d');
     imageStream.subscribe((img) => {
-      console.log(img);
-      console.log(img.value);
       mycan.height = img.height;
       mycan.width = img.width;
       ctx.putImageData(img, 0, 0);

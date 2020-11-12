@@ -3,6 +3,7 @@ import { Service, Paginated } from '@feathersjs/feathers';
 import { dequal } from 'dequal';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
+import { logger } from '../../core/logger';
 import type { Instance, ObjectId } from '../../core/types';
 import { Backend } from '../../backend/backend';
 import { addScope, imageData2DataURL, limitToScope, dataURL2ImageData } from '../../backend/hooks';
@@ -12,6 +13,13 @@ import Component from './dataset.svelte';
 export interface DatasetOptions {
   name: string;
   backend?: Backend;
+}
+
+function toKebabCase(str: string): string {
+  return str
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replace(/[\s_]+/g, '-')
+    .toLowerCase();
 }
 
 export class Dataset extends Module {
@@ -34,18 +42,37 @@ export class Dataset extends Module {
     super();
     this.name = name;
     this.#backend = backend;
-    if (this.#backend.requiresAuth) {
-      this.#backend.authenticate().then(() => {
+    this.$labels = new Stream(skipRepeatsWith(dequal, map(Object.keys, this.$classes)));
+    this.$count = new Stream(
+      this.$instances.map((x) => x.length),
+      true,
+    );
+    this.$countPerClass = new Stream(
+      map(
+        (x) =>
+          Object.entries(x).reduce(
+            (y, [label, instances]) => ({ ...y, [label]: instances.length }),
+            {},
+          ),
+        this.$classes,
+      ),
+      true,
+    );
+    this.start();
+    this.#backend
+      .connect()
+      .then(() => {
         this.setup();
+      })
+      .catch(() => {
+        logger.log('[dataset] backend connection failed');
       });
-    } else {
-      this.setup();
-    }
   }
 
   async setup(): Promise<void> {
-    this.#backend.createService('instances');
-    this.instanceService = this.#backend.service('instances') as Service<Instance>;
+    const serviceName = toKebabCase(`instances-${this.name}`);
+    this.#backend.createService(serviceName);
+    this.instanceService = this.#backend.service(serviceName) as Service<Instance>;
     this.instanceService.hooks({
       before: {
         create: [
@@ -66,24 +93,6 @@ export class Dataset extends Module {
         get: [dataURL2ImageData].filter((x) => !!x),
       },
     });
-
-    this.$labels = new Stream(skipRepeatsWith(dequal, map(Object.keys, this.$classes)));
-    this.$count = new Stream(
-      map((x) => x.length, this.$instances),
-      true,
-    );
-    this.$countPerClass = new Stream(
-      map(
-        (x) =>
-          Object.entries(x).reduce(
-            (y, [label, instances]) => ({ ...y, [label]: instances.length }),
-            {},
-          ),
-        this.$classes,
-      ),
-      true,
-    );
-    this.start();
 
     // Fetch instances
     const resInstances = await this.instanceService.find({

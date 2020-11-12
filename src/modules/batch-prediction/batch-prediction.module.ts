@@ -7,6 +7,7 @@ import { Backend, BackendType } from '../../backend/backend';
 import { addScope, limitToScope, imageData2DataURL, dataURL2ImageData } from '../../backend/hooks';
 import { Dataset } from '../dataset';
 import { MLP } from '../mlp';
+import { logger } from '../../core';
 
 export interface BatchPredictionOptions {
   name: string;
@@ -27,17 +28,18 @@ export class BatchPrediction extends Module {
     super();
     this.name = name;
     this.#backend = backend;
-    if (this.#backend.requiresAuth) {
-      this.#backend.authenticate().then(() => {
+    this.#backend
+      .connect()
+      .then(() => {
         this.setup();
+      })
+      .catch(() => {
+        logger.log('[BatchPrediction] backend connection failed');
       });
-    } else {
-      this.setup();
-    }
   }
 
   async setup(): Promise<void> {
-    const serviceName = `prediction-${this.name}`;
+    const serviceName = `predictions-${this.name}`;
     this.#backend.createService(serviceName);
     this.predictionService = this.#backend.service(serviceName) as Service<Prediction>;
     this.predictionService.hooks({
