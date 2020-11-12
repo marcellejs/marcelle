@@ -38,13 +38,13 @@ wizard
   .use([input, plotResults]);
 ```
 
-### .step()
+### .destroy()
 
 ```tsx
-step(): Step
+destroy(): void
 ```
 
-Add a new step to the wizard, and returns the corresponding `WizardStep` instance.
+Destroys the dashboard application. This destroys the current view, if it exists, but preserves the configuration, meaning that the dashboard can still be re-started.
 
 ### .start()
 
@@ -54,25 +54,17 @@ start(): void
 
 Starts the dashboard application. The application, a Svelte component instance, is mounted on the document's body, creating an overlay on the current web page without destroying any content.
 
-### .destroy()
+### .step()
 
 ```tsx
-destroy(): void
+step(): Step
 ```
 
-Destroys the dashboard application. This destroys the current view, if it exists, but preserves the configuration, meaning that the dashboard can still be re-started.
+Add a new step to the wizard, and returns the corresponding `WizardStep` instance.
 
 ## WizardStep
 
 They are created using the [`step`](#step) method of a Dashboard.
-
-### .title()
-
-```tsx
-title(title: string): WizardStep
-```
-
-Define the title of the step.
 
 ### .description()
 
@@ -81,6 +73,22 @@ description(desc: string): WizardStep
 ```
 
 Specifies the description, or help, of the current step.
+
+### .step()
+
+```tsx
+step(): WizardStep
+```
+
+Add a step to the parent wizard.
+
+### .title()
+
+```tsx
+title(title: string): WizardStep
+```
+
+Define the title of the step.
 
 ### .use()
 
@@ -93,11 +101,3 @@ Add a set of modules to the step. The syntax is similar to the one for Dashoards
 - A module ([`Module`](/api/modules)), displayed full-width on the right column
 - An array of module, which are then distributed horizontally
 - A string, which defines a section title
-
-### .step()
-
-```tsx
-step(): WizardStep
-```
-
-Add a step to the parent wizard.

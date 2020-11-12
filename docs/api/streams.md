@@ -67,13 +67,13 @@ const $rnd = $timer
 $rnd.subscribe(console.log);
 ```
 
-### .subscribe()
+### .hold()
 
 ```tsx
-subscribe(run: (value: T) => void = dummySubscriber, invalidate = () => {}): () => void
+hold(): Stream<T>
 ```
 
-The `subscribe` method must accept as its argument a subscription function. All of a streams's active subscription functions are synchronously called whenever a new event is emitted on the stream. If a stream is held, this subscription function must be immediately and synchronously called with the stream's current value upon calling `subscribe`.
+Hold the stream values. When called, all new subscribers will receive the latest value at the time of subscription.
 
 ### .start()
 
@@ -91,13 +91,13 @@ stop(): void
 
 Imperatively stop the stream processing. Calling `stop` will result in an `end` event being emitted on the stream.
 
-### .hold()
+### .subscribe()
 
 ```tsx
-hold(): Stream<T>
+subscribe(run: (value: T) => void = dummySubscriber, invalidate = () => {}): () => void
 ```
 
-Hold the stream values. When called, all new subscribers will receive the latest value at the time of subscription.
+The `subscribe` method must accept as its argument a subscription function. All of a streams's active subscription functions are synchronously called whenever a new event is emitted on the stream. If a stream is held, this subscription function must be immediately and synchronously called with the stream's current value upon calling `subscribe`.
 
 ### .thru()
 
