@@ -23,7 +23,6 @@ const instances = input.$images
   }))
   .awaitPromises();
 
-// const backend = marcelle.createBackend({ location: 'http://localhost:3030/', auth: true });
 const backend = marcelle.createBackend({ location: 'localStorage' });
 const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
 trainingSet.capture(instances);

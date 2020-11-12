@@ -33,11 +33,12 @@ export class TrainingError extends Error {
   }
 }
 
-export function throwError(error: Error): void {
+export function throwError(error: Error, { duration = 3000 } = {}): void {
   logger.error(`${error.name}: ${error.message}`, error);
   notify({
     title: error.name,
     message: error.message,
     type: 'danger',
+    duration,
   });
 }

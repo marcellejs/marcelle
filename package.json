@@ -1,12 +1,19 @@
 {
   "name": "@marcellejs/core",
   "description": "Marcelle Core API",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "repository": {
     "type": "git",
-    "url": "https://github.com/JulesFrancoise/marcelle"
+    "url": "https://github.com/marcellejs/marcelle"
   },
-  "author": "Jules Françoise <me@julesfrancoise.com>",
+  "author": {
+    "name": "Jules Françoise",
+    "email": "me@julesfrancoise.com"
+  },
+  "keywords": [
+    "marcelle",
+    "interactive machine learning"
+  ],
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.es.js",

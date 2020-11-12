@@ -9,7 +9,6 @@
   import Routie from './routie';
   import Tailwind from '../ui/style/Tailwind.svelte';
   import DashboardPage from './DashboardPage.svelte';
-  import Settings from './Settings.svelte';
 
   export let title;
   export let author;
@@ -203,7 +202,6 @@
 
       <main class="main-container">
         {#if showSettings}
-          <!-- <Settings {settings} /> -->
           <DashboardPage dashboard={settings} />
         {:else if currentDashboard}
           <DashboardPage dashboard={dashboards[currentDashboard]} />

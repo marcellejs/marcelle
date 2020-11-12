@@ -15,7 +15,7 @@
 
 <ModuleBase {title}>
   {#if backend.requiresAuth}
-    {#await backend.authenticate()}
+    {#await backend.connect()}
       <Spinner />
     {:then user}
       <p class="pb-2">Hello, {user.email}</p>
