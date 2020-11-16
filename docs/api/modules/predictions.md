@@ -119,9 +119,13 @@ interface Prediction {
 ### Example
 
 ```js
-const predictionStream = $features
-  .thru(mostCore.map((feat) => classifier.predict(feat)))
-  .thru(mostCore.awaitPromises);
+const predictionStream = $features.map((feat) => classifier.predict(feat)).awaitPromises();
 
 const plotResults = marcelle.predictionPlot(predictionStream);
 ```
+
+## VisObjectDetection
+
+::: warning
+TODO
+:::

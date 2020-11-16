@@ -2,7 +2,7 @@
 sidebarDepth: 1
 ---
 
-# Input Sources
+# Inputs
 
 ## Faker
 
@@ -25,7 +25,7 @@ A module producing a synthetic data stream composed of periodic events with rand
 | -------- | ------------------ | ----------------------- | :--: |
 | \$frames | Stream\<number[]\> | Stream of random events |      |
 
-<!-- ### Screenshot
+<!-- ## Screenshot
 
 <div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
   <img src="./images/faker.png" alt="Screenshot of the faker component">

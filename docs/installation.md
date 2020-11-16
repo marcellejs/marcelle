@@ -1,14 +1,18 @@
 # Installation
 
-::: warning Still Unpublished
-Marcelle remains unpublished and will be available shortly on NPM.
+There are several ways to start using Marcelle:
+
+- If you just want to check out simple examples and edit them, use [Glitch](https://glitch.com/@marcelle.crew/marcelle-examples)
+- If you want to generate an application template, use [Marcelle CLI](#using-marcelle-cli)
+- Other wise, you can either use the marcelle package through [direct download or CDN ](#direct-download-cdn), or using [a package manager](#using-a-package-manager)
+
+::: warning ⚠️ Experimental
+Marcelle is still experimental and is currently under active development. Breaking changes are expected.
 :::
 
-The easiest way to start is using Glitch, by remixing one of the examples available online: [https://glitch.com/@marcelle.crew/marcelle-examples](https://glitch.com/@marcelle.crew/marcelle-examples)
+## Direct Download / CDN
 
-<!-- ## Direct Download / CDN
-
-[https://unpkg.com/marcellejs](https://unpkg.com/marcellejs)
+[https://unpkg.com/@marcellejs/core@next](https://unpkg.com/@marcellejs/core@next)
 
 The above link will always point to the latest release on NPM.
 
@@ -17,14 +21,32 @@ The following codes HTML template includes all the necessary dependencies to run
 
 <<< @/examples/dashboard/index.html
 
-## NPM
+## Using a package manager
+
+Using npm:
 
 ```bash
-npm install marcellejs --save
+npm install @marcellejs/core@next --save
 ```
 
-## Yarn
+or yarn:
 
 ```bash
-yarn add marcellejs
+yarn add @marcellejs/core@next
 ```
+
+## Using Marcelle CLI
+
+Install the CLI globally:
+
+```bash
+npm install -g @marcellejs/cli
+```
+
+Generate a Marcelle application (if unsure about the options, just select the defaults):
+
+```bash
+marcelle generate app
+```
+
+See the [CLI's documentation](/cli)

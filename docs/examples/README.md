@@ -12,7 +12,7 @@ A project implementing a simple image classifier using Mobilenet embeddings for 
 
 [Edit on Glitch](https://glitch.com/~marcelle-v2-dashboard)
 
-![Screenshot of an example marcelle Application](../marcelle_dashboard_01.png)
+![Screenshot of an example marcelle Application](./images/marcelle-dashboard.png)
 
 ## Model comparison
 

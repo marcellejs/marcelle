@@ -61,9 +61,9 @@ createStream<T>(s: MostStream<T> | T, hold: boolean): Stream<T>
 ```js
 const $timer = marcelle.createStream(mostCore.periodic(500));
 const $rnd = $timer
-  .thru(mostCore.map(() => Math.random()))
-  .thru(mostCore.filter((x) => x > 0.5))
-  .thru(mostCore.map((x) => (x - 0.5) * 1000));
+  .map(() => Math.random())
+  .filter((x) => x > 0.5)
+  .map((x) => (x - 0.5) * 1000));
 $rnd.subscribe(console.log);
 ```
 
