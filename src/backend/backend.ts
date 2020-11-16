@@ -99,6 +99,9 @@ export class Backend {
   }
 
   async connect(): Promise<User> {
+    if (this.backendType !== BackendType.Remote) {
+      return { email: null };
+    }
     if (!this.#connectPromise) {
       logger.log(`Connecting to backend ${this.#location}...`);
       this.#connectPromise = new Promise((resolve, reject) => {
