@@ -4,7 +4,6 @@ import feathers, { Service } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio-client';
 import memoryService from 'feathers-memory';
 import localStorageService from 'feathers-localstorage';
-import sift from 'sift';
 import { addObjectId, renameIdField, createDate, updateDate } from './hooks';
 import { logger } from '../core/logger';
 import Login from './Login.svelte';
@@ -68,7 +67,6 @@ export class Backend {
       const storageService = (name: string) =>
         localStorageService({
           storage: window.localStorage,
-          matcher: sift,
           name,
           paginate: {
             default: 100,
@@ -84,7 +82,6 @@ export class Backend {
         this.#app.use(
           `/${name}`,
           memoryService({
-            matcher: sift,
             paginate: {
               default: 100,
               max: 200,

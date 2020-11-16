@@ -1,4 +1,4 @@
-import { IChartOptions } from 'chart.js';
+import { ChartOptions as ChartJsOptions } from 'chart.js';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import { throwError } from '../../utils/error-handling';
@@ -83,7 +83,7 @@ const presets = {
 
 export interface ChartOptions {
   preset?: 'line' | 'line-fast' | 'bar' | 'bar-fast';
-  options?: IChartOptions & { xlabel?: string; ylabel?: string };
+  options?: ChartJsOptions & { xlabel?: string; ylabel?: string };
 }
 
 export class Chart extends Module {
@@ -97,7 +97,7 @@ export class Chart extends Module {
     label: string;
     options: Record<string, unknown>;
   }> = [];
-  #options: IChartOptions;
+  #options: ChartJsOptions;
 
   constructor({ preset = 'line', options = {} }: ChartOptions = {}) {
     super();
