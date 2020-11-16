@@ -48,6 +48,7 @@ const globals = {
   '@tensorflow/tfjs-converter': 'tf',
   '@tensorflow/tfjs-layers': 'tf',
   '@tensorflow/tfjs-backend-webgl': 'tf',
+  '@tensorflow/tfjs-backend-cpu': 'tf',
   '@most/prelude': 'mostPrelude',
   '@most/core': 'mostCore',
   '@most/scheduler': 'mostScheduler',
