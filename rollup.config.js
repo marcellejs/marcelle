@@ -12,7 +12,7 @@ import sizes from 'rollup-plugin-sizes';
 import pkg from './package.json';
 
 const production = !process.env.ROLLUP_WATCH;
-const analyze = true;
+const analyze = false;
 
 const plugins = [
   replace({
