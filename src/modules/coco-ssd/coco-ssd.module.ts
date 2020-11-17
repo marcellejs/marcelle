@@ -8,6 +8,7 @@ import Component from './coco-ssd.svelte';
 export interface CocoSsdOptions {
   base?: ObjectDetectionBaseModel;
 }
+
 export class CocoSsd extends ObjectDetector<ImageData, ObjectDetectorResults> {
   name = 'COCO-SSD Object Detection';
   description = 'Object detection module using the tfjs coco-ssd model';
@@ -17,8 +18,6 @@ export class CocoSsd extends ObjectDetector<ImageData, ObjectDetectorResults> {
   #model: ObjectDetection;
   #base: ObjectDetectionBaseModel;
   $loading: Stream<boolean> = new Stream(true as boolean, true);
-
-  inputShape: number[];
 
   constructor({ base = 'lite_mobilenet_v2' }: CocoSsdOptions = {}) {
     super();

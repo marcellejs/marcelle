@@ -1,13 +1,16 @@
 # Introduction
 
-Marcelle is a versatile interactive machine learning toolkit that has been designed to allow ML practitioners, with various levels of expertise, to explore ML and build applications embedding ML models. In particular, Marcelle aims to address the following use cases:
-
-1. interactively designing ML-based web applications with small datasets
-2. teaching ML to an audience without specific skills in ML or CS
-3. learning about ML concepts through exploratory interactive training and testing
-4. discovering and exploring expressive (big) ML models.
-
+**Marcelle** is an interactive Machine Learning (ML) toolkit that has been designed to allow ML practitioners, with various levels of expertise, to explore ML and build applications embedding ML models.
 Marcelle is a web-based reactive toolkit facilitating the design of custom ML pipelines and personalized user interfaces enabling user interactions on the pipeline's constitutive elements.
+
+Marcelle aims to address the following use cases:
+
+1. Interactively designing ML-based web applications with small datasets
+2. Teaching ML to an audience without specific skills in ML or CS
+3. Learning about ML concepts through exploratory interactive training and testing
+4. Discovering and exploring expressive (big) ML models.
+
+Can't wait? [→ Go to the Quickstart Guide](/guide/quickstart.html)
 
 ## Example
 
@@ -16,6 +19,8 @@ The following screenshot shows a simple example of application with an interacti
 ![Screenshot of an example marcelle Application](./images/marcelle_dashboard_01.png)
 
 ## Architecture
+
+<!-- TODO: Move to API? -->
 
 Marcelle presents itself as a collection of reactive modules embedding the state and logic for particular tasks. Modules are the building blocks of a Marcelle application and handle various tasks such as capturing images from a webcam, defining a new dataset, instancing a Deep Neural Network (DNN), displaying a confusion matrix, or monitoring the confidence of a model prediction, to name a few.
 

@@ -13,7 +13,6 @@ import Component from './mobilenet.svelte';
 export interface MobilenetOptions {
   version?: MobileNetVersion;
   alpha?: MobileNetAlpha;
-  mode?: 'string';
 }
 
 export interface MobilenetResults {

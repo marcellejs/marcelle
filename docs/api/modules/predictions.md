@@ -10,14 +10,14 @@ sidebarDepth: 1
 marcelle.batchPrediction({ name: string, backend?: Backend }): BatchPrediction;
 ```
 
-This module allows to compute and store batch predictions with a given model over an entire dataset. Similarly to [Datasets](/modules/data.html#dataset), the prediction results are stored in a backend passed in argument.
+This module allows to compute and store batch predictions with a given model over an entire dataset. Similarly to [Datasets](/api/modules/data.html#dataset), the prediction results are stored in a backend passed in argument.
 
 ### Parameters
 
-| Option  | Type    | Description                                                                                                                                           | Required |
-| ------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
-| name    | string  | The name of the predictions (for backend storage)                                                                                                     |    ✓     |
-| backend | Backend | The [backend](/api/backends) used to store the instances of the dataset. This parameter is optional. By default, a backend in memory will be created. |          |
+| Option  | Type    | Description                                                                                                                                                | Required |
+| ------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
+| name    | string  | The name of the predictions (for backend storage)                                                                                                          |    ✓     |
+| backend | Backend | The [backend](/api/backends.html) used to store the instances of the dataset. This parameter is optional. By default, a backend in memory will be created. |          |
 
 ### Streams
 
@@ -34,7 +34,7 @@ This module allows to compute and store batch predictions with a given model ove
 async predict(model: Model, dataset: Dataset, inputField = 'features'): Promise<void>
 ```
 
-Compute predictions for all instances of a given [Datasets](/modules/data.html#dataset) `dataset`, using a trained `model`. The instance field used for predictions can be specified with the `inputField` parameters, that defaults to `features`.
+Compute predictions for all instances of a given [Datasets](/api/modules/data.html#dataset) `dataset`, using a trained `model`. The instance field used for predictions can be specified with the `inputField` parameters, that defaults to `features`.
 
 #### .clear()
 
@@ -88,7 +88,9 @@ const confusionMatrix = marcelle.confusion(batchMLP);
 ## PredictionPlot
 
 ```tsx
-marcelle.predictionPlot(predictionStream: Stream<Prediction>): PredictionPlot;
+marcelle.predictionPlot(
+  predictionStream: Stream<Prediction>
+): PredictionPlot;
 ```
 
 Plot prediction result in real-time from a reactive stream of predictions, where each event implements the following interface:
@@ -126,6 +128,6 @@ const plotResults = marcelle.predictionPlot(predictionStream);
 
 ## VisObjectDetection
 
-::: warning
+::: warning TODO
 TODO
 :::

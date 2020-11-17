@@ -106,3 +106,7 @@ thru<B>(f: (s: Stream<T>) => MostStream<B>): Stream<B>
 ```
 
 Apply functions fluently to a Stream, wrapping the result in a new Stream. Use thru when you want to continue dot-chaining other Stream operations.
+
+::: warning TODO
+Complement API (most methods)
+:::

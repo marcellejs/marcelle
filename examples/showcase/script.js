@@ -29,6 +29,13 @@ const tog = marcelle.toggle({ text: 'Toggle Real-Time Prediction' });
 tog.$checked.subscribe((x) => console.log('toggle $checked:', x));
 
 // -----------------------------------------------------------
+// SELECT
+// -----------------------------------------------------------
+
+const sel = marcelle.select({ options: ['one', 'two', 'three'], value: 'two' });
+sel.$value.subscribe((x) => console.log('sel $value:', x));
+
+// -----------------------------------------------------------
 // TEXT
 // -----------------------------------------------------------
 
@@ -36,6 +43,20 @@ const text = marcelle.text({
   text:
     'Just some <strong>HTML</strong> text content... Accepts HTML: <button class="btn">button</button>',
 });
+
+// -----------------------------------------------------------
+// SLIDER
+// -----------------------------------------------------------
+
+const slider = marcelle.slider({
+  values: [2, 8],
+  min: 0,
+  max: 10,
+  pips: true,
+  step: 1,
+  range: true,
+});
+slider.$values.subscribe((x) => console.log('slider $values:', x));
 
 // -----------------------------------------------------------
 // CHART
@@ -112,7 +133,7 @@ const dashboard = marcelle.createDashboard({
   author: 'Marcelle Pirates Crew',
 });
 
-dashboard.page('Widgets').use(capture, label, tog, text, chartExample);
+dashboard.page('Widgets').use(capture, label, tog, sel, text, slider, chartExample);
 dashboard.page('Sources').useLeft(faker, imgDrop, sketch, webcam);
 dashboard.page('Data Management').useLeft(webcam).use([label, capture], trainingSetBrowser);
 dashboard.settings.use(trainingSet);

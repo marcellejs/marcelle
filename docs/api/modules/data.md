@@ -37,7 +37,7 @@ dashboard.page('Data Management').use(trainingSetBrowser);
 marcelle.dataset({ name: string, backend?: Backend }): Dataset;
 ```
 
-A Dataset module allowing for capturing instances from a stream, storing them in a local or remote [backend](/api/backends).
+A Dataset module allowing for capturing instances from a stream, storing them in a local or remote [backend](/api/backends.html).
 
 ### Parameters
 

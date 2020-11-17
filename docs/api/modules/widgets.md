@@ -43,15 +43,101 @@ capture.$click.subscribe((x) => console.log('button $click:', x));
 
 ## Select
 
-::: warning
-TODO
-:::
+```tsx
+marcelle.select({ options: string[], value?: string }): Select;
+```
+
+A generic GUI Select component.
+
+### Parameters
+
+| Option  | Type     | Description                                      | Required |
+| ------- | -------- | ------------------------------------------------ | :------: |
+| options | string[] | The select menu options                          |    ✓     |
+| value   | string   | The default value (by default, the first option) |    ✓     |
+
+### Streams
+
+| Name      | Type     | Description              | Hold |
+| --------- | -------- | ------------------------ | :--: |
+| \$options | string[] | Stream of menu options   |  ✓   |
+| \$value   | string   | Stream of selected value |  ✓   |
+
+### Screenshot
+
+<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
+  <img src="./images/select.png" alt="Screenshot of the select component">
+</div>
+
+### Example
+
+```js
+const sel = marcelle.select({ options: ['one', 'two', 'three'], value: 'two' });
+sel.$value.subscribe((x) => console.log('sel $value:', x));
+```
 
 ## Slider
 
-::: warning
-TODO
-:::
+```tsx
+slider({
+  values: number[],
+  min: number,
+  max: number,
+  step: number,
+  range: boolean | 'min' | 'max',
+  float: boolean,
+  vertical: boolean,
+  pips: boolean,
+  pipstep: number,
+  formatter: (x: unknown) => unknown,
+}): Slider;
+```
+
+A generic slider widget, allowing multiple thumbs.
+
+### Parameters
+
+| Option    | Type                      | Description                                                                                                                                                                                                                     | Required |  Default  |
+| --------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: | :-------: |
+| values    | number[]                  | The default values                                                                                                                                                                                                              |          |   [0.2]   |
+| min       | number                    | minimum value                                                                                                                                                                                                                   |          |     0     |
+| max       | number                    | maximum value                                                                                                                                                                                                                   |          |     1     |
+| step      | number                    | step size                                                                                                                                                                                                                       |          |   0.01    |
+| range     | boolean \| 'min' \| 'max' | Specifies the slider bar display. If false, no bar is displayed. If true, the bar is displayed as a range between several values. If 'min' (resp. 'max'), the slider bar is displayed from the minimum (resp. 'maximum') value. |          |   'min'   |
+| float     | boolean                   | specifies if the value should be displayed in a floating indicator on hover                                                                                                                                                     |          |   true    |
+| vertical  | boolean                   | display the slider vertically                                                                                                                                                                                                   |          |   false   |
+| pips      | boolean                   | display pips (ticks)                                                                                                                                                                                                            |          |   false   |
+| pipstep   | number                    | Pip step size                                                                                                                                                                                                                   |          | undefined |
+| formatter | (x: unknown) => unknown   | The function used for formatting the pips and floating indicator                                                                                                                                                                |          | (x) => x  |
+
+### Streams
+
+| Name     | Type   | Description              | Hold |
+| -------- | ------ | ------------------------ | :--: |
+| \$values | string | Stream of selected value |  ✓   |
+| \$min    | string | Stream of selected value |  ✓   |
+| \$max    | string | Stream of selected value |  ✓   |
+| \$step   | string | Stream of selected value |  ✓   |
+
+### Screenshot
+
+<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
+  <img src="./images/slider.png" alt="Screenshot of the slider component">
+</div>
+
+### Example
+
+```js
+const slider = marcelle.slider({
+  values: [2, 8],
+  min: 0,
+  max: 10,
+  pips: true,
+  step: 1,
+  range: true,
+});
+slider.$values.subscribe((x) => console.log('slider $values:', x));
+```
 
 ## Text
 

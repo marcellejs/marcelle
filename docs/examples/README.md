@@ -4,7 +4,7 @@ sidebar: auto
 
 # Examples
 
-A few examples are available on [Glitch.com](https://glitch.com/@marcelle.crew/marcelle-examples). More advanced examples using Rollup, Webpack, or with custom modules are available with the source code on [Github](https://github.com/marcellejs/marcelle).
+A few examples are available on [Glitch.com](https://glitch.com/@marcelle.crew/marcelle-examples).
 
 ## Basic dashboard
 

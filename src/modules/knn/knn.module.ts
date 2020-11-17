@@ -41,12 +41,6 @@ export class KNN extends Classifier<TensorLike, ClassifierResults> {
           status: 'epoch',
           epoch: i,
           epochs: this.labels.length,
-          data: {
-            accuracy: 0,
-            loss: 0,
-            accuracyVal: 0,
-            lossVal: 0,
-          },
         });
       });
       this.$training.set({ status: 'success' });

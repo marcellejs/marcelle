@@ -29,6 +29,7 @@ function requestInterval(fn: () => void, delay: number) {
 export interface WebcamOptions {
   width?: number;
   height?: number;
+  period?: number;
 }
 
 export class Webcam extends Module {
@@ -40,6 +41,8 @@ export class Webcam extends Module {
   $mediastream = new Stream<MediaStream>(undefined, true);
   $images = new Stream<ImageData>(never());
   $thumbnails = new Stream<string>(never());
+
+  period: number;
 
   // Webcam stuff
   #width: number;
@@ -58,10 +61,12 @@ export class Webcam extends Module {
   #captureCanvas: HTMLCanvasElement;
   #captureCtx: CanvasRenderingContext2D;
 
-  constructor({ width = 224, height = 224 }: WebcamOptions = {}) {
+  constructor({ width = 224, height = 224, period = 50 }: WebcamOptions = {}) {
     super();
     this.#width = width;
     this.#height = height;
+    this.period = period;
+
     this.setupCapture();
     this.start();
     this.#videoElement.autoplay = true;
@@ -73,7 +78,7 @@ export class Webcam extends Module {
         } else {
           this.startCamera();
         }
-        this.#stopStreaming = requestInterval(this.process.bind(this), 50);
+        this.#stopStreaming = requestInterval(this.process.bind(this), this.period);
       } else {
         this.stopCamera();
       }
@@ -195,6 +200,7 @@ export class Webcam extends Module {
   }
 
   process(): void {
+    if (!this.$ready.value) return;
     this.$images.set(this.captureImage());
     this.$thumbnails.set(this.captureThumbnail());
   }

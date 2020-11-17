@@ -93,7 +93,7 @@ use(...modules: Array<Module | Module[] | string>): DashboardPage
 
 The `use` method takes an arbitrary number of arguments specifying the modules to display on the page. By default, modules are stacked vertically in the right column of the page. Each argument can either be:
 
-- A module ([`Module`](/api/modules)), displayed full-width on the right column
+- A module ([`Module`](/api/modules/)), displayed full-width on the right column
 - An array of module, which are then distributed horizontally
 - A string, which defines a section title
 
@@ -204,6 +204,6 @@ use(...modules: Array<Module | Module[] | string>): WizardStep
 
 Add a set of modules to the step. The syntax is similar to the one for Dashoards. By default, modules are stacked vertically in the right column of the page. Each argument can either be:
 
-- A module ([`Module`](/api/modules)), displayed full-width on the right column
+- A module ([`Module`](/api/modules/)), displayed full-width on the right column
 - An array of module, which are then distributed horizontally
 - A string, which defines a section title
