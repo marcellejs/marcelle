@@ -110,3 +110,699 @@ Apply functions fluently to a Stream, wrapping the result in a new Stream. Use t
 ::: warning TODO
 Complement API (most methods)
 :::
+
+## Most methods
+
+### .ap()
+
+```tsx
+ap<B>(fs: Stream<(a: T) => B>): Stream<B>
+```
+
+Apply the latest function in a Stream of functions to the latest value of<br>another Stream. In effect, ap applies a time-varying function to a<br>time-varying value.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#ap)
+
+#### Parameters
+
+| Parameter | Type                  | Default | Description     |
+| --------- | --------------------- | ------- | --------------- |
+| fs        | Stream\<(a: T) => B\> |         | Function stream |
+
+### .awaitPromises()
+
+```tsx
+awaitPromises<A>(): Stream<A>
+```
+
+Turn a Stream of promises into a Stream containing the promises’ values.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#awaitpromises)
+
+### .chain()
+
+```tsx
+chain<B>(f: (value: T) => Stream<B>): Stream<B>
+```
+
+Transform each event in `stream` into a new Stream, and then merge each into<br>the resulting Stream. Note that `f` must return a Stream.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#chain)
+
+#### Parameters
+
+| Parameter | Type                      | Default | Description                 |
+| --------- | ------------------------- | ------- | --------------------------- |
+| f         | (value: T) => Stream\<B\> |         | function returning a stream |
+
+### .combine()
+
+```tsx
+combine<A, R>(f: (a: A, b: T) => R, stream1: Stream<A>): Stream<R>
+```
+
+Apply a function to the most recent event from each Stream when a new event<br>arrives on any Stream.Note that `combine` waits for at least one event to arrive on all input<br>Streams before it produces any events.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#combine)
+
+#### Parameters
+
+| Parameter | Type              | Default | Description         |
+| --------- | ----------------- | ------- | ------------------- |
+| f         | (a: A, b: T) => R |         | Combinator function |
+| stream1   | Stream\<A\>       |         | Event stream 1      |
+
+### .concatMap()
+
+```tsx
+concatMap<B>(f: (a: T) => Stream<B>): Stream<B>
+```
+
+Transform each event in `stream` into a Stream, and then concatenate each<br>onto the end of the resulting Stream. Note that `f` must return a Stream.The mapping function `f` is applied lazily. That is, `f` is called only once<br>it is time to concatenate a new stream.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#concatmap)
+
+#### Parameters
+
+| Parameter | Type                  | Default | Description                 |
+| --------- | --------------------- | ------- | --------------------------- |
+| f         | (a: T) => Stream\<B\> |         | Function returning a stream |
+
+### .constant()
+
+```tsx
+constant<B>(x: B): Stream<B>
+```
+
+Replace each event value with x.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#constant)
+
+#### Parameters
+
+| Parameter | Type | Default | Description |
+| --------- | ---- | ------- | ----------- |
+| x         | B    |         | event data  |
+
+### .continueWith()
+
+```tsx
+continueWith<U>(f: () => Stream<U>): Stream<T | U>
+```
+
+Replace the end of a Stream with another Stream. When `stream` ends, `f`<br>will be called and must return a Stream.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html?highlight=continuewith#continuewith)
+
+#### Parameters
+
+| Parameter | Type              | Default | Description                    |
+| --------- | ----------------- | ------- | ------------------------------ |
+| f         | () => Stream\<U\> |         | Function that returns a stream |
+
+### .debounce()
+
+```tsx
+debounce(period: number): Stream<T>
+```
+
+Wait for a burst of events to subside and keep only the last event in the<br>burst.If the Stream ends while there is a pending debounced event (e.g., via<br>until), the pending event will occur just before the Stream ends.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#debounce)
+
+#### Parameters
+
+| Parameter | Type   | Default | Description     |
+| --------- | ------ | ------- | --------------- |
+| period    | number |         | Debounce period |
+
+### .delay()
+
+```tsx
+delay(delayTime: number): Stream<T>
+```
+
+Timeshift a Stream by the specified Delay.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#id57)
+
+#### Parameters
+
+| Parameter | Type   | Default | Description     |
+| --------- | ------ | ------- | --------------- |
+| delayTime | number |         | Delay time (ms) |
+
+### .during()
+
+```tsx
+during(timeWindow: Stream<Stream<unknown>>): Stream<T>
+```
+
+Keep events that occur during a time window defined by a higher-order Stream.
+
+#### Parameters
+
+| Parameter  | Type                        | Default | Description                                |
+| ---------- | --------------------------- | ------- | ------------------------------------------ |
+| timeWindow | Stream\<Stream\<unknown\>\> |         | Higher order stream defining a time window |
+
+### .filter()
+
+```tsx
+filter(p: (a: T) => boolean): Stream<T>
+```
+
+Retain only events for which a predicate is truthy.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#filter)
+
+#### Parameters
+
+| Parameter | Type              | Default | Description |
+| --------- | ----------------- | ------- | ----------- |
+| p         | (a: T) => boolean |         | Predicate   |
+
+**Example**
+
+#### Example
+
+```js
+a = periodic(200)
+  .rand()
+  .filter((x) => x > 0.8)
+  .tap(log);
+```
+
+### .join()
+
+```tsx
+join<U>(): Stream<U>
+```
+
+Given a higher-order Stream, return a new Stream that merges all the inner<br>Streams as they arrive.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#join)
+
+### .loop()
+
+```tsx
+loop<B, S>(stepper: (seed: S, a: T) => SeedValue<S, B>, seed: S): Stream<B>
+```
+
+Accumulate results using a feedback loop that emits one value and feeds back<br>another to be used in the next iteration.It allows you to maintain and update a “state” (a.k.a. feedback, a.k.a. seed<br>for the next iteration) while emitting a different value. In contrast, scan<br>feeds back and produces the same value.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#loop)
+
+#### Parameters
+
+| Parameter | Type                                 | Default | Description      |
+| --------- | ------------------------------------ | ------- | ---------------- |
+| stepper   | (seed: S, a: T) => SeedValue\<S, B\> |         | Stepper function |
+| seed      | S                                    |         | Seed             |
+
+### .map()
+
+```tsx
+map<U>(f: (a: T) => U): Stream<U>
+```
+
+Apply a function to each event value.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#map)
+
+#### Parameters
+
+| Parameter | Type        | Default | Description    |
+| --------- | ----------- | ------- | -------------- |
+| f         | (a: T) => U |         | Unary function |
+
+**Example**
+
+#### Example
+
+```js
+// Apply a function (in this example, double) to all events in a stream
+f = (x) => 2 * x;
+a = periodic(500).constant(1).accum().map(f).tap(log);
+```
+
+### .merge()
+
+```tsx
+merge<A>(stream1: Stream<A>): Stream<A | T>
+```
+
+Create a new Stream containing events from two Streams.Merging creates a new Stream containing all events from the two original<br>Streams without affecting the time of the events. You can think of the<br>events from the input Streams simply being interleaved into the new, merged<br>Stream. A merged Stream ends when all of its input Streams have ended.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#merge)
+
+#### Parameters
+
+| Parameter | Type        | Default | Description    |
+| --------- | ----------- | ------- | -------------- |
+| stream1   | Stream\<A\> |         | Event stream 1 |
+
+**Example**
+
+#### Example
+
+```js
+a = periodic(500).take(3).constant('a');
+b = periodic(100).take(3).constant(2);
+c = a.merge(b).tap(log);
+```
+
+### .mergeConcurrently()
+
+```tsx
+mergeConcurrently<U>(concurrency: number): Stream<U>
+```
+
+Given a higher-order Stream, return a new Stream that merges inner Streams<br>as they arrive up to the specified concurrency. Once concurrency number of<br>Streams are being merged, newly arriving Streams will be merged after an<br>existing one ends.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#mergeconcurrently)
+
+#### Parameters
+
+| Parameter   | Type   | Default | Description       |
+| ----------- | ------ | ------- | ----------------- |
+| concurrency | number |         | concurrency level |
+
+### .mergeMapConcurrently()
+
+```tsx
+mergeMapConcurrently<B>(f: (a: T) => Stream<B>, concurrency: number): Stream<B>
+```
+
+Lazily apply a function `f` to each event in a Stream, merging them into the<br>resulting Stream at the specified concurrency. Once concurrency number of<br>Streams are being merged, newly arriving Streams will be merged after an<br>existing one ends.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#mergemapconcurrently)
+
+#### Parameters
+
+| Parameter   | Type                  | Default | Description       |
+| ----------- | --------------------- | ------- | ----------------- |
+| f           | (a: T) => Stream\<B\> |         | Unary function    |
+| concurrency | number                |         | concurrency level |
+
+### .recoverWith()
+
+```tsx
+recoverWith<A, E extends Error>(f: (error: E) => Stream<A>): Stream<T | A>
+```
+
+Recover from a stream failure by calling a function to create a new Stream.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#recoverwith)
+
+#### Parameters
+
+| Parameter | Type                      | Default | Description                                   |
+| --------- | ------------------------- | ------- | --------------------------------------------- |
+| f         | (error: E) => Stream\<A\> |         | Function returning a new stream from an error |
+
+### .resample()
+
+```tsx
+resample<B>(sampler: Stream<B>): Stream<T>
+```
+
+Like `sample`, but the value stream and sampler streams are switched
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#sample)
+
+#### Parameters
+
+| Parameter | Type        | Default | Description    |
+| --------- | ----------- | ------- | -------------- |
+| sampler   | Stream\<B\> |         | Sampler stream |
+
+**Example**
+
+#### Example
+
+```js
+// Sample a noise signal from a stream of click events
+noise = periodic(20).rand().plot({ legend: 'noise' });
+click = noise.resample(click(doc)).tap(log);
+```
+
+### .sample()
+
+```tsx
+sample<A>(values: Stream<A>): Stream<A>
+```
+
+For each event in the current Stream, replace the event value with the latest<br>value in another Stream. The resulting Stream will contain the same number<br>of events as the sampler Stream.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#sample)
+
+#### Parameters
+
+| Parameter | Type        | Default | Description  |
+| --------- | ----------- | ------- | ------------ |
+| values    | Stream\<A\> |         | value stream |
+
+**Example**
+
+#### Example
+
+```js
+// Sample a noise signal from a stream of click events
+noise = periodic(20).rand().plot({ legend: 'noise' });
+click = click(doc).sample(noise).tap(log);
+```
+
+### .scan()
+
+```tsx
+scan<B>(f: (b: B, a: T) => B, initial: B): Stream<B>
+```
+
+Incrementally accumulate results, starting with the provided initial value.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#scan)
+
+#### Parameters
+
+| Parameter | Type              | Default | Description      |
+| --------- | ----------------- | ------- | ---------------- |
+| f         | (b: B, a: T) => B |         | Scanning reducer |
+| initial   | B                 |         | Initial Value    |
+
+**Example**
+
+#### Example
+
+```js
+// Accumulate the values of a constant stream
+a = periodic(500)
+  .constant(2)
+  .scan((s, x) => s + x, 0)
+  .tap(log);
+```
+
+### .since()
+
+```tsx
+since(startSignal: Stream<unknown>): Stream<T>
+```
+
+Discard all events in one Stream until the first event occurs in another.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#since)
+
+#### Parameters
+
+| Parameter   | Type              | Default | Description  |
+| ----------- | ----------------- | ------- | ------------ |
+| startSignal | Stream\<unknown\> |         | Start signal |
+
+### .skip()
+
+```tsx
+skip(n: number): Stream<T>
+```
+
+Discard the first n events from stream.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#skip)
+
+#### Parameters
+
+| Parameter | Type   | Default | Description      |
+| --------- | ------ | ------- | ---------------- |
+| n         | number |         | Number of events |
+
+### .skipAfter()
+
+```tsx
+skipAfter(p: (a: T) => boolean): Stream<T>
+```
+
+Discard all events after the first event for which predicate returns true.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#skipafter)
+
+#### Parameters
+
+| Parameter | Type              | Default | Description |
+| --------- | ----------------- | ------- | ----------- |
+| p         | (a: T) => boolean |         | Predicate   |
+
+### .skipRepeats()
+
+```tsx
+skipRepeats(): Stream<T>
+```
+
+Remove adjacent repeated events.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#skiprepeats)
+
+### .skipRepeatsWith()
+
+```tsx
+skipRepeatsWith(equals: (a1: T, a2: T) => boolean): Stream<T>
+```
+
+Remove adjacent repeated events, using the provided equality function to<br>compare adjacent events.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#skiprepeatswith)
+
+#### Parameters
+
+| Parameter | Type                      | Default | Description       |
+| --------- | ------------------------- | ------- | ----------------- |
+| equals    | (a1: T, a2: T) => boolean |         | Equality function |
+
+### .skipWhile()
+
+```tsx
+skipWhile(p: (a: T) => boolean): Stream<T>
+```
+
+Discard all events until predicate returns `false`, and keep the rest.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#skipwhile)
+
+#### Parameters
+
+| Parameter | Type              | Default | Description |
+| --------- | ----------------- | ------- | ----------- |
+| p         | (a: T) => boolean |         | Predicate   |
+
+### .slice()
+
+```tsx
+slice(start: number, end: number): Stream<T>
+```
+
+Keep only events in a range, where start <= index < end, and index is the<br>ordinal index of an event in `stream`.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#id48)
+
+#### Parameters
+
+| Parameter | Type   | Default | Description |
+| --------- | ------ | ------- | ----------- |
+| start     | number |         | start index |
+| end       | number |         | end index   |
+
+### .snapshot()
+
+```tsx
+snapshot<A, C>(f: (a: A, b: T) => C, values: Stream<A>): Stream<C>
+```
+
+For each event in a sampler Stream, apply a function to combine its value<br>with the most recent event value in another Stream. The resulting Stream<br>will contain the same number of events as the sampler Stream.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#snapshot)
+
+#### Parameters
+
+| Parameter | Type              | Default | Description       |
+| --------- | ----------------- | ------- | ----------------- |
+| f         | (a: A, b: T) => C |         | Snapshot function |
+| values    | Stream\<A\>       |         | Value stream      |
+
+### .startWith()
+
+```tsx
+startWith(x: T): Stream<T>
+```
+
+Prepend an event at time 0.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#startwith)
+
+#### Parameters
+
+| Parameter | Type | Default | Description |
+| --------- | ---- | ------- | ----------- |
+| x         | T    |         | Event data  |
+
+### .switchLatest()
+
+```tsx
+switchLatest<U>(): Stream<U>
+```
+
+Given a higher-order Stream, return a new Stream that adopts the behavior of<br>(i.e., emits the events of) the most recent inner Stream.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#switchlatest)
+
+### .take()
+
+```tsx
+take(n: number): Stream<T>
+```
+
+Keep at most the first n events from `stream`.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#take)
+
+#### Parameters
+
+| Parameter | Type   | Default | Description      |
+| --------- | ------ | ------- | ---------------- |
+| n         | number |         | Number of events |
+
+### .takeWhile()
+
+```tsx
+takeWhile(p: (a: T) => boolean): Stream<T>
+```
+
+Keep all events until predicate returns `false`, and discard the rest.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#takewhile)
+
+#### Parameters
+
+| Parameter | Type              | Default | Description |
+| --------- | ----------------- | ------- | ----------- |
+| p         | (a: T) => boolean |         | Predicate   |
+
+### .tap()
+
+```tsx
+tap(f: (a: T) => void): Stream<T>
+```
+
+Perform a side effect for each event in a Stream. For each event in stream,<br>`f` is called, but the value of its result is ignored. If `f` fails (i.e.,<br>throws an error), then the returned Stream will also fail. The Stream<br>returned by tap will contain the same events as the original Stream.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#tap)
+
+#### Parameters
+
+| Parameter | Type           | Default | Description  |
+| --------- | -------------- | ------- | ------------ |
+| f         | (a: T) => void |         | Tap function |
+
+**Example**
+
+#### Example
+
+```js
+// Apply a function with side effects, to log the values to the console
+a = periodic(500).rand().tap(log);
+```
+
+### .throttle()
+
+```tsx
+throttle(period: number): Stream<T>
+```
+
+Limit the rate of events by suppressing events that occur too often
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#throttle)
+
+#### Parameters
+
+| Parameter | Type   | Default | Description     |
+| --------- | ------ | ------- | --------------- |
+| period    | number |         | Throttle period |
+
+### .until()
+
+```tsx
+until(endSignal: Stream<unknown>): Stream<T>
+```
+
+Keep all events in one Stream until the first event occurs in another.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#until)
+
+#### Parameters
+
+| Parameter | Type              | Default | Description |
+| --------- | ----------------- | ------- | ----------- |
+| endSignal | Stream\<unknown\> |         | End signal  |
+
+### .withItems()
+
+```tsx
+withItems<A>(items: A[]): Stream<A>
+```
+
+Replace each event value with the array item at the respective index. The<br>resulting Stream will contain the same number of events as the input Stream,<br>or array.length events, whichever is less.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#withitems)
+
+#### Parameters
+
+| Parameter | Type | Default | Description |
+| --------- | ---- | ------- | ----------- |
+| items     | A[]  |         | Items array |
+
+### .withLocalTime()
+
+```tsx
+withLocalTime(origin: Time): Stream<T>
+```
+
+Create a Stream with localized Time values, whose origin (i.e., time 0) is<br>at the specified Time on the Scheduler provided when the Stream is observed<br>with runEffects or run.When implementing custom higher-order Stream combinators, such as chain, you<br>should use `withLocalTime` to localize “inner” Streams before running them.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#withlocaltime)
+
+#### Parameters
+
+| Parameter | Type | Default | Description       |
+| --------- | ---- | ------- | ----------------- |
+| origin    | Time |         | origin time value |
+
+### .zip()
+
+```tsx
+zip<A, R>(f: (a: A, b: T) => R, stream1: Stream<A>): Stream<R>
+```
+
+Apply a function to corresponding pairs of events from the inputs Streams.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#zip)
+
+#### Parameters
+
+| Parameter | Type              | Default | Description         |
+| --------- | ----------------- | ------- | ------------------- |
+| f         | (a: A, b: T) => R |         | Combinator function |
+| stream1   | Stream\<A\>       |         | Event stream 1      |
+
+### .zipItems()
+
+```tsx
+zipItems<A, C>(f: (a: A, b: T) => C, items: A[]): Stream<C>
+```
+
+Apply a function to the latest event and the array value at the respective<br>index. The resulting Stream will contain the same number of events as the<br>input Stream, or array.length events, whichever is less.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#zipitems)
+
+#### Parameters
+
+| Parameter | Type              | Default | Description         |
+| --------- | ----------------- | ------- | ------------------- |
+| f         | (a: A, b: T) => C |         | Combinator function |
+| items     | A[]               |         | Items               |
