@@ -23,8 +23,8 @@ const instances = capture.$click
   }))
   .awaitPromises();
 
-const backend = marcelle.createBackend({ location: 'localStorage' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
+const store = marcelle.dataStore({ location: 'localStorage' });
+const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
 trainingSet.capture(instances);
 
 const trainingSetBrowser = marcelle.browser(trainingSet);
@@ -45,7 +45,7 @@ const plotTraining = marcelle.trainingPlot(classifier);
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchMLP = marcelle.batchPrediction({ name: 'mlp', backend });
+const batchMLP = marcelle.batchPrediction({ name: 'mlp', dataStore: store });
 const confusionMatrix = marcelle.confusion(batchMLP);
 
 const predictButton = marcelle.button({ text: 'Update predictions' });

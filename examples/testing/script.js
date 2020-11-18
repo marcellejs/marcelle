@@ -18,8 +18,8 @@ const instances = source.$thumbnails.map((thumbnail) => ({
   thumbnail,
 }));
 
-const backend = marcelle.createBackend({ location: 'memory' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
+const store = marcelle.dataStore({ location: 'memory' });
+const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
 
 const tog = marcelle.toggle({ text: 'Capture to dataset' });
 tog.$checked.skipRepeats().subscribe((x) => {
@@ -36,7 +36,7 @@ const trainingSetBrowser = marcelle.browser(trainingSet);
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchTesting = marcelle.batchPrediction({ name: 'mobilenet', backend });
+const batchTesting = marcelle.batchPrediction({ name: 'mobilenet', dataStore: store });
 const predictButton = marcelle.button({ text: 'Update predictions' });
 const predictionAccuracy = marcelle.text({ text: 'Waiting for predictions...' });
 const confusionMatrix = marcelle.confusion(batchTesting);

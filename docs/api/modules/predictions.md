@@ -7,24 +7,24 @@ sidebarDepth: 1
 ## BatchPrediction
 
 ```tsx
-marcelle.batchPrediction({ name: string, backend?: Backend }): BatchPrediction;
+marcelle.batchPrediction({ name: string, dataStore?: DataStore }): BatchPrediction;
 ```
 
-This module allows to compute and store batch predictions with a given model over an entire dataset. Similarly to [Datasets](/api/modules/data.html#dataset), the prediction results are stored in a backend passed in argument.
+This module allows to compute and store batch predictions with a given model over an entire dataset. Similarly to [Datasets](/api/modules/data.html#dataset), the prediction results are stored in a data store passed in argument.
 
 ### Parameters
 
-| Option  | Type    | Description                                                                                                                                                | Required |
-| ------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
-| name    | string  | The name of the predictions (for backend storage)                                                                                                          |    ✓     |
-| backend | Backend | The [backend](/api/backends.html) used to store the instances of the dataset. This parameter is optional. By default, a backend in memory will be created. |          |
+| Option    | Type      | Description                                                                                                                                                        | Required |
+| --------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------: |
+| name      | string    | The name of the predictions (for data storage)                                                                                                                     |    ✓     |
+| dataStore | DataStore | The [dataStore](/api/data-stores.html) used to store the instances of the dataset. This parameter is optional. By default, a data store in memory will be created. |          |
 
 ### Streams
 
-| Name          | Type                 | Description                                                    | Hold |
-| ------------- | -------------------- | -------------------------------------------------------------- | :--: |
-| \$predictions | Stream\<ObjectId[]\> | Stream of all the ids of the predictions stored in the backend |  ✓   |
-| \$count       | Stream\<number\>     | Total number of predictions                                    |  ✓   |
+| Name          | Type                 | Description                                                       | Hold |
+| ------------- | -------------------- | ----------------------------------------------------------------- | :--: |
+| \$predictions | Stream\<ObjectId[]\> | Stream of all the ids of the predictions stored in the data store |  ✓   |
+| \$count       | Stream\<number\>     | Total number of predictions                                       |  ✓   |
 
 ### Methods
 
@@ -42,14 +42,14 @@ Compute predictions for all instances of a given [Datasets](/api/modules/data.ht
 async clear(): Promise<void>
 ```
 
-Clear all predictions from the backend, resetting the resulting streams.
+Clear all predictions from the data store, resetting the resulting streams.
 
 ### Example
 
 ```js
 const classifier = marcelle.mlp({ layers: [64, 32], epochs: 20 });
 
-const batchMLP = marcelle.batchPrediction({ name: 'mlp', backend });
+const batchMLP = marcelle.batchPrediction({ name: 'mlp', dataStore: store });
 
 const predictButton = marcelle.button({ text: 'Update predictions' });
 predictButton.$click.subscribe(async () => {
@@ -81,7 +81,7 @@ Displays a confusion matrix from a [BatchPrediction](#batchprediction) module.
 ### Example
 
 ```js
-const batchMLP = marcelle.batchPrediction({ name: 'mlp', backend });
+const batchMLP = marcelle.batchPrediction({ name: 'mlp', dataStore: store });
 const confusionMatrix = marcelle.confusion(batchMLP);
 ```
 

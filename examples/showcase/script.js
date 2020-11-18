@@ -118,8 +118,8 @@ const instances = webcam.$images
   }))
   .awaitPromises();
 
-const backend = marcelle.createBackend({ location: 'localStorage' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
+const store = marcelle.dataStore({ location: 'localStorage' });
+const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
 trainingSet.capture(instances);
 
 const trainingSetBrowser = marcelle.browser(trainingSet);

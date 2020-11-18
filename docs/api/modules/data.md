@@ -34,17 +34,17 @@ dashboard.page('Data Management').use(trainingSetBrowser);
 ## Dataset
 
 ```tsx
-marcelle.dataset({ name: string, backend?: Backend }): Dataset;
+marcelle.dataset({ name: string, dataStore?: DataStore }): Dataset;
 ```
 
-A Dataset module allowing for capturing instances from a stream, storing them in a local or remote [backend](/api/backends.html).
+A Dataset module allowing for capturing instances from a stream, storing them in a local or remote [data-store](/api/data-stores.html).
 
 ### Parameters
 
-| Option  | Type    | Description                                                                                                                                           | Required |
-| ------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
-| name    | string  | The dataset name                                                                                                                                      |    ✓     |
-| backend | Backend | The [backend](/api/backends) used to store the instances of the dataset. This parameter is optional. By default, a backend in memory will be created. |          |
+| Option    | Type      | Description                                                                                                                                                   | Required |
+| --------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
+| name      | string    | The dataset name                                                                                                                                              |    ✓     |
+| dataStore | DataStore | The [dataStore](/api/data-stores) used to store the instances of the dataset. This parameter is optional. By default, a data store in memory will be created. |          |
 
 ### Streams
 
@@ -60,7 +60,7 @@ A Dataset module allowing for capturing instances from a stream, storing them in
 ### Example
 
 ```js
-const backend = marcelle.createBackend({ location: 'localStorage' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
+const store = marcelle.dataStore({ location: 'localStorage' });
+const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
 trainingSet.capture($instances); // Capture a Stream of instances
 ```

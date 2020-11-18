@@ -1,8 +1,8 @@
 import { Account } from './account.module';
-import type { Backend } from '../../backend';
+import type { DataStore } from '../../data-store';
 
-export function account(backend: Backend): Account {
-  return new Account(backend);
+export function account(dataStore: DataStore): Account {
+  return new Account(dataStore);
 }
 
 export type { Account };

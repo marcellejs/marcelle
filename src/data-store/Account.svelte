@@ -4,7 +4,7 @@
 
   const dispatch = createEventDispatcher();
 
-  export let backend;
+  export let dataStore;
   export let mode = 'login';
 
   let loginError = null;
@@ -16,7 +16,7 @@
   async function login(e) {
     const data = new FormData(e.target);
     try {
-      await backend.login(data.get('email'), data.get('password'));
+      await dataStore.login(data.get('email'), data.get('password'));
       terminate(true);
     } catch (error) {
       loginError = error;
@@ -27,7 +27,7 @@
   async function signup(e) {
     const data = new FormData(e.target);
     try {
-      await backend.signup(data.get('email'), data.get('password'));
+      await dataStore.signup(data.get('email'), data.get('password'));
       terminate(true);
     } catch (error) {
       terminate(false);

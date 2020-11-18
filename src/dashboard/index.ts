@@ -32,8 +32,8 @@ export class Dashboard {
     });
     this.app.$on('quit', () => {
       this.app?.$destroy();
-      Object.values(this.panels).forEach((dashboard) => {
-        dashboard.destroy();
+      Object.values(this.panels).forEach((panel) => {
+        panel.destroy();
       });
       this.app = undefined;
     });

@@ -23,8 +23,8 @@ const instances = input.$images
   }))
   .awaitPromises();
 
-const backend = marcelle.createBackend({ location: 'localStorage' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
+const store = marcelle.dataStore({ location: 'localStorage' });
+const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
 trainingSet.capture(instances);
 
 const trainingSetBrowser = marcelle.browser(trainingSet);
@@ -46,7 +46,7 @@ const plotTraining = marcelle.trainingPlot(classifier);
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchMLP = marcelle.batchPrediction({ name: 'mlp', backend });
+const batchMLP = marcelle.batchPrediction({ name: 'mlp', dataStore: store });
 const confusionMatrix = marcelle.confusion(batchMLP);
 
 const predictButton = marcelle.button({ text: 'Update predictions' });
@@ -84,6 +84,6 @@ dashboard
 dashboard.page('Training').use(params, b, prog, plotTraining);
 dashboard.page('Batch Prediction').use(predictButton, confusionMatrix);
 dashboard.page('Real-time Prediction').useLeft(input).use(tog, plotResults);
-dashboard.settings.useLeft(marcelle.account(backend)).use(trainingSet);
+dashboard.settings.useLeft(marcelle.account(store)).use(trainingSet);
 
 dashboard.start();

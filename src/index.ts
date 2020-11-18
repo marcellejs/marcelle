@@ -9,7 +9,7 @@ import './utils';
 
 // Core library
 export * from './core';
-export * from './backend';
+export * from './data-store';
 export { throwError } from './utils/error-handling';
 
 // Dashboards & Wizards

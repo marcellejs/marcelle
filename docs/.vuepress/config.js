@@ -30,7 +30,6 @@ module.exports = {
       },
     ],
     sidebar: {
-      // '/api/': ['', 'modules', 'streams', 'interfaces', 'backends'],
       '/api/': [
         '',
         {
@@ -49,7 +48,7 @@ module.exports = {
         },
         'streams',
         'interfaces',
-        'backends',
+        'data-stores',
       ],
       '/': [
         '/installation',

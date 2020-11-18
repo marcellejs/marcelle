@@ -29,9 +29,9 @@ Most modules provide a view that can be mounted on demand in an application. Mar
 
 > Go to [Interfaces documentation](/api/interfaces.html)
 
-## Backends
+## Data Stores
 
-Marcelle provides a flexible interface for creating _backend services_ that provide a unified interface for storing data either on the client side (in memory or using web storage) or on a remote server.
-Some modules rely on the definition of a backend &ndash; for instance, the [Dataset](/modules/data#dataset) module that needs to store instances, &ndash; however data collections can be created on the fly to store custom information when relevant. This is particularly useful to store some of the state of the application (for instance the model's parameters), a history of changes to the application, or custom session logs recording some of the user's interactions.
+Marcelle provides a flexible interface for creating _data stores_ that provide a unified interface for storing data either on the client side (in memory or using web storage) or on a remote server.
+Some modules rely on the definition of a data stores &ndash; for instance, the [Dataset](/modules/data#dataset) module that needs to store instances, &ndash; however data collections can be created on the fly to store custom information when relevant. This is particularly useful to store some of the state of the application (for instance the model's parameters), a history of changes to the application, or custom session logs recording some of the user's interactions.
 
-> Go to [Backends documentation](/api/backends.html)
+> Go to [Data Stores documentation](/api/data-stores.html)

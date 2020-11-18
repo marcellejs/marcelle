@@ -19,7 +19,7 @@ function isValidUrl(str: string) {
   return true;
 }
 
-export enum BackendType {
+export enum DataStoreBackend {
   Memory,
   LocalStorage,
   Remote,
@@ -29,12 +29,12 @@ interface User {
   email: string;
 }
 
-export interface BackendOptions {
+export interface DataStoreOptions {
   location?: string;
 }
 
-export class Backend {
-  readonly isBackend = true;
+export class DataStore {
+  readonly isDataStore = true;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   #app: feathers.Application<any>;
@@ -45,15 +45,15 @@ export class Backend {
   #connectPromise: Promise<User>;
   #authenticationPromise: Promise<User>;
 
-  backendType: BackendType;
+  backend: DataStoreBackend;
 
   createService: (name: string) => void = () => {};
 
-  constructor({ location = 'memory' }: BackendOptions = {}) {
+  constructor({ location = 'memory' }: DataStoreOptions = {}) {
     this.#app = feathers();
     this.#location = location;
     if (isValidUrl(location)) {
-      this.backendType = BackendType.Remote;
+      this.backend = DataStoreBackend.Remote;
       const socket = io(location, { reconnectionAttempts: 3 });
       this.#app.configure(socketio(socket, { timeout: 3000 }));
       this.#app.io.on('init', ({ auth }: { auth: boolean }) => {
@@ -63,7 +63,7 @@ export class Backend {
         }
       });
     } else if (location === 'localStorage') {
-      this.backendType = BackendType.LocalStorage;
+      this.backend = DataStoreBackend.LocalStorage;
       const storageService = (name: string) =>
         localStorageService({
           storage: window.localStorage,
@@ -77,7 +77,7 @@ export class Backend {
         this.#app.use(`/${name}`, storageService(name));
       };
     } else if (location === 'memory') {
-      this.backendType = BackendType.Memory;
+      this.backend = DataStoreBackend.Memory;
       this.createService = (name: string) => {
         this.#app.use(
           `/${name}`,
@@ -96,7 +96,7 @@ export class Backend {
   }
 
   async connect(): Promise<User> {
-    if (this.backendType !== BackendType.Remote) {
+    if (this.backend !== DataStoreBackend.Remote) {
       return { email: null };
     }
     if (!this.#connectPromise) {
@@ -111,7 +111,7 @@ export class Backend {
             this.#location
           }. Is the server running?
           If using locally, run 'npm run backend'`);
-          e.name = 'Backend connection error';
+          e.name = 'DataStore connection error';
           reject();
           throwError(e, { duration: 0 });
         });
@@ -138,7 +138,7 @@ export class Backend {
           .catch(() => {
             const app = new Login({
               target: document.querySelector('#app'),
-              props: { backend: this },
+              props: { dataStore: this },
             });
             app.$on('terminate', (success) => {
               app.$destroy();
@@ -183,7 +183,7 @@ export class Backend {
   }
 
   setupAppHooks(): void {
-    const beforeCreate = this.backendType !== BackendType.Remote ? [addObjectId] : [];
+    const beforeCreate = this.backend !== DataStoreBackend.Remote ? [addObjectId] : [];
     this.#app.hooks({
       before: {
         create: beforeCreate.concat([createDate]),
