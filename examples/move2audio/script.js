@@ -71,7 +71,7 @@ const plotResults = marcelle.predictionPlot(predictionStream);
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const dashboard = marcelle.createDashboard({
+const dashboard = marcelle.dashboard({
   title: 'Marcelle Example - Wizard',
   author: 'Marcelle Pirates Crew',
 });
@@ -102,7 +102,7 @@ trainingSet.$countPerClass.subscribe((c) => {
   );
 });
 
-const wizard = marcelle.createWizard();
+const wizard = marcelle.wizard();
 
 wizard
   .step()

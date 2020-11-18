@@ -15,7 +15,7 @@ In Marcelle, dashboards are applications that can be displayed on demand on top 
 The following factory function creates and returns an empty Dashboard Application:
 
 ```tsx
-marcelle.createDashboard({
+marcelle.dashboard({
   title: string;
   author: string;
   datasets: Dataset[];
@@ -33,7 +33,7 @@ marcelle.createDashboard({
 #### Example
 
 ```js
-const dashboard = marcelle.createDashboard({
+const dashboard = marcelle.dashboard({
   title: 'Marcelle Example - Dashboard',
   author: 'Marcelle Pirates Crew',
   datasets: [trainingSet],
@@ -117,13 +117,13 @@ Wizards are dedicated to the creation of step-by-step guides for beginners or en
 The following factory function creates and returns an empty Wizard:
 
 ```tsx
-createWizard(): Wizard
+wizard(): Wizard
 ```
 
 **Example**
 
 ```js
-const wizard = marcelle.createWizard();
+const wizard = marcelle.wizard();
 
 wizard
   .step()

@@ -48,7 +48,7 @@ const rtPlotResults = marcelle.predictionPlot(realtimePredictions);
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const dashboard = marcelle.createDashboard({
+const dashboard = marcelle.dashboard({
   title: 'Marcelle: Object Detection with COCO-SSD',
   author: 'Marcelle Pirates Crew',
 });

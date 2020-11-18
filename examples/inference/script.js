@@ -96,7 +96,7 @@ const instanceViewer = {
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const dashboard = marcelle.createDashboard({
+const dashboard = marcelle.dashboard({
   title: 'Marcelle: Interactive Model Testing',
   author: 'Marcelle Pirates Crew',
 });

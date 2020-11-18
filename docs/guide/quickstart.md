@@ -42,10 +42,10 @@ Note that if you look at the app in your browser (at `http://localhost:8080/`), 
 
 ## Showing the interface
 
-Two types of interfaces are currently available: [Dashboards](../api/interfaces.html#dashboards) or Wizard [Wizards](../api/interfaces.html#wizards). In this tutorial we will create a dashboard where we will add elements from the pipeline that we would like to display. To create a dashboard, the API provides a `.createDashboard()` function:
+Two types of interfaces are currently available: [Dashboards](../api/interfaces.html#dashboards) or Wizard [Wizards](../api/interfaces.html#wizards). In this tutorial we will create a dashboard where we will add elements from the pipeline that we would like to display. To create a dashboard, the API provides a `.dashboard()` function:
 
 ```js
-const dashboard = createDashboard({
+const dashboard = dashboard({
   title: 'My First Tutorial',
   author: 'Marcelle Crew',
 });

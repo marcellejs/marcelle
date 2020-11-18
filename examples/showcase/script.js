@@ -128,7 +128,7 @@ const trainingSetBrowser = marcelle.browser(trainingSet);
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const dashboard = marcelle.createDashboard({
+const dashboard = marcelle.dashboard({
   title: 'Marcelle Documentation - Module Showcase',
   author: 'Marcelle Pirates Crew',
 });

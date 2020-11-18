@@ -104,7 +104,7 @@ plotResultsKNN.name = 'Predictions: KNN';
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const dashboard = marcelle.createDashboard({
+const dashboard = marcelle.dashboard({
   title: 'Marcelle Example - MLP vs KNN',
   author: 'Marcelle Pirates Crew',
 });

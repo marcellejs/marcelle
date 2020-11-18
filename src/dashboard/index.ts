@@ -44,6 +44,6 @@ export class Dashboard {
   }
 }
 
-export function createDashboard(options: DashboardOptions): Dashboard {
+export function dashboard(options: DashboardOptions): Dashboard {
   return new Dashboard(options.title, options.author);
 }
