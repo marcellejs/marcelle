@@ -57,10 +57,9 @@ module.exports = {
           collapsable: false,
           children: [
             '/guide/',
-            '/guide/quickstart',
-            '/guide/generating-an-app',
+            '/guide/getting-started',
             '/guide/creating-modules',
-            '/guide/adding-a-backend',
+            // '/guide/adding-a-backend',
           ],
         },
         '/cli',

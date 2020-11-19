@@ -10,7 +10,7 @@ Marcelle aims to address the following use cases:
 3. Learning about ML concepts through exploratory interactive training and testing
 4. Discovering and exploring expressive (big) ML models.
 
-Can't wait? [→ Go to the Quickstart Guide](/guide/quickstart.html)
+Can't wait? [→ Go to the Getting Started Guide](/guide/getting-started.html)
 
 ## Example
 

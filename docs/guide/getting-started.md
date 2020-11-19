@@ -25,7 +25,7 @@ Marcelle is a client-side JavaScript framework. All Marcelle applications run in
 To see the application running, type the command:
 
 ```bash
-$ yarn dev
+$ npm run dev
 ```
 
 Your app should be running at `http://localhost:8080/`. If everything went well you should have a blank page. Let's now inspect what's your app is made of. Select the file `src/script.ts` (or `src/script.js`), that contains the most minimal skeleton of a marcelle application. In the file you should see some `import` commands and that's it. The application is therefore empty but all the modules are imported. We can now start to design our app.
