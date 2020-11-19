@@ -1,4 +1,4 @@
-# Quickstart
+# Getting started
 
 In this tutorial, you will learn how to build a simple Marcelle application that allows the user to capture and annotate images from a webcam, train a classifier, assess it on the dataset, and play with real-time recognition. It is a toy example in Interactive Machine Learning, implemented in [Teachable Machine](https://teachablemachine.withgoogle.com/).
 
@@ -75,8 +75,89 @@ Which should look like this:
 
 ### Feature extraction and dataset creation
 
-If we want to build a classifier that takes images as inputs and that can be trained efficiently with few samples, we cannot use the raw image. We need to extract features that are well suited for the task. To do so, we could use a pre-trained model called `Mobilenet` that takes an image as input (whose size is 224 x 224 x 3 so 150528 dimensions) and outputs a vector with lower dimension. To declare a mobilenet feature extractor in Marcelle, we do:
+If we want to build a classifier that takes images as inputs and that can be trained efficiently with few samples, we usually don't use the raw image data. We need to extract features that are well suited for the task. To do so, we could use a pre-trained model called `Mobilenet` that takes an image as input (whose size is 224 x 224 x 3 so 150528 dimensions) and outputs a vector of lower dimension. To declare a mobilenet feature extractor in Marcelle, we do:
 
 ```js
 const featureExtractor = mobilenet();
 ```
+
+And if we want to compute the features associated to each new images from the webcam input, we subscribe to the `images` stream and process the data:
+
+```js
+input.$images.subscribe(async (img) => await featureExtractor.process(img));
+```
+
+In Marcelle, an instance of a dataset also comprised other fields. We can create a derived stream of instances from the webcam stream like this:
+
+```js
+const instances = input.$images
+  .map(async (img) => ({
+    type: 'image',
+    data: img,
+    label: myLabel,
+    thumbnail: input.$thumbnails.value,
+    features: await featureExtractor.process(img),
+  }))
+  .awaitPromises();
+```
+
+In this example, we see that the label is also specified by a string that we denoted as `myLabel`. In an application, a label can be provided by the user through a [textfield](../api/modules/widgets.html#textfield) on the interface:
+
+```js
+const label = marcelle.textfield();
+label.name = 'Instance label';
+```
+
+The textfield module has a `$text` stream that we can used when created the stream of instances:
+
+```js
+...
+    label: label.$text.value,
+...
+```
+
+We now create a dataset that can be used to train a classifier. A dataset requires a [DataStore](../api/data-stores.html#datastore) to store the captured data. A datastore can be created in the `localStorage` of your browser, but also on a server using a specified database.
+
+Once the datastore has been instanciated, we declare a marcelle [dataset](../api/modules/data.html#dataset) with a given name and a given datastore. The dataset has a `capture` method to store an incoming stream of instances. In Marcelle, these three steps can be done as such:
+
+```js
+const ds = marcelle.dataStore({ location: 'localStorage' });
+const trainingSet = marcelle.dataset({ name: 'TrainingSet', ds });
+trainingSet.capture(instances);
+```
+
+At this point, if you run this application on the browser, you will still only see the webcam input on the interface (as we didn't add anything else on the `dashboard`), but more annoying, you will add every frame of the webcam as new instance in the dataset... To avoid this, we can create a [button](../api/modules/widgets.html#button) to start and stop the capture.
+
+```js
+const capture = marcelle.button({ text: 'Hold to record instances' });
+capture.name = 'Capture instances to the training set';
+```
+
+And then we conditioned the stream of instances to status of this button:
+
+```js
+const instances = input.$images
+  .filter(() => capture.$down.value))
+  .map(async (img) => ({
+    type: 'image',
+    data: img,
+    label: label.$text.value,
+    thumbnail: input.$thumbnails.value,
+    features: await featureExtractor.process(img),
+  }))
+  .awaitPromises();
+```
+
+Finally, we plot on the interface the label textfield, the capture button and a dataset [browser](../api/modules/data.html#browser) that provides an interface to visualize the dataset content.
+
+```js
+const trainingSetBrowser = marcelle.browser(trainingSet);
+```
+
+```js
+dashboard.page('Data Management').useLeft(input).use(label, capture, trainingSetBrowser);
+```
+
+If you refresh the page in the browser, you should have the following:
+
+TODO
