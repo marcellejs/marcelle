@@ -33,6 +33,6 @@ export class Wizard {
   }
 }
 
-export function createWizard(): Wizard {
+export function wizard(): Wizard {
   return new Wizard();
 }

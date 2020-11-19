@@ -5,14 +5,19 @@ import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import { logger } from '../../core/logger';
 import type { Instance, ObjectId } from '../../core/types';
-import { Backend } from '../../backend/backend';
-import { addScope, imageData2DataURL, limitToScope, dataURL2ImageData } from '../../backend/hooks';
+import { DataStore } from '../../data-store/data-store';
+import {
+  addScope,
+  imageData2DataURL,
+  limitToScope,
+  dataURL2ImageData,
+} from '../../data-store/hooks';
 import { saveBlob } from '../../utils/file-io';
 import Component from './dataset.svelte';
 
 export interface DatasetOptions {
   name: string;
-  backend?: Backend;
+  dataStore?: DataStore;
 }
 
 function toKebabCase(str: string): string {
@@ -27,7 +32,7 @@ export class Dataset extends Module {
   description = 'Dataset';
 
   #unsubscribe: () => void = () => {};
-  #backend: Backend;
+  #dataStore: DataStore;
 
   instanceService: Service<Instance>;
 
@@ -38,10 +43,10 @@ export class Dataset extends Module {
   $count: Stream<number>;
   $countPerClass: Stream<Record<string, number>>;
 
-  constructor({ name, backend = new Backend() }: DatasetOptions) {
+  constructor({ name, dataStore = new DataStore() }: DatasetOptions) {
     super();
     this.name = name;
-    this.#backend = backend;
+    this.#dataStore = dataStore;
     this.$labels = new Stream(skipRepeatsWith(dequal, map(Object.keys, this.$classes)));
     this.$count = new Stream(
       this.$instances.map((x) => x.length),
@@ -59,27 +64,23 @@ export class Dataset extends Module {
       true,
     );
     this.start();
-    this.#backend
+    this.#dataStore
       .connect()
       .then(() => {
         this.setup();
       })
       .catch(() => {
-        logger.log('[dataset] backend connection failed');
+        logger.log('[dataset] dataStore connection failed');
       });
   }
 
   async setup(): Promise<void> {
     const serviceName = toKebabCase(`instances-${this.name}`);
-    this.#backend.createService(serviceName);
-    this.instanceService = this.#backend.service(serviceName) as Service<Instance>;
+    this.#dataStore.createService(serviceName);
+    this.instanceService = this.#dataStore.service(serviceName) as Service<Instance>;
     this.instanceService.hooks({
       before: {
-        create: [
-          addScope('datasetName', this.name),
-          imageData2DataURL,
-          // this.#backend.backendType !== BackendType.Memory && imageData2DataURL,
-        ].filter((x) => !!x),
+        create: [addScope('datasetName', this.name), imageData2DataURL].filter((x) => !!x),
         find: [limitToScope('datasetName', this.name)],
         get: [limitToScope('datasetName', this.name)],
         update: [limitToScope('datasetName', this.name)],
@@ -87,9 +88,7 @@ export class Dataset extends Module {
         remove: [limitToScope('datasetName', this.name)],
       },
       after: {
-        // find: [this.#backend.backendType !== BackendType.Memory && dataURL2ImageData].filter(
         find: [dataURL2ImageData].filter((x) => !!x),
-        // get: [this.#backend.backendType !== BackendType.Memory && dataURL2ImageData].filter(
         get: [dataURL2ImageData].filter((x) => !!x),
       },
     });

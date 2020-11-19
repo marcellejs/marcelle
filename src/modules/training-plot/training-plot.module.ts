@@ -3,6 +3,7 @@ import { Stream } from '../../core/stream';
 import { MLP } from '../mlp';
 import { chart, Chart } from '../chart';
 import Component from './training-plot.svelte';
+import { throwError } from '../../utils/error-handling';
 
 export class TrainingPlot extends Module {
   name = 'training plot';
@@ -13,8 +14,17 @@ export class TrainingPlot extends Module {
 
   constructor(public model: MLP) {
     super();
-    if (!model || !model.$training) {
-      throw new Error('This model is incompatible with this module');
+    if (!model) {
+      const e = new Error('[training plot] No model was provided');
+      e.name = 'Module Compatibility Error';
+      throwError(e);
+    }
+    if (!model.$training) {
+      const e = new Error(
+        '[training plot] The provided model is incompatible with the training plot module, missing `$training` stream',
+      );
+      e.name = 'Module Compatibility Error';
+      throwError(e);
     }
     const trainingLoss = new Stream([], true);
     const validationLoss = new Stream([], true);

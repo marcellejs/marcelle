@@ -1,6 +1,6 @@
 module.exports = {
-  title: 'marcelle.js',
-  description: 'A Versatile Interactive Machine Learning Toolkit',
+  title: 'Marcelle',
+  description: 'An Interactive Machine Learning Toolkit',
   head: [
     // ['link', { rel: 'icon', href: `/logo.png` }],
     // ['link', { rel: 'apple-touch-icon', href: `/icons/apple-touch-icon-152x152.png` }],
@@ -20,32 +20,49 @@ module.exports = {
         text: 'API Reference',
         link: '/api/',
       },
-      {
-        text: 'Modules Reference',
-        link: '/modules/',
-      },
+      // {
+      //   text: 'Cookbook',
+      //   link: '/cookbook/',
+      // },
       {
         text: 'Examples',
         link: '/examples/',
       },
     ],
     sidebar: {
-      '/api/': ['', 'modules', 'streams', 'dashboards', 'wizards', 'backends'],
-      '/modules/': ['', 'sources', 'data', 'models', 'predictions'],
+      '/api/': [
+        '',
+        {
+          title: 'Modules',
+          collapsable: false,
+          children: [
+            '/api/modules/',
+            '/api/modules/data',
+            '/api/modules/inputs',
+            '/api/modules/models',
+            '/api/modules/training',
+            '/api/modules/predictions',
+            '/api/modules/visualization',
+            '/api/modules/widgets',
+          ],
+        },
+        'streams',
+        'interfaces',
+        'data-stores',
+      ],
       '/': [
         '/installation',
-        '/',
-        '/guide/',
-        // {
-        //   title: 'Guide',
-        //   collapsable: false,
-        //   children: ['/guide/observables-watchers', '/guide/internal-api'],
-        // },
-        // {
-        //   title: 'Extending',
-        //   collapsable: false,
-        //   children: ['/extending/', '/extending/custom-components', '/extending/plugins'],
-        // },
+        {
+          title: 'Guide',
+          collapsable: false,
+          children: [
+            '/guide/',
+            '/guide/getting-started',
+            '/guide/creating-modules',
+            // '/guide/adding-a-backend',
+          ],
+        },
+        '/cli',
       ],
     },
   },

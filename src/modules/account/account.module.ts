@@ -1,16 +1,16 @@
 import { Module } from '../../core/module';
 import Component from './account.svelte';
-import { Backend } from '../../backend';
+import { DataStore } from '../../data-store';
 
 export class Account extends Module {
   name = 'account manager';
   description = 'Account manager';
 
-  #backend: Backend;
+  #dataStore: DataStore;
 
-  constructor(backend: Backend) {
+  constructor(dataStore: DataStore) {
     super();
-    this.#backend = backend;
+    this.#dataStore = dataStore;
   }
 
   mount(targetSelector?: string): void {
@@ -21,7 +21,7 @@ export class Account extends Module {
       target,
       props: {
         title: this.name,
-        backend: this.#backend,
+        dataStore: this.#dataStore,
       },
     });
   }

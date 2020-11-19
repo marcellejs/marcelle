@@ -295,9 +295,29 @@ export class Stream<T> {
     return new Stream(most.recoverWith(f, this));
   }
 
-  // static periodic(period: number): Stream<void> {
-  //   return new Stream(most.periodic(period));
-  // }
+  static empty(): Stream<never> {
+    return new Stream(most.empty());
+  }
+
+  static never(): Stream<never> {
+    return new Stream(most.never());
+  }
+
+  static now<A>(x: A): Stream<A> {
+    return new Stream(most.now(x));
+  }
+
+  static at<A>(t: Time, x: A): Stream<A> {
+    return new Stream(most.at(t, x));
+  }
+
+  static periodic(period: number): Stream<void> {
+    return new Stream(most.periodic(period));
+  }
+
+  static throwError(e: Error): Stream<never> {
+    return new Stream(most.throwError(e));
+  }
 }
 
 export function createStream<T>(s: MostStream<T> | T, hold = false): Stream<T> {

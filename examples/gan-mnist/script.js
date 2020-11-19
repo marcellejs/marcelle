@@ -81,7 +81,7 @@ const arrow = marcelle.text({
     '<div style="flex-grow: 1; align-self: center; text-align: center; font-size: 4rem;">⇨</div>',
 });
 
-const dashboard = marcelle.createDashboard({
+const dashboard = marcelle.dashboard({
   title: 'Marcelle Example - GAN for Image Generation (MNIST)',
   author: 'Marcelle Pirates Crew',
 });

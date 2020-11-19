@@ -1,7 +1,7 @@
 {
   "name": "@marcellejs/core",
   "description": "Marcelle Core API",
-  "version": "0.1.0-alpha.3",
+  "version": "0.1.0-alpha.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/marcellejs/marcelle"
@@ -66,10 +66,10 @@
     "@most/core": "^1.6.1",
     "@most/scheduler": "^1.3.0",
     "@most/types": "^1.1.0",
-    "@popperjs/core": "^2.5.3",
     "@tensorflow-models/coco-ssd": "^2.1.0",
     "@tensorflow-models/knn-classifier": "^1.2.2",
     "@tensorflow-models/mobilenet": "^2.0.4",
+    "@tensorflow/tfjs-backend-cpu": "^2.7.0",
     "@tensorflow/tfjs-backend-webgl": "^2.7.0",
     "@tensorflow/tfjs-converter": "^2.7.0",
     "@tensorflow/tfjs-core": "^2.4.0",
@@ -80,7 +80,6 @@
     "dequal": "^2.0.2",
     "feathers-localstorage": "^5.1.1",
     "feathers-memory": "^4.1.0",
-    "sift": "^13.3.5",
     "socket.io-client": "^2.3.1",
     "svelte": "^3.29.0",
     "svelte-range-slider-pips": "^1.5.0"

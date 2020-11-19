@@ -1,18 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+
+body
+  font-family: 'Poppins', sans-serif
+
 div.language-tsx
   background: none
-  border-top-width 4px
-  border-top-style solid
   background-color #f3f5f7
-  border-color: #476582
   border-radius: 0
-  font-size: 1.2em
   &::before
     content: ""
   pre.language-tsx
     padding: 8px 12px
-    margin: 0
     code
       color: #476582
+
+h2 + div.language-tsx
+  border-top-width 4px
+  border-top-style solid
+  border-color: #476582
+  font-size: 1.2em
+  pre.language-tsx
+    margin: 0
 
 div.language-ts::before
   content: 'ts'

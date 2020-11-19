@@ -4,6 +4,7 @@ import {
   MobileNetVersion,
   MobileNetAlpha,
 } from '@tensorflow-models/mobilenet';
+import { tidy } from '@tensorflow/tfjs-core';
 import { logger } from '../../core/logger';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
@@ -12,7 +13,6 @@ import Component from './mobilenet.svelte';
 export interface MobilenetOptions {
   version?: MobileNetVersion;
   alpha?: MobileNetAlpha;
-  mode?: 'string';
 }
 
 export interface MobilenetResults {
@@ -56,7 +56,10 @@ export class Mobilenet extends Module {
 
   async process(image: ImageData): Promise<number[][]> {
     if (!this.#mobilenet) return [];
-    return this.#mobilenet.infer(image, true).arraySync() as number[][];
+    return tidy(() => {
+      const x = this.#mobilenet.infer(image, true).arraySync() as number[][];
+      return x;
+    });
   }
 
   async predict(image: ImageData): Promise<MobilenetResults> {

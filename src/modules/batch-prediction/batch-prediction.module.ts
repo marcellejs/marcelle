@@ -3,51 +3,53 @@ import { Service, Paginated } from '@feathersjs/feathers';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import type { Instance, Prediction, ObjectId } from '../../core/types';
-import { Backend, BackendType } from '../../backend/backend';
-import { addScope, limitToScope, imageData2DataURL, dataURL2ImageData } from '../../backend/hooks';
+import { DataStore } from '../../data-store/data-store';
+import {
+  addScope,
+  limitToScope,
+  imageData2DataURL,
+  dataURL2ImageData,
+} from '../../data-store/hooks';
 import { Dataset } from '../dataset';
 import { MLP } from '../mlp';
 import { logger } from '../../core';
 
 export interface BatchPredictionOptions {
   name: string;
-  backend?: Backend;
+  dataStore?: DataStore;
 }
 
 export class BatchPrediction extends Module {
   name = 'batch prediction';
   description = 'BatchPrediction';
 
-  #backend: Backend;
+  #dataStore: DataStore;
   predictionService: Service<Prediction>;
 
   $predictions: Stream<ObjectId[]> = new Stream([], true);
   $count: Stream<number>;
 
-  constructor({ name, backend = new Backend() }: BatchPredictionOptions) {
+  constructor({ name, dataStore }: BatchPredictionOptions) {
     super();
     this.name = name;
-    this.#backend = backend;
-    this.#backend
+    this.#dataStore = dataStore || new DataStore();
+    this.#dataStore
       .connect()
       .then(() => {
         this.setup();
       })
       .catch(() => {
-        logger.log('[BatchPrediction] backend connection failed');
+        logger.log('[BatchPrediction] data store connection failed');
       });
   }
 
   async setup(): Promise<void> {
     const serviceName = `predictions-${this.name}`;
-    this.#backend.createService(serviceName);
-    this.predictionService = this.#backend.service(serviceName) as Service<Prediction>;
+    this.#dataStore.createService(serviceName);
+    this.predictionService = this.#dataStore.service(serviceName) as Service<Prediction>;
     this.predictionService.hooks({
       before: {
-        create: [
-          addScope('predictionName', this.name),
-          this.#backend.backendType === BackendType.Memory && imageData2DataURL,
-        ].filter((x) => !!x),
+        create: [addScope('predictionName', this.name), imageData2DataURL].filter((x) => !!x),
         find: [limitToScope('predictionName', this.name)],
         get: [limitToScope('predictionName', this.name)],
         update: [limitToScope('predictionName', this.name)],
@@ -55,12 +57,8 @@ export class BatchPrediction extends Module {
         remove: [limitToScope('predictionName', this.name)],
       },
       after: {
-        find: [this.#backend.backendType === BackendType.Memory && dataURL2ImageData].filter(
-          (x) => !!x,
-        ),
-        get: [this.#backend.backendType === BackendType.Memory && dataURL2ImageData].filter(
-          (x) => !!x,
-        ),
+        find: [dataURL2ImageData].filter((x) => !!x),
+        get: [dataURL2ImageData].filter((x) => !!x),
       },
     });
 

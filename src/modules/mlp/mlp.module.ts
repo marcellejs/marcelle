@@ -1,4 +1,4 @@
-import { tensor2d, train, Tensor2D, TensorLike, tensor } from '@tensorflow/tfjs-core';
+import { tensor2d, train, Tensor2D, TensorLike, tensor, tidy } from '@tensorflow/tfjs-core';
 import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core';
 import { sequential, layers as tfLayers, Sequential } from '@tensorflow/tfjs-layers';
 import { Dataset } from '../dataset/dataset.module';
@@ -31,6 +31,12 @@ function shuffleArray<T>(a: T[]): T[] {
 
 async function dataSplit(dataset: Dataset, trainProportion: number, numClasses = -1) {
   // split is an interval, between 0 and 1
+  const allInstances = await Promise.all(
+    dataset.$instances.value.map((id) =>
+      dataset.instanceService.get(id, { query: { $select: ['id', 'features'] } }),
+    ),
+  );
+
   const labels = dataset.$labels.value;
   const nClasses = numClasses < 0 ? labels.length : numClasses;
   const data: TrainingData = {
@@ -43,11 +49,6 @@ async function dataSplit(dataset: Dataset, trainProportion: number, numClasses =
       y: tensor2d([], [0, nClasses]),
     },
   };
-  const allInstances = await Promise.all(
-    dataset.$instances.value.map((id) =>
-      dataset.instanceService.get(id, { query: { $select: ['id', 'features'] } }),
-    ),
-  );
   labels.forEach((label: string) => {
     const instances = dataset.$classes.value[label];
     const numInstances = instances.length;
@@ -120,11 +121,13 @@ export class MLP extends Classifier<TensorLike, ClassifierResults> {
 
   async predict(x: TensorLike): Promise<ClassifierResults> {
     if (!this.model) return null;
-    const pred = this.model.predict(tensor(x)) as Tensor2D;
-    const label = this.labels[pred.gather(0).argMax().arraySync() as number];
-    const softmaxes = pred.arraySync()[0];
-    const confidences = softmaxes.reduce((c, y, i) => ({ ...c, [this.labels[i]]: y }), {});
-    return { label, confidences };
+    return tidy(() => {
+      const pred = this.model.predict(tensor(x)) as Tensor2D;
+      const label = this.labels[pred.gather(0).argMax().arraySync() as number];
+      const softmaxes = pred.arraySync()[0];
+      const confidences = softmaxes.reduce((c, y, i) => ({ ...c, [this.labels[i]]: y }), {});
+      return { label, confidences };
+    });
   }
 
   clear(): void {

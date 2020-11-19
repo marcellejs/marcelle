@@ -18,8 +18,9 @@ const instances = input.$images
   }))
   .awaitPromises();
 
-const backend = marcelle.createBackend({ location: 'localStorage' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', backend });
+const store = marcelle.dataStore({ location: 'localStorage' });
+const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
+
 const labelField = marcelle.textfield();
 labelField.name = 'Correct the prediction if necessary';
 labelField.$text.set('...');
@@ -70,7 +71,7 @@ const plotResults = marcelle.predictionPlot(predictionStream);
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const dashboard = marcelle.createDashboard({
+const dashboard = marcelle.dashboard({
   title: 'Marcelle Example - Dashboard',
   author: 'Marcelle Pirates Crew',
 });
@@ -84,7 +85,7 @@ dashboard.settings.use(trainingSet);
 
 dashboard.start();
 
-backend.authenticate().then(() => {
+store.authenticate().then(() => {
   trainingSet.$count.take(1).subscribe((c) => {
     if (c) {
       setTimeout(() => {

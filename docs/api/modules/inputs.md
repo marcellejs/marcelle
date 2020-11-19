@@ -2,7 +2,7 @@
 sidebarDepth: 1
 ---
 
-# Input Sources
+# Inputs
 
 ## Faker
 
@@ -14,10 +14,10 @@ A module producing a synthetic data stream composed of periodic events with rand
 
 ### Parameters
 
-| Option | Type   | Description | Required |
-| ------ | ------ | ----------- | :------: |
-| size   | number | Vector size |          |
-| period | number | Period (ms) |          |
+| Option | Type   | Description          | Required | Default |
+| ------ | ------ | -------------------- | :------: | :-----: |
+| size   | number | Vector size          |          |   32    |
+| period | number | Sampling period (ms) |          |  1000   |
 
 ### Streams
 
@@ -25,7 +25,7 @@ A module producing a synthetic data stream composed of periodic events with rand
 | -------- | ------------------ | ----------------------- | :--: |
 | \$frames | Stream\<number[]\> | Stream of random events |      |
 
-<!-- ### Screenshot
+<!-- ## Screenshot
 
 <div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
   <img src="./images/faker.png" alt="Screenshot of the faker component">
@@ -100,17 +100,18 @@ sketch.$strokeEnd.subscribe(() => console.log('imageDrop $strokeEnd'));
 ## Webcam
 
 ```tsx
-marcelle.webcam({ width: number, height: number }): Button;
+marcelle.webcam({ width?: number, height?: number, period?: number }): Webcam;
 ```
 
 A webcam source component, producing a periodic stream of images.
 
 ### Parameters
 
-| Option | Type   | Description             | Required |
-| ------ | ------ | ----------------------- | :------: |
-| width  | number | The target image width  |          |
-| height | number | The target image height |          |
+| Option | Type   | Description                                  | Required | Default |
+| ------ | ------ | -------------------------------------------- | :------: | :-----: |
+| width  | number | The target image width                       |          |   224   |
+| height | number | The target image height                      |          |   224   |
+| period | number | The period in ms at which images are sampled |          |   50    |
 
 ### Streams
 
