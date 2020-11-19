@@ -111,8 +111,6 @@ Apply functions fluently to a Stream, wrapping the result in a new Stream. Use t
 Complement API (most methods)
 :::
 
-## Most methods
-
 ### .ap()
 
 ```tsx
@@ -806,3 +804,98 @@ Apply a function to the latest event and the array value at the respective<br>in
 | --------- | ----------------- | ------- | ------------------- |
 | f         | (a: A, b: T) => C |         | Combinator function |
 | items     | A[]               |         | Items               |
+
+## Stream sources (static methods)
+
+### empty()
+
+```tsx
+static empty(): Stream<never>
+```
+
+Create a Stream containing no events and ends immediately.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#empty)
+
+### never()
+
+```tsx
+static never(): Stream<never>
+```
+
+Create a Stream containing no events and never ends.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#never)
+
+### now()
+
+```tsx
+static now<A>(x: A): Stream<A>
+```
+
+Create a Stream containing a single event at time 0.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#now)
+
+#### Parameters
+
+| Parameter | Type | Default | Description |
+| --------- | ---- | ------- | ----------- |
+| x         | A    |         | event value |
+
+### at()
+
+```tsx
+static at<A>(t: Time, x: A): Stream<A>
+```
+
+Create a Stream containing a single event at a specific time.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#at)
+
+#### Parameters
+
+| Parameter | Type | Default | Description     |
+| --------- | ---- | ------- | --------------- |
+| t         | Time |         | event time (ms) |
+| x         | A    |         | event value     |
+
+### periodic()
+
+```tsx
+static periodic(period: number): Stream<void>
+```
+
+Create an infinite Stream containing events that occur at a specified Period. The first event occurs at time 0, and the event values are `undefined`.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#periodic)
+
+#### Parameters
+
+| Parameter | Type   | Default | Description        |
+| --------- | ------ | ------- | ------------------ |
+| period    | number |         | stream period (ms) |
+
+#### Example
+
+```js
+const myPeriodicRandomStream = Stream.periodic(500)
+  .map(() => Math.random())
+  .subscribe(console.log);
+```
+
+### throwError()
+
+```tsx
+static throwError(e: Error): Stream<never>
+```
+
+Create a Stream that fails with the provided `Error` at time 0. This can be useful for functions that need to return a Stream and also need to propagate an error.
+
+[See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#throwerror)
+
+#### Parameters
+
+| Parameter | Type  | Default | Description |
+| --------- | ----- | ------- | ----------- |
+| e         | Error |         | error       |
