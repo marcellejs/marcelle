@@ -48,6 +48,7 @@ predictButton.$click.subscribe(async () => {
 });
 
 batchTesting.$predictions.subscribe(async () => {
+  if (!batchTesting.predictionService) return;
   const { data } = await batchTesting.predictionService.find();
   const accuracy =
     data.map(({ label, trueLabel }) => (label === trueLabel ? 1 : 0)).reduce((x, y) => x + y, 0) /
