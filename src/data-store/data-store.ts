@@ -42,8 +42,8 @@ export class DataStore {
   requiresAuth = false;
   user: User;
   #location: string;
-  #connectPromise: Promise<User>;
-  #authenticationPromise: Promise<User>;
+  #connectPromise: Promise<void>;
+  #authenticationPromise: Promise<void>;
 
   backend: DataStoreBackend;
 
@@ -101,7 +101,7 @@ export class DataStore {
     }
     if (!this.#connectPromise) {
       logger.log(`Connecting to backend ${this.#location}...`);
-      this.#connectPromise = new Promise((resolve, reject) => {
+      this.#connectPromise = new Promise<void>((resolve, reject) => {
         this.#app.io.on('connect', () => {
           logger.log(`Connected to backend ${this.#location}!`);
           resolve();
@@ -127,7 +127,7 @@ export class DataStore {
   async authenticate(): Promise<User> {
     if (!this.requiresAuth) return { email: null };
     if (!this.#authenticationPromise) {
-      this.#authenticationPromise = new Promise((resolve, reject) => {
+      this.#authenticationPromise = new Promise<void>((resolve, reject) => {
         this.#app
           .reAuthenticate()
           .then(({ user }) => {

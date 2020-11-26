@@ -153,7 +153,7 @@
       <input id="hidden-input" type="file" multiple class="hidden" />
       <button
         id="button"
-        class="mt-2 rounded-sm px-3 py-1 bg-gray-200 hover:bg-gray-300 focus:shadow-outline
+        class="mt-2 rounded-sm px-3 py-1 bg-gray-200 hover:bg-gray-300 focus:ring
         focus:outline-none">
         Upload a file
       </button>

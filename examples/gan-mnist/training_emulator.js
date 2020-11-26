@@ -1,4 +1,5 @@
-/* global marcelle */
+/* eslint-disable import/extensions */
+import { chart, createStream } from '../../dist/marcelle.bundle.esm.js';
 
 function sleep(duration) {
   return new Promise((resolve) => {
@@ -23,15 +24,15 @@ export class GanTrainer {
     this.id = 'remote-gan-emulator';
     this.name = 'remote GAN (Emulator)';
     this.parameters = {
-      epochs: marcelle.createStream(epochs, true),
+      epochs: createStream(epochs, true),
     };
     this.params = {
       sample_images_interval,
       sample_models_interval,
       sample_models_at,
     };
-    this.$models = marcelle.createStream([], true);
-    this.$training = marcelle.createStream({ status: 'idle' }, true);
+    this.$models = createStream([], true);
+    this.$training = createStream({ status: 'idle' }, true);
     this.trainingData = null;
     this.stopTraining = false;
     fetch('training_log.json')
@@ -77,9 +78,9 @@ export class GanTrainer {
 }
 
 export function plotGanTraining(ganModel) {
-  const discriminatorLoss = marcelle.createStream([], true);
-  const generatorLoss = marcelle.createStream([], true);
-  const plotLosses = marcelle.chart({
+  const discriminatorLoss = createStream([], true);
+  const generatorLoss = createStream([], true);
+  const plotLosses = chart({
     preset: 'line-fast',
     options: {
       xlabel: 'Epoch',
@@ -90,8 +91,8 @@ export function plotGanTraining(ganModel) {
   plotLosses.addSeries(generatorLoss, 'generator loss');
   plotLosses.name = 'losses';
 
-  const discriminatorAccuracy = marcelle.createStream([], true);
-  const plotAccuracy = marcelle.chart({
+  const discriminatorAccuracy = createStream([], true);
+  const plotAccuracy = chart({
     preset: 'line-fast',
     options: {
       xlabel: 'Epoch',

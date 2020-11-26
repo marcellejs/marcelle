@@ -10,7 +10,7 @@ export abstract class Model<InputType, ResultType> extends Module implements Par
   $training = new Stream<TrainingStatus>({ status: 'idle' });
 
   abstract train(dataset: Dataset): void;
-  abstract async predict(x: InputType): Promise<ResultType>;
+  abstract predict(x: InputType): Promise<ResultType>;
 
   // eslint-disable-next-line class-methods-use-this
   mount(): void {}

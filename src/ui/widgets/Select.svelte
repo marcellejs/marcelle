@@ -18,7 +18,7 @@
   }
 
   .select:focus {
-    @apply outline-none shadow-outline;
+    @apply outline-none ring;
   }
 </style>
 

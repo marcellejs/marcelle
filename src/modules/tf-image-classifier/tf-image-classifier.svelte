@@ -43,14 +43,14 @@
     <input type="file" id="fileUpload" multiple style="display:none" />
     <button
       id="fileSelect"
-      class="mt-2 rounded-sm px-3 py-1 bg-gray-200 hover:bg-gray-300 focus:shadow-outline
+      class="mt-2 rounded-sm px-3 py-1 bg-gray-200 hover:bg-gray-300 focus:ring
         focus:outline-none"
       style="width:200px; "
       on:click={uploadModel}>Upload Model</button>
 
     <button
       id="saveModel"
-      class="mt-2 rounded-sm px-3 py-1 bg-gray-200 hover:bg-gray-300 focus:shadow-outline
+      class="mt-2 rounded-sm px-3 py-1 bg-gray-200 hover:bg-gray-300 focus:ring
         focus:outline-none"
       style="width:200px; "
       on:click={saveModel}>Save Model</button>

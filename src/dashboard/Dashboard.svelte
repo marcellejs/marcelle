@@ -7,7 +7,6 @@
   const dispatch = createEventDispatcher();
 
   import Routie from './routie';
-  import Tailwind from '../ui/style/Tailwind.svelte';
   import DashboardPage from './DashboardPage.svelte';
 
   export let title;
@@ -77,7 +76,7 @@
   }
 
   .main-container {
-    @apply max-w-none w-screen p-1 flex flex-col flex-no-wrap flex-grow bg-gray-200;
+    @apply max-w-none w-screen p-1 flex flex-col flex-nowrap flex-grow bg-gray-200;
   }
 
   @screen lg {
@@ -136,8 +135,6 @@
 <svelte:head>
   <title>{title}</title>
 </svelte:head>
-
-<Tailwind />
 
 {#if showApp}
   <div style="position: fixed; height: 100vh; overflow: scroll; width: 100vw; top:0; left:0">

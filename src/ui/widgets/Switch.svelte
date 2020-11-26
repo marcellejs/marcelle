@@ -38,7 +38,7 @@
 
   input[type='checkbox']:focus + .switch .track,
   input[type='checkbox']:active + .switch .track {
-    @apply shadow-outline;
+    @apply ring;
   }
 </style>
 

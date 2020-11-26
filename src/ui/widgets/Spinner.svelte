@@ -10,7 +10,7 @@
     bottom: 0;
     width: 100%; */
     min-height: 40px;
-    @apply absolute flex flex-no-wrap items-center justify-center inset-0 w-full bg-white bg-opacity-50;
+    @apply absolute flex flex-nowrap items-center justify-center inset-0 w-full bg-white bg-opacity-50;
   }
 
   .spinner {

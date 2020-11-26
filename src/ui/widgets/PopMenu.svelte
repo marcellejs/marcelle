@@ -59,7 +59,7 @@
       class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg"
       class:hidden={false}
       transition:slide={{ duration: 100 }}>
-      <div class="rounded-md bg-white shadow-xs">
+      <div class="rounded-md bg-white shadow-ring-1 ring-black ring-opacity-5">
         <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
           {#each actions as action}
             <button

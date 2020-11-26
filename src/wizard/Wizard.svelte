@@ -2,8 +2,6 @@
   import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte';
   import WizardStep from './WizardStep.svelte';
 
-  import Tailwind from '../ui/style/Tailwind.svelte';
-
   export let steps;
   export let current;
 
@@ -61,7 +59,6 @@
   }
 </style>
 
-<Tailwind />
 <div
   class="wizard absolute min-h-screen top-0 inset-x-0 p-4 pb-4 sm:flex sm:items-center
     sm:justify-center z-20">
