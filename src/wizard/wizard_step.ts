@@ -1,7 +1,7 @@
 import { Module } from '../core/module';
 
 export class WizardStep {
-  modules: Array<Module | Module[] | string> = [];
+  modules: Array<Module | Module[]> = [];
 
   attr = { title: '', description: '' };
 
@@ -17,7 +17,7 @@ export class WizardStep {
     return this;
   }
 
-  use(...modules: Array<Module | Module[] | string>): WizardStep {
+  use(...modules: Array<Module | Module[]>): WizardStep {
     this.modules = this.modules.concat(modules);
     return this;
   }

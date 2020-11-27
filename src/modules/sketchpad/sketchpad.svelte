@@ -1,21 +1,22 @@
-<script>
+<script lang="ts">
   import { onMount, createEventDispatcher } from 'svelte';
+  import { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
 
-  export let title;
-  export let strokeStart;
-  export let strokeEnd;
+  export let title: string;
+  export let strokeStart: Stream<void>;
+  export let strokeEnd: Stream<void>;
 
-  let canvasElement = null;
+  let canvasElement: HTMLCanvasElement;
   let isDrawing = false;
   let offset = { left: 0, top: 0 };
   let previous = { x: 0, y: 0 };
-  let ctx;
+  let ctx: CanvasRenderingContext2D;
 
   const dispatch = createEventDispatcher();
 
   onMount(async () => {
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       const rej = setTimeout(() => {
         reject();
       }, 5000);
@@ -32,7 +33,7 @@
     });
   });
 
-  function draw(e) {
+  function draw(e: MouseEvent) {
     const x = e.clientX - offset.left;
     const y = e.clientY - offset.top;
     if (isDrawing) {
@@ -49,7 +50,7 @@
     previous.y = y;
   }
 
-  function startDrawing(e) {
+  function startDrawing(e: MouseEvent) {
     const rect = canvasElement.getBoundingClientRect();
     offset = {
       top: rect.top + document.body.scrollTop,
@@ -97,7 +98,6 @@
   <div class="sketchpad">
     <canvas
       id="fxid"
-      ref="drawingarea"
       class="sketchpad-container"
       width="300"
       height="300"

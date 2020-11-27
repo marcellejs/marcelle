@@ -1,8 +1,9 @@
-<script>
+<script lang="ts">
+  import type { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
 
-  export let title;
-  export let text;
+  export let title: string;
+  export let text: Stream<string>;
 </script>
 
 <ModuleBase {title}>

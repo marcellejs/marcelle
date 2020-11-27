@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   export let text = '';
   export let checked = false;
   export let disabled = false;

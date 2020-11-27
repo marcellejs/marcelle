@@ -86,18 +86,20 @@ export interface ChartOptions {
   options?: ChartJsOptions & { xlabel?: string; ylabel?: string };
 }
 
+export interface ChartDataset {
+  dataStream: Stream<number[] | Array<{ x: unknown; y: unknown }>>;
+  label: string;
+  options: { type?: string; labels?: string[]; [key: string]: unknown };
+}
+
 export class Chart extends Module {
   name = 'chart';
   description = 'Simple chart based on Chart.js';
 
   #presetName: string;
-  #preset: Record<string, unknown>;
-  #datasets: Array<{
-    dataStream: Stream<number[] | Array<{ x: unknown; y: unknown }>>;
-    label: string;
-    options: Record<string, unknown>;
-  }> = [];
-  #options: ChartJsOptions;
+  #preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };
+  #datasets: Array<ChartDataset> = [];
+  #options: ChartJsOptions & { xlabel?: string; ylabel?: string };
 
   constructor({ preset = 'line', options = {} }: ChartOptions = {}) {
     super();

@@ -1,18 +1,17 @@
-<script>
-  /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+<script lang="ts">
   import { onMount, createEventDispatcher } from 'svelte';
   import { blur } from 'svelte/transition';
   import { getLogStream, LogLevel } from '../core/logger';
+  import Routie from './routie';
+  import DashboardPageComponent from './DashboardPage.svelte';
+  import type { DashboardPage } from './dashboard_page';
 
   const dispatch = createEventDispatcher();
 
-  import Routie from './routie';
-  import DashboardPage from './DashboardPage.svelte';
-
-  export let title;
-  export let author;
-  export let dashboards = {};
-  export let settings;
+  export let title: string;
+  export let author: string;
+  export let dashboards: Record<string, DashboardPage> = {};
+  export let settings: DashboardPage;
 
   const logStream = getLogStream();
 
@@ -32,7 +31,7 @@
   let showSettings = false;
   let currentDashboard = Object.keys(dashboards)[0] || undefined;
 
-  function string2slug(str) {
+  function string2slug(str: string) {
     let s = str.replace(/^\s+|\s+$/g, ''); // trim
     s = s.toLowerCase();
 
@@ -199,9 +198,9 @@
 
       <main class="main-container">
         {#if showSettings}
-          <DashboardPage dashboard={settings} />
+          <DashboardPageComponent dashboard={settings} />
         {:else if currentDashboard}
-          <DashboardPage dashboard={dashboards[currentDashboard]} />
+          <DashboardPageComponent dashboard={dashboards[currentDashboard]} />
         {/if}
       </main>
 

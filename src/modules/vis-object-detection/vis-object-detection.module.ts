@@ -8,9 +8,9 @@ export class VisObjectDetection extends Module {
   description = 'Visualize the bounding box of detected objects';
 
   $objectDetectionResults: Stream<ObjectDetectorResults>;
-  $imgStream: Stream<unknown>;
+  $imgStream: Stream<ImageData>;
 
-  constructor(imgStream: Stream<unknown>, objDectectionRes: Stream<ObjectDetectorResults>) {
+  constructor(imgStream: Stream<ImageData>, objDectectionRes: Stream<ObjectDetectorResults>) {
     super();
     this.$imgStream = imgStream;
     this.$objectDetectionResults = objDectectionRes;

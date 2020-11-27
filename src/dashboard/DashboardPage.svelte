@@ -1,7 +1,8 @@
-<script>
+<script lang="ts">
   import { afterUpdate } from 'svelte';
+  import type { DashboardPage } from './dashboard_page';
 
-  export let dashboard;
+  export let dashboard: DashboardPage;
 
   afterUpdate(() => {
     dashboard.mount();

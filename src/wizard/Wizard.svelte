@@ -1,11 +1,13 @@
-<script>
+<script lang="ts">
   import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte';
-  import WizardStep from './WizardStep.svelte';
+  import type { Stream } from '../core';
+  import WizardStepComponent from './WizardStep.svelte';
+  import type { WizardStep } from './wizard_step';
 
-  export let steps;
-  export let current;
+  export let steps: WizardStep[];
+  export let current: Stream<number>;
 
-  function stepTo(index) {
+  function stepTo(index: number) {
     if (index >= 0 && index <= steps.length - 1) {
       steps[current.value].modules.forEach((m) => {
         if (Array.isArray(m)) {
@@ -68,7 +70,7 @@
   <div
     class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-3xl
       sm:w-full">
-    <WizardStep
+    <WizardStepComponent
       title={steps[$current].attr.title}
       description={steps[$current].attr.description}
       modules={steps[$current].modules}

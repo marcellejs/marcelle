@@ -1,14 +1,5 @@
 <style lang="postcss">
   .spinner-container {
-    /* position: absolute;
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: center;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 100%; */
     min-height: 40px;
     @apply absolute flex flex-nowrap items-center justify-center inset-0 w-full bg-white bg-opacity-50;
   }

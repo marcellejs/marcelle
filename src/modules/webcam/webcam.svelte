@@ -1,22 +1,23 @@
-<script>
+<script lang="ts">
   import { onMount, onDestroy } from 'svelte';
+  import type { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
   import Spinner from '../../ui/widgets/Spinner.svelte';
   import Switch from '../../ui/widgets/Switch.svelte';
 
-  export let title;
-  export let width;
-  export let height;
-  export let active;
-  export let mediaStream;
-  export let ready;
+  export let title: string;
+  export let width: number;
+  export let height: number;
+  export let active: Stream<boolean>;
+  export let mediaStream: Stream<MediaStream>;
+  export let ready: Stream<boolean>;
 
-  let videoElement = null;
+  let videoElement: HTMLVideoElement;
   let webcamContainerWidth;
 
   let unSub = () => {};
   onMount(async () => {
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       const rej = setTimeout(() => {
         reject();
       }, 5000);

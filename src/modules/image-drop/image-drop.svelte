@@ -1,17 +1,16 @@
-<script>
-  import { resolveScalarsInLogs } from '@tensorflow/tfjs-layers/dist/logs';
-
+<script lang="ts">
+  import type { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
   import { convertURIToImageData } from '../../utils/image';
 
-  export let title;
-  export let images;
-  export let thumbnails;
+  export let title: string;
+  export let images: Stream<ImageData>;
+  export let thumbnails: Stream<string>;
 
   let counter = 0;
   let draggedOver = false;
 
-  function handleDragEnter(e) {
+  function handleDragEnter(e: DragEvent) {
     e.preventDefault();
     if (!hasFiles(e)) {
       return;
@@ -20,25 +19,26 @@
     draggedOver = true;
   }
 
-  function handleDragLeave(e) {
+  function handleDragLeave(e: DragEvent) {
     counter -= 1;
     if (counter < 1) {
       draggedOver = false;
     }
   }
 
-  function handleDragOver(e) {
+  function handleDragOver(e: DragEvent) {
     if (hasFiles(e)) {
       e.preventDefault();
     }
   }
 
-  let objectURLs = [];
-  function handleDragDrop(e) {
+  let objectURLs: string[] = [];
+  function handleDragDrop(e: DragEvent) {
     e.preventDefault();
     objectURLs = [];
-    const files = [];
-    for (const file of e.dataTransfer.files) {
+    const files: File[] = [];
+    for (let i = 0; i < e.dataTransfer.files.length; i++) {
+      const file = e.dataTransfer.files[i];
       const isImage = file.type.match('image.*');
       if (isImage) {
         objectURLs.push(URL.createObjectURL(file));
@@ -47,17 +47,17 @@
       draggedOver = false;
       counter = 0;
     }
-    objectURLs.forEach((imgUrl, i) => {
+    objectURLs.forEach((imgUrl: string, i: number) => {
       Promise.all([convertURIToImageData(imgUrl), getDataUrl(files[i])]).then(
         ([img, thumbnail]) => {
           images.set(img);
-          thumbnails.set(thumbnail);
+          thumbnails.set(thumbnail as string);
         },
       );
     });
   }
 
-  async function getDataUrl(file) {
+  async function getDataUrl(file: File) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.addEventListener(
@@ -76,33 +76,8 @@
     });
   }
 
-  // let unSub = noop;
-  // onMount(async () => {
-  //   await new Promise((resolve, reject) => {
-  //     const rej = setTimeout(() => {
-  //       reject();
-  //     }, 5000);
-  //     const int = setInterval(() => {
-  //       if (videoElement) {
-  //         clearTimeout(rej);
-  //         clearInterval(int);
-  //         resolve();
-  //       }
-  //     }, 200);
-  //   });
-  //   unSub = mediaStream.subscribe((s) => {
-  //     if (s) {
-  //       videoElement.srcObject = s;
-  //     }
-  //   });
-  // });
-
-  // onDestroy(() => {
-  //   unSub();
-  // });
-
   // use to check if a file is being dragged
-  const hasFiles = ({ dataTransfer: { types = [] } }) => types.indexOf('Files') > -1;
+  const hasFiles = ({ dataTransfer: { types = [] } }: DragEvent) => types.indexOf('Files') > -1;
 </script>
 
 <style lang="postcss">
@@ -111,7 +86,6 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    /* @apply h-full overflow-auto p-8 w-full h-full flex flex-col */
   }
 
   .overlay {

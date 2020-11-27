@@ -1,12 +1,12 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from 'svelte';
+  import type { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
 
-  export let title;
-  export let loading;
-  export let modelFiles;
+  export let title: string;
+  export let loading: Stream<boolean>;
+  export let modelFiles: Stream<any[]>;
 
-  let files;
   const dispatch = createEventDispatcher();
 
   function saveModel() {
@@ -21,7 +21,7 @@
     }
   }
 
-  async function handleFiles() {
+  async function handleFiles(this: any) {
     const filesArray = [];
     for (let i = 0; i < this.files.length; i++) {
       filesArray.push(this.files[i]);
@@ -38,7 +38,6 @@
 </script>
 
 <ModuleBase {title} loading={$loading}>
-  <!-- <ModuleBase {title}> -->
   <div style="display:inline-block;">
     <input type="file" id="fileUpload" multiple style="display:none" />
     <button

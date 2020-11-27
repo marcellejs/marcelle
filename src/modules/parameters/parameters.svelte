@@ -1,10 +1,11 @@
-<script>
+<script lang="ts">
   import Number from './Number.svelte';
   import NumberArray from './NumberArray.svelte';
   import ModuleBase from '../../core/ModuleBase.svelte';
+  import type { Stream } from '../../core';
 
-  export let title;
-  export let parameters;
+  export let title: string;
+  export let parameters: Record<string, Stream<any>>;
 </script>
 
 <svelte:options accessors />

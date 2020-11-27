@@ -2,7 +2,6 @@
   import { Chart, CategoryScale, Title, Tooltip } from 'chart.js';
   import { Matrix, MatrixController } from 'chartjs-chart-matrix';
   import { onDestroy } from 'svelte';
-  import { mergeDeep } from '../../utils/object.ts';
   import ModuleBase from '../../core/ModuleBase.svelte';
 
   export let title;

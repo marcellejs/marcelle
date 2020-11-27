@@ -1,7 +1,8 @@
-<script>
-  export let options = [];
-  export let value;
-  // export let disabled = false;
+<script lang="ts">
+  import type { Stream } from '../../core';
+
+  export let options: Stream<string[]>;
+  export let value: Stream<string>;
 </script>
 
 <style type="text/postcss">

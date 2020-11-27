@@ -1,9 +1,10 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
+  import type { Stream, TrainingStatus } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
 
-  export let title;
-  export let training;
+  export let title: string;
+  export let training: Stream<TrainingStatus>;
 
   let status = 'idle';
   let percent = 0;
