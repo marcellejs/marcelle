@@ -23,7 +23,7 @@ Models expose a `$training` stream that monitors the training process. Each `Tra
 
 ```ts
 interface TrainingStatus {
-  status: 'idle' | 'start' | 'epoch' | 'success' | 'error';
+  status: 'idle' | 'start' | 'epoch' | 'success' | 'error' | 'loaded';
   epoch?: number;
   epochs?: number;
   data?: Record<string, unknown>;
@@ -92,16 +92,17 @@ const cocoPredictionStream = source.$images
 ## KNN
 
 ```tsx
-marcelle.knn({ k?: number }): KNN;
+marcelle.knn({ k?: number, dataStore: DataStore }): KNN;
 ```
 
 A K-Nearest Neighbors classifier based on [Tensorflow.js's implementation](https://github.com/tensorflow/tfjs-models/tree/master/knn-classifier).
 
 ### Parameters
 
-| Option | Type   | Description                                                                                                                                                                                                                                                                      | Required | default |
-| ------ | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: | ------- |
-| k      | number | The K value to use in K-nearest neighbors. The algorithm will first find the K nearest examples from those it was previously shown, and then choose the class that appears the most as the final prediction for the input example. Defaults to 3. If examples < k, k = examples. |          | 3       |
+| Option    | Type      | Description                                                                                                                                                                                                                                                                      | Required | default |
+| --------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: | ------- |
+| k         | number    | The K value to use in K-nearest neighbors. The algorithm will first find the K nearest examples from those it was previously shown, and then choose the class that appears the most as the final prediction for the input example. Defaults to 3. If examples < k, k = examples. |          | 3       |
+| dataStore | DataStore | The [dataStore](/api/data-stores) used to store the model. This parameter is optional. By default, a data store in memory will be created.                                                                                                                                       |          |
 
 The set of reactive parameters has the following signature:
 
@@ -168,6 +169,7 @@ marcelle.mlp({
   layers?: number[],
   epochs?: number,
   batchSize?: number,
+  dataStore?: DataStore
   }): MLP;
 ```
 
@@ -175,11 +177,12 @@ A Multi-Layer Perceptron using Tensorflow.js. The configuration of the model (nu
 
 ### Parameters
 
-| Option    | Type     | Description                                                                                                              | Required | Default  |
-| --------- | -------- | ------------------------------------------------------------------------------------------------------------------------ | :------: | -------- |
-| layers    | number[] | The model configuration as an array of numbers, where each element defines a layer with the given number of hidden nodes |          | [64, 32] |
-| epochs    | number   | Number of epochs used for training                                                                                       |          | 20       |
-| batchSize | number   | Training data batch size                                                                                                 |          | 8        |
+| Option    | Type      | Description                                                                                                                                | Required | Default  |
+| --------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------ | :------: | -------- |
+| layers    | number[]  | The model configuration as an array of numbers, where each element defines a layer with the given number of hidden nodes                   |          | [64, 32] |
+| epochs    | number    | Number of epochs used for training                                                                                                         |          | 20       |
+| batchSize | number    | Training data batch size                                                                                                                   |          | 8        |
+| dataStore | DataStore | The [dataStore](/api/data-stores) used to store the model. This parameter is optional. By default, a data store in memory will be created. |          |
 
 The set of reactive parameters has the following signature:
 

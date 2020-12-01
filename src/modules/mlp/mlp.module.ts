@@ -1,11 +1,17 @@
 import { tensor2d, train, Tensor2D, TensorLike, tensor, tidy } from '@tensorflow/tfjs-core';
 import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core';
-import { sequential, layers as tfLayers, Sequential } from '@tensorflow/tfjs-layers';
+import {
+  sequential,
+  layers as tfLayers,
+  Sequential,
+  loadLayersModel,
+} from '@tensorflow/tfjs-layers';
 import { Dataset } from '../dataset/dataset.module';
 import { Stream } from '../../core/stream';
-import { Catch, TrainingError } from '../../utils/error-handling';
+import { Catch, throwError, TrainingError } from '../../utils/error-handling';
 import { logger } from '../../core/logger';
 import { Classifier, ClassifierResults } from '../../core/classifier';
+import { DataStore, DataStoreBackend } from '../../data-store/data-store';
 
 interface TrainingData {
   training: {
@@ -82,11 +88,15 @@ export interface MLPOptions {
   layers: number[];
   epochs: number;
   batchSize: number;
+  dataStore: DataStore;
 }
 
 export class MLP extends Classifier<TensorLike, ClassifierResults> {
   name = 'MLP';
   description = 'Multilayer Perceptron';
+
+  static nextModelId = 0;
+  modelId = `mlp-${MLP.nextModelId++}`;
 
   parameters: {
     layers: Stream<number[]>;
@@ -95,13 +105,19 @@ export class MLP extends Classifier<TensorLike, ClassifierResults> {
   };
   model: Sequential;
 
-  constructor({ layers = [64, 32], epochs = 20, batchSize = 8 }: Partial<MLPOptions> = {}) {
-    super();
+  constructor({
+    layers = [64, 32],
+    epochs = 20,
+    batchSize = 8,
+    dataStore = new DataStore(),
+  }: Partial<MLPOptions> = {}) {
+    super(dataStore);
     this.parameters = {
       layers: new Stream(layers, true),
       epochs: new Stream(epochs, true),
       batchSize: new Stream(batchSize, true),
     };
+    this.load().catch(() => {});
   }
 
   @Catch
@@ -196,10 +212,34 @@ export class MLP extends Classifier<TensorLike, ClassifierResults> {
             lossVal: results.history.val_loss,
           },
         });
+        this.save();
       })
       .catch((error) => {
         this.$training.set({ status: 'error', data: error });
         throw new TrainingError(error.message);
       });
+  }
+
+  @Catch
+  async save() {
+    if (!this.model) return;
+    if (this.dataStore.backend === DataStoreBackend.LocalStorage) {
+      await this.model.save(`indexeddb://${this.modelId}`);
+      localStorage.setItem(`marcelle:${this.modelId}:labels`, JSON.stringify(this.labels));
+    } else if (this.dataStore.backend === DataStoreBackend.Remote) {
+      throwError(new Error('Remote model saving is not yet implemented'));
+    }
+  }
+
+  async load() {
+    if (this.dataStore.backend === DataStoreBackend.LocalStorage) {
+      this.model = (await loadLayersModel(`indexeddb://${this.modelId}`)) as Sequential;
+      this.labels = JSON.parse(localStorage.getItem(`marcelle:${this.modelId}:labels`));
+      this.$training.set({
+        status: 'loaded',
+      });
+    } else if (this.dataStore.backend === DataStoreBackend.Remote) {
+      throwError(new Error('Remote model loading is not yet implemented'));
+    }
   }
 }

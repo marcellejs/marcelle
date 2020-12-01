@@ -60,10 +60,12 @@ export class TrainingPlot extends Module {
         trainingAccuracy.set([]);
         validationAccuracy.set([]);
       } else if (x.status === 'epoch') {
-        trainingLoss.set(trainingLoss.value.concat([x.data.loss]));
-        validationLoss.set(validationLoss.value.concat([x.data.lossVal]));
-        trainingAccuracy.set(trainingAccuracy.value.concat([x.data.accuracy]));
-        validationAccuracy.set(validationAccuracy.value.concat([x.data.accuracyVal]));
+        if (x.data) {
+          trainingLoss.set(trainingLoss.value.concat([x.data.loss]));
+          validationLoss.set(validationLoss.value.concat([x.data.lossVal]));
+          trainingAccuracy.set(trainingAccuracy.value.concat([x.data.accuracy]));
+          validationAccuracy.set(validationAccuracy.value.concat([x.data.accuracyVal]));
+        }
       }
     });
     this.start();

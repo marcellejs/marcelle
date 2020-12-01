@@ -1,4 +1,5 @@
-import { ObjectDetection, ObjectDetectionBaseModel } from '@tensorflow-models/coco-ssd';
+import { load, ObjectDetection, ObjectDetectionBaseModel } from '@tensorflow-models/coco-ssd';
+import { io } from '@tensorflow/tfjs-core';
 import { logger } from '../../core/logger';
 import { ObjectDetector, ObjectDetectorResults } from '../../core/object-detector';
 import { Stream } from '../../core/stream';
@@ -15,19 +16,30 @@ export class CocoSsd extends ObjectDetector<ImageData, ObjectDetectorResults> {
 
   parameters = {};
 
-  #model: ObjectDetection;
+  #coco: ObjectDetection;
+  // #coco: (ObjectDetection & { model?: GraphModel }) | undefined;
   #base: ObjectDetectionBaseModel;
   $loading: Stream<boolean> = new Stream(true as boolean, true);
 
   constructor({ base = 'lite_mobilenet_v2' }: CocoSsdOptions = {}) {
     super();
     this.#base = base;
-    this.#model = new ObjectDetection(base);
     this.setup();
   }
 
   async setup(): Promise<void> {
-    await this.#model.load();
+    const cachedModels = await io.listModels();
+    const cachedCoco = Object.keys(cachedModels).filter((x) => x.includes('cocossd'));
+    try {
+      this.#coco = await load({ base: this.#base, modelUrl: `indexeddb://cocossd-${this.#base}` });
+    } catch (error) {
+      if (cachedCoco.length > 0) {
+        await io.removeModel(cachedCoco[0]);
+      }
+      this.#coco = await load({ base: this.#base });
+      // @ts-ignore
+      await this.#coco.model.save(`indexeddb://cocossd-${this.#base}`);
+    }
     logger.info('COCO-SSD loaded with base `lite_mobilenet_v2`');
     this.$loading.set(false);
     this.start();
@@ -41,10 +53,10 @@ export class CocoSsd extends ObjectDetector<ImageData, ObjectDetectorResults> {
 
   @Catch
   async predict(img: ImageData): Promise<ObjectDetectorResults> {
-    if (!this.#model) {
+    if (!this.#coco) {
       throw new Error('Model is not loaded');
     }
-    const predictions = await this.#model.detect(img);
+    const predictions = await this.#coco.detect(img);
     const outputs = predictions.map((x) => ({
       bbox: x.bbox,
       class: x.class,

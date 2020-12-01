@@ -29,7 +29,7 @@ export interface Instance {
 }
 
 export interface TrainingStatus {
-  status: 'idle' | 'start' | 'epoch' | 'success' | 'error';
+  status: 'idle' | 'start' | 'epoch' | 'success' | 'error' | 'loaded';
   epoch?: number;
   epochs?: number;
   data?: Record<string, unknown>;
