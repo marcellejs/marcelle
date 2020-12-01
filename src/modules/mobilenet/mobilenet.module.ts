@@ -4,8 +4,9 @@ import {
   MobileNetVersion,
   MobileNetAlpha,
 } from '@tensorflow-models/mobilenet';
-import { tidy } from '@tensorflow/tfjs-core';
-import { logger } from '../../core/logger';
+import { GraphModel } from '@tensorflow/tfjs-converter';
+import { io, tidy } from '@tensorflow/tfjs-core';
+import { logger } from '../../core';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import Component from './mobilenet.svelte';
@@ -24,7 +25,7 @@ export class Mobilenet extends Module {
   name = 'mobilenet';
   description = 'Mobilenet input module';
 
-  #mobilenet: MobileNet | undefined;
+  #mobilenet: (MobileNet & { model?: GraphModel }) | undefined;
   // #convert = createImageConverter();
   $loading = new Stream(true, true);
   readonly version: MobileNetVersion;
@@ -44,10 +45,24 @@ export class Mobilenet extends Module {
   }
 
   async setup(): Promise<Mobilenet> {
-    this.#mobilenet = await loadMobilenet({
-      version: this.version,
-      alpha: this.alpha,
-    });
+    const cachedModels = await io.listModels();
+    const cachedMobilenet = Object.keys(cachedModels).filter((x) => x.includes('mobilenet'));
+    try {
+      this.#mobilenet = await loadMobilenet({
+        modelUrl: `indexeddb://mobilenet-v${this.version}-${this.alpha}`,
+        version: this.version,
+        alpha: this.alpha,
+      });
+    } catch (error) {
+      if (cachedMobilenet.length > 0) {
+        await io.removeModel(cachedMobilenet[0]);
+      }
+      this.#mobilenet = await loadMobilenet({
+        version: this.version,
+        alpha: this.alpha,
+      });
+      await this.#mobilenet.model.save(`indexeddb://mobilenet-v${this.version}-${this.alpha}`);
+    }
     logger.info(`Mobilenet v${this.version} loaded with alpha = ${this.alpha}`);
     this.$loading.set(false);
     this.start();
