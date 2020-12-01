@@ -1,15 +1,34 @@
-/* global marcelle */
+/* eslint-disable import/extensions */
+import {
+  account,
+  batchPrediction,
+  browser,
+  button,
+  confusion,
+  dashboard,
+  dataset,
+  dataStore,
+  mlp,
+  mobilenet,
+  parameters,
+  predictionPlot,
+  progress,
+  textfield,
+  toggle,
+  trainingPlot,
+  webcam,
+} from '../../dist/marcelle.bundle.esm.js';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
 // -----------------------------------------------------------
 
-const input = marcelle.webcam();
-const featureExtractor = marcelle.mobilenet();
+const input = webcam();
+const featureExtractor = mobilenet();
 
-const label = marcelle.textfield();
+const label = textfield();
 label.name = 'Instance label';
-const capture = marcelle.button({ text: 'Hold to record instances' });
+const capture = button({ text: 'Hold to record instances' });
 capture.name = 'Capture instances to the training set';
 
 const instances = input.$images
@@ -23,33 +42,33 @@ const instances = input.$images
   }))
   .awaitPromises();
 
-const store = marcelle.dataStore({ location: 'localStorage' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
+const store = dataStore({ location: 'localStorage' });
+const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
 trainingSet.capture(instances);
 
-const trainingSetBrowser = marcelle.browser(trainingSet);
+const trainingSetBrowser = browser(trainingSet);
 
 // -----------------------------------------------------------
 // TRAINING
 // -----------------------------------------------------------
 
-const b = marcelle.button({ text: 'Train' });
+const b = button({ text: 'Train' });
 b.name = 'Training Launcher';
-const classifier = marcelle.mlp({ layers: [64, 32], epochs: 20 });
+const classifier = mlp({ layers: [64, 32], epochs: 20 });
 b.$click.subscribe(() => classifier.train(trainingSet));
 
-const params = marcelle.parameters(classifier);
-const prog = marcelle.progress(classifier);
-const plotTraining = marcelle.trainingPlot(classifier);
+const params = parameters(classifier);
+const prog = progress(classifier);
+const plotTraining = trainingPlot(classifier);
 
 // -----------------------------------------------------------
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchMLP = marcelle.batchPrediction({ name: 'mlp', dataStore: store });
-const confusionMatrix = marcelle.confusion(batchMLP);
+const batchMLP = batchPrediction({ name: 'mlp', dataStore: store });
+const confusionMatrix = confusion(batchMLP);
 
-const predictButton = marcelle.button({ text: 'Update predictions' });
+const predictButton = button({ text: 'Update predictions' });
 predictButton.$click.subscribe(async () => {
   await batchMLP.clear();
   await batchMLP.predict(classifier, trainingSet);
@@ -59,31 +78,31 @@ predictButton.$click.subscribe(async () => {
 // REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
-const tog = marcelle.toggle({ text: 'toggle prediction' });
+const tog = toggle({ text: 'toggle prediction' });
 
 const predictionStream = input.$images
   .filter(() => tog.$checked.value)
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
-const plotResults = marcelle.predictionPlot(predictionStream);
+const plotResults = predictionPlot(predictionStream);
 
 // -----------------------------------------------------------
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const dashboard = marcelle.dashboard({
+const dash = dashboard({
   title: 'Marcelle Example - Dashboard',
   author: 'Marcelle Pirates Crew',
 });
 
-dashboard
+dash
   .page('Data Management')
   .useLeft(input, featureExtractor)
   .use([label, capture], trainingSetBrowser);
-dashboard.page('Training').use(params, b, prog, plotTraining);
-dashboard.page('Batch Prediction').use(predictButton, confusionMatrix);
-dashboard.page('Real-time Prediction').useLeft(input).use(tog, plotResults);
-dashboard.settings.useLeft(marcelle.account(store)).use(trainingSet);
+dash.page('Training').use(params, b, prog, plotTraining);
+dash.page('Batch Prediction').use(predictButton, confusionMatrix);
+dash.page('Real-time Prediction').useLeft(input).use(tog, plotResults);
+dash.settings.useLeft(account(store)).use(trainingSet);
 
-dashboard.start();
+dash.start();

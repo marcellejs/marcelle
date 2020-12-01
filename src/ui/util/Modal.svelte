@@ -1,4 +1,4 @@
-<script>
+<script lag="ts">
   import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();

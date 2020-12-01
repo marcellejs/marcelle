@@ -1,11 +1,20 @@
-/* global marcelle */
+/* eslint-disable import/extensions */
+import {
+  cocoSsd,
+  dashboard,
+  imageDrop,
+  predictionPlot,
+  toggle,
+  visObjectDetection,
+  webcam,
+} from '../../dist/marcelle.bundle.esm.js';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CLASSIFICATION
 // -----------------------------------------------------------
 
-const source = marcelle.imageDrop();
-const cocoClassifier = marcelle.cocoSsd();
+const source = imageDrop();
+const cocoClassifier = cocoSsd();
 
 // -----------------------------------------------------------
 // SINGLE IMAGE PREDICTION
@@ -20,15 +29,15 @@ const cocoBetterPredictions = cocoPredictionStream.map(({ outputs }) => ({
   confidences: outputs.reduce((x, y) => ({ ...x, [y.class]: y.confidence }), {}),
 }));
 
-const objDetectionVis = marcelle.visObjectDetection(source.$images, cocoPredictionStream);
-const cocoPlotResults = marcelle.predictionPlot(cocoBetterPredictions);
+const objDetectionVis = visObjectDetection(source.$images, cocoPredictionStream);
+const cocoPlotResults = predictionPlot(cocoBetterPredictions);
 
 // -----------------------------------------------------------
 // REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
-const wc = marcelle.webcam();
-const tog = marcelle.toggle({ text: 'toggle prediction' });
+const wc = webcam();
+const tog = toggle({ text: 'toggle prediction' });
 
 const rtDetectStream = wc.$images
   .filter(() => tog.$checked.value)
@@ -41,27 +50,27 @@ const realtimePredictions = rtDetectStream.map(({ outputs }) => ({
 
 const imgStream = wc.$images.filter(() => tog.$checked.value);
 
-const rtObjDetectionVis = marcelle.visObjectDetection(imgStream, rtDetectStream);
-const rtPlotResults = marcelle.predictionPlot(realtimePredictions);
+const rtObjDetectionVis = visObjectDetection(imgStream, rtDetectStream);
+const rtPlotResults = predictionPlot(realtimePredictions);
 
 // -----------------------------------------------------------
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const dashboard = marcelle.dashboard({
+const dash = dashboard({
   title: 'Marcelle: Object Detection with COCO-SSD',
   author: 'Marcelle Pirates Crew',
 });
 
-dashboard
+dash
   .page('Image-based Detection')
   .useLeft(source, cocoClassifier)
   .use([objDetectionVis, cocoPlotResults]);
 
-dashboard
+dash
   .page('Video-based Detection')
   .useLeft(wc, cocoClassifier)
   .use(tog)
   .use([rtObjDetectionVis, rtPlotResults]);
 
-dashboard.start();
+dash.start();

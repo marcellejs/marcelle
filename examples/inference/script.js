@@ -1,11 +1,25 @@
-/* global marcelle */
+/* eslint-disable import/extensions */
+import {
+  batchPrediction,
+  browser,
+  button,
+  confusion,
+  dashboard,
+  dataset,
+  dataStore,
+  imageDrop,
+  predictionPlot,
+  text,
+  tfImageClassifier,
+  toggle,
+} from '../../dist/marcelle.bundle.esm.js';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CLASSIFICATION
 // -----------------------------------------------------------
 
-const source = marcelle.imageDrop();
-const classifier = marcelle.tfImageClassifier();
+const source = imageDrop();
+const classifier = tfImageClassifier();
 
 // -----------------------------------------------------------
 // CAPTURE TO DATASET
@@ -18,10 +32,10 @@ const instances = source.$thumbnails.map((thumbnail) => ({
   thumbnail,
 }));
 
-const store = marcelle.dataStore({ location: 'memory' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
+const store = dataStore({ location: 'memory' });
+const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
 
-const tog = marcelle.toggle({ text: 'Capture to dataset' });
+const tog = toggle({ text: 'Capture to dataset' });
 tog.$checked.skipRepeats().subscribe((x) => {
   if (x) {
     trainingSet.capture(instances);
@@ -30,16 +44,16 @@ tog.$checked.skipRepeats().subscribe((x) => {
   }
 });
 
-const trainingSetBrowser = marcelle.browser(trainingSet);
+const trainingSetBrowser = browser(trainingSet);
 
 // -----------------------------------------------------------
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchTesting = marcelle.batchPrediction({ name: 'mobilenet', dataStore: store });
-const predictButton = marcelle.button({ text: 'Update predictions' });
-const predictionAccuracy = marcelle.text({ text: 'Waiting for predictions...' });
-const confusionMatrix = marcelle.confusion(batchTesting);
+const batchTesting = batchPrediction({ name: 'mobilenet', dataStore: store });
+const predictButton = button({ text: 'Update predictions' });
+const predictionAccuracy = text({ text: 'Waiting for predictions...' });
+const confusionMatrix = confusion(batchTesting);
 confusionMatrix.name = 'Mobilenet: Confusion Matrix';
 
 predictButton.$click.subscribe(async () => {
@@ -70,7 +84,7 @@ const betterPredictions = predictionStream.map(({ label, confidences }) => {
   };
 });
 
-const plotResults = marcelle.predictionPlot(betterPredictions);
+const plotResults = predictionPlot(betterPredictions);
 
 const instanceViewer = {
   id: 'my-instance-viewer',
@@ -96,25 +110,22 @@ const instanceViewer = {
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const dashboard = marcelle.dashboard({
+const dash = dashboard({
   title: 'Marcelle: Interactive Model Testing',
   author: 'Marcelle Pirates Crew',
 });
 
-const help = marcelle.text({
+const help = text({
   text:
     'In this example, you can upload a pre-trained classification model (converted from a Keras model, see examples here: https://keras.io/api/applications/) and perform inference with input images of your choice.',
 });
 help.name = 'Test generic DNN classifier';
 
-dashboard
-  .page('Real-time Testing')
-  .useLeft(source)
-  .use(help, classifier, [instanceViewer, plotResults]);
-dashboard
+dash.page('Real-time Testing').useLeft(source).use(help, classifier, [instanceViewer, plotResults]);
+dash
   .page('Batch Testing')
   .useLeft(source, classifier)
   .use(tog, trainingSetBrowser, predictButton, predictionAccuracy, confusionMatrix);
-dashboard.settings.use(trainingSet);
+dash.settings.use(trainingSet);
 
-dashboard.start();
+dash.start();

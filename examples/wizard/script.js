@@ -1,15 +1,35 @@
-/* global marcelle */
+/* eslint-disable import/extensions */
+import {
+  batchPrediction,
+  browser,
+  button,
+  confusion,
+  dashboard,
+  dataset,
+  dataStore,
+  mlp,
+  mobilenet,
+  parameters,
+  predictionPlot,
+  progress,
+  text,
+  textfield,
+  toggle,
+  trainingPlot,
+  webcam,
+  wizard,
+} from '../../dist/marcelle.bundle.esm.js';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
 // -----------------------------------------------------------
 
-const input = marcelle.webcam();
-const featureExtractor = marcelle.mobilenet();
+const input = webcam();
+const featureExtractor = mobilenet();
 
-const labelInput = marcelle.textfield();
+const labelInput = textfield();
 labelInput.name = 'Instance label';
-const capture = marcelle.button({ text: 'Hold to record instances' });
+const capture = button({ text: 'Hold to record instances' });
 capture.name = 'Capture instances to the training set';
 
 const instances = input.$images
@@ -23,32 +43,32 @@ const instances = input.$images
   }))
   .awaitPromises();
 
-const store = marcelle.dataStore({ location: 'localStorage' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
+const store = dataStore({ location: 'localStorage' });
+const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
 trainingSet.capture(instances);
 
-const trainingSetBrowser = marcelle.browser(trainingSet);
+const trainingSetBrowser = browser(trainingSet);
 
 // -----------------------------------------------------------
 // TRAINING
 // -----------------------------------------------------------
 
-const b = marcelle.button({ text: 'Train' });
-const classifier = marcelle.mlp({ layers: [64, 32], epochs: 20 });
+const b = button({ text: 'Train' });
+const classifier = mlp({ layers: [64, 32], epochs: 20 });
 b.$click.subscribe(() => classifier.train(trainingSet));
 
-const params = marcelle.parameters(classifier);
-const prog = marcelle.progress(classifier);
-const plotTraining = marcelle.trainingPlot(classifier);
+const params = parameters(classifier);
+const prog = progress(classifier);
+const plotTraining = trainingPlot(classifier);
 
 // -----------------------------------------------------------
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchMLP = marcelle.batchPrediction({ name: 'mlp', dataStore: store });
-const confusionMatrix = marcelle.confusion(batchMLP);
+const batchMLP = batchPrediction({ name: 'mlp', dataStore: store });
+const confusionMatrix = confusion(batchMLP);
 
-const predictButton = marcelle.button({ text: 'Update predictions' });
+const predictButton = button({ text: 'Update predictions' });
 predictButton.$click.subscribe(async () => {
   await batchMLP.clear();
   await batchMLP.predict(classifier, trainingSet);
@@ -58,7 +78,7 @@ predictButton.$click.subscribe(async () => {
 // REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
-const tog = marcelle.toggle({ text: 'toggle prediction' });
+const tog = toggle({ text: 'toggle prediction' });
 
 const predictionStream = input.$images
   .filter(() => tog.$checked.value)
@@ -70,32 +90,32 @@ const predictionStream = input.$images
 //   .map(async (img) => classifier.predict(await m.process(img)))
 //   .awaitPromises();
 
-const plotResults = marcelle.predictionPlot(predictionStream);
+const plotResults = predictionPlot(predictionStream);
 
 // -----------------------------------------------------------
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const dashboard = marcelle.dashboard({
+const dash = dashboard({
   title: 'Marcelle Example - Wizard',
   author: 'Marcelle Pirates Crew',
 });
 
-dashboard
+dash
   .page('Data Management')
   .useLeft(input, featureExtractor)
   .use([labelInput, capture], trainingSetBrowser);
-dashboard.page('Training').use(params, b, prog, plotTraining);
-dashboard.page('Batch Prediction').use(predictButton, confusionMatrix);
-dashboard.page('Real-time Prediction').useLeft(input).use(tog, plotResults);
-dashboard.settings.use(trainingSet);
+dash.page('Training').use(params, b, prog, plotTraining);
+dash.page('Batch Prediction').use(predictButton, confusionMatrix);
+dash.page('Real-time Prediction').useLeft(input).use(tog, plotResults);
+dash.settings.use(trainingSet);
 
 // -----------------------------------------------------------
 // WIZARD
 // -----------------------------------------------------------
 
-const wizardButton = marcelle.button({ text: 'Record Examples (class a)' });
-const wizardText = marcelle.text({ text: 'Waiting for examples...' });
+const wizardButton = button({ text: 'Record Examples (class a)' });
+const wizardText = text({ text: 'Waiting for examples...' });
 wizardButton.$down.subscribe((x) => {
   capture.$down.set(x);
 });
@@ -107,9 +127,9 @@ trainingSet.$countPerClass.subscribe((c) => {
   );
 });
 
-const wizard = marcelle.wizard();
+const wiz = wizard();
 
-wizard
+wiz
   .step()
   .title('Record examples for class A')
   .description('Hold on the record button to capture training examples for class A')
@@ -136,7 +156,7 @@ function configureWizard(label) {
   );
 }
 
-wizard.$current.subscribe((stepIndex) => {
+wiz.$current.subscribe((stepIndex) => {
   if (stepIndex === 0) {
     configureWizard('A');
   } else if (stepIndex === 1) {
@@ -178,4 +198,11 @@ predictionStream.subscribe(async ({ label }) => {
         : 'https://media.giphy.com/media/Oc8lIQHZsXqDu/giphy.gif';
     PrevLabel = label;
   }
+});
+
+document.querySelector('#open-wizard').addEventListener('click', () => {
+  wiz.start();
+});
+document.querySelector('#open-dashboard').addEventListener('click', () => {
+  dash.start();
 });

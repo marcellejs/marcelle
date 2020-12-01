@@ -32,7 +32,7 @@ export class Stream<T> {
   #hasValue = false;
   #hold: boolean;
   #running = false;
-  #startPromise: Promise<undefined>;
+  #startPromise: Promise<void>;
 
   set: (value: T) => void;
 
@@ -90,7 +90,7 @@ export class Stream<T> {
     };
   }
 
-  async start(): Promise<undefined> {
+  async start(): Promise<void> {
     if (!this.#running) {
       Stream.numActive++;
       // console.log('active streams: ', Stream.numActive);
@@ -99,7 +99,7 @@ export class Stream<T> {
         // console.log('active streams: ', Stream.numActive);
       });
       this.#running = true;
-      this.#startPromise = new Promise((resolve, reject) => {
+      this.#startPromise = new Promise<void>((resolve, reject) => {
         asap(
           {
             run: () => {

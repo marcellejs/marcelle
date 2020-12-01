@@ -1,13 +1,13 @@
-<script>
-  import { onDestroy, createEventDispatcher } from 'svelte';
+<script lang="ts">
+  import { createEventDispatcher } from 'svelte';
   import { slide } from 'svelte/transition';
 
-  export let actions = [];
+  export let actions: Array<{ code: string; text: string }> = [];
 
   const dispatch = createEventDispatcher();
 
   let showDropdown = false;
-  function toggleDropdown(e) {
+  function toggleDropdown(e: Event) {
     e.stopPropagation();
     if (showDropdown) {
       showDropdown = false;
@@ -16,7 +16,7 @@
     }
   }
 
-  function selectAction(code) {
+  function selectAction(code: string) {
     dispatch('select', code);
   }
 </script>
@@ -59,11 +59,11 @@
       class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg"
       class:hidden={false}
       transition:slide={{ duration: 100 }}>
-      <div class="rounded-md bg-white shadow-xs">
+      <div class="rounded-md bg-white shadow-ring-1 ring-black ring-opacity-5">
         <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
           {#each actions as action}
             <button
-              on:click={selectAction(action.code)}
+              on:click={() => selectAction(action.code)}
               class="text-sm py-2 px-4 font-normal block w-full whitespace-no-wrap bg-transparent
           text-gray-800 hover:bg-gray-100">
               {action.text}

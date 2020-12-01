@@ -1,5 +1,14 @@
+/* global tf */
 /* eslint-disable import/extensions */
-/* global marcelle, tf */
+import {
+  button,
+  dashboard,
+  parameters,
+  progress,
+  slider,
+  text,
+  webcam,
+} from '../../dist/marcelle.bundle.esm.js';
 import { displaySamples, displayTensor } from './visualization.js';
 // import { GanTrainer, plotGanTraining } from './training.js';
 import { GanTrainer, plotGanTraining } from './training_emulator.js';
@@ -13,7 +22,7 @@ const gan = new GanTrainer({ epochs: 30000 });
 // --------------------------------
 const [plotLosses, plotAccuracy] = plotGanTraining(gan);
 
-const trainingLauncher = marcelle.button({ text: 'Start Training' });
+const trainingLauncher = button({ text: 'Start Training' });
 trainingLauncher.name = 'Training Launcher';
 gan.$training
   .map((x) => x.status)
@@ -39,10 +48,10 @@ const samples = displaySamples(gan);
 // --------------------------------
 // GENERATION
 // --------------------------------
-const genButton = marcelle.button({ text: 'Generate an Image' });
+const genButton = button({ text: 'Generate an Image' });
 const $imagesOneShot = genButton.$click.thru(generateNoise).thru(predict);
 
-const w = marcelle.webcam({ width: 10, height: 10 });
+const w = webcam({ width: 10, height: 10 });
 const $webcamNoise = w.$images.filter(() => w.$ready.value).thru(downsampleCamera);
 const $imagesWebcam = $webcamNoise
   .map((input) => input.sub(tf.scalar(0.5).mul(tf.scalar(2))).reshape([1, 100]))
@@ -52,7 +61,7 @@ const displayInput = displayTensor($webcamNoise, 'Input Noise');
 
 const displayResult = displayTensor($imagesOneShot.merge($imagesWebcam), 'Generated Image');
 
-const modelSlider = marcelle.slider({
+const modelSlider = slider({
   step: 1,
   pips: true,
   pipstep: 1,
@@ -68,7 +77,7 @@ gan.$models.subscribe((x) => {
   modelSlider.$max.set(Math.max(1, x.length - 1));
 });
 
-const loadButton = marcelle.button({ text: 'Load Model' });
+const loadButton = button({ text: 'Load Model' });
 loadButton.name = 'Load model';
 loadButton.$click.subscribe(async () => {
   loadButton.$loading.set(true);
@@ -76,28 +85,28 @@ loadButton.$click.subscribe(async () => {
   loadButton.$loading.set(false);
 });
 
-const arrow = marcelle.text({
+const arrow = text({
   text:
     '<div style="flex-grow: 1; align-self: center; text-align: center; font-size: 4rem;">⇨</div>',
 });
 
-const dashboard = marcelle.dashboard({
+const dash = dashboard({
   title: 'Marcelle Example - GAN for Image Generation (MNIST)',
   author: 'Marcelle Pirates Crew',
 });
 
-dashboard
+dash
   .page('Train')
-  .useLeft(marcelle.parameters(gan), trainingLauncher)
-  .use(marcelle.progress(gan), samples, [plotLosses, plotAccuracy]);
-dashboard.page('Simple').use(modelSlider, [loadButton, genButton], displayResult);
-dashboard
+  .useLeft(parameters(gan), trainingLauncher)
+  .use(progress(gan), samples, [plotLosses, plotAccuracy]);
+dash.page('Simple').use(modelSlider, [loadButton, genButton], displayResult);
+dash
   .page('Webcam')
   .useLeft(w)
-  .use(marcelle.text({ text: 'Love on the beat' }), modelSlider, loadButton, [
+  .use(text({ text: 'Love on the beat' }), modelSlider, loadButton, [
     displayInput,
     arrow,
     displayResult,
   ]);
 
-dashboard.start();
+dash.start();

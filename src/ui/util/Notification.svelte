@@ -1,15 +1,32 @@
-<script>
+<script lang="ts">
   import { blur } from 'svelte/transition';
   import { flip } from 'svelte/animate';
 
-  let uid = 1;
-  export let notifications = [];
-
-  function close(id) {
-    notifications = notifications.filter(x => x.id !== id);
+  interface Notification {
+    id: number;
+    title: string;
+    message: string;
+    type: string;
   }
 
-  export function add({ title, message, type = 'default', duration = 3000 }) {
+  export let notifications: Notification[] = [];
+
+  function close(id: number) {
+    notifications = notifications.filter((x) => x.id !== id);
+  }
+
+  let uid = 1;
+  export function add({
+    title,
+    message,
+    type = 'default',
+    duration = 3000,
+  }: {
+    title: string;
+    message: string;
+    type: string;
+    duration: number;
+  }) {
     const n = {
       id: uid,
       title,

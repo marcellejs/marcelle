@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   export let text = '';
   export let checked = false;
   export let disabled = false;
@@ -38,7 +38,7 @@
 
   input[type='checkbox']:focus + .switch .track,
   input[type='checkbox']:active + .switch .track {
-    @apply shadow-outline;
+    @apply ring;
   }
 </style>
 

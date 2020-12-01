@@ -18,5 +18,5 @@ export abstract class ObjectDetector<
   labels: string[];
 
   abstract train(dataset: Dataset): void;
-  abstract async predict(x: InputType): Promise<ResultType>;
+  abstract predict(x: InputType): Promise<ResultType>;
 }

@@ -21,6 +21,10 @@ export class Dashboard {
   }
 
   start(): void {
+    // const target = document.querySelector('#dashboard');
+    // if (!target) {
+    //   throw new Error('Cannot start dashboard, div#dashboard not found.');
+    // }
     this.app = new DashboardComponent({
       target: document.body,
       props: {

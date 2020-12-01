@@ -1,24 +1,27 @@
-<script>
-  export let values;
+<script lang="ts">
+  import type { Stream } from '../../core';
 
-  function changeValue(e, i) {
-    const x = parseInt(e.target.value, 10);
+  export let values: Stream<number[]>;
+
+  function changeValue(e: Event, i: number) {
+    const target = e.target as HTMLInputElement;
+    const x = parseInt(target.value, 10);
     if (!Number.isNaN(x)) {
       const v = values.value.slice();
       v[i] = x;
       values.set(v);
     } else {
-      e.target.value = values.value[i];
+      target.value = values.value[i].toString();
     }
   }
 
-  function decrement(i) {
+  function decrement(i: number) {
     const v = values.value.slice();
     v[i] -= 1;
     values.set(v);
   }
 
-  function increment(i) {
+  function increment(i: number) {
     const v = values.value.slice();
     v[i] += 1;
     values.set(v);
@@ -49,7 +52,7 @@
         <input
           type="text"
           value={$values[i]}
-          on:change={e => changeValue(e, i)}
+          on:change={(e) => changeValue(e, i)}
           class="text-sm text-gray-800 text-center border-t border-b border-solid border-gray-400"
           style="width: 80px" />
         <button

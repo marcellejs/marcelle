@@ -1,7 +1,10 @@
-<script>
-  export let dataset;
-  export let count;
-  export let classes;
+<script lang="ts">
+  import type { Stream } from '../../core';
+  import type { Dataset } from './dataset.module';
+
+  export let dataset: Dataset;
+  export let count: Stream<number>;
+  export let classes: Stream<Record<string, number>>;
 
   function downloadDataset() {
     dataset.download();

@@ -1,9 +1,10 @@
-<script>
+<script lang="ts">
+  import type { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
 
-  export let title;
-  export let size;
-  export let frames;
+  export let title: string;
+  export let size: number;
+  export let frames: Stream<number[]>;
 </script>
 
 <ModuleBase {title}>

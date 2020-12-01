@@ -1,8 +1,7 @@
-<script>
+<script lang="ts">
   import Spinner from '../ui/widgets/Spinner.svelte';
 
-  export let title;
-  // export let description;
+  export let title: string;
   export let loading = false;
 </script>
 

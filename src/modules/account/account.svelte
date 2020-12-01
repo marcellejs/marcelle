@@ -1,9 +1,10 @@
-<script>
+<script lang="ts">
   import ModuleBase from '../../core/ModuleBase.svelte';
+  import type { DataStore } from '../../data-store';
   import Spinner from '../../ui/widgets/Spinner.svelte';
 
-  export let title;
-  export let dataStore;
+  export let title: string;
+  export let dataStore: DataStore;
 
   function logout() {
     dataStore.logout();

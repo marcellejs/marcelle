@@ -15,5 +15,5 @@ export abstract class Classifier<InputType, ResultType extends ClassifierResults
   labels: string[];
 
   abstract train(dataset: Dataset): void;
-  abstract async predict(x: InputType): Promise<ResultType>;
+  abstract predict(x: InputType): Promise<ResultType>;
 }

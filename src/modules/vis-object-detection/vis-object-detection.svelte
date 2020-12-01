@@ -1,14 +1,14 @@
-<script>
-  import { onDestroy, onMount } from 'svelte';
+<script lang="ts">
+  import { onMount } from 'svelte';
+  import type { ObjectDetectorResults, Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
 
-  export let title;
-  export let imageStream;
-  export let objectDetectionResults;
-  let can;
+  export let title: string;
+  export let imageStream: Stream<ImageData>;
+  export let objectDetectionResults: Stream<ObjectDetectorResults>;
 
   onMount(() => {
-    const mycan = document.getElementById('can');
+    const mycan = document.getElementById('can') as HTMLCanvasElement;
     const ctx = mycan.getContext('2d');
     imageStream.subscribe((img) => {
       mycan.height = img.height;

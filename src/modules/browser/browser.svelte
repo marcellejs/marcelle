@@ -1,13 +1,15 @@
-<script>
+<script lang="ts">
+  import type { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
   import PopMenu from '../../ui/widgets/PopMenu.svelte';
+  import type { Dataset } from '../dataset';
 
-  export let title;
-  export let count;
-  export let classes;
-  export let dataset;
+  export let title: string;
+  export let count: Stream<number>;
+  export let classes: Stream<Record<string, string[]>>;
+  export let dataset: Dataset;
 
-  function onClassAction(label, code) {
+  function onClassAction(label: string, code: string) {
     switch (code) {
       case 'edit':
         const result = window.prompt('Enter the new label', label);
