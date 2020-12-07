@@ -1,16 +1,18 @@
 import { empty } from '@most/core';
 import { io, image as tfImage, browser, Tensor2D } from '@tensorflow/tfjs-core';
 import { LayersModel, loadLayersModel } from '@tensorflow/tfjs-layers';
-import { ClassifierResults } from '../../core/classifier';
+import { ClassifierResults, TFJSClassifier } from '../../core';
 import { logger } from '../../core/logger';
-import { Model } from '../../core/model';
 import { Stream } from '../../core/stream';
 import { Catch } from '../../utils/error-handling';
 import Component from './tf-image-classifier.svelte';
 
-export class TfImageClassifier extends Model<ImageData, ClassifierResults> {
+export class TfImageClassifier extends TFJSClassifier {
   name = 'tfImageClassifier';
   description = 'Generic Deep Neural Network module';
+
+  static nextModelId = 0;
+  modelId = `tf-image-classifier-${TfImageClassifier.nextModelId++}`;
 
   parameters = {};
 
@@ -23,7 +25,7 @@ export class TfImageClassifier extends Model<ImageData, ClassifierResults> {
   constructor() {
     super();
     this.$modelFiles.subscribe((s) => {
-      this.load(s);
+      this.loadFromFiles(s);
     });
     this.start();
   }
@@ -56,15 +58,12 @@ export class TfImageClassifier extends Model<ImageData, ClassifierResults> {
     };
   }
 
-  async saveModel(): Promise<void> {
-    await this.model.save('localstorage://my-model-1');
-  }
-
-  async load(urls: []): Promise<void> {
+  async loadFromFiles(urls: []): Promise<void> {
     this.$loading.set(true);
     if (urls.length) {
       this.model = await loadLayersModel(io.browserFiles(urls));
       this.inputShape = Object.values(this.model.inputs[0].shape);
+      await this.save();
       this.$loading.set(false);
     }
   }
@@ -80,9 +79,6 @@ export class TfImageClassifier extends Model<ImageData, ClassifierResults> {
         loading: this.$loading,
         modelFiles: this.$modelFiles,
       },
-    });
-    this.$$.app.$on('save', () => {
-      this.saveModel();
     });
   }
 }

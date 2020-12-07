@@ -1,19 +1,10 @@
-import { tensor2d, train, Tensor2D, TensorLike, tensor, tidy, io } from '@tensorflow/tfjs-core';
+import { tensor2d, train, Tensor2D, TensorLike, tensor, tidy } from '@tensorflow/tfjs-core';
 import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core';
-import {
-  sequential,
-  layers as tfLayers,
-  Sequential,
-  loadLayersModel,
-} from '@tensorflow/tfjs-layers';
-import type { Paginated, Service } from '@feathersjs/feathers';
+import { sequential, layers as tfLayers, Sequential } from '@tensorflow/tfjs-layers';
+import { Stream, TFJSClassifier, logger, ClassifierResults } from '../../core';
 import { Dataset } from '../dataset/dataset.module';
-import { Stream } from '../../core/stream';
 import { Catch, TrainingError } from '../../utils/error-handling';
-import { logger } from '../../core/logger';
-import { Classifier, ClassifierResults } from '../../core/classifier';
-import { DataStore, DataStoreBackend } from '../../data-store/data-store';
-import type { ObjectId, Parametrable } from '../../core/types';
+import { DataStore } from '../../data-store/data-store';
 
 interface TrainingData {
   training: {
@@ -24,14 +15,6 @@ interface TrainingData {
     x: Tensor2D;
     y: Tensor2D;
   };
-}
-
-interface StoredModel {
-  id?: ObjectId;
-  modelName: string;
-  parameters: Record<string, unknown>;
-  labels: string[];
-  modelUrl: unknown;
 }
 
 function shuffleArray<T>(a: T[]): T[] {
@@ -101,30 +84,20 @@ export interface MLPOptions {
   dataStore: DataStore;
 }
 
-function parametersSnapshot(p: Parametrable['parameters']): Record<string, unknown> {
-  const params: Record<string, unknown> = {};
-  Object.entries(p).forEach(([key, s]) => {
-    params[key] = s.value;
-  });
-  return params;
-}
-
-export class MLP extends Classifier<TensorLike, ClassifierResults> {
+export class MLP extends TFJSClassifier {
   name = 'MLP';
   description = 'Multilayer Perceptron';
 
+  model: Sequential;
+
   static nextModelId = 0;
   modelId = `mlp-${MLP.nextModelId++}`;
-
-  #modelService: Service<StoredModel>;
-  storedModelId: string;
 
   parameters: {
     layers: Stream<number[]>;
     epochs: Stream<number>;
     batchSize: Stream<number>;
   };
-  model: Sequential;
 
   constructor({
     layers = [64, 32],
@@ -138,21 +111,6 @@ export class MLP extends Classifier<TensorLike, ClassifierResults> {
       epochs: new Stream(epochs, true),
       batchSize: new Stream(batchSize, true),
     };
-    this.dataStore.createService('tfjs-models');
-    this.#modelService = this.dataStore.service('tfjs-models') as Service<StoredModel>;
-    this.dataStore.connect().then(() => {
-      this.setup();
-    });
-  }
-
-  async setup() {
-    const { total, data } = (await this.#modelService.find({
-      query: { modelName: this.modelId, $select: ['_id', 'id'] },
-    })) as Paginated<StoredModel>;
-    if (total === 1) {
-      this.storedModelId = data[0].id;
-    }
-    this.load().catch(() => {});
   }
 
   @Catch
@@ -253,64 +211,5 @@ export class MLP extends Classifier<TensorLike, ClassifierResults> {
         this.$training.set({ status: 'error', data: error });
         throw new TrainingError(error.message);
       });
-  }
-
-  @Catch
-  async save() {
-    if (!this.model) return;
-    let modelUrl: string;
-    if (this.dataStore.backend === DataStoreBackend.LocalStorage) {
-      await this.model.save(`indexeddb://${this.modelId}`);
-      modelUrl = `indexeddb://${this.modelId}`;
-    } else if (this.dataStore.backend === DataStoreBackend.Remote) {
-      const requestOpts: { requestInit?: unknown } = {};
-      if (this.dataStore.requiresAuth) {
-        const jwt = await this.dataStore.feathers.authentication.getAccessToken();
-        const headers = new Headers({ Authorization: `Bearer ${jwt}` });
-        requestOpts.requestInit = { headers };
-      }
-      const files = await this.model
-        .save(io.http(`${this.dataStore.location}/tfjs-models/upload`, requestOpts))
-        .then((res) => {
-          return res.responses[0].json();
-        });
-      modelUrl = files['model.json'];
-    }
-    const modelData = {
-      modelName: this.modelId,
-      parameters: parametersSnapshot(this.parameters),
-      labels: this.labels,
-      modelUrl,
-    };
-    if (this.storedModelId) {
-      await this.#modelService.update(this.storedModelId, modelData);
-    } else {
-      const res = await this.#modelService.create(modelData);
-      this.storedModelId = res.id;
-    }
-  }
-
-  async load() {
-    if (!this.storedModelId) return;
-    const res = await this.#modelService.get(this.storedModelId);
-    if (!res) return;
-    this.labels = res.labels;
-    if (this.dataStore.backend === DataStoreBackend.LocalStorage) {
-      this.model = (await loadLayersModel(res.modelUrl)) as Sequential;
-    } else if (this.dataStore.backend === DataStoreBackend.Remote) {
-      const requestOpts: { requestInit?: unknown } = {};
-      if (this.dataStore.requiresAuth) {
-        const jwt = await this.dataStore.feathers.authentication.getAccessToken();
-        const headers = new Headers({ Authorization: `Bearer ${jwt}` });
-        requestOpts.requestInit = { headers };
-      }
-      this.model = (await loadLayersModel(
-        `${this.dataStore.location}/tfjs-models/${res.modelUrl}`,
-        requestOpts,
-      )) as Sequential;
-    }
-    this.$training.set({
-      status: 'loaded',
-    });
   }
 }

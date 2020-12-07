@@ -10,7 +10,7 @@ export abstract class Module {
 
   id = `module-${String(nextId++).padStart(3, '0')}`;
 
-  protected $$: ModuleInternals = {
+  $$: ModuleInternals = {
     streams: [],
     app: undefined,
     moduleType: 'generic',

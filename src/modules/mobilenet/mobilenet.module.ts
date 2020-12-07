@@ -6,9 +6,9 @@ import {
 } from '@tensorflow-models/mobilenet';
 import { GraphModel } from '@tensorflow/tfjs-converter';
 import { io, tidy } from '@tensorflow/tfjs-core';
-import { logger } from '../../core';
-import { Module } from '../../core/module';
+import { Classifier, logger, Model, ModelConstructor } from '../../core';
 import { Stream } from '../../core/stream';
+import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './mobilenet.svelte';
 
 export interface MobilenetOptions {
@@ -21,12 +21,13 @@ export interface MobilenetResults {
   confidences: { [key: string]: number };
 }
 
-export class Mobilenet extends Module {
+export class Mobilenet extends Classifier(Model as ModelConstructor<Model>) {
   name = 'mobilenet';
   description = 'Mobilenet input module';
 
+  parameters = {};
+
   #mobilenet: (MobileNet & { model?: GraphModel }) | undefined;
-  // #convert = createImageConverter();
   $loading = new Stream(true, true);
   readonly version: MobileNetVersion;
   readonly alpha: MobileNetAlpha;
@@ -101,5 +102,11 @@ export class Mobilenet extends Module {
         alpha: this.alpha,
       },
     });
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  train(): never {
+    throw new TrainingError('Model `CocoSsd` cannot be trained');
   }
 }
