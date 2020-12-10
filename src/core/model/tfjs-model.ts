@@ -26,7 +26,14 @@ export abstract class TFJSModel extends Saveable(Model as ModelConstructor<Model
 
   async tfjsSetup() {
     const { total, data } = (await this.modelService.find({
-      query: { modelName: this.modelId, $select: ['_id', 'id'] },
+      query: {
+        modelName: this.modelId,
+        $select: ['_id', 'id'],
+        $limit: 1,
+        $sort: {
+          updatedAt: -1,
+        },
+      },
     })) as Paginated<StoredModel>;
     if (total === 1) {
       this.storedModelId = data[0].id;
