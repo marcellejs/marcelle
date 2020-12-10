@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount, tick } from 'svelte';
+
   import type { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
   import { convertURIToImageData } from '../../utils/image';
@@ -6,6 +8,8 @@
   export let title: string;
   export let images: Stream<ImageData>;
   export let thumbnails: Stream<string>;
+
+  let uploadInput: HTMLInputElement;
 
   let counter = 0;
   let draggedOver = false;
@@ -35,10 +39,14 @@
   let objectURLs: string[] = [];
   function handleDragDrop(e: DragEvent) {
     e.preventDefault();
+    processFiles(e.dataTransfer.files);
+  }
+
+  function processFiles(f: FileList) {
     objectURLs = [];
     const files: File[] = [];
-    for (let i = 0; i < e.dataTransfer.files.length; i++) {
-      const file = e.dataTransfer.files[i];
+    for (let i = 0; i < f.length; i++) {
+      const file = f[i];
       const isImage = file.type.match('image.*');
       if (isImage) {
         objectURLs.push(URL.createObjectURL(file));
@@ -78,6 +86,19 @@
 
   // use to check if a file is being dragged
   const hasFiles = ({ dataTransfer: { types = [] } }: DragEvent) => types.indexOf('Files') > -1;
+
+  onMount(async () => {
+    await tick();
+    uploadInput.addEventListener('change', (e) => {
+      processFiles((e.target as HTMLInputElement).files);
+    });
+  });
+
+  function clickUpload() {
+    if (uploadInput) {
+      uploadInput.click();
+    }
+  }
 </script>
 
 <style lang="postcss">
@@ -124,11 +145,12 @@
       <p class="mb-3 font-semibold text-gray-900 flex flex-wrap justify-center">
         <span>Drag and drop an image or</span>
       </p>
-      <input id="hidden-input" type="file" multiple class="hidden" />
+      <input bind:this={uploadInput} type="file" multiple class="hidden" />
       <button
         id="button"
         class="mt-2 rounded-sm px-3 py-1 bg-gray-200 hover:bg-gray-300 focus:ring
-        focus:outline-none">
+        focus:outline-none"
+        on:click={clickUpload}>
         Upload a file
       </button>
     </div>

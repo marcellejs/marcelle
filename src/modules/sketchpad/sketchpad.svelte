@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from 'svelte';
+  import { onMount, createEventDispatcher, tick } from 'svelte';
   import { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
 
@@ -16,21 +16,10 @@
   const dispatch = createEventDispatcher();
 
   onMount(async () => {
-    await new Promise<void>((resolve, reject) => {
-      const rej = setTimeout(() => {
-        reject();
-      }, 5000);
-      const int = setInterval(() => {
-        if (canvasElement) {
-          clearTimeout(rej);
-          clearInterval(int);
-          ctx = canvasElement.getContext('2d');
-          clearDrawing();
-          dispatch('canvasElement', canvasElement);
-          resolve();
-        }
-      }, 200);
-    });
+    await tick();
+    ctx = canvasElement.getContext('2d');
+    clearDrawing();
+    dispatch('canvasElement', canvasElement);
   });
 
   function draw(e: MouseEvent) {
