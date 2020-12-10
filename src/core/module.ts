@@ -14,7 +14,7 @@ export abstract class Module {
     moduleType: 'generic',
   };
 
-  abstract mount(targetSelector?: string): void;
+  abstract mount(target?: HTMLElement): void;
 
   destroy(): void {
     this.$$.app?.$destroy();

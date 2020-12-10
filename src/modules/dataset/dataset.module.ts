@@ -173,12 +173,12 @@ export class Dataset extends Module {
     await saveBlob(JSON.stringify(fileContents), fileName, 'text/plain');
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new Component({
-      target,
+      target: t,
       props: {
         dataset: this,
         count: this.$count,

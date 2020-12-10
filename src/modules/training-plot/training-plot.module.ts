@@ -70,14 +70,13 @@ export class TrainingPlot extends Module {
     this.start();
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`) as HTMLElement;
-    if (!target) return;
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new Component({
-      target,
+      target: t,
       props: {
-        id: target.id,
         plotLosses: this.plotLosses,
         plotAccuracies: this.plotAccuracies,
       },

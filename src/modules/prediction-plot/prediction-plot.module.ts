@@ -54,21 +54,21 @@ export class PredictionPlot extends Module {
     this.start();
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     const divLab = document.createElement('div');
-    divLab.id = `${target.id}-${this.#displayLabel.id}`;
+    divLab.id = `${t.id}-${this.#displayLabel.id}`;
     const divConf = document.createElement('div');
-    divConf.id = `${target.id}-${this.#plotConfidences.id}`;
-    target.appendChild(divLab);
-    target.appendChild(divConf);
+    divConf.id = `${t.id}-${this.#plotConfidences.id}`;
+    t.appendChild(divLab);
+    t.appendChild(divConf);
     this.#displayLabel.title = this.title;
-    this.#displayLabel.mount(`#${divLab.id}`);
-    this.#plotConfidences.mount(`#${divConf.id}`);
+    this.#displayLabel.mount(divLab);
+    this.#plotConfidences.mount(divConf);
     this.destroy = () => {
-      target.removeChild(divLab);
-      target.removeChild(divConf);
+      t.removeChild(divLab);
+      t.removeChild(divConf);
       this.#displayLabel.destroy();
       this.#plotConfidences.destroy();
     };

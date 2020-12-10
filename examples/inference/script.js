@@ -88,19 +88,19 @@ const plotResults = predictionPlot(betterPredictions);
 
 const instanceViewer = {
   id: 'my-instance-viewer',
-  mount(targetSelector) {
-    const target = document.querySelector(targetSelector || '#my-instance-viewer');
+  mount(target) {
+    const t = target || document.querySelector('#my-instance-viewer');
     const instanceCanvas = document.createElement('canvas');
     instanceCanvas.classList.add('w-full', 'max-w-full');
     const instanceCtx = instanceCanvas.getContext('2d');
-    target.appendChild(instanceCanvas);
+    t.appendChild(instanceCanvas);
     const unSub = source.$images.subscribe((img) => {
       instanceCanvas.width = img.width;
       instanceCanvas.height = img.height;
       instanceCtx.putImageData(img, 0, 0);
     });
     this.destroy = () => {
-      target.removeChild(instanceCanvas);
+      t.removeChild(instanceCanvas);
       unSub();
     };
   },
