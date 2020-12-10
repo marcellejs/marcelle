@@ -1,5 +1,5 @@
 import { never, map, skipRepeatsWith } from '@most/core';
-import { Service, Paginated } from '@feathersjs/feathers';
+import type { Service, Paginated } from '@feathersjs/feathers';
 import { dequal } from 'dequal';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';

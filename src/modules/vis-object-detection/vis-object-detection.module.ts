@@ -1,6 +1,4 @@
-import { Module } from '../../core/module';
-import { Stream } from '../../core/stream';
-import { ObjectDetectorResults } from '../../core/object-detector';
+import { Module, Stream, ObjectDetectorResults } from '../../core';
 import Component from './vis-object-detection.svelte';
 
 export class VisObjectDetection extends Module {

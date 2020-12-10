@@ -28,13 +28,6 @@ export interface Instance {
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-export interface TrainingStatus {
-  status: 'idle' | 'start' | 'epoch' | 'success' | 'error' | 'loaded';
-  epoch?: number;
-  epochs?: number;
-  data?: Record<string, unknown>;
-}
-
 export interface Prediction {
   id?: ObjectId;
   instanceId: ObjectId;
@@ -42,4 +35,20 @@ export interface Prediction {
   trueLabel?: string;
   confidences?: Record<string, number>;
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+}
+
+export interface TrainingStatus {
+  status: 'idle' | 'start' | 'epoch' | 'success' | 'error' | 'loaded';
+  epoch?: number;
+  epochs?: number;
+  data?: Record<string, unknown>;
+}
+
+export interface StoredModel {
+  id?: ObjectId;
+  modelName: string;
+  parameters: Record<string, unknown>;
+  modelUrl: string;
+  labels?: string[];
+  data?: unknown;
 }

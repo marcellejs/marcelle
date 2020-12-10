@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy, tick } from 'svelte';
   import type { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
   import Spinner from '../../ui/widgets/Spinner.svelte';
@@ -17,18 +17,7 @@
 
   let unSub = () => {};
   onMount(async () => {
-    await new Promise<void>((resolve, reject) => {
-      const rej = setTimeout(() => {
-        reject();
-      }, 5000);
-      const int = setInterval(() => {
-        if (videoElement) {
-          clearTimeout(rej);
-          clearInterval(int);
-          resolve();
-        }
-      }, 200);
-    });
+    await tick();
     unSub = mediaStream.subscribe((s) => {
       if (s) {
         videoElement.srcObject = s;

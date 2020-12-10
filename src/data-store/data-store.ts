@@ -37,11 +37,11 @@ export class DataStore {
   readonly isDataStore = true;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  #app: feathers.Application<any>;
-
+  feathers: feathers.Application<any>;
   requiresAuth = false;
   user: User;
-  #location: string;
+  location: string;
+
   #connectPromise: Promise<void>;
   #authenticationPromise: Promise<void>;
 
@@ -50,16 +50,16 @@ export class DataStore {
   createService: (name: string) => void = () => {};
 
   constructor({ location = 'memory' }: DataStoreOptions = {}) {
-    this.#app = feathers();
-    this.#location = location;
+    this.feathers = feathers();
+    this.location = location;
     if (isValidUrl(location)) {
       this.backend = DataStoreBackend.Remote;
       const socket = io(location, { reconnectionAttempts: 3 });
-      this.#app.configure(socketio(socket, { timeout: 3000 }));
-      this.#app.io.on('init', ({ auth }: { auth: boolean }) => {
+      this.feathers.configure(socketio(socket, { timeout: 3000 }));
+      this.feathers.io.on('init', ({ auth }: { auth: boolean }) => {
         this.requiresAuth = auth;
         if (auth) {
-          this.#app.configure(authentication());
+          this.feathers.configure(authentication());
         }
       });
     } else if (location === 'localStorage') {
@@ -74,12 +74,12 @@ export class DataStore {
           },
         });
       this.createService = (name: string) => {
-        this.#app.use(`/${name}`, storageService(name));
+        this.feathers.use(`/${name}`, storageService(name));
       };
     } else if (location === 'memory') {
       this.backend = DataStoreBackend.Memory;
       this.createService = (name: string) => {
-        this.#app.use(
+        this.feathers.use(
           `/${name}`,
           memoryService({
             paginate: {
@@ -100,16 +100,14 @@ export class DataStore {
       return { email: null };
     }
     if (!this.#connectPromise) {
-      logger.log(`Connecting to backend ${this.#location}...`);
+      logger.log(`Connecting to backend ${this.location}...`);
       this.#connectPromise = new Promise<void>((resolve, reject) => {
-        this.#app.io.on('connect', () => {
-          logger.log(`Connected to backend ${this.#location}!`);
+        this.feathers.io.on('connect', () => {
+          logger.log(`Connected to backend ${this.location}!`);
           resolve();
         });
-        this.#app.io.on('reconnect_failed', () => {
-          const e = new Error(`Cannot reach backend at location ${
-            this.#location
-          }. Is the server running?
+        this.feathers.io.on('reconnect_failed', () => {
+          const e = new Error(`Cannot reach backend at location ${this.location}. Is the server running?
           If using locally, run 'npm run backend'`);
           e.name = 'DataStore connection error';
           reject();
@@ -128,7 +126,7 @@ export class DataStore {
     if (!this.requiresAuth) return { email: null };
     if (!this.#authenticationPromise) {
       this.#authenticationPromise = new Promise<void>((resolve, reject) => {
-        this.#app
+        this.feathers
           .reAuthenticate()
           .then(({ user }) => {
             this.user = user;
@@ -156,14 +154,14 @@ export class DataStore {
   }
 
   async login(email: string, password: string): Promise<User> {
-    const res = await this.#app.authenticate({ strategy: 'local', email, password });
+    const res = await this.feathers.authenticate({ strategy: 'local', email, password });
     this.user = res.user;
     return this.user;
   }
 
   async signup(email: string, password: string): Promise<User> {
     try {
-      await this.#app.service('users').create({ email, password });
+      await this.feathers.service('users').create({ email, password });
       await this.login(email, password);
       return this.user;
     } catch (error) {
@@ -173,18 +171,18 @@ export class DataStore {
   }
 
   async logout(): Promise<void> {
-    await this.#app.logout();
+    await this.feathers.logout();
     document.location.reload();
   }
 
   service(name: string): Service<unknown> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return this.#app.service(name);
+    return this.feathers.service(name);
   }
 
   setupAppHooks(): void {
     const beforeCreate = this.backend !== DataStoreBackend.Remote ? [addObjectId] : [];
-    this.#app.hooks({
+    this.feathers.hooks({
       before: {
         create: beforeCreate.concat([createDate]),
         update: [updateDate],

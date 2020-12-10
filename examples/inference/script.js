@@ -19,7 +19,7 @@ import {
 // -----------------------------------------------------------
 
 const source = imageDrop();
-const classifier = tfImageClassifier();
+const classifier = tfImageClassifier().sync(dataStore({ location: 'localStorage' }));
 
 // -----------------------------------------------------------
 // CAPTURE TO DATASET

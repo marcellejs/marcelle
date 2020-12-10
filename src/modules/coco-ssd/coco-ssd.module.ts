@@ -1,7 +1,7 @@
 import { load, ObjectDetection, ObjectDetectionBaseModel } from '@tensorflow-models/coco-ssd';
 import { io } from '@tensorflow/tfjs-core';
+import { Model, ModelConstructor, ObjectDetector, ObjectDetectorResults } from '../../core';
 import { logger } from '../../core/logger';
-import { ObjectDetector, ObjectDetectorResults } from '../../core/object-detector';
 import { Stream } from '../../core/stream';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './coco-ssd.svelte';
@@ -10,14 +10,13 @@ export interface CocoSsdOptions {
   base?: ObjectDetectionBaseModel;
 }
 
-export class CocoSsd extends ObjectDetector<ImageData, ObjectDetectorResults> {
+export class CocoSsd extends ObjectDetector(Model as ModelConstructor<Model>) {
   name = 'COCO-SSD Object Detection';
   description = 'Object detection module using the tfjs coco-ssd model';
 
   parameters = {};
 
   #coco: ObjectDetection;
-  // #coco: (ObjectDetection & { model?: GraphModel }) | undefined;
   #base: ObjectDetectionBaseModel;
   $loading: Stream<boolean> = new Stream(true as boolean, true);
 

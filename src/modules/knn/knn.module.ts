@@ -1,17 +1,26 @@
-import { tensor, tensor2d, TensorLike } from '@tensorflow/tfjs-core';
+import type { Paginated, Service } from '@feathersjs/feathers';
+import type { Tensor2D, TensorLike } from '@tensorflow/tfjs-core';
+import { tensor, tensor2d } from '@tensorflow/tfjs-core';
 import { KNNClassifier } from '@tensorflow-models/knn-classifier';
+import {
+  Stream,
+  Model,
+  ModelConstructor,
+  Classifier,
+  ClassifierResults,
+  Saveable,
+  StoredModel,
+} from '../../core';
 import { Dataset } from '../dataset/dataset.module';
-import { Stream } from '../../core/stream';
-import { Classifier, ClassifierResults } from '../../core/classifier';
 import { Catch, throwError } from '../../utils/error-handling';
-import { DataStore, DataStoreBackend } from '../../data-store/data-store';
+import { DataStore } from '../../data-store';
+import { saveBlob } from '../../utils/file-io';
 
 export interface KNNOptions {
   k: number;
-  dataStore: DataStore;
 }
 
-export class KNN extends Classifier<TensorLike, ClassifierResults> {
+export class KNN extends Classifier(Saveable(Model as ModelConstructor<Model>)) {
   name = 'KNN';
   description = 'K-Nearest Neighbours';
 
@@ -21,13 +30,40 @@ export class KNN extends Classifier<TensorLike, ClassifierResults> {
   parameters: {
     k: Stream<number>;
   };
+
   classifier = new KNNClassifier();
 
-  constructor({ k = 3, dataStore = new DataStore() }: Partial<KNNOptions> = {}) {
-    super(dataStore);
+  constructor({ k = 3 }: Partial<KNNOptions> = {}) {
+    super();
     this.parameters = {
       k: new Stream(k, true),
     };
+  }
+
+  sync(dataStore: DataStore) {
+    super.sync(dataStore);
+    this.dataStore.createService('knn-models');
+    this.modelService = this.dataStore.service('knn-models') as Service<StoredModel>;
+    this.dataStore.connect().then(() => {
+      this.setupSync();
+    });
+    return this;
+  }
+
+  async setupSync() {
+    const { total, data } = (await this.modelService.find({
+      query: {
+        modelName: this.modelId,
+        $select: ['_id', 'id'],
+        $limit: 1,
+        $sort: {
+          updatedAt: -1,
+        },
+      },
+    })) as Paginated<StoredModel>;
+    if (total === 1) {
+      this.storedModelId = data[0].id;
+    }
     this.load().catch(() => {});
   }
 
@@ -86,38 +122,40 @@ export class KNN extends Classifier<TensorLike, ClassifierResults> {
     delete this.classifier;
   }
 
-  @Catch
-  async save() {
-    if (!this.classifier) return;
+  async beforeSave(): Promise<StoredModel | null> {
+    if (!this.classifier) return null;
     const dataset = this.classifier.getClassifierDataset();
     const datasetObj: Record<string, number[][]> = {};
     Object.keys(dataset).forEach((key) => {
       const data = dataset[key].arraySync();
       datasetObj[key] = data;
     });
-    const jsonStr = JSON.stringify(datasetObj);
-    if (this.dataStore.backend === DataStoreBackend.LocalStorage) {
-      localStorage.setItem(`marcelle:${this.modelId}:dataset`, jsonStr);
-      // localStorage.setItem(`marcelle:${this.modelId}:labels`, JSON.stringify(this.labels));
-    } else if (this.dataStore.backend === DataStoreBackend.Remote) {
-      throwError(new Error('Remote model saving is not yet implemented'));
-    }
+    return {
+      modelName: this.modelId,
+      parameters: this.parametersSnapshot(),
+      modelUrl: '',
+      labels: this.labels,
+      data: datasetObj,
+    };
   }
 
-  async load() {
-    if (this.dataStore.backend === DataStoreBackend.LocalStorage) {
-      const dataset = localStorage.getItem(`marcelle:${this.modelId}:dataset`);
-      if (!dataset) return;
-      const tensorObj = JSON.parse(dataset);
-      Object.keys(tensorObj).forEach((key) => {
-        tensorObj[key] = tensor2d(tensorObj[key]);
-      });
-      this.classifier.setClassifierDataset(tensorObj);
-      this.$training.set({
-        status: 'loaded',
-      });
-    } else if (this.dataStore.backend === DataStoreBackend.Remote) {
-      throwError(new Error('Remote model loading is not yet implemented'));
-    }
+  async afterLoad(s: StoredModel): Promise<void> {
+    const dataset = s.data as Record<string, number[][]>;
+    if (!dataset) return;
+    const tensorObj: Record<string, Tensor2D> = {};
+    Object.entries(dataset).forEach(([key, d]) => {
+      tensorObj[key] = tensor2d(d);
+    });
+    this.labels = s.labels;
+    this.classifier.setClassifierDataset(tensorObj);
+    this.$training.set({
+      status: 'loaded',
+    });
+  }
+
+  download() {
+    this.beforeSave().then((fileMeta) => {
+      saveBlob(JSON.stringify(fileMeta), `${this.modelId}.json`, 'text/plain');
+    });
   }
 }
