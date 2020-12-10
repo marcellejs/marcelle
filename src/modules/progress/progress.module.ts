@@ -3,7 +3,7 @@ import Component from './progress.svelte';
 import { MLP } from '../mlp';
 
 export class Progress extends Module {
-  name = 'progress';
+  title = 'progress';
 
   #model: MLP;
 
@@ -19,7 +19,7 @@ export class Progress extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         training: this.#model.$training,
       },
     });

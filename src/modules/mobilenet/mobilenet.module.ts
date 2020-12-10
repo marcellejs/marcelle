@@ -22,7 +22,7 @@ export interface MobilenetResults {
 }
 
 export class Mobilenet extends Classifier(Model as ModelConstructor<Model>) {
-  name = 'mobilenet';
+  title = 'mobilenet';
 
   parameters = {};
 
@@ -95,7 +95,7 @@ export class Mobilenet extends Classifier(Model as ModelConstructor<Model>) {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         loading: this.$loading,
         version: this.version,
         alpha: this.alpha,

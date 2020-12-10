@@ -9,7 +9,7 @@ export interface FakerOptions {
 }
 
 export class Faker extends Module {
-  name = 'faker';
+  title = 'faker';
 
   size: number;
 
@@ -31,7 +31,7 @@ export class Faker extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         size: this.size,
         frames: this.$frames,
       },

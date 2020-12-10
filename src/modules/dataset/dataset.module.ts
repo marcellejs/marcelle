@@ -28,7 +28,7 @@ function toKebabCase(str: string): string {
 }
 
 export class Dataset extends Module {
-  name = 'dataset';
+  title = 'dataset';
 
   #unsubscribe: () => void = () => {};
   #dataStore: DataStore;
@@ -44,7 +44,7 @@ export class Dataset extends Module {
 
   constructor({ name, dataStore = new DataStore() }: DatasetOptions) {
     super();
-    this.name = name;
+    this.title = name;
     this.#dataStore = dataStore;
     this.$labels = new Stream(skipRepeatsWith(dequal, map(Object.keys, this.$classes)));
     this.$count = new Stream(
@@ -74,17 +74,17 @@ export class Dataset extends Module {
   }
 
   async setup(): Promise<void> {
-    const serviceName = toKebabCase(`instances-${this.name}`);
+    const serviceName = toKebabCase(`instances-${this.title}`);
     this.#dataStore.createService(serviceName);
     this.instanceService = this.#dataStore.service(serviceName) as Service<Instance>;
     this.instanceService.hooks({
       before: {
-        create: [addScope('datasetName', this.name), imageData2DataURL].filter((x) => !!x),
-        find: [limitToScope('datasetName', this.name)],
-        get: [limitToScope('datasetName', this.name)],
-        update: [limitToScope('datasetName', this.name)],
-        patch: [limitToScope('datasetName', this.name)],
-        remove: [limitToScope('datasetName', this.name)],
+        create: [addScope('datasetName', this.title), imageData2DataURL].filter((x) => !!x),
+        find: [limitToScope('datasetName', this.title)],
+        get: [limitToScope('datasetName', this.title)],
+        update: [limitToScope('datasetName', this.title)],
+        patch: [limitToScope('datasetName', this.title)],
+        remove: [limitToScope('datasetName', this.title)],
       },
       after: {
         find: [dataURL2ImageData].filter((x) => !!x),
@@ -169,7 +169,7 @@ export class Dataset extends Module {
       instances: (instances as Paginated<Instance>).data,
     };
     const today = new Date(Date.now());
-    const fileName = `${this.name}-${today.toISOString()}.json`;
+    const fileName = `${this.title}-${today.toISOString()}.json`;
     await saveBlob(JSON.stringify(fileContents), fileName, 'text/plain');
   }
 

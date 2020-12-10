@@ -2,7 +2,7 @@ import { Module, Stream, ObjectDetectorResults } from '../../core';
 import Component from './vis-object-detection.svelte';
 
 export class VisObjectDetection extends Module {
-  name = 'Visualize Object Detections';
+  title = 'Visualize Object Detections';
 
   $objectDetectionResults: Stream<ObjectDetectorResults>;
   $imgStream: Stream<ImageData>;
@@ -21,7 +21,7 @@ export class VisObjectDetection extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         imageStream: this.$imgStream,
         objectDetectionResults: this.$objectDetectionResults,
       },

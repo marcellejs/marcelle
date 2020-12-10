@@ -8,7 +8,7 @@ import { Catch } from '../../utils/error-handling';
 import Component from './tf-image-classifier.svelte';
 
 export class TfImageClassifier extends TFJSClassifier {
-  name = 'tfImageClassifier';
+  title = 'tfImageClassifier';
 
   static nextModelId = 0;
   modelId = `tf-image-classifier-${TfImageClassifier.nextModelId++}`;
@@ -75,7 +75,7 @@ export class TfImageClassifier extends TFJSClassifier {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         loading: this.$loading,
         modelFiles: this.$modelFiles,
       },

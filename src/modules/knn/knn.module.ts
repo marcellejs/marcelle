@@ -21,7 +21,7 @@ export interface KNNOptions {
 }
 
 export class KNN extends Classifier(Saveable(Model as ModelConstructor<Model>)) {
-  name = 'KNN';
+  title = 'KNN';
 
   static nextModelId = 0;
   modelId = `knn-${KNN.nextModelId++}`;

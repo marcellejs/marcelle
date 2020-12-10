@@ -8,7 +8,7 @@ export interface SelectOptions {
 }
 
 export class Select extends Module {
-  name = 'select';
+  title = 'select';
 
   $options: Stream<string[]>;
   $value: Stream<string>;
@@ -27,7 +27,7 @@ export class Select extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         options: this.$options,
         value: this.$value,
       },

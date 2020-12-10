@@ -8,7 +8,7 @@ export interface ButtonOptions {
 }
 
 export class Button extends Module {
-  name = 'button';
+  title = 'button';
 
   $text: Stream<string>;
   $click = new Stream<CustomEvent<unknown>>(never());
@@ -31,7 +31,7 @@ export class Button extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         text: this.$text,
         down: this.$down,
         loading: this.$loading,

@@ -6,7 +6,7 @@ import Component from './training-plot.svelte';
 import { throwError } from '../../utils/error-handling';
 
 export class TrainingPlot extends Module {
-  name = 'training plot';
+  title = 'training plot';
 
   plotLosses: Chart;
   plotAccuracies: Chart;
@@ -36,7 +36,7 @@ export class TrainingPlot extends Module {
     });
     this.plotLosses.addSeries(trainingLoss, 'training loss');
     this.plotLosses.addSeries(validationLoss, 'validation loss');
-    this.plotLosses.name = 'losses';
+    this.plotLosses.title = 'losses';
 
     const trainingAccuracy = new Stream([], true);
     const validationAccuracy = new Stream([], true);
@@ -50,7 +50,7 @@ export class TrainingPlot extends Module {
     });
     this.plotAccuracies.addSeries(trainingAccuracy, 'training accuracy');
     this.plotAccuracies.addSeries(validationAccuracy, 'validation accuracy');
-    this.plotAccuracies.name = 'accuracies';
+    this.plotAccuracies.title = 'accuracies';
 
     model.$training.subscribe((x) => {
       if (x.status === 'start') {

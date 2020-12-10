@@ -16,7 +16,7 @@ export interface SliderOptions {
 }
 
 export class Slider extends Module {
-  name = 'slider';
+  title = 'slider';
 
   $values: Stream<number[]>;
   $min: Stream<number>;
@@ -61,7 +61,7 @@ export class Slider extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         values: this.$values,
         min: this.$min,
         max: this.$max,

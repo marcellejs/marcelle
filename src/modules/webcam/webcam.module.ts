@@ -33,7 +33,7 @@ export interface WebcamOptions {
 }
 
 export class Webcam extends Module {
-  name = 'webcam';
+  title = 'webcam';
 
   $active = new Stream(false, true);
   $ready = new Stream(false, true);
@@ -95,7 +95,7 @@ export class Webcam extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         width: this.#width,
         height: this.#height,
         active: this.$active,

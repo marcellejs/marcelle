@@ -4,7 +4,7 @@ import { ModuleInternals } from './types';
 let nextId = 0;
 
 export abstract class Module {
-  public abstract name: string;
+  public abstract title: string;
 
   id = `module-${String(nextId++).padStart(3, '0')}`;
 

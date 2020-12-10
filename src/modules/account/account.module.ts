@@ -3,7 +3,7 @@ import Component from './account.svelte';
 import { DataStore } from '../../data-store';
 
 export class Account extends Module {
-  name = 'account manager';
+  title = 'account manager';
 
   #dataStore: DataStore;
 
@@ -19,7 +19,7 @@ export class Account extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         dataStore: this.#dataStore,
       },
     });

@@ -11,7 +11,7 @@ export interface CocoSsdOptions {
 }
 
 export class CocoSsd extends ObjectDetector(Model as ModelConstructor<Model>) {
-  name = 'COCO-SSD Object Detection';
+  title = 'COCO-SSD Object Detection';
 
   parameters = {};
 
@@ -70,7 +70,7 @@ export class CocoSsd extends ObjectDetector(Model as ModelConstructor<Model>) {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         loading: this.$loading,
         base: this.#base,
       },

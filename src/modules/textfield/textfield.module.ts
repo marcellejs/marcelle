@@ -3,7 +3,7 @@ import { Stream } from '../../core/stream';
 import Component from './textfield.svelte';
 
 export class Textfield extends Module {
-  name = 'textfield';
+  title = 'textfield';
 
   $text: Stream<string> = new Stream('', true);
 
@@ -19,7 +19,7 @@ export class Textfield extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         text: this.$text,
       },
     });

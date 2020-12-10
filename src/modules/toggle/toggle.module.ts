@@ -7,7 +7,7 @@ export interface ToggleOptions {
 }
 
 export class Toggle extends Module {
-  name = 'toggle';
+  title = 'toggle';
 
   $text: Stream<string>;
   $checked = new Stream(false, true);
@@ -26,7 +26,7 @@ export class Toggle extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         text: this.$text,
         checked: this.$checked,
         disabled: this.$disabled,

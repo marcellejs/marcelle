@@ -13,7 +13,7 @@ export type ConfusionMatrix = Array<{
 }>;
 
 export class Confusion extends Module {
-  name = 'confusion matrix';
+  title = 'confusion matrix';
 
   #prediction: BatchPrediction;
 
@@ -81,7 +81,7 @@ export class Confusion extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         confusion: this.$confusion,
         accuracy: this.$accuracy,
         labels: this.$labels,

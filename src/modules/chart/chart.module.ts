@@ -93,7 +93,7 @@ export interface ChartDataset {
 }
 
 export class Chart extends Module {
-  name = 'chart';
+  title = 'chart';
 
   #presetName: string;
   #preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };
@@ -143,7 +143,7 @@ export class Chart extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         preset: this.#preset,
         options: this.#options,
         datasets: this.#datasets,

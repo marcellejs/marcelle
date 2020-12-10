@@ -6,7 +6,7 @@ import { chart, Chart } from '../chart';
 import { text, Text } from '../text';
 
 export class PredictionPlot extends Module {
-  name = 'prediction plot';
+  title = 'prediction plot';
 
   $confidenceStream: Stream<{ x: string; y: number }[]>;
   #plotConfidences: Chart;
@@ -34,9 +34,9 @@ export class PredictionPlot extends Module {
       this.$confidenceStream as Stream<number[] | Array<{ x: unknown; y: unknown }>>,
       'Confidences',
     );
-    this.#plotConfidences.name = '';
+    this.#plotConfidences.title = '';
     this.#displayLabel = text({ text: 'Waiting for predictions...' });
-    this.#displayLabel.name = this.name;
+    this.#displayLabel.title = this.title;
     this.#displayLabel.$text = new Stream(
       startWith('Waiting for predictions...')(
         map(({ label, trueLabel }: Prediction) => {
@@ -63,7 +63,7 @@ export class PredictionPlot extends Module {
     divConf.id = `${target.id}-${this.#plotConfidences.id}`;
     target.appendChild(divLab);
     target.appendChild(divConf);
-    this.#displayLabel.name = this.name;
+    this.#displayLabel.title = this.title;
     this.#displayLabel.mount(`#${divLab.id}`);
     this.#plotConfidences.mount(`#${divConf.id}`);
     this.destroy = () => {

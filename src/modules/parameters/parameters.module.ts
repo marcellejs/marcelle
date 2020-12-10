@@ -3,7 +3,7 @@ import Component from './parameters.svelte';
 import { Parametrable } from '../../core/types';
 
 export class Parameters extends Module {
-  name = 'parameters';
+  title = 'parameters';
 
   #module: Parametrable;
 
@@ -19,7 +19,7 @@ export class Parameters extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         parameters: this.#module.parameters,
       },
     });

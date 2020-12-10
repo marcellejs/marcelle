@@ -7,7 +7,7 @@ export interface TextOptions {
 }
 
 export class Text extends Module {
-  name = 'text';
+  title = 'text';
 
   $text: Stream<string>;
 
@@ -24,7 +24,7 @@ export class Text extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         text: this.$text,
       },
     });

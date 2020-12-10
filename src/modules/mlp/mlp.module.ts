@@ -88,7 +88,7 @@ export interface MLPOptions {
 }
 
 export class MLP extends TFJSClassifier {
-  name = 'MLP';
+  title = 'MLP';
 
   model: Sequential;
   loadFn = loadLayersModel;

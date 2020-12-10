@@ -20,7 +20,7 @@ export interface BatchPredictionOptions {
 }
 
 export class BatchPrediction extends Module {
-  name = 'batch prediction';
+  title = 'batch prediction';
 
   #dataStore: DataStore;
   predictionService: Service<Prediction>;
@@ -30,7 +30,7 @@ export class BatchPrediction extends Module {
 
   constructor({ name, dataStore }: BatchPredictionOptions) {
     super();
-    this.name = name;
+    this.title = name;
     this.#dataStore = dataStore || new DataStore();
     this.#dataStore
       .connect()
@@ -43,17 +43,17 @@ export class BatchPrediction extends Module {
   }
 
   async setup(): Promise<void> {
-    const serviceName = `predictions-${this.name}`;
+    const serviceName = `predictions-${this.title}`;
     this.#dataStore.createService(serviceName);
     this.predictionService = this.#dataStore.service(serviceName) as Service<Prediction>;
     this.predictionService.hooks({
       before: {
-        create: [addScope('predictionName', this.name), imageData2DataURL].filter((x) => !!x),
-        find: [limitToScope('predictionName', this.name)],
-        get: [limitToScope('predictionName', this.name)],
-        update: [limitToScope('predictionName', this.name)],
-        patch: [limitToScope('predictionName', this.name)],
-        remove: [limitToScope('predictionName', this.name)],
+        create: [addScope('predictionName', this.title), imageData2DataURL].filter((x) => !!x),
+        find: [limitToScope('predictionName', this.title)],
+        get: [limitToScope('predictionName', this.title)],
+        update: [limitToScope('predictionName', this.title)],
+        patch: [limitToScope('predictionName', this.title)],
+        remove: [limitToScope('predictionName', this.title)],
       },
       after: {
         find: [dataURL2ImageData].filter((x) => !!x),

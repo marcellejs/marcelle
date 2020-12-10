@@ -3,7 +3,7 @@ import Component from './browser.svelte';
 import { Dataset } from '../dataset';
 
 export class Browser extends Module {
-  name = 'dataset browser';
+  title = 'dataset browser';
 
   #dataset: Dataset;
 
@@ -20,7 +20,7 @@ export class Browser extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         count: this.#dataset.$count,
         classes: this.#dataset.$classes,
         dataset: this.#dataset,

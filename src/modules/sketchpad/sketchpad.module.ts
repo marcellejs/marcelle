@@ -4,7 +4,7 @@ import { Stream } from '../../core/stream';
 import Component from './sketchpad.svelte';
 
 export class Sketchpad extends Module {
-  name = 'sketchpad';
+  title = 'sketchpad';
 
   $images = new Stream<ImageData>(never());
   $thumbnails = new Stream<string>(never());
@@ -34,7 +34,7 @@ export class Sketchpad extends Module {
     this.$$.app = new Component({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         strokeStart: this.$strokeStart,
         strokeEnd: this.$strokeEnd,
       },
