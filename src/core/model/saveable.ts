@@ -48,6 +48,8 @@ export function Saveable<TBase extends ModelConstructor<Model>>(Base: TBase) {
       );
     }
 
+    abstract download(): void;
+
     parametersSnapshot(): Record<string, unknown> {
       const params: Record<string, unknown> = {};
       Object.entries(this.parameters).forEach(([key, s]) => {

@@ -1,7 +1,7 @@
 import { empty } from '@most/core';
 import { io, image as tfImage, browser, Tensor2D } from '@tensorflow/tfjs-core';
 import { LayersModel, loadLayersModel } from '@tensorflow/tfjs-layers';
-import { ClassifierResults, TFJSClassifier } from '../../core';
+import { ClassifierResults, StoredModel, TFJSClassifier } from '../../core';
 import { logger } from '../../core/logger';
 import { Stream } from '../../core/stream';
 import { Catch } from '../../utils/error-handling';
@@ -81,5 +81,10 @@ export class TfImageClassifier extends TFJSClassifier {
         modelFiles: this.$modelFiles,
       },
     });
+  }
+
+  async afterLoad(s: StoredModel): Promise<void> {
+    await super.afterLoad(s);
+    this.inputShape = Object.values(this.model.inputs[0].shape);
   }
 }

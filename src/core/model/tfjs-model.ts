@@ -10,6 +10,7 @@ import { Classifier } from './classifier';
 import { DataStoreBackend } from '../../data-store/data-store';
 import { ObjectDetector } from './object-detector';
 import { Saveable } from './saveable';
+import { saveBlob } from '../../utils/file-io';
 
 export abstract class TFJSModel extends Saveable(Model as ModelConstructor<Model>) {
   abstract model: LayersModel | GraphModel | Sequential;
@@ -85,6 +86,36 @@ export abstract class TFJSModel extends Saveable(Model as ModelConstructor<Model
       )) as Sequential;
     }
   }
+
+  prepareDownload() {
+    return {
+      modelType: 'tfjs-model',
+      modelName: this.modelId,
+      parameters: this.parametersSnapshot(),
+    };
+  }
+
+  download() {
+    const dateSaved = new Date(Date.now());
+    const fileMeta = this.prepareDownload();
+    this.model.save(
+      io.withSaveHandler(async (data) => {
+        const weightsManifest = {
+          modelTopology: data.modelTopology,
+          weightsManifest: [
+            {
+              paths: [`./${this.modelId}.weights.bin`],
+              weights: data.weightSpecs,
+            },
+          ],
+          marcelle: fileMeta,
+        };
+        await saveBlob(data.weightData, `${this.modelId}.weights.bin`, 'application/octet-stream');
+        await saveBlob(JSON.stringify(weightsManifest), `${this.modelId}.json`, 'text/plain');
+        return { modelArtifactsInfo: { dateSaved, modelTopologyType: 'JSON' } };
+      }),
+    );
+  }
 }
 
 export abstract class TFJSClassifier extends Classifier(TFJSModel as ModelConstructor<TFJSModel>) {
@@ -95,8 +126,13 @@ export abstract class TFJSClassifier extends Classifier(TFJSModel as ModelConstr
   }
 
   async afterLoad(s: StoredModel): Promise<void> {
+    await super.afterLoad(s);
     this.labels = s.labels;
-    super.afterLoad(s);
+  }
+
+  prepareDownload() {
+    const fileMeta = super.prepareDownload();
+    return { ...fileMeta, labels: this.labels };
   }
 }
 
@@ -110,7 +146,12 @@ export abstract class TFJSObjectDetector extends ObjectDetector(
   }
 
   async afterLoad(s: StoredModel): Promise<void> {
+    await super.afterLoad(s);
     this.labels = s.labels;
-    super.afterLoad(s);
+  }
+
+  prepareDownload() {
+    const fileMeta = super.prepareDownload();
+    return { ...fileMeta, labels: this.labels };
   }
 }

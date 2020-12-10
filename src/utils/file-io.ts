@@ -1,4 +1,8 @@
-export async function saveBlob(data: string, name: string, type: string): Promise<void> {
+export async function saveBlob(
+  data: string | ArrayBuffer,
+  name: string,
+  type: string,
+): Promise<void> {
   const link = document.createElement('a');
   link.style.display = 'none';
   document.body.appendChild(link);

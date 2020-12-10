@@ -14,6 +14,7 @@ import {
 import { Dataset } from '../dataset/dataset.module';
 import { Catch, throwError } from '../../utils/error-handling';
 import { DataStore } from '../../data-store';
+import { saveBlob } from '../../utils/file-io';
 
 export interface KNNOptions {
   k: number;
@@ -149,6 +150,12 @@ export class KNN extends Classifier(Saveable(Model as ModelConstructor<Model>)) 
     this.classifier.setClassifierDataset(tensorObj);
     this.$training.set({
       status: 'loaded',
+    });
+  }
+
+  download() {
+    this.beforeSave().then((fileMeta) => {
+      saveBlob(JSON.stringify(fileMeta), `${this.modelId}.json`, 'text/plain');
     });
   }
 }
