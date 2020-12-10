@@ -1,5 +1,6 @@
 import { DashboardPage } from './dashboard_page';
 import DashboardComponent from './Dashboard.svelte';
+import { Stream } from '../core';
 
 export interface DashboardOptions {
   title: string;
@@ -11,6 +12,9 @@ export class Dashboard {
   app?: DashboardComponent;
   settings = new DashboardPage('settings');
 
+  $active = new Stream(false as boolean, true);
+  $page = new Stream('', true);
+
   constructor(private title = 'Hello, Marcelle!', private author = 'author') {}
 
   page(name: string): DashboardPage {
@@ -21,10 +25,6 @@ export class Dashboard {
   }
 
   start(): void {
-    // const target = document.querySelector('#dashboard');
-    // if (!target) {
-    //   throw new Error('Cannot start dashboard, div#dashboard not found.');
-    // }
     this.app = new DashboardComponent({
       target: document.body,
       props: {
@@ -32,9 +32,12 @@ export class Dashboard {
         author: this.author,
         dashboards: this.panels,
         settings: this.settings,
+        page: this.$page,
       },
     });
+    this.$active.set(true);
     this.app.$on('quit', () => {
+      this.$active.set(false);
       this.app?.$destroy();
       Object.values(this.panels).forEach((panel) => {
         panel.destroy();

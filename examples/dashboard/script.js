@@ -106,3 +106,10 @@ dash.page('Real-time Prediction').useLeft(input).use(tog, plotResults);
 dash.settings.useLeft(account(store)).use(trainingSet);
 
 dash.start();
+
+dash.$active.subscribe((x) => {
+  console.log('active', x);
+});
+dash.$page.subscribe((x) => {
+  console.log('page', x);
+});

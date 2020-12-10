@@ -5,6 +5,7 @@
   import Routie from './routie';
   import DashboardPageComponent from './DashboardPage.svelte';
   import type { DashboardPage } from './dashboard_page';
+  import type { Stream } from '../core';
 
   const dispatch = createEventDispatcher();
 
@@ -12,6 +13,7 @@
   export let author: string;
   export let dashboards: Record<string, DashboardPage> = {};
   export let settings: DashboardPage;
+  export let page: Stream<string>;
 
   const logStream = getLogStream();
 
@@ -19,6 +21,7 @@
 
   onMount(() => {
     showApp = true;
+    page.set(string2slug(dashboardNames[0]));
   });
 
   export function quit() {
@@ -58,6 +61,7 @@
   router.route('settings', () => {
     showSettings = true;
     if (currentDashboard) dashboards[currentDashboard].destroy();
+    page.set('settings');
   });
   $: dashboardSlugs.forEach((slug, i) => {
     router.route(slug, () => {
@@ -65,6 +69,7 @@
       if (currentDashboard === dashboardNames[i]) return;
       if (currentDashboard) dashboards[currentDashboard].destroy();
       currentDashboard = dashboardNames[i];
+      page.set(slug === '' ? string2slug(dashboardNames[0]) : slug);
     });
   });
 </script>

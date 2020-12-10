@@ -67,8 +67,8 @@ export class PredictionPlot extends Module {
     this.#displayLabel.mount(divLab);
     this.#plotConfidences.mount(divConf);
     this.destroy = () => {
-      t.removeChild(divLab);
-      t.removeChild(divConf);
+      divLab.parentElement.removeChild(divLab);
+      divConf.parentElement.removeChild(divConf);
       this.#displayLabel.destroy();
       this.#plotConfidences.destroy();
     };
