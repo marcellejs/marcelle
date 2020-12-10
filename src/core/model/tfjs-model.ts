@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import type { Paginated, Service } from '@feathersjs/feathers';
 import { LayersModel, loadLayersModel, Sequential } from '@tensorflow/tfjs-layers';
-import type { GraphModel } from '@tensorflow/tfjs-converter';
+import { GraphModel, loadGraphModel } from '@tensorflow/tfjs-converter';
 import { io } from '@tensorflow/tfjs-core';
 import type { DataStore } from '../../data-store';
 import type { StoredModel } from '../types';
@@ -13,6 +13,7 @@ import { Saveable } from './saveable';
 
 export abstract class TFJSModel extends Saveable(Model as ModelConstructor<Model>) {
   abstract model: LayersModel | GraphModel | Sequential;
+  abstract loadFn: typeof loadLayersModel | typeof loadGraphModel;
 
   constructor(dataStore?: DataStore) {
     super(dataStore);
@@ -62,7 +63,7 @@ export abstract class TFJSModel extends Saveable(Model as ModelConstructor<Model
 
   async afterLoad(s: StoredModel): Promise<void> {
     if (this.dataStore.backend === DataStoreBackend.LocalStorage) {
-      this.model = (await loadLayersModel(s.modelUrl)) as Sequential;
+      this.model = (await this.loadFn(s.modelUrl)) as Sequential;
     } else if (this.dataStore.backend === DataStoreBackend.Remote) {
       const requestOpts: { requestInit?: unknown } = {};
       if (this.dataStore.requiresAuth) {
@@ -70,7 +71,7 @@ export abstract class TFJSModel extends Saveable(Model as ModelConstructor<Model
         const headers = new Headers({ Authorization: `Bearer ${jwt}` });
         requestOpts.requestInit = { headers };
       }
-      this.model = (await loadLayersModel(
+      this.model = (await this.loadFn(
         `${this.dataStore.location}/tfjs-models/${s.modelUrl}`,
         requestOpts,
       )) as Sequential;

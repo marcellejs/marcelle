@@ -20,6 +20,7 @@ export class TfImageClassifier extends TFJSClassifier {
   $loading: Stream<boolean> = new Stream(false as boolean, true);
 
   model: LayersModel;
+  loadFn = loadLayersModel;
   inputShape: number[];
 
   constructor() {

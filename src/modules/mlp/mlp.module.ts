@@ -1,6 +1,11 @@
 import { tensor2d, train, Tensor2D, TensorLike, tensor, tidy } from '@tensorflow/tfjs-core';
-import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core';
-import { sequential, layers as tfLayers, Sequential } from '@tensorflow/tfjs-layers';
+import {
+  loadLayersModel,
+  sequential,
+  layers as tfLayers,
+  Sequential,
+} from '@tensorflow/tfjs-layers';
+import type { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core';
 import { Stream, TFJSClassifier, logger, ClassifierResults } from '../../core';
 import { Dataset } from '../dataset/dataset.module';
 import { Catch, TrainingError } from '../../utils/error-handling';
@@ -89,6 +94,7 @@ export class MLP extends TFJSClassifier {
   description = 'Multilayer Perceptron';
 
   model: Sequential;
+  loadFn = loadLayersModel;
 
   static nextModelId = 0;
   modelId = `mlp-${MLP.nextModelId++}`;
