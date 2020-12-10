@@ -34,7 +34,6 @@ export interface WebcamOptions {
 
 export class Webcam extends Module {
   name = 'webcam';
-  description = 'Webcam input module';
 
   $active = new Stream(false, true);
   $ready = new Stream(false, true);

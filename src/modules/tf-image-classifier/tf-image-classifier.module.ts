@@ -9,7 +9,6 @@ import Component from './tf-image-classifier.svelte';
 
 export class TfImageClassifier extends TFJSClassifier {
   name = 'tfImageClassifier';
-  description = 'Generic Deep Neural Network module';
 
   static nextModelId = 0;
   modelId = `tf-image-classifier-${TfImageClassifier.nextModelId++}`;

@@ -5,7 +5,6 @@ import Component from './image-drop.svelte';
 
 export class ImageDrop extends Module {
   name = 'image-drop';
-  description = 'Drop an image file to a stream';
 
   $images = new Stream(never());
   $thumbnails = new Stream(never());

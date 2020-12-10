@@ -9,7 +9,6 @@ export interface ButtonOptions {
 
 export class Button extends Module {
   name = 'button';
-  description = 'just a button...';
 
   $text: Stream<string>;
   $click = new Stream<CustomEvent<unknown>>(never());

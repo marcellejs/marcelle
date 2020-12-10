@@ -23,7 +23,6 @@ export interface MobilenetResults {
 
 export class Mobilenet extends Classifier(Model as ModelConstructor<Model>) {
   name = 'mobilenet';
-  description = 'Mobilenet input module';
 
   parameters = {};
 

@@ -5,7 +5,6 @@ let nextId = 0;
 
 export abstract class Module {
   public abstract name: string;
-  public abstract description: string;
 
   id = `module-${String(nextId++).padStart(3, '0')}`;
 

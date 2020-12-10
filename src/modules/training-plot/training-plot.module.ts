@@ -7,7 +7,6 @@ import { throwError } from '../../utils/error-handling';
 
 export class TrainingPlot extends Module {
   name = 'training plot';
-  description = 'Plot the loss/accuracy during training';
 
   plotLosses: Chart;
   plotAccuracies: Chart;

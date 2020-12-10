@@ -4,7 +4,6 @@ import { Parametrable } from '../../core/types';
 
 export class Parameters extends Module {
   name = 'parameters';
-  description = 'just parameters...';
 
   #module: Parametrable;
 

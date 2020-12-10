@@ -12,7 +12,6 @@ export interface CocoSsdOptions {
 
 export class CocoSsd extends ObjectDetector(Model as ModelConstructor<Model>) {
   name = 'COCO-SSD Object Detection';
-  description = 'Object detection module using the tfjs coco-ssd model';
 
   parameters = {};
 

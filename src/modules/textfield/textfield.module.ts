@@ -4,7 +4,6 @@ import Component from './textfield.svelte';
 
 export class Textfield extends Module {
   name = 'textfield';
-  description = 'Simple text field widget';
 
   $text: Stream<string> = new Stream('', true);
 

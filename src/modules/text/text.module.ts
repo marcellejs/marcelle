@@ -8,7 +8,6 @@ export interface TextOptions {
 
 export class Text extends Module {
   name = 'text';
-  description = 'just a text...';
 
   $text: Stream<string>;
 

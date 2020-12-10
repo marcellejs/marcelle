@@ -5,7 +5,6 @@ import Component from './sketchpad.svelte';
 
 export class Sketchpad extends Module {
   name = 'sketchpad';
-  description = 'Sketch input component';
 
   $images = new Stream<ImageData>(never());
   $thumbnails = new Stream<string>(never());

@@ -10,7 +10,7 @@ export interface FakerOptions {
 
 export class Faker extends Module {
   name = 'faker';
-  description = 'Fake data input module';
+
   size: number;
 
   $frames: Stream<number[]>;

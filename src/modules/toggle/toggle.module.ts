@@ -8,7 +8,6 @@ export interface ToggleOptions {
 
 export class Toggle extends Module {
   name = 'toggle';
-  description = 'just a toggle...';
 
   $text: Stream<string>;
   $checked = new Stream(false, true);

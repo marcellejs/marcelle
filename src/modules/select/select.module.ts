@@ -9,7 +9,6 @@ export interface SelectOptions {
 
 export class Select extends Module {
   name = 'select';
-  description = 'just a select...';
 
   $options: Stream<string[]>;
   $value: Stream<string>;

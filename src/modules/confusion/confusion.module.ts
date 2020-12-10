@@ -14,7 +14,6 @@ export type ConfusionMatrix = Array<{
 
 export class Confusion extends Module {
   name = 'confusion matrix';
-  description = 'Confusion Matrix';
 
   #prediction: BatchPrediction;
 

@@ -21,7 +21,6 @@ export interface BatchPredictionOptions {
 
 export class BatchPrediction extends Module {
   name = 'batch prediction';
-  description = 'BatchPrediction';
 
   #dataStore: DataStore;
   predictionService: Service<Prediction>;

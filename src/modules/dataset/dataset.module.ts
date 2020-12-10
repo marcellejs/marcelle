@@ -29,7 +29,6 @@ function toKebabCase(str: string): string {
 
 export class Dataset extends Module {
   name = 'dataset';
-  description = 'Dataset';
 
   #unsubscribe: () => void = () => {};
   #dataStore: DataStore;

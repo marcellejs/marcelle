@@ -17,7 +17,6 @@ export interface SliderOptions {
 
 export class Slider extends Module {
   name = 'slider';
-  description = 'just a slider...';
 
   $values: Stream<number[]>;
   $min: Stream<number>;

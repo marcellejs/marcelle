@@ -7,7 +7,6 @@ import { text, Text } from '../text';
 
 export class PredictionPlot extends Module {
   name = 'prediction plot';
-  description = 'Plot the confidences associated with a prediction';
 
   $confidenceStream: Stream<{ x: string; y: number }[]>;
   #plotConfidences: Chart;

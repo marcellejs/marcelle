@@ -89,7 +89,6 @@ export interface MLPOptions {
 
 export class MLP extends TFJSClassifier {
   name = 'MLP';
-  description = 'Multilayer Perceptron';
 
   model: Sequential;
   loadFn = loadLayersModel;

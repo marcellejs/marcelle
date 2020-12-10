@@ -4,7 +4,6 @@ import { Dataset } from '../dataset';
 
 export class Browser extends Module {
   name = 'dataset browser';
-  description = 'Browser a Dataset (of images...)';
 
   #dataset: Dataset;
 

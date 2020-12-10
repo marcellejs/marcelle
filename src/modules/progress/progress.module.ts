@@ -4,7 +4,6 @@ import { MLP } from '../mlp';
 
 export class Progress extends Module {
   name = 'progress';
-  description = 'just progress...';
 
   #model: MLP;
 

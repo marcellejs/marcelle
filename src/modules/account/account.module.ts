@@ -4,7 +4,6 @@ import { DataStore } from '../../data-store';
 
 export class Account extends Module {
   name = 'account manager';
-  description = 'Account manager';
 
   #dataStore: DataStore;
 

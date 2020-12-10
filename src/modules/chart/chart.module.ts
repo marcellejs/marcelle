@@ -94,7 +94,6 @@ export interface ChartDataset {
 
 export class Chart extends Module {
   name = 'chart';
-  description = 'Simple chart based on Chart.js';
 
   #presetName: string;
   #preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };

@@ -3,7 +3,6 @@ import Component from './vis-object-detection.svelte';
 
 export class VisObjectDetection extends Module {
   name = 'Visualize Object Detections';
-  description = 'Visualize the bounding box of detected objects';
 
   $objectDetectionResults: Stream<ObjectDetectorResults>;
   $imgStream: Stream<ImageData>;
