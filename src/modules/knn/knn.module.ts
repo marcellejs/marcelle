@@ -13,11 +13,10 @@ import {
 } from '../../core';
 import { Dataset } from '../dataset/dataset.module';
 import { Catch, throwError } from '../../utils/error-handling';
-import { DataStore } from '../../data-store/data-store';
+import { DataStore } from '../../data-store';
 
 export interface KNNOptions {
   k: number;
-  dataStore: DataStore;
 }
 
 export class KNN extends Classifier(Saveable(Model as ModelConstructor<Model>)) {
@@ -33,19 +32,24 @@ export class KNN extends Classifier(Saveable(Model as ModelConstructor<Model>)) 
 
   classifier = new KNNClassifier();
 
-  constructor({ k = 3, dataStore = new DataStore() }: Partial<KNNOptions> = {}) {
-    super(dataStore);
+  constructor({ k = 3 }: Partial<KNNOptions> = {}) {
+    super();
     this.parameters = {
       k: new Stream(k, true),
     };
+  }
+
+  sync(dataStore: DataStore) {
+    super.sync(dataStore);
     this.dataStore.createService('knn-models');
     this.modelService = this.dataStore.service('knn-models') as Service<StoredModel>;
     this.dataStore.connect().then(() => {
-      this.setup();
+      this.setupSync();
     });
+    return this;
   }
 
-  async setup() {
+  async setupSync() {
     const { total, data } = (await this.modelService.find({
       query: {
         modelName: this.modelId,

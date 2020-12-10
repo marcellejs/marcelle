@@ -1,18 +1,26 @@
 import { Service } from '@feathersjs/feathers';
+import { DataStore } from '../../data-store';
 import { logger } from '../logger';
 import { ObjectId, StoredModel } from '../types';
 import type { Model, ModelConstructor } from './model';
 
 export function Saveable<TBase extends ModelConstructor<Model>>(Base: TBase) {
   abstract class SaveableModel extends Base {
+    dataStore: DataStore;
     abstract modelId: string;
     modelService: Service<StoredModel>;
     storedModelId: string;
+
+    sync(dataStore: DataStore) {
+      this.dataStore = dataStore;
+      return this;
+    }
 
     abstract beforeSave(): Promise<StoredModel | null>;
     abstract afterLoad(s: StoredModel): Promise<void>;
 
     async save(update = true): Promise<ObjectId | null> {
+      if (!this.dataStore) return null;
       const modelData = await this.beforeSave();
       if (!modelData) return null;
       if (update && this.storedModelId) {
@@ -28,7 +36,7 @@ export function Saveable<TBase extends ModelConstructor<Model>>(Base: TBase) {
     }
 
     async load(id?: ObjectId): Promise<void> {
-      if (!id && !this.storedModelId) return;
+      if (!this.dataStore || (!id && !this.storedModelId)) return;
       const res = await this.modelService.get(id || this.storedModelId);
       if (!res) return;
       await this.afterLoad(res);

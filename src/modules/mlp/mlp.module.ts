@@ -9,7 +9,6 @@ import type { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core';
 import { Stream, TFJSClassifier, logger, ClassifierResults } from '../../core';
 import { Dataset } from '../dataset/dataset.module';
 import { Catch, TrainingError } from '../../utils/error-handling';
-import { DataStore } from '../../data-store/data-store';
 
 interface TrainingData {
   training: {
@@ -86,7 +85,6 @@ export interface MLPOptions {
   layers: number[];
   epochs: number;
   batchSize: number;
-  dataStore: DataStore;
 }
 
 export class MLP extends TFJSClassifier {
@@ -105,13 +103,8 @@ export class MLP extends TFJSClassifier {
     batchSize: Stream<number>;
   };
 
-  constructor({
-    layers = [64, 32],
-    epochs = 20,
-    batchSize = 8,
-    dataStore = new DataStore(),
-  }: Partial<MLPOptions> = {}) {
-    super(dataStore);
+  constructor({ layers = [64, 32], epochs = 20, batchSize = 8 }: Partial<MLPOptions> = {}) {
+    super();
     this.parameters = {
       layers: new Stream(layers, true),
       epochs: new Stream(epochs, true),

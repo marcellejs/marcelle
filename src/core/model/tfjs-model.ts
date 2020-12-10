@@ -15,16 +15,17 @@ export abstract class TFJSModel extends Saveable(Model as ModelConstructor<Model
   abstract model: LayersModel | GraphModel | Sequential;
   abstract loadFn: typeof loadLayersModel | typeof loadGraphModel;
 
-  constructor(dataStore?: DataStore) {
-    super(dataStore);
+  sync(dataStore: DataStore) {
+    super.sync(dataStore);
     this.dataStore.createService('tfjs-models');
     this.modelService = this.dataStore.service('tfjs-models') as Service<StoredModel>;
     this.dataStore.connect().then(() => {
-      this.tfjsSetup();
+      this.setupSync();
     });
+    return this;
   }
 
-  async tfjsSetup() {
+  async setupSync() {
     const { total, data } = (await this.modelService.find({
       query: {
         modelName: this.modelId,
