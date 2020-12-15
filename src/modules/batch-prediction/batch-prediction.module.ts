@@ -32,6 +32,11 @@ export class BatchPrediction extends Module {
     super();
     this.title = name;
     this.#dataStore = dataStore || new DataStore();
+    this.$count = new Stream(
+      map((x) => x.length, this.$predictions),
+      true,
+    );
+    this.start();
     this.#dataStore
       .connect()
       .then(() => {
@@ -44,7 +49,7 @@ export class BatchPrediction extends Module {
 
   async setup(): Promise<void> {
     const serviceName = `predictions-${this.title}`;
-    this.#dataStore.createService(serviceName);
+    // this.#dataStore.createService(serviceName);
     this.predictionService = this.#dataStore.service(serviceName) as Service<Prediction>;
     this.predictionService.hooks({
       before: {
@@ -61,11 +66,6 @@ export class BatchPrediction extends Module {
       },
     });
 
-    this.$count = new Stream(
-      map((x) => x.length, this.$predictions),
-      true,
-    );
-    this.start();
     const result = await this.predictionService.find({
       query: { $select: ['id', '_id', 'label'] },
     });
