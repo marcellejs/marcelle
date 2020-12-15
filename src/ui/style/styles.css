@@ -4,7 +4,6 @@
 
 h2 {
   @apply text-lg mx-1 p-1;
-  @apply sm:hover:text-red-100;
 }
 
 .btn {

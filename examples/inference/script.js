@@ -104,6 +104,7 @@ const instanceViewer = {
       unSub();
     };
   },
+  destroy() {},
 };
 
 // -----------------------------------------------------------
@@ -126,6 +127,6 @@ dash
   .page('Batch Testing')
   .useLeft(source, classifier)
   .use(tog, trainingSetBrowser, predictButton, predictionAccuracy, confusionMatrix);
-dash.settings.use(trainingSet);
+dash.settings.dataStores(store).datasets(trainingSet).models(classifier);
 
 dash.start();

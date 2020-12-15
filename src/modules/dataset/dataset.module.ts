@@ -13,7 +13,6 @@ import {
   dataURL2ImageData,
 } from '../../data-store/hooks';
 import { saveBlob } from '../../utils/file-io';
-import Component from './dataset.svelte';
 
 export interface DatasetOptions {
   name: string;
@@ -173,19 +172,8 @@ export class Dataset extends Module {
     await saveBlob(JSON.stringify(fileContents), fileName, 'text/plain');
   }
 
-  mount(target?: HTMLElement): void {
-    const t = target || document.querySelector(`#${this.id}`);
-    if (!t) return;
-    this.destroy();
-    this.$$.app = new Component({
-      target: t,
-      props: {
-        dataset: this,
-        count: this.$count,
-        classes: this.$classes,
-      },
-    });
-  }
+  // eslint-disable-next-line class-methods-use-this
+  mount(): void {}
 
   stop(): void {
     super.stop();

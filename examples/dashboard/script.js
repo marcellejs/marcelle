@@ -1,6 +1,5 @@
 /* eslint-disable import/extensions */
 import {
-  account,
   batchPrediction,
   browser,
   button,
@@ -103,13 +102,6 @@ dash
 dash.page('Training').use(params, b, prog, plotTraining);
 dash.page('Batch Prediction').use(predictButton, confusionMatrix);
 dash.page('Real-time Prediction').useLeft(input).use(tog, plotResults);
-dash.settings.useLeft(account(store)).use(trainingSet);
+dash.settings.dataStores(store).datasets(trainingSet).models(classifier).predictions(batchMLP);
 
 dash.start();
-
-dash.$active.subscribe((x) => {
-  console.log('active', x);
-});
-dash.$page.subscribe((x) => {
-  console.log('page', x);
-});

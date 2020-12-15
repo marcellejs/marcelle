@@ -101,6 +101,6 @@ dash
 dash.page('Training').use(params, b, prog, plotTraining);
 dash.page('Batch Prediction').use(predictButton, confusionMatrix);
 dash.page('Real-time Prediction').useLeft(input).use(tog, plotResults);
-dash.settings.use(trainingSet);
+dash.settings.dataStores(store).datasets(trainingSet).models(classifier);
 
 dash.start();

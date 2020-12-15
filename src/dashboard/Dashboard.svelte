@@ -4,15 +4,17 @@
   import { getLogStream, LogLevel } from '../core/logger';
   import Routie from './routie';
   import DashboardPageComponent from './DashboardPage.svelte';
+  import DashboardSettingsComponent from './DashboardSettings.svelte';
   import type { DashboardPage } from './dashboard_page';
   import type { Stream } from '../core';
+  import type { DashboardSettings } from './dashboard_settings';
 
   const dispatch = createEventDispatcher();
 
   export let title: string;
   export let author: string;
   export let dashboards: Record<string, DashboardPage> = {};
-  export let settings: DashboardPage;
+  export let settings: DashboardSettings;
   export let page: Stream<string>;
 
   const logStream = getLogStream();
@@ -203,7 +205,7 @@
 
       <main class="main-container">
         {#if showSettings}
-          <DashboardPageComponent dashboard={settings} />
+          <DashboardSettingsComponent {settings} />
         {:else if currentDashboard}
           <DashboardPageComponent dashboard={dashboards[currentDashboard]} />
         {/if}

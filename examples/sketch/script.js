@@ -96,7 +96,7 @@ dash
   .useLeft(input, featureExtractor)
   .use(plotResults, [labelField, addToDataset], prog, trainingSetBrowser);
 dash.page('Offline Training').useLeft(trainingSetBrowser).use(params, b, prog, plotTraining);
-dash.settings.use(trainingSet);
+dash.settings.dataStores(store).datasets(trainingSet).models(classifier, featureExtractor);
 
 dash.start();
 

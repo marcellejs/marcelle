@@ -1,6 +1,7 @@
 import { DashboardPage } from './dashboard_page';
 import DashboardComponent from './Dashboard.svelte';
 import { Stream } from '../core';
+import { DashboardSettings } from './dashboard_settings';
 
 export interface DashboardOptions {
   title: string;
@@ -10,7 +11,7 @@ export interface DashboardOptions {
 export class Dashboard {
   panels: Record<string, DashboardPage> = {};
   app?: DashboardComponent;
-  settings = new DashboardPage('settings');
+  settings = new DashboardSettings();
 
   $active = new Stream(false as boolean, true);
   $page = new Stream('', true);

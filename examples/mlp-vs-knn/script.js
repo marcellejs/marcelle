@@ -147,6 +147,6 @@ dash
   );
 dash.page('Batch Prediction').use(predictButton, predictionAccuracy, [confusionMLP, confusionKNN]);
 dash.page('Real-time prediction').useLeft(input).use(tog, [plotResultsMLP, plotResultsKNN]);
-dash.settings.use(trainingSet);
+dash.settings.dataStores(store).datasets(trainingSet).models(classifierKNN, classifierMLP);
 
 dash.start();

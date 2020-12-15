@@ -1,17 +1,17 @@
 <script lang="ts">
-  import type { Stream } from '../../core';
-  import type { Dataset } from './dataset.module';
+  import type { Dataset } from '../modules/dataset';
 
   export let dataset: Dataset;
-  export let count: Stream<number>;
-  export let classes: Stream<Record<string, number>>;
+
+  $: count = dataset.$count;
+  $: classes = dataset.$classes;
 
   function downloadDataset() {
     dataset.download();
   }
 
   function uploadDataset() {
-    alert(`TODO: Upload ${dataset.name}`);
+    alert(`TODO: Upload ${dataset.title}`);
   }
 
   function clearDataset() {
@@ -19,7 +19,7 @@
   }
 </script>
 
-<span class="card-title">{dataset.name}</span>
+<span class="card-title">{dataset.title}</span>
 <p class="pb-2">
   {#if $count}
     This dataset contains

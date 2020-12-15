@@ -152,6 +152,6 @@ const dash = dashboard({
 dash.page('Widgets').use(capture, label, tog, sel, t, s, chartExample);
 dash.page('Sources').useLeft(f, imgDrop, sketch, w);
 dash.page('Data Management').useLeft(w).use([label, capture], trainingSetBrowser);
-dash.settings.use(trainingSet);
+dash.settings.dataStores(store).datasets(trainingSet);
 
 dash.start();
