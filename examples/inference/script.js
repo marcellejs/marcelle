@@ -7,6 +7,7 @@ import {
   dashboard,
   dataset,
   dataStore,
+  fileUpload,
   imageDrop,
   predictionPlot,
   text,
@@ -19,7 +20,13 @@ import {
 // -----------------------------------------------------------
 
 const source = imageDrop();
+
+const up = fileUpload();
+up.title = 'Upload model files (.json and .bin)';
 const classifier = tfImageClassifier().sync(dataStore({ location: 'localStorage' }));
+up.$files.subscribe((fl) => {
+  classifier.loadFromFiles(fl);
+});
 
 // -----------------------------------------------------------
 // CAPTURE TO DATASET
@@ -122,7 +129,10 @@ const help = text({
 });
 help.name = 'Test generic DNN classifier';
 
-dash.page('Real-time Testing').useLeft(source).use(help, classifier, [instanceViewer, plotResults]);
+dash
+  .page('Real-time Testing')
+  .useLeft(source)
+  .use(help, [up, classifier], [instanceViewer, plotResults]);
 dash
   .page('Batch Testing')
   .useLeft(source, classifier)

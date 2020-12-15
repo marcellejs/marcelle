@@ -6,6 +6,7 @@ export * from './chart';
 export * from './confusion';
 export * from './dataset';
 export * from './faker';
+export * from './file-upload';
 export * from './image-drop';
 export * from './mobilenet';
 export * from './parameters';

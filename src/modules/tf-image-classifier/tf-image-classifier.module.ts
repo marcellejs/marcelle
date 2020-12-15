@@ -1,4 +1,3 @@
-import { empty } from '@most/core';
 import { io, image as tfImage, browser, Tensor2D } from '@tensorflow/tfjs-core';
 import { LayersModel, loadLayersModel } from '@tensorflow/tfjs-layers';
 import { ClassifierResults, StoredModel, TFJSClassifier } from '../../core';
@@ -15,8 +14,8 @@ export class TfImageClassifier extends TFJSClassifier {
 
   parameters = {};
 
-  $modelFiles: Stream<[]> = new Stream(empty() as Stream<[]>, false);
   $loading: Stream<boolean> = new Stream(false as boolean, true);
+  $ready: Stream<boolean> = new Stream(false as boolean, true);
 
   model: LayersModel;
   loadFn = loadLayersModel;
@@ -24,9 +23,6 @@ export class TfImageClassifier extends TFJSClassifier {
 
   constructor() {
     super();
-    this.$modelFiles.subscribe((s) => {
-      this.loadFromFiles(s);
-    });
     this.start();
   }
 
@@ -37,7 +33,7 @@ export class TfImageClassifier extends TFJSClassifier {
 
   @Catch
   async predict(img: ImageData): Promise<ClassifierResults> {
-    if (!this.model) {
+    if (!this.model || !this.$ready.value) {
       throw new Error('Model is not loaded');
     }
     const tensorData = tfImage.resizeBilinear(browser.fromPixels(img), [
@@ -58,13 +54,23 @@ export class TfImageClassifier extends TFJSClassifier {
     };
   }
 
-  async loadFromFiles(urls: []): Promise<void> {
+  @Catch
+  async loadFromFiles(files: File[]): Promise<void> {
+    const jsonFiles = files.filter((x) => x.name.includes('.json'));
+    const weightFiles = files.filter((x) => x.name.includes('.bin'));
+    if (jsonFiles.length !== 1) {
+      const e = new Error('The provided files are not compatible with this model');
+      e.name = 'File upload error';
+      throw e;
+    }
+    this.$ready.set(false);
     this.$loading.set(true);
-    if (urls.length) {
-      this.model = await loadLayersModel(io.browserFiles(urls));
+    if (files.length) {
+      this.model = await loadLayersModel(io.browserFiles([jsonFiles[0], ...weightFiles]));
       this.inputShape = Object.values(this.model.inputs[0].shape);
       await this.save();
       this.$loading.set(false);
+      this.$ready.set(true);
     }
   }
 
@@ -77,13 +83,17 @@ export class TfImageClassifier extends TFJSClassifier {
       props: {
         title: this.title,
         loading: this.$loading,
-        modelFiles: this.$modelFiles,
+        ready: this.$ready,
       },
     });
   }
 
   async afterLoad(s: StoredModel): Promise<void> {
+    this.$loading.set(true);
+    this.$ready.set(false);
     await super.afterLoad(s);
     this.inputShape = Object.values(this.model.inputs[0].shape);
+    this.$ready.set(true);
+    this.$loading.set(false);
   }
 }
