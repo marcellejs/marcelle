@@ -81,7 +81,7 @@ interface ObjectDetectorResults {
 ### Example
 
 ```js
-const source = marcelle.imageDrop();
+const source = marcelle.imageUpload();
 const cocoClassifier = marcelle.cocoSsd();
 
 const cocoPredictionStream = source.$images
@@ -330,7 +330,7 @@ interface ClassifierResults {
 ### Example
 
 ```js
-const source = marcelle.imageDrop();
+const source = marcelle.imageUpload();
 const classifier = marcelle.tfImageClassifier();
 
 const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();

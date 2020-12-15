@@ -7,7 +7,7 @@ import {
   dashboard,
   dataset,
   dataStore,
-  imageDrop,
+  imageUpload,
   mobilenet,
   predictionPlot,
   text,
@@ -18,7 +18,7 @@ import {
 // INPUT PIPELINE & CLASSIFICATION
 // -----------------------------------------------------------
 
-const source = imageDrop();
+const source = imageUpload();
 const classifier = mobilenet();
 
 // -----------------------------------------------------------

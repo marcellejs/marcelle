@@ -2,7 +2,7 @@
 import {
   cocoSsd,
   dashboard,
-  imageDrop,
+  imageUpload,
   predictionPlot,
   toggle,
   visObjectDetection,
@@ -13,7 +13,7 @@ import {
 // INPUT PIPELINE & CLASSIFICATION
 // -----------------------------------------------------------
 
-const source = imageDrop();
+const source = imageUpload();
 const cocoClassifier = cocoSsd();
 
 // -----------------------------------------------------------

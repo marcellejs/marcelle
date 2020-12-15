@@ -103,7 +103,7 @@
 </script>
 
 <style lang="postcss">
-  .image-drop {
+  .image-upload {
     @apply mt-2;
     width: 100%;
     display: flex;
@@ -140,7 +140,7 @@
     on:dragleave={handleDragLeave}
     on:dragover={handleDragOver}
     on:drop={handleDragDrop}
-    class="image-drop">
+    class="image-upload">
     <div
       class="border-dashed border-2 border-gray-400 py-8 flex flex-col justify-center items-center">
       <p class="mb-3 font-semibold text-gray-900 flex flex-wrap justify-center">

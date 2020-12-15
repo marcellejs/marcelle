@@ -1,10 +1,10 @@
 import { never } from '@most/core';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
-import Component from './image-drop.svelte';
+import Component from './image-upload.svelte';
 
-export class ImageDrop extends Module {
-  title = 'image-drop';
+export class ImageUpload extends Module {
+  title = 'image upload';
 
   $images = new Stream(never());
   $thumbnails = new Stream(never());

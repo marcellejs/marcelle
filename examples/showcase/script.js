@@ -7,7 +7,7 @@ import {
   dataset,
   dataStore,
   faker,
-  imageDrop,
+  imageUpload,
   select,
   sketchpad,
   slider,
@@ -99,19 +99,19 @@ const f = faker({ size: 12, period: 500 });
 f.$frames.subscribe((x) => console.log('faker $frames:', x));
 
 // -----------------------------------------------------------
-// IMAGEDROP
+// IMAGE UPLOAD
 // -----------------------------------------------------------
 
-const imgDrop = imageDrop();
-imgDrop.$images.subscribe((x) => console.log('imageDrop $images:', x));
+const imgDrop = imageUpload();
+imgDrop.$images.subscribe((x) => console.log('imageUpload $images:', x));
 
 // -----------------------------------------------------------
 // SKETCHPAD
 // -----------------------------------------------------------
 
 const sketch = sketchpad();
-sketch.$strokeStart.subscribe(() => console.log('imageDrop $strokeStart'));
-sketch.$strokeEnd.subscribe(() => console.log('imageDrop $strokeEnd'));
+sketch.$strokeStart.subscribe(() => console.log('sketchpad $strokeStart'));
+sketch.$strokeEnd.subscribe(() => console.log('sketchpad $strokeEnd'));
 
 // -----------------------------------------------------------
 // WEBCAM

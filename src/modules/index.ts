@@ -7,7 +7,7 @@ export * from './confusion';
 export * from './dataset';
 export * from './faker';
 export * from './file-upload';
-export * from './image-drop';
+export * from './image-upload';
 export * from './mobilenet';
 export * from './parameters';
 export * from './prediction-plot';

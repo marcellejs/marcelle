@@ -8,7 +8,7 @@ import {
   dataset,
   dataStore,
   fileUpload,
-  imageDrop,
+  imageUpload,
   predictionPlot,
   text,
   tfImageClassifier,
@@ -19,7 +19,7 @@ import {
 // INPUT PIPELINE & CLASSIFICATION
 // -----------------------------------------------------------
 
-const source = imageDrop();
+const source = imageUpload();
 
 const up = fileUpload();
 up.title = 'Upload model files (.json and .bin)';
