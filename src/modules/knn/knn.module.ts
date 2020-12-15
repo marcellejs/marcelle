@@ -41,7 +41,7 @@ export class KNN extends Classifier(Saveable(Model as ModelConstructor<Model>)) 
 
   sync(dataStore: DataStore) {
     super.sync(dataStore);
-    this.dataStore.createService('knn-models');
+    // this.dataStore.createService('knn-models');
     this.modelService = this.dataStore.service('knn-models') as Service<StoredModel>;
     this.dataStore.connect().then(() => {
       this.setupSync();

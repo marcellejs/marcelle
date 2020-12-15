@@ -18,7 +18,7 @@ export abstract class TFJSModel extends Saveable(Model as ModelConstructor<Model
 
   sync(dataStore: DataStore) {
     super.sync(dataStore);
-    this.dataStore.createService('tfjs-models');
+    // this.dataStore.createService('tfjs-models');
     this.modelService = this.dataStore.service('tfjs-models') as Service<StoredModel>;
     this.dataStore.connect().then(() => {
       this.setupSync();

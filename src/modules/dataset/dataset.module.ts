@@ -75,7 +75,7 @@ export class Dataset extends Module {
 
   async setup(): Promise<void> {
     const serviceName = toKebabCase(`instances-${this.title}`);
-    this.#dataStore.createService(serviceName);
+    // this.#dataStore.createService(serviceName);
     this.instanceService = this.#dataStore.service(serviceName) as Service<Instance>;
     this.instanceService.hooks({
       before: {

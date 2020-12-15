@@ -8,6 +8,7 @@ import { addObjectId, renameIdField, createDate, updateDate } from './hooks';
 import { logger } from '../core/logger';
 import Login from './Login.svelte';
 import { throwError } from '../utils/error-handling';
+import { Stream } from '../core/stream';
 
 function isValidUrl(str: string) {
   try {
@@ -45,9 +46,11 @@ export class DataStore {
   #connectPromise: Promise<void>;
   #authenticationPromise: Promise<void>;
 
+  $services: Stream<string[]> = new Stream([], true);
+
   backend: DataStoreBackend;
 
-  createService: (name: string) => void = () => {};
+  #createService: (name: string) => void = () => {};
 
   constructor({ location = 'memory' }: DataStoreOptions = {}) {
     this.feathers = feathers();
@@ -73,12 +76,12 @@ export class DataStore {
             max: 200,
           },
         });
-      this.createService = (name: string) => {
+      this.#createService = (name: string) => {
         this.feathers.use(`/${name}`, storageService(name));
       };
     } else if (location === 'memory') {
       this.backend = DataStoreBackend.Memory;
-      this.createService = (name: string) => {
+      this.#createService = (name: string) => {
         this.feathers.use(
           `/${name}`,
           memoryService({
@@ -176,7 +179,10 @@ export class DataStore {
   }
 
   service(name: string): Service<unknown> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    if (!Object.keys(this.feathers.services).includes(name)) {
+      this.#createService(name);
+      this.$services.set(Object.keys(this.feathers.services));
+    }
     return this.feathers.service(name);
   }
 
