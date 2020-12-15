@@ -89,6 +89,7 @@
 
   onMount(async () => {
     await tick();
+    await tick();
     uploadInput.addEventListener('change', (e) => {
       processFiles((e.target as HTMLInputElement).files);
     });
