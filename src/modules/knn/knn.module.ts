@@ -53,7 +53,7 @@ export class KNN extends Classifier(Saveable(Model as ModelConstructor<Model>)) 
     const { total, data } = (await this.modelService.find({
       query: {
         modelName: this.modelId,
-        $select: ['_id', 'id'],
+        $select: ['id'],
         $limit: 1,
         $sort: {
           updatedAt: -1,

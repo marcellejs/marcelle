@@ -67,7 +67,7 @@ export class BatchPrediction extends Module {
     });
 
     const result = await this.predictionService.find({
-      query: { $select: ['id', '_id', 'label'] },
+      query: { $select: ['id', 'label'] },
     });
     const { data } = result as Paginated<Prediction>;
     this.$predictions.set(data.map((x) => x.id));
@@ -97,6 +97,7 @@ export class BatchPrediction extends Module {
     const result = await this.predictionService.find({ query: { $select: ['id'] } });
     const { data } = result as Paginated<Prediction>;
     await Promise.all(data.map(({ id }) => this.predictionService.remove(id)));
+    this.$predictions.set([]);
   }
 
   // eslint-disable-next-line class-methods-use-this

@@ -71,6 +71,7 @@ export class DataStore {
         localStorageService({
           storage: window.localStorage,
           name,
+          id: '_id',
           paginate: {
             default: 100,
             max: 200,
@@ -85,6 +86,7 @@ export class DataStore {
         this.feathers.use(
           `/${name}`,
           memoryService({
+            id: '_id',
             paginate: {
               default: 100,
               max: 200,
@@ -190,6 +192,7 @@ export class DataStore {
     const beforeCreate = this.backend !== DataStoreBackend.Remote ? [addObjectId] : [];
     this.feathers.hooks({
       before: {
+        find: [renameIdField],
         create: beforeCreate.concat([createDate]),
         update: [updateDate],
         patch: [updateDate],

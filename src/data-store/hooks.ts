@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { HookContext } from '@feathersjs/feathers';
 import genId from './objectid';
 import { convertURIToImageData } from '../utils/image';
@@ -14,25 +15,27 @@ export function addObjectId(context: HookContext): HookContext {
 }
 
 export function renameIdField(context: HookContext): HookContext {
-  const { result } = context;
-  if (!result) return context;
-
-  // eslint-disable-next-line no-underscore-dangle
-  if (result._id) {
-    // eslint-disable-next-line no-underscore-dangle
-    result.id = result._id;
-    // eslint-disable-next-line no-underscore-dangle
-    delete result._id;
-  } else if (result.total && Array.isArray(result.data)) {
-    (result.data as [{ _id?: string }]).forEach((x, i) => {
-      // eslint-disable-next-line no-underscore-dangle
-      if (x._id) {
-        // eslint-disable-next-line no-underscore-dangle
-        result.data[i].id = result.data[i]._id;
-        // eslint-disable-next-line no-underscore-dangle
-        delete result.data[i]._id;
-      }
-    });
+  const { result, params } = context;
+  if (result) {
+    if (result._id) {
+      result.id = result._id;
+      delete result._id;
+    } else if (result.total && Array.isArray(result.data)) {
+      (result.data as [{ _id?: string }]).forEach((x, i) => {
+        if (x._id) {
+          result.data[i].id = result.data[i]._id;
+          delete result.data[i]._id;
+        }
+      });
+    }
+  } else if (params && params.query) {
+    if (params.query.id) {
+      context.params.query._id = context.params.query.id;
+      delete context.params.query.id;
+    }
+    if (params.query.$select && params.query.$select.includes('id')) {
+      context.params.query.$select.push('_id');
+    }
   }
 
   return context;
@@ -104,7 +107,6 @@ export async function dataURL2ImageData(context: HookContext): Promise<HookConte
   const hasImageData = (x: { data?: string }) =>
     x.data && typeof x.data === 'string' && x.data.slice(0, 22) === 'data:image/jpeg;base64';
 
-  // eslint-disable-next-line no-underscore-dangle
   if (result._id && hasImageData(result)) {
     result.data = await convertURIToImageData(result.data);
   } else if (result.total && Array.isArray(result.data)) {

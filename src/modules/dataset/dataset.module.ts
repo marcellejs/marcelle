@@ -93,7 +93,7 @@ export class Dataset extends Module {
 
     // Fetch instances
     const resInstances = await this.instanceService.find({
-      query: { $select: ['id', '_id', 'label'] },
+      query: { $select: ['id', 'label'] },
     });
     const { data } = resInstances as Paginated<Instance>;
     this.$instances.set(data.map((x) => x.id));
