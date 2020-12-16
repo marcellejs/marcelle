@@ -1,16 +1,10 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
   import ModuleBase from '../../core/ModuleBase.svelte';
   import type { DataStore } from '../../data-store';
   import Spinner from '../../ui/widgets/Spinner.svelte';
 
   export let title: string;
   export let dataStore: DataStore;
-
-  onMount(() => {
-    console.log('dataStore', dataStore);
-  });
 
   function logout() {
     dataStore.logout();

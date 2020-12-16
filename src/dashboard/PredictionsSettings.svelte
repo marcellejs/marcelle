@@ -4,7 +4,7 @@
   export let prediction: BatchPrediction;
 
   $: count = prediction.$count;
-  $: console.log('prediction', prediction);
+
 
   function downloadPredictions() {
     alert(`TODO: Download ${prediction.title}`);

@@ -13,6 +13,7 @@ import {
   dataURL2ImageData,
 } from '../../data-store/hooks';
 import { saveBlob } from '../../utils/file-io';
+import { throwError } from '../../utils/error-handling';
 
 export interface DatasetOptions {
   name: string;
@@ -24,6 +25,20 @@ function toKebabCase(str: string): string {
     .replace(/([a-z])([A-Z])/g, '$1-$2')
     .replace(/[\s_]+/g, '-')
     .toLowerCase();
+}
+
+async function readJSONFile(f: File): Promise<any> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const fileContent = JSON.parse(reader.result as string);
+      resolve(fileContent);
+    };
+    reader.onerror = (e) => {
+      reject(e);
+    };
+    reader.readAsText(f);
+  });
 }
 
 export class Dataset extends Module {
@@ -111,16 +126,20 @@ export class Dataset extends Module {
       this.#unsubscribe = () => {};
       return;
     }
-    this.#unsubscribe = instanceStream.subscribe(async (instance: Instance) => {
-      if (!instance) return;
-      const { id } = await this.instanceService.create(instance);
-      const x = Object.keys(this.$classes.value).includes(instance.label)
-        ? this.$classes.value[instance.label]
-        : [];
-      this.$classes.set({ ...this.$classes.value, [instance.label]: [...x, id] });
-      this.$instances.set([...this.$instances.value, id]);
-      this.$created.set(id);
+    this.#unsubscribe = instanceStream.subscribe((instance: Instance) => {
+      this.addInstance(instance);
     });
+  }
+
+  async addInstance(instance: Instance) {
+    if (!instance) return;
+    const { id } = await this.instanceService.create(instance);
+    const x = Object.keys(this.$classes.value).includes(instance.label)
+      ? this.$classes.value[instance.label]
+      : [];
+    this.$classes.set({ ...this.$classes.value, [instance.label]: [...x, id] });
+    this.$instances.set([...this.$instances.value, id]);
+    this.$created.set(id);
   }
 
   async renameClass(label: string, newLabel: string): Promise<void> {
@@ -170,6 +189,23 @@ export class Dataset extends Module {
     const today = new Date(Date.now());
     const fileName = `${this.title}-${today.toISOString()}.json`;
     await saveBlob(JSON.stringify(fileContents), fileName, 'text/plain');
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  async upload(files: File[]): Promise<void> {
+    const jsonFiles = await Promise.all(
+      files.filter((f) => f.type === 'application/json').map((f) => readJSONFile(f)),
+    );
+    await Promise.all(
+      jsonFiles.map((fileContent: { instances: Instance[] }) => {
+        return fileContent.instances.map((instance: Instance) => {
+          const { id, ...instanceNoId } = instance;
+          return this.addInstance(instanceNoId).catch((e) => {
+            throwError(e);
+          });
+        });
+      }),
+    );
   }
 
   // eslint-disable-next-line class-methods-use-this
