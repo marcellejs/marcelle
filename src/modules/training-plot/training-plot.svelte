@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount } from 'svelte';
+  import { onDestroy, onMount, tick } from 'svelte';
   import type { Chart } from '../chart';
 
   export let plotLosses: Chart;
@@ -8,7 +8,8 @@
   let lossElt: HTMLElement;
   let accElt: HTMLElement;
 
-  onMount(() => {
+  onMount(async () => {
+    await tick();
     plotLosses.mount(lossElt);
     plotAccuracies.mount(accElt);
   });
