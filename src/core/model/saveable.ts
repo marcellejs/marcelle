@@ -4,6 +4,20 @@ import { logger } from '../logger';
 import { ObjectId, StoredModel } from '../types';
 import type { Model, ModelConstructor } from './model';
 
+export interface HookContext {
+  model?: StoredModel | null;
+  meta?: {
+    labels?: string[];
+    [key: string]: unknown;
+  };
+}
+type HookFn = (context?: HookContext) => Promise<HookContext>;
+type Hook = {
+  action: 'save' | 'load' | 'download' | 'upload';
+  when: 'before' | 'after';
+  fn: HookFn;
+};
+
 export function Saveable<TBase extends ModelConstructor<Model>>(Base: TBase) {
   abstract class SaveableModel extends Base {
     dataStore: DataStore;
@@ -11,24 +25,47 @@ export function Saveable<TBase extends ModelConstructor<Model>>(Base: TBase) {
     modelService: Service<StoredModel>;
     storedModelId: string;
 
+    protected hooks: Array<Hook> = [];
+
+    protected registerHook(
+      action: 'save' | 'load' | 'download' | 'upload',
+      when: 'before' | 'after',
+      fn: (context?: HookContext) => Promise<HookContext>,
+    ) {
+      this.hooks.push({
+        action,
+        when,
+        fn,
+      });
+    }
+
+    protected async processHooks(
+      action: 'save' | 'load' | 'download' | 'upload',
+      when: 'before' | 'after',
+      context: HookContext = {},
+    ) {
+      const hooks = this.hooks
+        .filter((x) => x.action === action && x.when === when)
+        .map((x) => x.fn);
+      return hooks.reduce(async (res, fn) => fn(await res), Promise.resolve(context));
+    }
+
     sync(dataStore: DataStore) {
       this.dataStore = dataStore;
       return this;
     }
 
-    abstract beforeSave(): Promise<StoredModel | null>;
-    abstract afterLoad(s: StoredModel): Promise<void>;
-
     async save(update = true): Promise<ObjectId | null> {
       if (!this.dataStore) return null;
-      const modelData = await this.beforeSave();
-      if (!modelData) return null;
+      const { model } = await this.processHooks('save', 'before');
+      if (!model) return null;
       if (update && this.storedModelId) {
-        await this.modelService.update(this.storedModelId, modelData);
+        await this.modelService.update(this.storedModelId, model);
       } else {
-        const res = await this.modelService.create(modelData);
+        const res = await this.modelService.create(model);
         this.storedModelId = res.id;
       }
+      await this.processHooks('save', 'after');
       logger.info(
         `Model ${this.modelId} was saved to data store at location ${this.dataStore.location}`,
       );
@@ -37,9 +74,10 @@ export function Saveable<TBase extends ModelConstructor<Model>>(Base: TBase) {
 
     async load(id?: ObjectId): Promise<void> {
       if (!this.dataStore || (!id && !this.storedModelId)) return;
-      const res = await this.modelService.get(id || this.storedModelId);
-      if (!res) return;
-      await this.afterLoad(res);
+      await this.processHooks('load', 'before');
+      const model = await this.modelService.get(id || this.storedModelId);
+      if (!model) return;
+      await this.processHooks('load', 'after', { model });
       this.$training.set({
         status: 'loaded',
       });
@@ -48,7 +86,8 @@ export function Saveable<TBase extends ModelConstructor<Model>>(Base: TBase) {
       );
     }
 
-    abstract download(): void;
+    abstract download(): Promise<void>;
+    abstract upload(...files: File[]): Promise<void>;
 
     parametersSnapshot(): Record<string, unknown> {
       const params: Record<string, unknown> = {};

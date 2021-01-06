@@ -9,16 +9,36 @@ import { Model, ModelConstructor } from './model';
 import { Classifier } from './classifier';
 import { DataStoreBackend } from '../../data-store/data-store';
 import { ObjectDetector } from './object-detector';
-import { Saveable } from './saveable';
+import { Saveable, HookContext } from './saveable';
 import { saveBlob } from '../../utils/file-io';
 
 export abstract class TFJSModel extends Saveable(Model as ModelConstructor<Model>) {
   abstract model: LayersModel | GraphModel | Sequential;
   abstract loadFn: typeof loadLayersModel | typeof loadGraphModel;
 
+  constructor(...args: any[]) {
+    super(...args);
+    this.registerHook('save', 'before', async (context) => {
+      context.model = await this.beforeSave();
+      return context;
+    });
+    this.registerHook('load', 'after', async (context) => {
+      await this.afterLoad(context.model);
+      return context;
+    });
+    this.registerHook('download', 'before', async (context) => {
+      context.meta = {
+        ...context.meta,
+        modelType: 'tfjs-model',
+        modelName: this.modelId,
+        parameters: this.parametersSnapshot(),
+      };
+      return context;
+    });
+  }
+
   sync(dataStore: DataStore) {
     super.sync(dataStore);
-    // this.dataStore.createService('tfjs-models');
     this.modelService = this.dataStore.service('tfjs-models') as Service<StoredModel>;
     this.dataStore.connect().then(() => {
       this.setupSync();
@@ -87,18 +107,11 @@ export abstract class TFJSModel extends Saveable(Model as ModelConstructor<Model
     }
   }
 
-  prepareDownload() {
-    return {
-      modelType: 'tfjs-model',
-      modelName: this.modelId,
-      parameters: this.parametersSnapshot(),
-    };
-  }
-
-  download() {
+  async download() {
+    const { model, meta } = await this.processHooks('download', 'before');
+    meta.labels = model.labels;
     const dateSaved = new Date(Date.now());
-    const fileMeta = this.prepareDownload();
-    this.model.save(
+    await this.model.save(
       io.withSaveHandler(async (data) => {
         const weightsManifest = {
           modelTopology: data.modelTopology,
@@ -108,50 +121,86 @@ export abstract class TFJSModel extends Saveable(Model as ModelConstructor<Model
               weights: data.weightSpecs,
             },
           ],
-          marcelle: fileMeta,
+          marcelle: meta,
         };
         await saveBlob(data.weightData, `${this.modelId}.weights.bin`, 'application/octet-stream');
         await saveBlob(JSON.stringify(weightsManifest), `${this.modelId}.json`, 'text/plain');
         return { modelArtifactsInfo: { dateSaved, modelTopologyType: 'JSON' } };
       }),
     );
+    await this.processHooks('download', 'after', { meta });
+  }
+
+  async upload(...files: File[]): Promise<void> {
+    await this.processHooks('upload', 'before');
+    const jsonFiles = files.filter((x) => x.name.includes('.json'));
+    const weightFiles = files.filter((x) => x.name.includes('.bin'));
+    const { marcelle: meta } = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const obj = JSON.parse(reader.result as string);
+        resolve(obj);
+      };
+      reader.onerror = reject;
+      reader.readAsText(jsonFiles[0]);
+    });
+    if (jsonFiles.length === 1 && files.length) {
+      this.model = await this.loadFn(io.browserFiles([jsonFiles[0], ...weightFiles]));
+      await this.processHooks('upload', 'after', { meta });
+      this.save();
+    } else {
+      await this.processHooks('upload', 'after', { meta });
+      const e = new Error('The provided files are not compatible with this model');
+      e.name = 'File upload error';
+      throw e;
+    }
   }
 }
 
 export abstract class TFJSClassifier extends Classifier(TFJSModel as ModelConstructor<TFJSModel>) {
-  async beforeSave(): Promise<StoredModel | null> {
-    const modelData = await super.beforeSave();
-    modelData.labels = this.labels;
-    return modelData;
-  }
-
-  async afterLoad(s: StoredModel): Promise<void> {
-    await super.afterLoad(s);
-    this.labels = s.labels;
-  }
-
-  prepareDownload() {
-    const fileMeta = super.prepareDownload();
-    return { ...fileMeta, labels: this.labels };
+  constructor(...args: any[]) {
+    super(...args);
+    const beforeHook = async (context: HookContext) => {
+      context.model = { ...context.model, labels: this.labels };
+      return context;
+    };
+    const afterHook = async (context: HookContext) => {
+      if (context.model && context.model.labels) {
+        this.labels = context.model.labels;
+      }
+      if (context.meta && context.meta.labels) {
+        this.labels = context.meta.labels;
+      }
+      return context;
+    };
+    this.registerHook('save', 'before', beforeHook);
+    this.registerHook('load', 'after', afterHook);
+    this.registerHook('download', 'before', beforeHook);
+    this.registerHook('upload', 'after', afterHook);
   }
 }
 
 export abstract class TFJSObjectDetector extends ObjectDetector(
   TFJSModel as ModelConstructor<TFJSModel>,
 ) {
-  async beforeSave(): Promise<StoredModel | null> {
-    const modelData = await super.beforeSave();
-    modelData.labels = this.labels;
-    return modelData;
-  }
-
-  async afterLoad(s: StoredModel): Promise<void> {
-    await super.afterLoad(s);
-    this.labels = s.labels;
-  }
-
-  prepareDownload() {
-    const fileMeta = super.prepareDownload();
-    return { ...fileMeta, labels: this.labels };
+  constructor(...args: any[]) {
+    super(...args);
+    const beforeHook = async (context: HookContext) => {
+      context.model = { ...context.model, labels: this.labels };
+      return context;
+    };
+    const afterHook = async (context: HookContext) => {
+      if (context.model && context.model.labels) {
+        this.labels = context.model.labels;
+      }
+      if (context.meta && context.model.labels) {
+        this.labels = context.model.labels;
+      }
+      return context;
+    };
+    this.registerHook('save', 'before', beforeHook);
+    this.registerHook('load', 'after', afterHook);
+    this.registerHook('download', 'before', beforeHook);
+    this.registerHook('upload', 'after', afterHook);
   }
 }

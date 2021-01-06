@@ -28,9 +28,9 @@ const input = webcam();
 const featureExtractor = mobilenet();
 
 const label = textfield();
-label.name = 'Instance label';
+label.title = 'Instance label';
 const capture = button({ text: 'Hold to record instances' });
-capture.name = 'Capture instances to the training set';
+capture.title = 'Capture instances to the training set';
 
 const instances = input.$images
   .filter(() => capture.$down.value)
@@ -54,23 +54,23 @@ const trainingSetBrowser = browser(trainingSet);
 // -----------------------------------------------------------
 
 const b = button({ text: 'Train' });
-b.name = 'Training Launcher';
+b.title = 'Training Launcher';
 
 // KNN
 const classifierKNN = knn({ k: 3 }).sync(store);
 const paramsKNN = parameters(classifierKNN);
-paramsKNN.name = 'KNN: Parameters';
+paramsKNN.title = 'KNN: Parameters';
 const progressKNN = progress(classifierKNN);
-progressKNN.name = 'KNN: Training Progress';
+progressKNN.title = 'KNN: Training Progress';
 
 // MLP
 const classifierMLP = mlp({ layers: [128, 64], epochs: 30 }).sync(store);
 const paramsMLP = parameters(classifierMLP);
-paramsMLP.name = 'MLP: Parameters';
+paramsMLP.title = 'MLP: Parameters';
 const progressMLP = progress(classifierMLP);
-progressMLP.name = 'MLP: Training Progress';
+progressMLP.title = 'MLP: Training Progress';
 const plotTrainingMLP = trainingPlot(classifierMLP);
-plotTrainingMLP.name = 'MLP: Training Monitoring';
+plotTrainingMLP.title = 'MLP: Training Monitoring';
 
 b.$click.subscribe(() => {
   classifierKNN.train(trainingSet);
@@ -86,9 +86,9 @@ const batchKNN = batchPrediction({ name: 'knn', dataStore: store });
 const predictButton = button({ text: 'Update predictions' });
 const predictionAccuracy = text({ text: 'Waiting for predictions...' });
 const confusionMLP = confusion(batchMLP);
-confusionMLP.name = 'MLP: Confusion Matrix';
+confusionMLP.title = 'MLP: Confusion Matrix';
 const confusionKNN = confusion(batchKNN);
-confusionKNN.name = 'KNN: Confusion Matrix';
+confusionKNN.title = 'KNN: Confusion Matrix';
 
 predictButton.$click.subscribe(async () => {
   await batchMLP.clear();
@@ -116,9 +116,9 @@ const predictionStreamKNN = rtFeatureStream
   .awaitPromises();
 
 const plotResultsMLP = predictionPlot(predictionStreamMLP);
-plotResultsMLP.name = 'Predictions: MLP';
+plotResultsMLP.title = 'Predictions: MLP';
 const plotResultsKNN = predictionPlot(predictionStreamKNN);
-plotResultsKNN.name = 'Predictions: KNN';
+plotResultsKNN.title = 'Predictions: KNN';
 
 // -----------------------------------------------------------
 // DASHBOARDS

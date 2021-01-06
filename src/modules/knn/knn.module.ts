@@ -34,6 +34,14 @@ export class KNN extends Classifier(Saveable(Model as ModelConstructor<Model>)) 
 
   constructor({ k = 3 }: Partial<KNNOptions> = {}) {
     super();
+    this.registerHook('save', 'before', async (context) => {
+      context.model = await this.write();
+      return context;
+    });
+    this.registerHook('load', 'after', async (context) => {
+      await this.read(context.model);
+      return context;
+    });
     this.parameters = {
       k: new Stream(k, true),
     };
@@ -41,7 +49,6 @@ export class KNN extends Classifier(Saveable(Model as ModelConstructor<Model>)) 
 
   sync(dataStore: DataStore) {
     super.sync(dataStore);
-    // this.dataStore.createService('knn-models');
     this.modelService = this.dataStore.service('knn-models') as Service<StoredModel>;
     this.dataStore.connect().then(() => {
       this.setupSync();
@@ -121,7 +128,7 @@ export class KNN extends Classifier(Saveable(Model as ModelConstructor<Model>)) 
     delete this.classifier;
   }
 
-  async beforeSave(): Promise<StoredModel | null> {
+  private async write(): Promise<StoredModel | null> {
     if (!this.classifier) return null;
     const dataset = this.classifier.getClassifierDataset();
     const datasetObj: Record<string, number[][]> = {};
@@ -138,7 +145,7 @@ export class KNN extends Classifier(Saveable(Model as ModelConstructor<Model>)) 
     };
   }
 
-  async afterLoad(s: StoredModel): Promise<void> {
+  private async read(s: StoredModel): Promise<void> {
     const dataset = s.data as Record<string, number[][]>;
     if (!dataset) return;
     const tensorObj: Record<string, Tensor2D> = {};
@@ -152,9 +159,23 @@ export class KNN extends Classifier(Saveable(Model as ModelConstructor<Model>)) 
     });
   }
 
-  download() {
-    this.beforeSave().then((fileMeta) => {
-      saveBlob(JSON.stringify(fileMeta), `${this.modelId}.json`, 'text/plain');
+  async download() {
+    const model = await this.write();
+    saveBlob(JSON.stringify(model), `${this.modelId}.json`, 'text/plain');
+  }
+
+  async upload(...files: File[]): Promise<void> {
+    const jsonFiles = files.filter((x) => x.name.includes('.json'));
+    const model = await new Promise((resolve: (o: StoredModel) => void, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const obj = JSON.parse(reader.result as string);
+        resolve(obj);
+      };
+      reader.onerror = reject;
+      reader.readAsText(jsonFiles[0]);
     });
+    await this.read(model);
+    this.save();
   }
 }

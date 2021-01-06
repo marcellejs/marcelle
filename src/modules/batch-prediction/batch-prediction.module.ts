@@ -49,7 +49,6 @@ export class BatchPrediction extends Module {
 
   async setup(): Promise<void> {
     const serviceName = `predictions-${this.title}`;
-    // this.#dataStore.createService(serviceName);
     this.predictionService = this.#dataStore.service(serviceName) as Service<Prediction>;
     this.predictionService.hooks({
       before: {
