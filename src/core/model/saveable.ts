@@ -25,26 +25,26 @@ export function Saveable<TBase extends ModelConstructor<Model>>(Base: TBase) {
     modelService: Service<StoredModel>;
     storedModelId: string;
 
-    protected hooks: Array<Hook> = [];
+    #hooks: Array<Hook> = [];
 
-    protected registerHook(
+    registerHook(
       action: 'save' | 'load' | 'download' | 'upload',
       when: 'before' | 'after',
       fn: (context?: HookContext) => Promise<HookContext>,
     ) {
-      this.hooks.push({
+      this.#hooks.push({
         action,
         when,
         fn,
       });
     }
 
-    protected async processHooks(
+    async processHooks(
       action: 'save' | 'load' | 'download' | 'upload',
       when: 'before' | 'after',
       context: HookContext = {},
     ) {
-      const hooks = this.hooks
+      const hooks = this.#hooks
         .filter((x) => x.action === action && x.when === when)
         .map((x) => x.fn);
       return hooks.reduce(async (res, fn) => fn(await res), Promise.resolve(context));

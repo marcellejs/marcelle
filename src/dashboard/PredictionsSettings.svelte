@@ -5,7 +5,6 @@
 
   $: count = prediction.$count;
 
-
   function downloadPredictions() {
     alert(`TODO: Download ${prediction.title}`);
     // prediction.download();
