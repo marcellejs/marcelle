@@ -13,6 +13,8 @@ import {
 import { Dataset } from '../dataset';
 import { MLP } from '../mlp';
 import { logger } from '../../core';
+import { readJSONFile, saveBlob } from '../../utils/file-io';
+import { throwError } from '../../utils/error-handling';
 
 export interface BatchPredictionOptions {
   name: string;
@@ -101,4 +103,39 @@ export class BatchPrediction extends Module {
 
   // eslint-disable-next-line class-methods-use-this
   mount(): void {}
+
+  async download(): Promise<void> {
+    const predictions = await this.predictionService.find();
+    const fileContents = {
+      marcelleMeta: {
+        type: 'predictions',
+      },
+      predictions: (predictions as Paginated<Prediction>).data,
+    };
+    const today = new Date(Date.now());
+    const fileName = `${this.title}-${today.toISOString()}.json`;
+    await saveBlob(JSON.stringify(fileContents), fileName, 'text/plain');
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  async upload(files: File[]): Promise<void> {
+    const jsonFiles = await Promise.all(
+      files.filter((f) => f.type === 'application/json').map((f) => readJSONFile(f)),
+    );
+    const preds = await Promise.all(
+      jsonFiles.map((fileContent: { predictions: Prediction[] }) => {
+        return Promise.all(
+          fileContent.predictions.map((prediction: Prediction) => {
+            const { id, ...predictionNoId } = prediction;
+            return this.predictionService
+              .create(predictionNoId, { query: { $select: ['id'] } })
+              .catch((e) => {
+                throwError(e);
+              });
+          }),
+        );
+      }),
+    );
+    this.$predictions.set(preds.flat().map((x) => (x as Prediction).id));
+  }
 }

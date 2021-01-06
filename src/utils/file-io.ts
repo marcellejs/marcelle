@@ -12,17 +12,16 @@ export async function saveBlob(
   link.click();
 }
 
-// export async function readJsonFile(inputFile) {
-//   const temporaryFileReader = new FileReader();
-//   return new Promise((resolve, reject) => {
-//     temporaryFileReader.onerror = () => {
-//       temporaryFileReader.abort();
-//       reject(new DOMException('Problem parsing input file.'));
-//     };
-
-//     temporaryFileReader.onload = () => {
-//       resolve(JSON.parse(temporaryFileReader.result));
-//     };
-//     temporaryFileReader.readAsText(inputFile);
-//   });
-// }
+export async function readJSONFile(f: File): Promise<any> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const fileContent = JSON.parse(reader.result as string);
+      resolve(fileContent);
+    };
+    reader.onerror = (e) => {
+      reject(e);
+    };
+    reader.readAsText(f);
+  });
+}

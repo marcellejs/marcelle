@@ -12,7 +12,7 @@ import {
   limitToScope,
   dataURL2ImageData,
 } from '../../data-store/hooks';
-import { saveBlob } from '../../utils/file-io';
+import { readJSONFile, saveBlob } from '../../utils/file-io';
 import { throwError } from '../../utils/error-handling';
 
 export interface DatasetOptions {
@@ -25,20 +25,6 @@ function toKebabCase(str: string): string {
     .replace(/([a-z])([A-Z])/g, '$1-$2')
     .replace(/[\s_]+/g, '-')
     .toLowerCase();
-}
-
-async function readJSONFile(f: File): Promise<any> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const fileContent = JSON.parse(reader.result as string);
-      resolve(fileContent);
-    };
-    reader.onerror = (e) => {
-      reject(e);
-    };
-    reader.readAsText(f);
-  });
 }
 
 export class Dataset extends Module {
