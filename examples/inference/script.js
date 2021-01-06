@@ -61,7 +61,7 @@ const batchTesting = batchPrediction({ name: 'mobilenet', dataStore: store });
 const predictButton = button({ text: 'Update predictions' });
 const predictionAccuracy = text({ text: 'Waiting for predictions...' });
 const confusionMatrix = confusion(batchTesting);
-confusionMatrix.name = 'Mobilenet: Confusion Matrix';
+confusionMatrix.title = 'Mobilenet: Confusion Matrix';
 
 predictButton.$click.subscribe(async () => {
   await batchTesting.clear();
@@ -127,7 +127,7 @@ const help = text({
   text:
     'In this example, you can upload a pre-trained classification model (converted from a Keras model, see examples here: https://keras.io/api/applications/) and perform inference with input images of your choice.',
 });
-help.name = 'Test generic DNN classifier';
+help.title = 'Test generic DNN classifier';
 
 dash
   .page('Real-time Testing')

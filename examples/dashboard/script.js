@@ -26,9 +26,9 @@ const input = webcam();
 const featureExtractor = mobilenet();
 
 const label = textfield();
-label.name = 'Instance label';
+label.title = 'Instance label';
 const capture = button({ text: 'Hold to record instances' });
-capture.name = 'Capture instances to the training set';
+capture.title = 'Capture instances to the training set';
 
 const instances = input.$images
   .filter(() => capture.$down.value)
@@ -52,7 +52,7 @@ const trainingSetBrowser = browser(trainingSet);
 // -----------------------------------------------------------
 
 const b = button({ text: 'Train' });
-b.name = 'Training Launcher';
+b.title = 'Training Launcher';
 const classifier = mlp({ layers: [64, 32], epochs: 20 }).sync(store);
 b.$click.subscribe(() => classifier.train(trainingSet));
 

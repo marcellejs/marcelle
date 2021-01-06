@@ -22,7 +22,7 @@ export class GanTrainer {
     sample_models_at = [0, 100, 250, 500, 1000, 2000],
   } = {}) {
     this.id = 'remote-gan-emulator';
-    this.name = 'remote GAN (Emulator)';
+    this.title = 'remote GAN (Emulator)';
     this.parameters = {
       epochs: createStream(epochs, true),
     };
@@ -89,7 +89,7 @@ export function plotGanTraining(ganModel) {
   });
   plotLosses.addSeries(discriminatorLoss, 'discriminator loss');
   plotLosses.addSeries(generatorLoss, 'generator loss');
-  plotLosses.name = 'losses';
+  plotLosses.title = 'losses';
 
   const discriminatorAccuracy = createStream([], true);
   const plotAccuracy = chart({
@@ -100,7 +100,7 @@ export function plotGanTraining(ganModel) {
     },
   });
   plotAccuracy.addSeries(discriminatorAccuracy, 'discriminator accuracy');
-  plotAccuracy.name = 'discriminator accuracy';
+  plotAccuracy.title = 'discriminator accuracy';
 
   ganModel.$training.subscribe((x) => {
     if (x.status === 'start') {

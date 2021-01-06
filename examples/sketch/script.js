@@ -37,10 +37,10 @@ const store = dataStore({ location: 'localStorage' });
 const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
 
 const labelField = textfield();
-labelField.name = 'Correct the prediction if necessary';
+labelField.title = 'Correct the prediction if necessary';
 labelField.$text.set('...');
 const addToDataset = button({ text: 'Add to Dataset and Train' });
-addToDataset.name = 'Improve the classifier';
+addToDataset.title = 'Improve the classifier';
 trainingSet.capture(
   addToDataset.$click.snapshot(
     (instance) => ({ ...instance, label: labelField.$text.value }),

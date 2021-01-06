@@ -23,7 +23,7 @@ const gan = new GanTrainer({ epochs: 30000 });
 const [plotLosses, plotAccuracy] = plotGanTraining(gan);
 
 const trainingLauncher = button({ text: 'Start Training' });
-trainingLauncher.name = 'Training Launcher';
+trainingLauncher.title = 'Training Launcher';
 gan.$training
   .map((x) => x.status)
   .skipRepeats()
@@ -72,13 +72,13 @@ const modelSlider = slider({
     return '0';
   },
 });
-modelSlider.name = 'Browse Model Training History (Ticks indicate the number of epochs)';
+modelSlider.title = 'Browse Model Training History (Ticks indicate the number of epochs)';
 gan.$models.subscribe((x) => {
   modelSlider.$max.set(Math.max(1, x.length - 1));
 });
 
 const loadButton = button({ text: 'Load Model' });
-loadButton.name = 'Load model';
+loadButton.title = 'Load model';
 loadButton.$click.subscribe(async () => {
   loadButton.$loading.set(true);
   await loadModel(gan.$models.value[modelSlider.$values.value[0]]);

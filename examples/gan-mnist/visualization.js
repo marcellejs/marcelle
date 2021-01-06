@@ -6,7 +6,7 @@ class DisplayTensor {
   constructor(imgStream) {
     this.id = `module-display-${++dtNextId}`;
     this.imgStream = imgStream;
-    this.name = 'diplay image';
+    this.title = 'diplay image';
   }
 
   mount(target) {
@@ -16,7 +16,7 @@ class DisplayTensor {
     displayCanvas.style.height = '200px';
     displayCanvas.style.imageRendering = 'crisp-edges';
     displayCanvas.getContext('2d').imageSmoothingEnabled = false;
-    t.innerHTML = `<span class="card-title svelte-1mqcbxb">${this.name}</span>`;
+    t.innerHTML = `<span class="card-title svelte-1mqcbxb">${this.title}</span>`;
     t.appendChild(displayCanvas);
     const unSub = this.imgStream.subscribe((img) => {
       tf.browser.toPixels(img, displayCanvas);
@@ -36,12 +36,12 @@ class DisplaySamples {
   constructor(ganModel) {
     this.id = `module-display-samples-${++dsNextId}`;
     this.ganModel = ganModel;
-    this.name = 'GAN-generated Samples';
+    this.title = 'GAN-generated Samples';
   }
 
   mount(target) {
     const t = target || document.querySelector(`#${this.id}`);
-    t.innerHTML = `<span class="card-title svelte-1mqcbxb">${this.name}</span>`;
+    t.innerHTML = `<span class="card-title svelte-1mqcbxb">${this.title}</span>`;
     const p = document.createElement('p');
     const img = document.createElement('img');
     img.classList.add('w-full');
@@ -78,7 +78,7 @@ class DisplaySamples {
 
 export function displayTensor(s, name) {
   const m = new DisplayTensor(s);
-  m.name = name;
+  m.title = name;
   return m;
 }
 

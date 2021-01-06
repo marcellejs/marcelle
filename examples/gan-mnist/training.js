@@ -98,7 +98,7 @@ export function plotGanTraining(ganModel) {
   });
   plotLosses.addSeries(discriminatorLoss, 'discriminator loss');
   plotLosses.addSeries(generatorLoss, 'generator loss');
-  plotLosses.name = 'losses';
+  plotLosses.title = 'losses';
 
   const discriminatorAccuracy = marcelle.createStream([], true);
   const plotAccuracy = marcelle.chart({
@@ -109,7 +109,7 @@ export function plotGanTraining(ganModel) {
     },
   });
   plotAccuracy.addSeries(discriminatorAccuracy, 'discriminator accuracy');
-  plotAccuracy.name = 'discriminator accuracy';
+  plotAccuracy.title = 'discriminator accuracy';
 
   ganModel.$training.subscribe((x) => {
     if (x.status === 'start') {

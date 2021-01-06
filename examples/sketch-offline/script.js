@@ -26,9 +26,9 @@ const input = sketchpad();
 const featureExtractor = mobilenet();
 
 const label = textfield();
-label.name = 'Instance label';
+label.title = 'Instance label';
 const capture = button({ text: 'Capture this drawing' });
-capture.name = 'Capture instances to the training set';
+capture.title = 'Capture instances to the training set';
 
 const instances = capture.$click
   .sample(input.$images)

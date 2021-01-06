@@ -23,7 +23,7 @@ import {
 // -----------------------------------------------------------
 
 const capture = button({ text: 'Hold to record instances' });
-capture.name = 'Capture instances to the training set';
+capture.title = 'Capture instances to the training set';
 
 capture.$click.subscribe((x) => console.log('button $click:', x));
 
@@ -32,7 +32,7 @@ capture.$click.subscribe((x) => console.log('button $click:', x));
 // -----------------------------------------------------------
 
 const label = textfield();
-label.name = 'Instance label';
+label.title = 'Instance label';
 
 label.$text.subscribe((x) => console.log('label $text:', x));
 setTimeout(() => {

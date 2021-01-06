@@ -28,9 +28,9 @@ const input = webcam();
 const featureExtractor = mobilenet();
 
 const labelInput = textfield();
-labelInput.name = 'Instance label';
+labelInput.title = 'Instance label';
 const capture = button({ text: 'Hold to record instances' });
-capture.name = 'Capture instances to the training set';
+capture.title = 'Capture instances to the training set';
 
 const instances = input.$images
   .filter(() => capture.$down.value)

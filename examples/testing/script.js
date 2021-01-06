@@ -54,7 +54,7 @@ const batchTesting = batchPrediction({ name: 'mobilenet', dataStore: store });
 const predictButton = button({ text: 'Update predictions' });
 const predictionAccuracy = text({ text: 'Waiting for predictions...' });
 const confusionMatrix = confusion(batchTesting);
-confusionMatrix.name = 'Mobilenet: Confusion Matrix';
+confusionMatrix.title = 'Mobilenet: Confusion Matrix';
 
 predictButton.$click.subscribe(async () => {
   await batchTesting.clear();
@@ -98,9 +98,9 @@ const instanceViewer = {
 };
 
 const buttonCorrect = button({ text: 'Yes! 😛' });
-buttonCorrect.name = '';
+buttonCorrect.title = '';
 const buttonIncorrect = button({ text: 'No... 🤔' });
-buttonIncorrect.name = '';
+buttonIncorrect.title = '';
 
 let numCorrect = 0;
 let numIncorrect = 0;
@@ -135,7 +135,7 @@ const help = text({
   text:
     'In this example, you can test an existing trained model (mobilenet), by uploading your own images to assess the quality of the predictions.',
 });
-help.name = 'Test Mobilenet with your images!';
+help.title = 'Test Mobilenet with your images!';
 
 dash
   .page('Real-time Testing')
