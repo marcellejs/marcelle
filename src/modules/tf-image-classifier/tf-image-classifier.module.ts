@@ -1,9 +1,11 @@
+import { GraphModel, loadGraphModel } from '@tensorflow/tfjs-converter';
 import { io, image as tfImage, browser, Tensor2D } from '@tensorflow/tfjs-core';
 import { LayersModel, loadLayersModel } from '@tensorflow/tfjs-layers';
 import { ClassifierResults, TFJSClassifier } from '../../core';
 import { logger } from '../../core/logger';
 import { Stream } from '../../core/stream';
 import { Catch } from '../../utils/error-handling';
+import { readJSONFile } from '../../utils/file-io';
 import Component from './tf-image-classifier.svelte';
 
 export class TfImageClassifier extends TFJSClassifier {
@@ -17,8 +19,8 @@ export class TfImageClassifier extends TFJSClassifier {
   $loading: Stream<boolean> = new Stream(false as boolean, true);
   $ready: Stream<boolean> = new Stream(false as boolean, true);
 
-  model: LayersModel;
-  loadFn = loadLayersModel;
+  model: LayersModel | GraphModel;
+  loadFn: typeof loadGraphModel | typeof loadLayersModel = loadGraphModel;
   inputShape: number[];
 
   constructor() {
@@ -54,12 +56,16 @@ export class TfImageClassifier extends TFJSClassifier {
     const outputs = this.model.predict(tensorData.expandDims(0)) as Tensor2D;
     const results: number = outputs.argMax(1).dataSync()[0];
 
+    const getLabel = this.labels
+      ? (index: number) => this.labels[index]
+      : (index: number) => index.toString();
+
     return {
-      label: results.toString(),
+      label: getLabel(results),
       confidences: outputs
         .arraySync()[0]
         .reduce(
-          (x: Record<string, number>, y: number, i: number) => ({ ...x, [i.toString()]: y }),
+          (x: Record<string, number>, y: number, i: number) => ({ ...x, [getLabel(i)]: y }),
           {},
         ),
     };
@@ -77,7 +83,9 @@ export class TfImageClassifier extends TFJSClassifier {
     this.$ready.set(false);
     this.$loading.set(true);
     if (files.length) {
-      this.model = await loadLayersModel(io.browserFiles([jsonFiles[0], ...weightFiles]));
+      const jsonData = await readJSONFile(jsonFiles[0]);
+      this.loadFn = jsonData.format === 'graph-model' ? loadGraphModel : loadLayersModel;
+      this.model = await this.loadFn(io.browserFiles([jsonFiles[0], ...weightFiles]));
       this.inputShape = Object.values(this.model.inputs[0].shape);
       await this.save();
       this.$loading.set(false);
