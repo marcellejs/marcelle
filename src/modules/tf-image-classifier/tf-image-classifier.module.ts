@@ -93,6 +93,18 @@ export class TfImageClassifier extends TFJSClassifier {
     }
   }
 
+  @Catch
+  async loadFromUrl(url: string): Promise<void> {
+    this.$ready.set(false);
+    this.$loading.set(true);
+    const modelJson = await fetch(url).then((res) => res.json());
+    this.loadFn = modelJson.format === 'graph-model' ? loadGraphModel : loadLayersModel;
+    this.model = await this.loadFn(url);
+    this.inputShape = Object.values(this.model.inputs[0].shape);
+    this.$loading.set(false);
+    this.$ready.set(true);
+  }
+
   mount(target?: HTMLElement): void {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
