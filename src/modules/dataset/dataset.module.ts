@@ -1,6 +1,5 @@
-import { never, map, skipRepeatsWith } from '@most/core';
+import { map } from '@most/core';
 import type { Service, Paginated } from '@feathersjs/feathers';
-import { dequal } from 'dequal';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import { logger } from '../../core/logger';
@@ -27,6 +26,20 @@ function toKebabCase(str: string): string {
     .toLowerCase();
 }
 
+interface DatasetInfo {
+  id?: ObjectId;
+  datasetName: string;
+  count: number;
+  labels: string[];
+  classes: Record<string, ObjectId[]>;
+}
+
+interface DatasetChange {
+  level: 'instance' | 'class' | 'dataset';
+  type: 'created' | 'updated' | 'deleted' | 'renamed';
+  data?: any;
+}
+
 export class Dataset extends Module {
   title = 'dataset';
 
@@ -34,23 +47,21 @@ export class Dataset extends Module {
   #dataStore: DataStore;
 
   instanceService: Service<Instance>;
+  datasetService: Service<DatasetInfo>;
+  #datasetId: ObjectId;
+  #datasetState: DatasetInfo;
 
-  $created: Stream<ObjectId> = new Stream<ObjectId>(never());
+  $changes: Stream<DatasetChange[]> = new Stream([]);
   $instances: Stream<ObjectId[]> = new Stream<ObjectId[]>([], true);
   $classes = new Stream<Record<string, ObjectId[]>>({}, true);
-  $labels: Stream<string[]>;
-  $count: Stream<number>;
+  $labels: Stream<string[]> = new Stream([], true);
+  $count: Stream<number> = new Stream(0, true);
   $countPerClass: Stream<Record<string, number>>;
 
   constructor({ name, dataStore = new DataStore() }: DatasetOptions) {
     super();
     this.title = name;
     this.#dataStore = dataStore;
-    this.$labels = new Stream(skipRepeatsWith(dequal, map(Object.keys, this.$classes)));
-    this.$count = new Stream(
-      this.$instances.map((x) => x.length),
-      true,
-    );
     this.$countPerClass = new Stream(
       map(
         (x) =>
@@ -74,8 +85,21 @@ export class Dataset extends Module {
   }
 
   async setup(): Promise<void> {
-    const serviceName = toKebabCase(`instances-${this.title}`);
-    this.instanceService = this.#dataStore.service(serviceName) as Service<Instance>;
+    const datasetServiceName = toKebabCase(`dataset-${this.title}`);
+    this.datasetService = this.#dataStore.service(datasetServiceName) as Service<DatasetInfo>;
+    this.datasetService.hooks({
+      before: {
+        create: [addScope('datasetName', this.title)].filter((x) => !!x),
+        find: [limitToScope('datasetName', this.title)],
+        get: [limitToScope('datasetName', this.title)],
+        update: [limitToScope('datasetName', this.title)],
+        patch: [limitToScope('datasetName', this.title)],
+        remove: [limitToScope('datasetName', this.title)],
+      },
+    });
+
+    const instanceServiceName = toKebabCase(`instances-${this.title}`);
+    this.instanceService = this.#dataStore.service(instanceServiceName) as Service<Instance>;
     this.instanceService.hooks({
       before: {
         create: [addScope('datasetName', this.title), imageData2DataURL].filter((x) => !!x),
@@ -91,18 +115,39 @@ export class Dataset extends Module {
       },
     });
 
-    // Fetch instances
-    const resInstances = await this.instanceService.find({
-      query: { $select: ['id', 'label'] },
+    // Fetch dataset info
+    const res = await this.datasetService.find({
+      query: {
+        datasetName: this.title,
+        $sort: {
+          updatedAt: -1,
+        },
+      },
     });
-    const { data } = resInstances as Paginated<Instance>;
-    this.$instances.set(data.map((x) => x.id));
-    this.$classes.set(
-      data.reduce((c: Record<string, ObjectId[]>, instance: Instance) => {
-        const x = Object.keys(c).includes(instance.label) ? c[instance.label] : [];
-        return { ...c, [instance.label]: x.concat([instance.id]) };
-      }, {}),
-    );
+    const { total, data } = res as Paginated<DatasetInfo>;
+    if (total === 1) {
+      this.#datasetId = data[0].id;
+      [this.#datasetState] = data;
+      this.$count.set(data[0].count);
+      this.$labels.set(data[0].labels);
+      this.$instances.set(Object.values(data[0].classes).flat());
+      this.$classes.set(data[0].classes);
+    } else {
+      const created = await this.datasetService.create({
+        datasetName: this.title,
+        labels: [],
+        classes: {},
+        count: 0,
+      });
+      this.#datasetId = created.id;
+      this.#datasetState = created;
+    }
+    this.$changes.set([
+      {
+        level: 'dataset',
+        type: 'created',
+      },
+    ]);
   }
 
   capture(instanceStream: Stream<Instance>): void {
@@ -119,16 +164,30 @@ export class Dataset extends Module {
   async addInstance(instance: Instance) {
     if (!instance) return;
     const { id } = await this.instanceService.create(instance);
-    const x = Object.keys(this.$classes.value).includes(instance.label)
-      ? this.$classes.value[instance.label]
-      : [];
-    this.$classes.set({ ...this.$classes.value, [instance.label]: [...x, id] });
+    const labelExists = Object.keys(this.#datasetState.classes).includes(instance.label);
+    this.#datasetState.count += 1;
+    if (labelExists) {
+      this.#datasetState.classes[instance.label].push(id);
+    } else {
+      this.#datasetState.labels.push(instance.label);
+      this.$labels.set(this.#datasetState.labels);
+      this.#datasetState.classes[instance.label] = [id];
+    }
+    await this.datasetService.patch(this.#datasetId, this.#datasetState);
+    this.$count.set(this.#datasetState.count);
+    this.$classes.set(this.#datasetState.classes);
     this.$instances.set([...this.$instances.value, id]);
-    this.$created.set(id);
+    this.$changes.set([
+      {
+        level: 'instance',
+        type: 'created',
+        data: { id, label: instance.label },
+      },
+    ]);
   }
 
   async renameClass(label: string, newLabel: string): Promise<void> {
-    const classes = this.$classes.value;
+    const { classes } = this.#datasetState;
     if (!Object.keys(classes).includes(label)) return;
     await Promise.all(
       classes[label].map((id) => this.instanceService.patch(id, { label: newLabel })),
@@ -139,23 +198,48 @@ export class Dataset extends Module {
       classes[newLabel] = classes[label];
     }
     delete classes[label];
+    this.#datasetState.labels = Object.keys(classes);
+    await this.datasetService.patch(this.#datasetId, this.#datasetState);
     this.$classes.set(classes);
-    this.$instances.set(this.$instances.value);
+    this.$labels.set(this.#datasetState.labels);
+    this.$changes.set([
+      {
+        level: 'class',
+        type: 'renamed',
+        data: {
+          srcLabel: label,
+          label: newLabel,
+        },
+      },
+    ]);
   }
 
   async deleteClass(label: string): Promise<void> {
-    const classes = this.$classes.value;
+    const { classes } = this.#datasetState;
     if (!Object.keys(classes).includes(label)) return;
     const delIns = classes[label];
     delete classes[label];
     await Promise.all(delIns.map((id) => this.instanceService.remove(id)));
-    const newInstances = this.$instances.value.filter((x) => !delIns.includes(x));
+    this.#datasetState.labels = Object.keys(classes);
+    await this.datasetService.patch(this.#datasetId, this.#datasetState);
     this.$classes.set(classes);
+    this.$labels.set(this.#datasetState.labels);
+    const newInstances = this.$instances.value.filter((x) => !delIns.includes(x));
     this.$instances.set(newInstances);
+    this.$changes.set([
+      {
+        level: 'class',
+        type: 'deleted',
+        data: label,
+      },
+    ]);
   }
 
   async clear(): Promise<void> {
-    const result = await this.instanceService.find({ query: { $select: ['id'] } });
+    const { total } = (await this.instanceService.find({
+      query: { $limit: 0 },
+    })) as Paginated<Instance>;
+    const result = await this.instanceService.find({ query: { $select: ['id'], $limit: total } });
     const { data } = result as Paginated<Instance>;
     await Promise.all(data.map(({ id }) => this.instanceService.remove(id)));
     this.$instances.set([]);
