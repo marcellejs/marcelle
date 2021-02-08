@@ -65,6 +65,13 @@ export class TrainingPlot extends Module {
           trainingAccuracy.set(trainingAccuracy.value.concat([x.data.accuracy]));
           validationAccuracy.set(validationAccuracy.value.concat([x.data.accuracyVal]));
         }
+      } else if (x.status === 'success') {
+        if (x.data) {
+          if (x.data.loss) trainingLoss.set(x.data.loss as number[]);
+          if (x.data.lossVal) validationLoss.set(x.data.lossVal as number[]);
+          if (x.data.accuracy) trainingAccuracy.set(x.data.accuracy as number[]);
+          if (x.data.accuracyVal) validationAccuracy.set(x.data.accuracyVal as number[]);
+        }
       }
     });
     this.start();
