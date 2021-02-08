@@ -221,11 +221,13 @@ export class Dataset extends Module {
     delete classes[label];
     await Promise.all(delIns.map((id) => this.instanceService.remove(id)));
     this.#datasetState.labels = Object.keys(classes);
+    this.#datasetState.count -= delIns.length;
     await this.datasetService.patch(this.#datasetId, this.#datasetState);
     this.$classes.set(classes);
     this.$labels.set(this.#datasetState.labels);
     const newInstances = this.$instances.value.filter((x) => !delIns.includes(x));
     this.$instances.set(newInstances);
+    this.$count.set(this.#datasetState.count);
     this.$changes.set([
       {
         level: 'class',
