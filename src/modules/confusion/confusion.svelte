@@ -118,6 +118,15 @@
   });
 </script>
 
+<ModuleBase {title}>
+  {#if $accuracy !== undefined}
+    <p class="m-2">Global Accuracy: {$accuracy.toFixed(2)}</p>
+    <div class="confusion-container"><canvas use:setup /></div>
+  {:else}
+    <p class="m-2">Waiting for predictions...</p>
+  {/if}
+</ModuleBase>
+
 <style>
   .confusion-container {
     width: 350px;
@@ -125,12 +134,3 @@
     height: 350px;
   }
 </style>
-
-<ModuleBase {title}>
-  {#if $accuracy}
-    <p class="m-2">Global Accuracy: {$accuracy.toFixed(2)}</p>
-    <div class="confusion-container"><canvas use:setup /></div>
-  {:else}
-    <p class="m-2">Waiting for predictions...</p>
-  {/if}
-</ModuleBase>

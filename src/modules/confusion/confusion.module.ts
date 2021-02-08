@@ -60,14 +60,15 @@ export class Confusion extends Module {
     );
 
     this.$accuracy = new Stream(
-      map(
-        (predictions: Prediction[]) =>
+      map((predictions: Prediction[]) => {
+        if (predictions.length === 0) return undefined;
+        return (
           predictions.reduce(
             (correct, { label, trueLabel }) => correct + (label === trueLabel ? 1 : 0),
             0,
-          ) / predictions.length,
-        predStream,
-      ),
+          ) / predictions.length
+        );
+      }, predStream),
       true,
     );
 
