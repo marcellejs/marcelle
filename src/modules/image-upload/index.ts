@@ -1,7 +1,7 @@
-import { ImageUpload } from './image-upload.module';
+import { ImageUpload, ImageUploadOptions } from './image-upload.module';
 
-export function imageUpload(): ImageUpload {
-  return new ImageUpload();
+export function imageUpload(options: ImageUploadOptions): ImageUpload {
+  return new ImageUpload(options);
 }
 
-export type { ImageUpload } from './image-upload.module';
+export type { ImageUpload, ImageUploadOptions } from './image-upload.module';
