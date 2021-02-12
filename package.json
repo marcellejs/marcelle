@@ -47,6 +47,8 @@
     "@rollup/plugin-typescript": "^6.1.0",
     "@tensorflow/tfjs": "^2.7.0",
     "@types/blueimp-load-image": "^5.14.1",
+    "@types/ndarray": "^1.0.8",
+    "@types/ndarray-ops": "^1.2.0",
     "@typescript-eslint/eslint-plugin": "^4.8.1",
     "autoprefixer": "^9",
     "eslint": "^7.14.0",
@@ -96,6 +98,9 @@
     "dequal": "^2.0.2",
     "feathers-localstorage": "^5.1.1",
     "feathers-memory": "^4.1.0",
+    "ndarray": "^1.0.19",
+    "ndarray-ops": "^1.2.2",
+    "onnxjs": "^0.1.8",
     "socket.io-client": "^2.3.1"
   }
 }

@@ -27,3 +27,4 @@ export * from './coco-ssd';
 export * from './knn';
 export * from './mlp';
 export * from './tf-image-classifier';
+export * from './onnx-image-classifier';

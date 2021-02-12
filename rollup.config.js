@@ -88,6 +88,11 @@ const browserBuild = {
       sourcemap: true,
     },
   ],
+  onwarn(warning, warn) {
+    // suppress eval warnings
+    if (warning.code === 'EVAL') return;
+    warn(warning);
+  },
 };
 
 export default noBundle ? esBuild : [esBuild, browserBuild];
