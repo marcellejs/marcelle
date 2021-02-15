@@ -1,25 +1,25 @@
 /* eslint-disable no-underscore-dangle */
-import ndarray from 'ndarray';
-import ops from 'ndarray-ops';
-import { Tensor, InferenceSession } from 'onnxjs';
+import { tidy, browser, reshape, tensor1d } from '@tensorflow/tfjs-core';
+import { Tensor as OnnxTensor, InferenceSession } from 'onnxjs';
 import { ClassifierResults, Model, Classifier, Stream, ModelConstructor, logger } from '../../core';
 import { Catch } from '../../utils/error-handling';
 import Component from './onnx-image-classifier.svelte';
 
-function softmax(arr: number[]): number[] {
-  const C = Math.max(...arr);
-  const d = arr.map((y) => Math.exp(y - C)).reduce((a, b) => a + b);
-  return arr.map((value) => {
-    return Math.exp(value - C) / d;
-  });
-}
+// Questions:
+// - Do we autoscale input images?
+// - Do we externalize input scaling/normalization?
+// - Do we keep normalization default?
+// - How do we deal with missing softmax? auto?
 
 export interface OnnxImageClassifierOptions {
+  inputShape?: number[];
+  channelsFirst?: boolean;
   inputRange?: [number, number];
   normalization?: {
-    mean: [number, number, number];
-    std: [number, number, number];
+    mean: number[];
+    std: number[];
   };
+  applySoftmax?: boolean;
   topK?: number;
 }
 
@@ -33,24 +33,36 @@ export class OnnxImageClassifier extends Classifier(Model as ModelConstructor<Mo
   title = 'onnxImageClassifier';
 
   parameters = {};
-  session: InferenceSession;
 
   $loading: Stream<boolean> = new Stream(false as boolean, true);
   $ready: Stream<boolean> = new Stream(false as boolean, true);
+
+  inputShape: OnnxImageClassifierOptions['inputShape'];
+  channelsFirst: OnnxImageClassifierOptions['channelsFirst'];
   inputRange: OnnxImageClassifierOptions['inputRange'];
   normalization: OnnxImageClassifierOptions['normalization'];
+  applySoftmax: boolean;
   topK: number;
-  expectedDims: number[] = [];
   modelName: string = '';
+
+  #session: InferenceSession;
+  #autoDetectShape: boolean;
 
   constructor({
     inputRange = [0, 1],
     normalization = defaultNormalization,
     topK = 0,
+    channelsFirst = true,
+    inputShape = undefined,
+    applySoftmax = false,
   }: OnnxImageClassifierOptions = {}) {
     super();
+    this.#autoDetectShape = !inputShape;
+    this.channelsFirst = channelsFirst;
+    this.inputShape = inputShape;
     this.inputRange = inputRange;
     this.normalization = normalization;
+    this.applySoftmax = applySoftmax;
     this.topK = topK;
     this.start();
   }
@@ -62,13 +74,16 @@ export class OnnxImageClassifier extends Classifier(Model as ModelConstructor<Mo
 
   @Catch
   async predict(img: ImageData): Promise<ClassifierResults> {
-    if (!this.session || !this.$ready.value) {
+    if (!this.#session || !this.$ready.value) {
       throw new Error('Model is not loaded');
     }
+
     const inputTensor = this.preprocess(img);
-    const tensorOutput = await this.session.run([inputTensor]);
+    const tensorOutput = await this.#session.run([inputTensor]);
     const outputData = tensorOutput.values().next().value.data as Float32Array;
-    const probabilities = softmax(Array.prototype.slice.call(outputData));
+    const probabilities = this.applySoftmax
+      ? tensor1d(outputData).softmax().arraySync()
+      : Array.from(outputData);
 
     const getLabel = this.labels
       ? (index: number) => this.labels[index]
@@ -112,52 +127,31 @@ export class OnnxImageClassifier extends Classifier(Model as ModelConstructor<Mo
     };
   }
 
-  /**
-   * Preprocess raw image data to match Resnet50 requirement.
-   */
-  preprocess(img: ImageData) {
-    const { data, width, height } = img;
+  preprocess(img: ImageData): OnnxTensor {
+    const tfTensor = tidy(() => {
+      let t = browser.fromPixels(img).expandDims(0);
+      if (this.channelsFirst) {
+        t = t.transpose([0, 3, 1, 2]);
+      }
+      t = t.div(255);
+      if (this.channelsFirst) {
+        t = t.sub(reshape(this.normalization.mean, [1, this.normalization.mean.length, 1, 1]));
+        t = t.div(reshape(this.normalization.std, [1, this.normalization.std.length, 1, 1]));
+      } else {
+        t = t.sub(reshape(this.normalization.mean, [1, 1, 1, this.normalization.mean.length]));
+        t = t.div(reshape(this.normalization.std, [1, 1, 1, this.normalization.std.length]));
+      }
 
-    // data processing
-    const dataTensor = ndarray(new Float32Array(data), [width, height, 4]);
-    const dataProcessedTensor = ndarray(new Float32Array(width * height * 3), [
-      1,
-      3,
-      width,
-      height,
-    ]);
-    ops.assign(dataProcessedTensor.pick(0, 0, null, null), dataTensor.pick(null, null, 0));
-    ops.assign(dataProcessedTensor.pick(0, 1, null, null), dataTensor.pick(null, null, 1));
-    ops.assign(dataProcessedTensor.pick(0, 2, null, null), dataTensor.pick(null, null, 2));
-    ops.divseq(dataProcessedTensor, 255);
-    ops.mulseq(dataProcessedTensor, this.inputRange[1] - this.inputRange[0]);
-    ops.addseq(dataProcessedTensor, this.inputRange[0]);
-    ops.subseq(dataProcessedTensor.pick(0, 0, null, null), this.normalization.mean[0]);
-    ops.subseq(dataProcessedTensor.pick(0, 1, null, null), this.normalization.mean[1]);
-    ops.subseq(dataProcessedTensor.pick(0, 2, null, null), this.normalization.mean[2]);
-    ops.divseq(dataProcessedTensor.pick(0, 0, null, null), this.normalization.std[0]);
-    ops.divseq(dataProcessedTensor.pick(0, 1, null, null), this.normalization.std[1]);
-    ops.divseq(dataProcessedTensor.pick(0, 2, null, null), this.normalization.std[2]);
-    const tensor = new Tensor(new Float32Array(3 * width * height), 'float32', [
-      1,
-      3,
-      width,
-      height,
-    ]);
-    (tensor.data as Float32Array).set(dataProcessedTensor.data);
-    return tensor;
+      return t;
+    });
+    return new OnnxTensor(tfTensor.dataSync(), 'float32', tfTensor.shape);
   }
 
   @Catch
   async loadFromUrl(url: string): Promise<void> {
     this.$ready.set(false);
     this.$loading.set(true);
-    this.session = new InferenceSession();
-    await this.session.loadModel(url);
-    this.modelName = url;
-    this.expectedDims = (this.session as any).session._model._graph._allData[0].type.shape.dims;
-    logger.log(`Model expects Images with min input dim: [${this.expectedDims}]`);
-    await this.warmup();
+    await this.loadModel(url, url);
     this.$loading.set(false);
     this.$ready.set(true);
   }
@@ -178,22 +172,60 @@ export class OnnxImageClassifier extends Classifier(Model as ModelConstructor<Mo
       };
       reader.readAsArrayBuffer(files[0]);
     });
-    this.session = new InferenceSession();
-    await this.session.loadModel(buffer);
-    await this.warmup();
-    this.modelName = files[0].name;
+    await this.loadModel(buffer, files[0].name);
     this.$loading.set(false);
     this.$ready.set(true);
   }
 
   @Catch
-  async warmup(): Promise<void> {
-    const size = this.expectedDims.reduce((a, b) => a * b);
-    const warmupTensor = new Tensor(new Float32Array(size), 'float32', this.expectedDims);
-    for (let i = 0; i < size; i++) {
-      warmupTensor.data[i] = Math.random() * 2.0 - 1.0; // random value [-1.0, 1.0)
+  async loadModel(source: string | ArrayBuffer, modelName: string) {
+    this.#session = new InferenceSession();
+    await this.#session.loadModel(source as string);
+    this.modelName = modelName;
+    try {
+      this.detectInputShape();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('ONNX Model shape detection failed', error);
     }
-    await this.session.run([warmupTensor]);
+    try {
+      await this.warmup();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('ONNX Model warmup failed', error);
+    }
+  }
+
+  @Catch
+  async detectInputShape() {
+    if (!this.#autoDetectShape) return;
+    logger.log('Detecting input shape from model...');
+    const expectedDims = (this.#session as any).session._model._graph._allData[0].type.shape.dims;
+    if (expectedDims.length === 4) {
+      if (expectedDims[3] < 5) {
+        this.channelsFirst = false;
+      }
+      if (expectedDims[0] === 0) {
+        expectedDims[0] = 1;
+      }
+      this.inputShape = expectedDims.slice(1, expectedDims.length);
+      logger.log(`Model expects Images with min input dim: [${this.inputShape}]`);
+    } else {
+      throw new Error(`Expecting input shape of length 4, got: [${expectedDims}]`);
+    }
+  }
+
+  @Catch
+  async warmup(): Promise<void> {
+    const [width, height] = this.channelsFirst
+      ? this.inputShape.slice(1, 3)
+      : this.inputShape.slice(0, 2);
+    const warmupImg = new ImageData(width, height);
+    for (let i = 0; i < width * height * 4; i++) {
+      warmupImg.data[i] = Math.floor(Math.random() * 256);
+    }
+    const warmupTensor = this.preprocess(warmupImg);
+    await this.#session.run([warmupTensor]);
   }
 
   mount(target?: HTMLElement): void {
