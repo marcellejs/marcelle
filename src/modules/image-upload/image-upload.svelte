@@ -4,7 +4,6 @@
 
   import type { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
-  import { convertURIToImageData } from '../../utils/image';
 
   export let title: string;
   export let images: Stream<ImageData>;
@@ -47,8 +46,8 @@
 
   async function processImageFile(file: File) {
     const { image } = await loadImage(file, {
-      maxWidth: width,
-      maxHeight: height,
+      ...(width > 0 && { maxWidth: width }),
+      ...(height > 0 && { maxHeight: height }),
       cover: true,
       crop: true,
       canvas: true,
@@ -62,8 +61,15 @@
       canvas: true,
       crossOrigin: 'Anonymous',
     });
-    const imgData = image.getContext('2d').getImageData(0, 0, width, height);
-    const thumbData = (thumbnail as HTMLCanvasElement).toDataURL('image/jpeg');
+    const imgData = ((image as any) as HTMLCanvasElement)
+      .getContext('2d')
+      .getImageData(
+        0,
+        0,
+        width || ((image as any) as HTMLCanvasElement).width,
+        height || ((image as any) as HTMLCanvasElement).height,
+      );
+    const thumbData = ((thumbnail as any) as HTMLCanvasElement).toDataURL('image/jpeg');
     images.set(imgData);
     thumbnails.set(thumbData);
   }
