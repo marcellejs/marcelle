@@ -87,7 +87,7 @@ export interface ChartOptions {
 }
 
 export interface ChartDataset {
-  dataStream: Stream<number[] | Array<{ x: unknown; y: unknown }>>;
+  dataStream: Stream<number[]> | Stream<Array<{ x: unknown; y: unknown }>>;
   label: string;
   options: { type?: string; labels?: string[]; [key: string]: unknown };
 }
@@ -112,7 +112,7 @@ export class Chart extends Module {
   }
 
   addSeries(
-    dataStream: Stream<number[] | Array<{ x: unknown; y: unknown }>>,
+    dataStream: Stream<number[]> | Stream<Array<{ x: unknown; y: unknown }>>,
     label: string,
     options: Record<string, unknown> = {},
   ): void {
@@ -129,7 +129,7 @@ export class Chart extends Module {
     }
   }
 
-  removeSeries(dataStream: Stream<number[] | Array<{ x: unknown; y: unknown }>>): void {
+  removeSeries(dataStream: Stream<number[]> | Stream<Array<{ x: unknown; y: unknown }>>): void {
     const index = this.#datasets.map((x) => x.dataStream).indexOf(dataStream);
     if (index > -1) {
       this.#datasets.splice(index, 1);

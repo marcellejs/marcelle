@@ -31,7 +31,7 @@ export class PredictionPlot extends Module {
       },
     });
     this.#plotConfidences.addSeries(
-      this.$confidenceStream as Stream<number[] | Array<{ x: unknown; y: unknown }>>,
+      this.$confidenceStream as Stream<number[]> | Stream<Array<{ x: unknown; y: unknown }>>,
       'Confidences',
     );
     this.#plotConfidences.title = '';

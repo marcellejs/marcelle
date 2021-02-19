@@ -99,8 +99,8 @@
       maxElts = Math.max(maxElts, dataStream.value ? dataStream.value.length : 0);
       if (i === 0) {
         data.labels = options.labels || [];
-        if (!options.labels && dataStream.value) {
-          if (dataStream.value.length > 0 && typeof dataStream.value[0] === 'number') {
+        if (!options.labels && dataStream.value && dataStream.value.length > 0) {
+          if (typeof dataStream.value[0] === 'number') {
             data.labels = Array.from(Array(dataStream.value.length), (_, i) => i.toString());
           } else {
             data.labels = (dataStream.value as Array<{
@@ -157,8 +157,8 @@
     unSub = datasets.map(({ dataStream, options }, i) =>
       dataStream.subscribe((values: Array<number> | Array<{ x: unknown; y: unknown }>) => {
         if (values && chart) {
-          if (!options.labels && i === 0) {
-            if (values.length > 0 && typeof values[0] === 'number') {
+          if (!options.labels && i === 0 && values.length > 0) {
+            if (typeof values[0] === 'number') {
               chartOptions.data.labels = Array.from(Array(values.length), (_, i) => i.toString());
             } else {
               chartOptions.data.labels = (values as Array<{

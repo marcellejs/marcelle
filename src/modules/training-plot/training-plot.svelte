@@ -2,25 +2,25 @@
   import { onDestroy, onMount, tick } from 'svelte';
   import type { Chart } from '../chart';
 
-  export let plotLosses: Chart;
-  export let plotAccuracies: Chart;
+  export let charts: { [key: string]: Chart };
 
-  let lossElt: HTMLElement;
-  let accElt: HTMLElement;
+  let container: HTMLElement;
 
   onMount(async () => {
     await tick();
-    plotLosses.mount(lossElt);
-    plotAccuracies.mount(accElt);
+    Object.entries(charts).forEach(([name, chart]) => {
+      const div = document.createElement('div');
+      div.className = 'card flex-none xl:flex-1 w-full';
+      container.appendChild(div);
+      chart.mount(div);
+    });
   });
 
   onDestroy(() => {
-    plotLosses.destroy();
-    plotAccuracies.destroy();
+    Object.values(charts).forEach((chart) => {
+      chart.destroy();
+    });
   });
 </script>
 
-<div class="grid grid-cols-1 xl:grid-cols-2 gap-1">
-  <div bind:this={lossElt} class="card flex-none xl:flex-1 w-full" />
-  <div bind:this={accElt} class="card flex-none xl:flex-1 w-full" />
-</div>
+<div bind:this={container} class="grid grid-cols-1 xl:grid-cols-2 gap-1" />
