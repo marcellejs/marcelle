@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { tidy, browser, reshape, tensor1d } from '@tensorflow/tfjs-core';
 import { Tensor as OnnxTensor, InferenceSession } from 'onnxjs';
-import { ClassifierResults, Model, Classifier, Stream, ModelConstructor, logger } from '../../core';
+import { ClassifierResults, Model, Stream, logger } from '../../core';
 import { Catch } from '../../utils/error-handling';
 import Component from './onnx-image-classifier.svelte';
 
@@ -29,10 +29,11 @@ const defaultNormalization: OnnxImageClassifierOptions['normalization'] = {
 };
 
 // export class OnnxImageClassifier extends Module {
-export class OnnxImageClassifier extends Classifier(Model as ModelConstructor<Model>) {
+export class OnnxImageClassifier extends Model<ImageData, ClassifierResults> {
   title = 'onnxImageClassifier';
 
   parameters = {};
+  serviceName = 'onnx-models';
 
   $loading: Stream<boolean> = new Stream(false as boolean, true);
   $ready: Stream<boolean> = new Stream(false as boolean, true);
@@ -44,6 +45,7 @@ export class OnnxImageClassifier extends Classifier(Model as ModelConstructor<Mo
   applySoftmax: boolean;
   topK: number;
   modelName: string = '';
+  labels: string[];
 
   #session: InferenceSession;
   #autoDetectShape: boolean;
@@ -241,5 +243,29 @@ export class OnnxImageClassifier extends Classifier(Model as ModelConstructor<Mo
         parent: this,
       },
     });
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  save(): never {
+    throw new Error('OnnxImageClassifier does not support saving');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  load(): never {
+    throw new Error('OnnxImageClassifier does not support loading');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  download(): never {
+    throw new Error('OnnxImageClassifier does not support downloading');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  upload(): never {
+    throw new Error('OnnxImageClassifier does not support uploading');
   }
 }

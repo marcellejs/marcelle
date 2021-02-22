@@ -1,76 +1,32 @@
-import type { Paginated, Service } from '@feathersjs/feathers';
 import type { Tensor2D, TensorLike } from '@tensorflow/tfjs-core';
 import { tensor, tensor2d } from '@tensorflow/tfjs-core';
 import { KNNClassifier } from '@tensorflow-models/knn-classifier';
-import {
-  Stream,
-  Model,
-  ModelConstructor,
-  Classifier,
-  ClassifierResults,
-  Saveable,
-  StoredModel,
-} from '../../core';
+import { Stream, Model, ClassifierResults, StoredModel, ObjectId, ModelOptions } from '../../core';
 import { Dataset } from '../dataset/dataset.module';
 import { Catch, throwError } from '../../utils/error-handling';
-import { DataStore } from '../../data-store';
 import { saveBlob } from '../../utils/file-io';
+import { toKebabCase } from '../../utils/string';
 
-export interface KNNOptions {
+export interface KNNOptions extends ModelOptions {
   k: number;
 }
 
-export class KNN extends Classifier(Saveable(Model as ModelConstructor<Model>)) {
+export class KNN extends Model<TensorLike, ClassifierResults> {
   title = 'KNN';
-
-  static nextModelId = 0;
-  modelId = `knn-${KNN.nextModelId++}`;
 
   parameters: {
     k: Stream<number>;
   };
+  serviceName = 'knn-models';
 
   classifier = new KNNClassifier();
+  labels: string[];
 
-  constructor({ k = 3 }: Partial<KNNOptions> = {}) {
-    super();
-    this.registerHook('save', 'before', async (context) => {
-      context.model = await this.write();
-      return context;
-    });
-    this.registerHook('load', 'after', async (context) => {
-      await this.read(context.model);
-      return context;
-    });
+  constructor({ k = 3, ...rest }: Partial<KNNOptions> = {}) {
+    super(rest);
     this.parameters = {
       k: new Stream(k, true),
     };
-  }
-
-  sync(dataStore: DataStore) {
-    super.sync(dataStore);
-    this.modelService = this.dataStore.service('knn-models') as Service<StoredModel>;
-    this.dataStore.connect().then(() => {
-      this.setupSync();
-    });
-    return this;
-  }
-
-  async setupSync() {
-    const { total, data } = (await this.modelService.find({
-      query: {
-        modelName: this.modelId,
-        $select: ['id'],
-        $limit: 1,
-        $sort: {
-          updatedAt: -1,
-        },
-      },
-    })) as Paginated<StoredModel>;
-    if (total === 1) {
-      this.storedModelId = data[0].id;
-    }
-    this.load().catch(() => {});
   }
 
   @Catch
@@ -94,7 +50,6 @@ export class KNN extends Classifier(Saveable(Model as ModelConstructor<Model>)) 
         }),
       );
       this.$training.set({ status: 'success' });
-      this.save();
     }, 100);
   }
 
@@ -128,43 +83,23 @@ export class KNN extends Classifier(Saveable(Model as ModelConstructor<Model>)) 
     delete this.classifier;
   }
 
-  private async write(): Promise<StoredModel | null> {
-    if (!this.classifier) return null;
-    const dataset = this.classifier.getClassifierDataset();
-    const datasetObj: Record<string, number[][]> = {};
-    Object.keys(dataset).forEach((key) => {
-      const data = dataset[key].arraySync();
-      datasetObj[key] = data;
-    });
-    return {
-      modelName: this.modelId,
-      parameters: this.parametersSnapshot(),
-      modelUrl: '',
-      labels: this.labels,
-      data: datasetObj,
-    };
+  async save(update: boolean, metadata?: Record<string, unknown>) {
+    const storedModel = await this.write(metadata);
+    return this.saveToDatastore(storedModel, update);
   }
 
-  private async read(s: StoredModel): Promise<void> {
-    const dataset = s.data as Record<string, number[][]>;
-    if (!dataset) return;
-    const tensorObj: Record<string, Tensor2D> = {};
-    Object.entries(dataset).forEach(([key, d]) => {
-      tensorObj[key] = tensor2d(d);
-    });
-    this.labels = s.labels;
-    this.classifier.setClassifierDataset(tensorObj);
-    this.$training.set({
-      status: 'loaded',
-    });
+  async load(id?: ObjectId): Promise<StoredModel> {
+    const storedModel = await this.loadFromDatastore(id);
+    await this.read(storedModel);
+    return storedModel;
   }
 
-  async download() {
-    const model = await this.write();
-    saveBlob(JSON.stringify(model), `${this.modelId}.json`, 'text/plain');
+  async download(metadata?: Record<string, unknown>) {
+    const model = await this.write(metadata);
+    saveBlob(JSON.stringify(model), `${model.name}.json`, 'text/plain');
   }
 
-  async upload(...files: File[]): Promise<void> {
+  async upload(...files: File[]): Promise<StoredModel> {
     const jsonFiles = files.filter((x) => x.name.includes('.json'));
     const model = await new Promise((resolve: (o: StoredModel) => void, reject) => {
       const reader = new FileReader();
@@ -176,6 +111,41 @@ export class KNN extends Classifier(Saveable(Model as ModelConstructor<Model>)) 
       reader.readAsText(jsonFiles[0]);
     });
     await this.read(model);
-    this.save();
+    return model;
+  }
+
+  private async write(metadata: Record<string, unknown> = {}): Promise<StoredModel | null> {
+    if (!this.classifier) return null;
+    const dataset = this.classifier.getClassifierDataset();
+    const datasetObj: Record<string, number[][]> = {};
+    Object.keys(dataset).forEach((key) => {
+      const data = dataset[key].arraySync();
+      datasetObj[key] = data;
+    });
+    const name = this.syncModelName || toKebabCase(this.title);
+    return {
+      name,
+      url: '',
+      metadata: {
+        labels: this.labels,
+        data: datasetObj,
+        // parameters: this.parametersSnapshot()
+        ...metadata,
+      },
+    };
+  }
+
+  private async read(s: StoredModel): Promise<void> {
+    const dataset = s.metadata.data as Record<string, number[][]>;
+    if (!dataset) return;
+    const tensorObj: Record<string, Tensor2D> = {};
+    Object.entries(dataset).forEach(([key, d]) => {
+      tensorObj[key] = tensor2d(d);
+    });
+    this.labels = s.metadata.labels as string[];
+    this.classifier.setClassifierDataset(tensorObj);
+    this.$training.set({
+      status: 'loaded',
+    });
   }
 }

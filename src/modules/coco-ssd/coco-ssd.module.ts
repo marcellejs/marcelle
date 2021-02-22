@@ -1,6 +1,6 @@
 import { load, ObjectDetection, ObjectDetectionBaseModel } from '@tensorflow-models/coco-ssd';
 import { io } from '@tensorflow/tfjs-core';
-import { Model, ModelConstructor, ObjectDetector, ObjectDetectorResults } from '../../core';
+import { Model, ObjectDetectorResults } from '../../core';
 import { logger } from '../../core/logger';
 import { Stream } from '../../core/stream';
 import { Catch, TrainingError } from '../../utils/error-handling';
@@ -10,10 +10,11 @@ export interface CocoSsdOptions {
   base?: ObjectDetectionBaseModel;
 }
 
-export class CocoSsd extends ObjectDetector(Model as ModelConstructor<Model>) {
+export class CocoSsd extends Model<ImageData, ObjectDetectorResults> {
   title = 'COCO-SSD Object Detection';
 
   parameters = {};
+  serviceName = 'undefined';
 
   #coco: ObjectDetection;
   #base: ObjectDetectionBaseModel;
@@ -75,5 +76,29 @@ export class CocoSsd extends ObjectDetector(Model as ModelConstructor<Model>) {
         base: this.#base,
       },
     });
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  save(): never {
+    throw new Error('OnnxImageClassifier does not support saving');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  load(): never {
+    throw new Error('OnnxImageClassifier does not support loading');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  download(): never {
+    throw new Error('OnnxImageClassifier does not support downloading');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  upload(): never {
+    throw new Error('OnnxImageClassifier does not support uploading');
   }
 }

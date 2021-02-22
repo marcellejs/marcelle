@@ -13,7 +13,7 @@ export class DashboardSettings {
   name = 'settings';
   modules: Array<Module | Module[] | string> = [];
 
-  xModels: Model[] = [];
+  xModels: Model<any, any>[] = [];
   xDatasets: Dataset[] = [];
   xPredictions: BatchPrediction[] = [];
   xDataStores: DataStore[] = [];
@@ -28,7 +28,7 @@ export class DashboardSettings {
     return this;
   }
 
-  models(...models: Model[]): DashboardSettings {
+  models(...models: Model<any, any>[]): DashboardSettings {
     this.xModels = models;
     return this;
   }

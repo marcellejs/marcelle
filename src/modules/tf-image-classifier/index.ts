@@ -1,7 +1,15 @@
-import { TfImageClassifier } from './tf-image-classifier.module';
+import {
+  TFJSGenericModel,
+  TFJSGenericModelOptions,
+  InputTypes,
+  OutputTypes,
+} from './tf-generic-model.module';
 
-export function tfImageClassifier(): TfImageClassifier {
-  return new TfImageClassifier();
+export function tfGenericModel<
+  InputType extends keyof InputTypes,
+  TaskType extends keyof OutputTypes
+>(options: TFJSGenericModelOptions<InputType, TaskType>): TFJSGenericModel<InputType, TaskType> {
+  return new TFJSGenericModel<InputType, TaskType>(options);
 }
 
-export type { TfImageClassifier };
+export type { TFJSGenericModel, TFJSGenericModelOptions };

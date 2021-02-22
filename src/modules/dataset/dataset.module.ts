@@ -13,17 +13,11 @@ import {
 } from '../../data-store/hooks';
 import { readJSONFile, saveBlob } from '../../utils/file-io';
 import { throwError } from '../../utils/error-handling';
+import { toKebabCase } from '../../utils/string';
 
 export interface DatasetOptions {
   name: string;
   dataStore?: DataStore;
-}
-
-function toKebabCase(str: string): string {
-  return str
-    .replace(/([a-z])([A-Z])/g, '$1-$2')
-    .replace(/[\s_]+/g, '-')
-    .toLowerCase();
 }
 
 interface DatasetInfo {

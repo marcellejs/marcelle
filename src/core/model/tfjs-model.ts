@@ -1,74 +1,28 @@
-/* eslint-disable max-classes-per-file */
-import type { Paginated, Service } from '@feathersjs/feathers';
-import { LayersModel, loadLayersModel, Sequential } from '@tensorflow/tfjs-layers';
 import { GraphModel, loadGraphModel } from '@tensorflow/tfjs-converter';
 import { io } from '@tensorflow/tfjs-core';
-import type { DataStore } from '../../data-store';
-import type { StoredModel } from '../types';
-import { Model, ModelConstructor } from './model';
-import { Classifier } from './classifier';
+import { LayersModel, loadLayersModel } from '@tensorflow/tfjs-layers';
 import { DataStoreBackend } from '../../data-store/data-store';
-import { ObjectDetector } from './object-detector';
-import { Saveable, HookContext } from './saveable';
+import { Catch, checkProperty } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
+import { toKebabCase } from '../../utils/string';
+import { ObjectId, StoredModel } from '../types';
+import { Model, ModelOptions } from './model';
 
-export abstract class TFJSModel extends Saveable(Model as ModelConstructor<Model>) {
-  abstract model: LayersModel | GraphModel | Sequential;
-  abstract loadFn: typeof loadLayersModel | typeof loadGraphModel;
+export type TFJSModelOptions = ModelOptions;
 
-  constructor(...args: any[]) {
-    super(...args);
-    this.registerHook('save', 'before', async (context) => {
-      context.model = await this.beforeSave();
-      return context;
-    });
-    this.registerHook('load', 'after', async (context) => {
-      await this.afterLoad(context.model);
-      return context;
-    });
-    this.registerHook('download', 'before', async (context) => {
-      context.meta = {
-        ...context.meta,
-        modelType: 'tfjs-model',
-        modelName: this.modelId,
-        parameters: this.parametersSnapshot(),
-      };
-      return context;
-    });
-  }
+export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, OutputType> {
+  serviceName = 'tfjs-models';
+  model: LayersModel | GraphModel;
+  loadFn: typeof loadLayersModel | typeof loadGraphModel;
+  labels?: string[];
 
-  sync(dataStore: DataStore) {
-    super.sync(dataStore);
-    this.modelService = this.dataStore.service('tfjs-models') as Service<StoredModel>;
-    this.dataStore.connect().then(() => {
-      this.setupSync();
-    });
-    return this;
-  }
-
-  async setupSync() {
-    const { total, data } = (await this.modelService.find({
-      query: {
-        modelName: this.modelId,
-        $select: ['id'],
-        $limit: 1,
-        $sort: {
-          updatedAt: -1,
-        },
-      },
-    })) as Paginated<StoredModel>;
-    if (total === 1) {
-      this.storedModelId = data[0].id;
-    }
-    this.load().catch(() => {});
-  }
-
-  async beforeSave(): Promise<StoredModel | null> {
+  @checkProperty('dataStore')
+  async save(update: boolean, metadata?: Record<string, unknown>): Promise<ObjectId> {
     if (!this.model) return null;
-    let modelUrl: string;
+    let url: string;
     if (this.dataStore.backend === DataStoreBackend.LocalStorage) {
-      await this.model.save(`indexeddb://${this.modelId}`);
-      modelUrl = `indexeddb://${this.modelId}`;
+      await this.model.save(`indexeddb://${this.syncModelName}`);
+      url = `indexeddb://${this.syncModelName}`;
     } else if (this.dataStore.backend === DataStoreBackend.Remote) {
       const requestOpts: { requestInit?: unknown } = {};
       if (this.dataStore.requiresAuth) {
@@ -81,18 +35,22 @@ export abstract class TFJSModel extends Saveable(Model as ModelConstructor<Model
         .then((res) => {
           return res.responses[0].json();
         });
-      modelUrl = files['model.json'];
+      url = files['model.json'];
     }
-    return {
-      modelName: this.modelId,
-      parameters: this.parametersSnapshot(),
-      modelUrl,
+    const storedModel = {
+      name: this.syncModelName,
+      url,
+      metadata: { ...(this.labels && { labels: this.labels }), ...metadata },
     };
+    return this.saveToDatastore(storedModel, update);
   }
 
-  async afterLoad(s: StoredModel): Promise<void> {
+  @checkProperty('dataStore')
+  async load(id?: ObjectId): Promise<StoredModel> {
+    const storedModel = await this.loadFromDatastore(id);
+    let model: LayersModel | GraphModel;
     if (this.dataStore.backend === DataStoreBackend.LocalStorage) {
-      this.model = (await this.loadFn(s.modelUrl)) as Sequential;
+      model = await this.loadFn(storedModel.url);
     } else if (this.dataStore.backend === DataStoreBackend.Remote) {
       const requestOpts: { requestInit?: unknown } = {};
       if (this.dataStore.requiresAuth) {
@@ -100,16 +58,31 @@ export abstract class TFJSModel extends Saveable(Model as ModelConstructor<Model
         const headers = new Headers({ Authorization: `Bearer ${jwt}` });
         requestOpts.requestInit = { headers };
       }
-      this.model = (await this.loadFn(
-        `${this.dataStore.location}/tfjs-models/${s.modelUrl}`,
+      model = await this.loadFn(
+        `${this.dataStore.location}/tfjs-models/${storedModel.url}`,
         requestOpts,
-      )) as Sequential;
+      );
     }
+    if (model) {
+      this.model = model;
+    }
+    if (storedModel.metadata && storedModel.metadata.labels) {
+      this.labels = storedModel.metadata.labels as string[];
+    } else {
+      // logger.log("Couldn't Find labels in the stored model's metadata");
+      this.labels = undefined;
+    }
+    return storedModel;
   }
 
-  async download() {
-    const { model, meta } = await this.processHooks('download', 'before');
-    meta.labels = model.labels;
+  async download(metadata?: Record<string, unknown>) {
+    const name = this.syncModelName || toKebabCase(this.title);
+    const meta = {
+      type: 'tfjs-model',
+      name,
+      ...(this.labels && { labels: this.labels }),
+      ...metadata,
+    };
     const dateSaved = new Date(Date.now());
     await this.model.save(
       io.withSaveHandler(async (data) => {
@@ -117,22 +90,21 @@ export abstract class TFJSModel extends Saveable(Model as ModelConstructor<Model
           modelTopology: data.modelTopology,
           weightsManifest: [
             {
-              paths: [`./${this.modelId}.weights.bin`],
+              paths: [`./${name}.weights.bin`],
               weights: data.weightSpecs,
             },
           ],
           marcelle: meta,
         };
-        await saveBlob(data.weightData, `${this.modelId}.weights.bin`, 'application/octet-stream');
-        await saveBlob(JSON.stringify(weightsManifest), `${this.modelId}.json`, 'text/plain');
+        await saveBlob(data.weightData, `${name}.weights.bin`, 'application/octet-stream');
+        await saveBlob(JSON.stringify(weightsManifest), `${name}.json`, 'text/plain');
         return { modelArtifactsInfo: { dateSaved, modelTopologyType: 'JSON' } };
       }),
     );
-    await this.processHooks('download', 'after', { meta });
   }
 
-  async upload(...files: File[]): Promise<void> {
-    await this.processHooks('upload', 'before');
+  @Catch
+  async upload(...files: File[]): Promise<StoredModel> {
     const jsonFiles = files.filter((x) => x.name.includes('.json'));
     const weightFiles = files.filter((x) => x.name.includes('.bin'));
     const { marcelle: meta } = await new Promise((resolve, reject) => {
@@ -141,66 +113,28 @@ export abstract class TFJSModel extends Saveable(Model as ModelConstructor<Model
         const obj = JSON.parse(reader.result as string);
         resolve(obj);
       };
-      reader.onerror = reject;
+      reader.onerror = (err) =>
+        reject(new Error(`The provided files are not a valid marcelle model ${err}`));
       reader.readAsText(jsonFiles[0]);
     });
     if (jsonFiles.length === 1 && files.length) {
-      this.model = await this.loadFn(io.browserFiles([jsonFiles[0], ...weightFiles]));
-      await this.processHooks('upload', 'after', { meta });
-      this.save();
-    } else {
-      await this.processHooks('upload', 'after', { meta });
-      const e = new Error('The provided files are not compatible with this model');
-      e.name = 'File upload error';
-      throw e;
+      const model = await this.loadFn(io.browserFiles([jsonFiles[0], ...weightFiles]));
+      if (model) {
+        this.model = model;
+      }
+      if (meta && meta.labels) {
+        this.labels = meta.labels as string[];
+      } else {
+        // logger.log("Couldn't Find labels in the stored model's metadata");
+        this.labels = null;
+      }
+      return { name: meta.name, url: '', metadata: meta };
     }
+
+    const e = new Error('The provided files are not compatible with this model');
+    e.name = 'File upload error';
+    throw e;
   }
 }
 
-export abstract class TFJSClassifier extends Classifier(TFJSModel as ModelConstructor<TFJSModel>) {
-  constructor(...args: any[]) {
-    super(...args);
-    const beforeHook = async (context: HookContext) => {
-      context.model = { ...context.model, labels: this.labels };
-      return context;
-    };
-    const afterHook = async (context: HookContext) => {
-      if (context.model && context.model.labels) {
-        this.labels = context.model.labels;
-      }
-      if (context.meta && context.meta.labels) {
-        this.labels = context.meta.labels;
-      }
-      return context;
-    };
-    this.registerHook('save', 'before', beforeHook);
-    this.registerHook('load', 'after', afterHook);
-    this.registerHook('download', 'before', beforeHook);
-    this.registerHook('upload', 'after', afterHook);
-  }
-}
-
-export abstract class TFJSObjectDetector extends ObjectDetector(
-  TFJSModel as ModelConstructor<TFJSModel>,
-) {
-  constructor(...args: any[]) {
-    super(...args);
-    const beforeHook = async (context: HookContext) => {
-      context.model = { ...context.model, labels: this.labels };
-      return context;
-    };
-    const afterHook = async (context: HookContext) => {
-      if (context.model && context.model.labels) {
-        this.labels = context.model.labels;
-      }
-      if (context.meta && context.model.labels) {
-        this.labels = context.model.labels;
-      }
-      return context;
-    };
-    this.registerHook('save', 'before', beforeHook);
-    this.registerHook('load', 'after', afterHook);
-    this.registerHook('download', 'before', beforeHook);
-    this.registerHook('upload', 'after', afterHook);
-  }
-}
+export type TFJSModelConstructor<X, Y, T extends TFJSModel<X, Y>> = new (...args: any[]) => T;

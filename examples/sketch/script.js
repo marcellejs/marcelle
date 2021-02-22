@@ -58,7 +58,14 @@ const b = button({ text: 'Train' });
 const classifier = mlp({ layers: [64, 32], epochs: 20 });
 
 b.$click.subscribe(() => classifier.train(trainingSet));
-trainingSet.$created.subscribe(() => classifier.train(trainingSet));
+trainingSet.$changes.subscribe((changes) => {
+  for (let i = 0; i < changes.length; i++) {
+    if (changes[i].level === 'instance' && changes[i].type === 'created') {
+      classifier.train(trainingSet);
+      break;
+    }
+  }
+});
 
 const params = parameters(classifier);
 const prog = progress(classifier);

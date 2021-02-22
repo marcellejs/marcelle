@@ -83,55 +83,12 @@
       const isImage = file.type.match('image.*');
       if (isImage) {
         p = p.then(() => processImageFile(file));
-        // imgPromises.push(
-        //   loadImage(file, {
-        //     maxWidth: width,
-        //     maxHeight: height,
-        //     cover: true,
-        //     crop: true,
-        //     canvas: true,
-        //     crossOrigin: 'Anonymous',
-        //   }),
-        // );
       }
       draggedOver = false;
       counter = 0;
     }
     await p;
-    // const imgs = await Promise.all(imgPromises);
-    // console.log('imgs', imgs);
-    // const finalImages = imgs.map(({ image }: { image: HTMLCanvasElement }) =>
-    //   image.getContext('2d').getImageData(0, 0, width, height),
-    // );
-    // console.log('finalImages', finalImages);
-    // objectURLs.forEach((imgUrl: string, i: number) => {
-    //   Promise.all([convertURIToImageData(imgUrl), getDataUrl(files[i])]).then(
-    //     ([img, thumbnail]) => {
-    //       images.set(img);
-    //       thumbnails.set(thumbnail as string);
-    //     },
-    //   );
-    // });
   }
-
-  // async function getDataUrl(file: File) {
-  //   return new Promise((resolve, reject) => {
-  //     const reader = new FileReader();
-  //     reader.addEventListener(
-  //       'load',
-  //       () => {
-  //         resolve(reader.result);
-  //       },
-  //       false,
-  //     );
-
-  //     if (file) {
-  //       reader.readAsDataURL(file);
-  //     } else {
-  //       reject();
-  //     }
-  //   });
-  // }
 
   // use to check if a file is being dragged
   const hasFiles = ({ dataTransfer: { types = [] } }: DragEvent) => types.indexOf('Files') > -1;

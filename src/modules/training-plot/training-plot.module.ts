@@ -7,13 +7,13 @@ import { Model } from '../../core';
 
 export type LogSpec = string | string[] | { [key: string]: string | string[] };
 
-export class TrainingPlot extends Module {
+export class TrainingPlot<T, U> extends Module {
   title = 'training plot';
 
   charts: { [key: string]: Chart } = {};
 
   constructor(
-    public model: Model,
+    public model: Model<T, U>,
     logs: LogSpec = {
       loss: ['loss', 'lossVal'],
       accuracy: ['accuracy', 'accuracyVal'],

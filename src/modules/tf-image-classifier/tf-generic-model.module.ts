@@ -1,0 +1,192 @@
+import {
+  browser,
+  image as tfImage,
+  io,
+  tensor,
+  Tensor,
+  Tensor1D,
+  Tensor2D,
+  Tensor3D,
+  TensorLike,
+  tidy,
+} from '@tensorflow/tfjs-core';
+import { loadGraphModel } from '@tensorflow/tfjs-converter';
+import { loadLayersModel } from '@tensorflow/tfjs-layers';
+import { ClassifierResults, TFJSModel, TFJSModelOptions } from '../../core';
+import { logger } from '../../core/logger';
+import { Stream } from '../../core/stream';
+import { Catch } from '../../utils/error-handling';
+import { readJSONFile } from '../../utils/file-io';
+import Component from './tf-generic-model.svelte';
+
+export interface InputTypes {
+  image: ImageData;
+  generic: TensorLike;
+}
+
+function isInputType<T extends keyof InputTypes>(t: keyof InputTypes, tt: T): t is T {
+  return t === tt;
+}
+
+export interface OutputTypes {
+  classification: ClassifierResults;
+  segmentation: ImageData;
+  generic: TensorLike;
+}
+
+function isOutputType<T extends keyof OutputTypes>(t: keyof OutputTypes, tt: T): t is T {
+  return t === tt;
+}
+
+export interface TFJSGenericModelOptions<T, U> extends TFJSModelOptions {
+  inputType: T;
+  taskType: U;
+}
+
+export class TFJSGenericModel<
+  InputType extends keyof InputTypes,
+  TaskType extends keyof OutputTypes
+> extends TFJSModel<InputTypes[InputType], OutputTypes[TaskType]> {
+  title = 'tfjs generic model';
+
+  $loading: Stream<boolean> = new Stream(false as boolean, true);
+  $ready: Stream<boolean> = new Stream(false as boolean, true);
+  inputShape: number[];
+  inputType: InputType;
+  taskType: TaskType;
+
+  parameters = {};
+
+  constructor({ inputType, taskType, ...rest }: TFJSGenericModelOptions<InputType, TaskType>) {
+    super(rest);
+    this.inputType = inputType;
+    this.taskType = taskType;
+    this.$loading.start();
+    this.$ready.start();
+  }
+
+  train(): void {
+    logger.log('This model cannot be trained', this.model);
+  }
+
+  @Catch
+  async predict(input: InputTypes[InputType]): Promise<OutputTypes[TaskType]> {
+    if (!this.model || !this.$ready.value) {
+      throw new Error('Model is not loaded');
+    }
+
+    const outputs = tidy(() => {
+      const inputTensor = this.preprocess(input);
+      return ((this.model.predict(inputTensor.expandDims(0)) as unknown) as Tensor).gather(0);
+    });
+    const result = await this.postprocess(outputs);
+
+    outputs.dispose();
+
+    return result;
+  }
+
+  @Catch
+  preprocess(input: InputTypes[InputType]): Tensor {
+    if (isInputType(this.inputType, 'image')) {
+      return this.preprocessImage(input as InputTypes['image']);
+    }
+    if (isInputType(this.inputType, 'generic')) {
+      return tensor(input as InputTypes['generic']);
+    }
+    throw new Error('Invalid input data type');
+  }
+
+  @Catch
+  preprocessImage(img: InputTypes['image']): Tensor3D {
+    return tfImage.resizeBilinear(browser.fromPixels(img), [
+      this.inputShape[1],
+      this.inputShape[2],
+    ]);
+  }
+
+  async postprocess(outputs: Tensor): Promise<OutputTypes[TaskType]>;
+  @Catch
+  async postprocess(outputs: Tensor): Promise<OutputTypes[keyof OutputTypes]> {
+    if (isOutputType(this.taskType, 'classification')) {
+      // throw new Error('Classifier is not yet implemented');
+      const getLabel = this.labels
+        ? (index: number) => this.labels[index]
+        : (index: number) => index.toString();
+
+      const likeliest = tidy(() => (outputs as Tensor1D).argMax().dataSync()[0]);
+      const confidences = (outputs as Tensor1D)
+        .arraySync()
+        .reduce(
+          (x: Record<string, number>, y: number, i: number) => ({ ...x, [getLabel(i)]: y }),
+          {},
+        );
+
+      return {
+        label: getLabel(likeliest),
+        confidences,
+      };
+    }
+    if (isOutputType(this.taskType, 'segmentation')) {
+      const [width, height] = (outputs as Tensor3D).shape;
+      const processedOutputs = tidy(() => {
+        return outputs.argMax(-1).mul(0.5) as Tensor2D;
+      });
+      const mask = new ImageData(await browser.toPixels(processedOutputs), width, height);
+      processedOutputs.dispose();
+      return mask;
+    }
+    if (isOutputType(this.taskType, 'generic')) {
+      return outputs.array();
+    }
+    throw new Error('Invalid output data type');
+  }
+
+  @Catch
+  async loadFromFiles(files: File[]): Promise<void> {
+    const jsonFiles = files.filter((x) => x.name.includes('.json'));
+    const weightFiles = files.filter((x) => x.name.includes('.bin'));
+    if (jsonFiles.length !== 1) {
+      const e = new Error('The provided files are not compatible with this model');
+      e.name = 'File upload error';
+      throw e;
+    }
+    this.$ready.set(false);
+    this.$loading.set(true);
+    if (files.length) {
+      const jsonData = await readJSONFile(jsonFiles[0]);
+      this.loadFn = jsonData.format === 'graph-model' ? loadGraphModel : loadLayersModel;
+      this.model = await this.loadFn(io.browserFiles([jsonFiles[0], ...weightFiles]));
+      this.inputShape = Object.values(this.model.inputs[0].shape);
+      await this.save(true);
+      this.$loading.set(false);
+      this.$ready.set(true);
+    }
+  }
+
+  @Catch
+  async loadFromUrl(url: string): Promise<void> {
+    this.$ready.set(false);
+    this.$loading.set(true);
+    const modelJson = await fetch(url).then((res) => res.json());
+    this.loadFn = modelJson.format === 'graph-model' ? loadGraphModel : loadLayersModel;
+    this.model = await this.loadFn(url);
+    this.inputShape = Object.values(this.model.inputs[0].shape);
+    this.$loading.set(false);
+    this.$ready.set(true);
+  }
+
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
+    this.destroy();
+    this.$$.app = new Component({
+      target: t,
+      props: {
+        title: this.title,
+        loading: this.$loading,
+        ready: this.$ready,
+      },
+    });
+  }
+}
