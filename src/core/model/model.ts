@@ -62,8 +62,8 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
       this.#storedModelId = data[0].id;
     }
     this.load().catch(() => {});
-    this.$training.subscribe(({ status }) => {
-      if (status === 'success') {
+    this.$training.subscribe(({ status, data: meta }) => {
+      if (status === 'success' || (status === 'loaded' && meta?.source !== 'datastore')) {
         this.save(true);
       }
     });
@@ -89,9 +89,6 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
     if (!this.service || (!id && !this.#storedModelId)) return null;
     const model = await this.service.get(id || this.#storedModelId);
     if (model) {
-      this.$training.set({
-        status: 'loaded',
-      });
       const name = this.syncModelName || toKebabCase(this.title);
       logger.info(
         `Model ${name} was loaded from data store at location ${this.dataStore.location}`,

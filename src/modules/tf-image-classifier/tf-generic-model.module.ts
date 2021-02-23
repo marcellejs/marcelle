@@ -14,7 +14,6 @@ import { loadGraphModel } from '@tensorflow/tfjs-converter';
 import { loadLayersModel } from '@tensorflow/tfjs-layers';
 import { ClassifierResults, TFJSModel, TFJSModelOptions } from '../../core';
 import { logger } from '../../core/logger';
-import { Stream } from '../../core/stream';
 import { Catch } from '../../utils/error-handling';
 import { readJSONFile } from '../../utils/file-io';
 import Component from './tf-generic-model.svelte';
@@ -30,7 +29,7 @@ function isInputType<T extends keyof InputTypes>(t: keyof InputTypes, tt: T): t 
 
 export interface OutputTypes {
   classification: ClassifierResults;
-  segmentation: ImageData;
+  segmentation: ImageData | TensorLike;
   generic: TensorLike;
 }
 
@@ -41,6 +40,10 @@ function isOutputType<T extends keyof OutputTypes>(t: keyof OutputTypes, tt: T):
 export interface TFJSGenericModelOptions<T, U> extends TFJSModelOptions {
   inputType: T;
   taskType: U;
+  segmentationOptions?: {
+    output?: 'image' | 'tensor';
+    applyArgmax?: boolean;
+  };
 }
 
 export class TFJSGenericModel<
@@ -49,20 +52,28 @@ export class TFJSGenericModel<
 > extends TFJSModel<InputTypes[InputType], OutputTypes[TaskType]> {
   title = 'tfjs generic model';
 
-  $loading: Stream<boolean> = new Stream(false as boolean, true);
-  $ready: Stream<boolean> = new Stream(false as boolean, true);
   inputShape: number[];
   inputType: InputType;
   taskType: TaskType;
 
   parameters = {};
+  segmentationOptions: Record<string, unknown>;
 
-  constructor({ inputType, taskType, ...rest }: TFJSGenericModelOptions<InputType, TaskType>) {
+  constructor({
+    inputType,
+    taskType,
+    segmentationOptions = { applyArgmax: false, output: 'image' },
+    ...rest
+  }: TFJSGenericModelOptions<InputType, TaskType>) {
     super(rest);
+    this.segmentationOptions = { applyArgmax: false, output: 'image', ...segmentationOptions };
     this.inputType = inputType;
     this.taskType = taskType;
-    this.$loading.start();
-    this.$ready.start();
+    this.$training.subscribe(({ status }) => {
+      if (status === 'loaded') {
+        this.inputShape = Object.values(this.model.inputs[0].shape);
+      }
+    });
   }
 
   train(): void {
@@ -71,7 +82,7 @@ export class TFJSGenericModel<
 
   @Catch
   async predict(input: InputTypes[InputType]): Promise<OutputTypes[TaskType]> {
-    if (!this.model || !this.$ready.value) {
+    if (!this.model || this.$training.value.status !== 'loaded') {
       throw new Error('Model is not loaded');
     }
 
@@ -129,11 +140,23 @@ export class TFJSGenericModel<
     }
     if (isOutputType(this.taskType, 'segmentation')) {
       const [width, height] = (outputs as Tensor3D).shape;
-      const processedOutputs = tidy(() => {
-        return outputs.argMax(-1).mul(0.5) as Tensor2D;
-      });
-      const mask = new ImageData(await browser.toPixels(processedOutputs), width, height);
-      processedOutputs.dispose();
+
+      const processedOutputs = this.segmentationOptions.applyArgmax
+        ? tidy(() => {
+            return outputs.argMax(-1).mul(0.5);
+          })
+        : outputs;
+      const mask =
+        this.segmentationOptions.output === 'image'
+          ? new ImageData(
+              await browser.toPixels(processedOutputs as Tensor2D | Tensor3D),
+              width,
+              height,
+            )
+          : await processedOutputs.array();
+      if (this.segmentationOptions.applyArgmax) {
+        processedOutputs.dispose();
+      }
       return mask;
     }
     if (isOutputType(this.taskType, 'generic')) {
@@ -144,36 +167,64 @@ export class TFJSGenericModel<
 
   @Catch
   async loadFromFiles(files: File[]): Promise<void> {
-    const jsonFiles = files.filter((x) => x.name.includes('.json'));
-    const weightFiles = files.filter((x) => x.name.includes('.bin'));
-    if (jsonFiles.length !== 1) {
-      const e = new Error('The provided files are not compatible with this model');
-      e.name = 'File upload error';
-      throw e;
-    }
-    this.$ready.set(false);
-    this.$loading.set(true);
-    if (files.length) {
-      const jsonData = await readJSONFile(jsonFiles[0]);
-      this.loadFn = jsonData.format === 'graph-model' ? loadGraphModel : loadLayersModel;
-      this.model = await this.loadFn(io.browserFiles([jsonFiles[0], ...weightFiles]));
-      this.inputShape = Object.values(this.model.inputs[0].shape);
-      await this.save(true);
-      this.$loading.set(false);
-      this.$ready.set(true);
+    this.$training.set({
+      status: 'loading',
+    });
+    try {
+      const jsonFiles = files.filter((x) => x.name.includes('.json'));
+      const weightFiles = files.filter((x) => x.name.includes('.bin'));
+      if (jsonFiles.length !== 1) {
+        const e = new Error('The provided files are not compatible with this model');
+        e.name = 'File upload error';
+        throw e;
+      }
+      this.$training.set({ status: 'loading' });
+      if (files.length) {
+        const jsonData = await readJSONFile(jsonFiles[0]);
+        this.loadFn = jsonData.format === 'graph-model' ? loadGraphModel : loadLayersModel;
+        this.model = await this.loadFn(io.browserFiles([jsonFiles[0], ...weightFiles]));
+        this.inputShape = Object.values(this.model.inputs[0].shape);
+        await this.warmup();
+        await this.save(true);
+        this.$training.set({
+          status: 'loaded',
+          data: {
+            source: 'file',
+          },
+        });
+      }
+    } catch (error) {
+      this.$training.set({
+        status: 'error',
+      });
+      throw error;
     }
   }
 
   @Catch
   async loadFromUrl(url: string): Promise<void> {
-    this.$ready.set(false);
-    this.$loading.set(true);
-    const modelJson = await fetch(url).then((res) => res.json());
-    this.loadFn = modelJson.format === 'graph-model' ? loadGraphModel : loadLayersModel;
-    this.model = await this.loadFn(url);
-    this.inputShape = Object.values(this.model.inputs[0].shape);
-    this.$loading.set(false);
-    this.$ready.set(true);
+    this.$training.set({
+      status: 'loading',
+    });
+    try {
+      const modelJson = await fetch(url).then((res) => res.json());
+      this.loadFn = modelJson.format === 'graph-model' ? loadGraphModel : loadLayersModel;
+      this.model = await this.loadFn(url);
+      this.inputShape = Object.values(this.model.inputs[0].shape);
+      this.$training.set({ status: 'loaded' });
+      this.$training.set({
+        status: 'loaded',
+        data: {
+          source: 'url',
+          url,
+        },
+      });
+    } catch (error) {
+      this.$training.set({
+        status: 'error',
+      });
+      throw error;
+    }
   }
 
   mount(target?: HTMLElement): void {
@@ -184,8 +235,7 @@ export class TFJSGenericModel<
       target: t,
       props: {
         title: this.title,
-        loading: this.$loading,
-        ready: this.$ready,
+        training: this.$training,
       },
     });
   }
