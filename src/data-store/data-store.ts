@@ -57,7 +57,10 @@ export class DataStore {
     this.location = location;
     if (isValidUrl(location)) {
       this.backend = DataStoreBackend.Remote;
-      const socket = io(location, { reconnectionAttempts: 3 });
+      const socket = io(location, {
+        transports: ['websocket'],
+        reconnectionAttempts: 3,
+      });
       this.feathers.configure(socketio(socket, { timeout: 5000 }));
       this.feathers.io.on('init', ({ auth }: { auth: boolean }) => {
         this.requiresAuth = auth;
