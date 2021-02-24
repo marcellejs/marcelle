@@ -60,8 +60,8 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
     })) as Paginated<StoredModel>;
     if (data.length === 1) {
       this.#storedModelId = data[0].id;
+      this.load().catch(() => {});
     }
-    this.load().catch(() => {});
     this.$training.subscribe(({ status, data: meta }) => {
       if (status === 'success' || (status === 'loaded' && meta?.source !== 'datastore')) {
         this.save(true);
