@@ -20,9 +20,12 @@
   "browser": "dist/marcelle.bundle.umd.js",
   "types": "types/index.d.ts",
   "exports": {
-    "require": "./dist/marcelle.bundle.umd.js",
-    "import": "./dist/marcelle.esm.js",
-    "default": "./dist/marcelle.esm.js"
+    ".": {
+      "require": "./dist/marcelle.bundle.umd.js",
+      "import": "./dist/marcelle.esm.js",
+      "default": "./dist/marcelle.esm.js"
+    },
+    "./dist/marcelle.css": "./dist/marcelle.css"
   },
   "files": [
     "dist",
