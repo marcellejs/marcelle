@@ -48,6 +48,7 @@
     "@rollup/plugin-node-resolve": "^11.2.0",
     "@rollup/plugin-replace": "^2.4.1",
     "@rollup/plugin-typescript": "^8.2.0",
+    "@tensorflow/tfjs": "^2.8.6",
     "@types/blueimp-load-image": "^5.14.1",
     "@types/ndarray": "^1.0.8",
     "@types/ndarray-ops": "^1.2.0",

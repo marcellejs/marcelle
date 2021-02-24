@@ -6,6 +6,7 @@ import { DashboardSettings } from './dashboard_settings';
 export interface DashboardOptions {
   title: string;
   author: string;
+  closable?: boolean;
 }
 
 export class Dashboard {
@@ -16,7 +17,19 @@ export class Dashboard {
   $active = new Stream(false as boolean, true);
   $page = new Stream('', true);
 
-  constructor(private title = 'Hello, Marcelle!', private author = 'author') {}
+  title: string;
+  author: string;
+  closable: boolean;
+
+  constructor({
+    title = 'Hello, Marcelle!',
+    author = 'author',
+    closable = false,
+  }: DashboardOptions) {
+    this.title = title;
+    this.author = author;
+    this.closable = closable;
+  }
 
   page(name: string): DashboardPage {
     if (!Object.keys(this.panels).includes(name)) {
@@ -34,6 +47,7 @@ export class Dashboard {
         dashboards: this.panels,
         settings: this.settings,
         page: this.$page,
+        closable: this.closable,
       },
     });
     this.$active.set(true);
@@ -53,5 +67,5 @@ export class Dashboard {
 }
 
 export function dashboard(options: DashboardOptions): Dashboard {
-  return new Dashboard(options.title, options.author);
+  return new Dashboard(options);
 }

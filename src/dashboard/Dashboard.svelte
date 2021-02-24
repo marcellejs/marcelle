@@ -16,6 +16,7 @@
   export let dashboards: Record<string, DashboardPage> = {};
   export let settings: DashboardSettings;
   export let page: Stream<string>;
+  export let closable: boolean;
 
   const logStream = getLogStream();
 
@@ -81,7 +82,7 @@
 
 {#if showApp}
   <div style="position: fixed; height: 100vh; overflow: scroll; width: 100vw; top:0; left:0">
-    <div class="app-container" transition:blur={{ amount: 10 }}>
+    <div class="app-container" transition:blur={{ amount: 10, duration: closable ? 400 : 0 }}>
       <header class="bg-white text-gray-700 body-font border-b">
         <div class="mx-auto flex flex-wrap p-2 flex-col md:flex-row items-center w-full">
           <a href="#/" class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
@@ -129,23 +130,25 @@
               />
             </svg>
           </a>
-          <button
-            on:click={quit}
-            class="text-red-500 bg-transparent font-bold uppercase text-xs px-2 py-2 rounded-full
+          {#if closable}
+            <button
+              on:click={quit}
+              class="text-red-500 bg-transparent font-bold uppercase text-xs px-2 py-2 rounded-full
               outline-none mr-1 mb-1 hover:bg-red-500 hover:text-white"
-          >
-            <svg
-              class="fill-current inline-block h-5 w-5"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
             >
-              <path
-                fill-rule="evenodd"
-                d="M4.16 4.16l1.42 1.42A6.99 6.99 0 0 0 10 18a7 7 0 0 0 4.42-12.42l1.42-1.42a9 9 0 1
+              <svg
+                class="fill-current inline-block h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M4.16 4.16l1.42 1.42A6.99 6.99 0 0 0 10 18a7 7 0 0 0 4.42-12.42l1.42-1.42a9 9 0 1
                 1-11.69 0zM9 0h2v8H9V0z"
-              />
-            </svg>
-          </button>
+                />
+              </svg>
+            </button>
+          {/if}
         </div>
       </header>
 

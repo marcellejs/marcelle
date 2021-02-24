@@ -99,6 +99,7 @@ const plotResults = predictionPlot(predictionStream);
 const dash = dashboard({
   title: 'Marcelle Example - Wizard',
   author: 'Marcelle Pirates Crew',
+  closable: true,
 });
 
 dash
