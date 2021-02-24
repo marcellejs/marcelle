@@ -8,6 +8,9 @@
 
   onMount(async () => {
     await tick();
+    if (Object.keys(charts).length > 1) {
+      container.style.gridTemplateColumns = 'repeat(2, minmax(0, 1fr))';
+    }
     Object.entries(charts).forEach(([name, chart]) => {
       const div = document.createElement('div');
       div.className = 'card flex-none xl:flex-1 w-full';
@@ -23,4 +26,4 @@
   });
 </script>
 
-<div bind:this={container} class="grid grid-cols-1 xl:grid-cols-2 gap-1" />
+<div bind:this={container} class="grid grid-cols-1 gap-1" />
