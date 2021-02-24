@@ -7,6 +7,7 @@ import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
 import { ObjectId, StoredModel } from '../types';
 import { Model, ModelOptions } from './model';
+import { browserFiles, http } from './tfjs-io';
 
 export type TFJSModelOptions = ModelOptions;
 
@@ -39,7 +40,7 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
         requestOpts.requestInit = { headers };
       }
       const files = await this.model
-        .save(io.http(`${this.dataStore.location}/tfjs-models/upload`, requestOpts))
+        .save(http(`${this.dataStore.location}/tfjs-models/upload`, requestOpts))
         .then((res) => {
           return res.responses[0].json();
         });
@@ -79,8 +80,7 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
         }
 
         model = await this.loadFn(
-          `${this.dataStore.location}/tfjs-models/${storedModel.url}`,
-          requestOpts,
+          http(`${this.dataStore.location}/tfjs-models/${storedModel.url}`, requestOpts),
         );
       }
       if (model) {
@@ -102,6 +102,7 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
       });
       return storedModel;
     } catch (error) {
+      console.log('[tfjs-model] Loading error', error);
       this.$training.set({
         status: 'error',
       });
@@ -158,7 +159,7 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
       });
       this.loadFn = meta.tfjsModelFormat === 'graph-model' ? loadGraphModel : loadLayersModel;
       if (jsonFiles.length === 1 && files.length) {
-        const model = await this.loadFn(io.browserFiles([jsonFiles[0], ...weightFiles]));
+        const model = await this.loadFn(browserFiles([jsonFiles[0], ...weightFiles]));
         if (model) {
           this.model = model;
           await this.warmup();

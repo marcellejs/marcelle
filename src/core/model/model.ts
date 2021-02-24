@@ -48,7 +48,7 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
 
   protected async setupSync() {
     this.service = this.dataStore.service(this.serviceName) as Service<StoredModel>;
-    const { total, data } = (await this.service.find({
+    const { data } = (await this.service.find({
       query: {
         name: this.syncModelName,
         $select: ['id'],
@@ -58,7 +58,7 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
         },
       },
     })) as Paginated<StoredModel>;
-    if (total === 1) {
+    if (data.length === 1) {
       this.#storedModelId = data[0].id;
     }
     this.load().catch(() => {});

@@ -1,7 +1,6 @@
 import {
   browser,
   image as tfImage,
-  io,
   tensor,
   Tensor,
   Tensor1D,
@@ -17,6 +16,7 @@ import { logger } from '../../core/logger';
 import { Catch } from '../../utils/error-handling';
 import { readJSONFile } from '../../utils/file-io';
 import Component from './tf-generic-model.svelte';
+import { browserFiles, http } from '../../core/model/tfjs-io';
 
 export interface InputTypes {
   image: ImageData;
@@ -182,7 +182,7 @@ export class TFJSGenericModel<
       if (files.length) {
         const jsonData = await readJSONFile(jsonFiles[0]);
         this.loadFn = jsonData.format === 'graph-model' ? loadGraphModel : loadLayersModel;
-        this.model = await this.loadFn(io.browserFiles([jsonFiles[0], ...weightFiles]));
+        this.model = await this.loadFn(browserFiles([jsonFiles[0], ...weightFiles]));
         this.inputShape = Object.values(this.model.inputs[0].shape);
         await this.warmup();
         await this.save(true);
@@ -209,9 +209,9 @@ export class TFJSGenericModel<
     try {
       const modelJson = await fetch(url).then((res) => res.json());
       this.loadFn = modelJson.format === 'graph-model' ? loadGraphModel : loadLayersModel;
-      this.model = await this.loadFn(url);
+      this.model = await this.loadFn(http(url));
+      await this.warmup();
       this.inputShape = Object.values(this.model.inputs[0].shape);
-      this.$training.set({ status: 'loaded' });
       this.$training.set({
         status: 'loaded',
         data: {
@@ -220,6 +220,7 @@ export class TFJSGenericModel<
         },
       });
     } catch (error) {
+      console.log('[tf-generic-model] Loading error', error);
       this.$training.set({
         status: 'error',
       });
