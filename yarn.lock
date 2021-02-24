@@ -2940,12 +2940,12 @@ chalk@^4.0.0, chalk@^4.1.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
-chart.js@^3.0.0-beta.11:
-  version "3.0.0-beta.11"
-  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-3.0.0-beta.11.tgz#0ce0ae746e9cf33a5773e5be28bd980eb792a347"
-  integrity sha512-PHSOFGXm3XMsI2P78xcgRZEBaYkPMJNVwaPrwOGT1xdSf79PsQ6PfA1ntnvl1HaX2qFPQr/pNfRLe5igcT2AGw==
+chart.js@3.0.0-beta.10:
+  version "3.0.0-beta.10"
+  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-3.0.0-beta.10.tgz#d4ebbd40939d18e1677e036733f31276ef24d835"
+  integrity sha512-zPK5c7jHB3YAxICluB4QDbgOSN6s8LUvPjdvDwRBgwtbTGKe1DvyVCUIVBSXGh30pe6L3s6q4jur9A1PEd7/YA==
 
-chartjs-chart-matrix@^1.0.0-beta:
+chartjs-chart-matrix@^1.0.0-beta.2:
   version "1.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/chartjs-chart-matrix/-/chartjs-chart-matrix-1.0.0-beta.2.tgz#68e1d40cd6d75ca0b7cd4953326dfb395783f8e4"
   integrity sha512-xwSMBP8fqSqNGTZsnfgkX/l5hyuzH9hOhkLrGTVqvI0Ux436GXjgMhN0xBsVEh1OLTwxpdTEFTykhsyhDwKnFQ==
