@@ -1,13 +1,13 @@
+import { Model } from '../../core';
 import { Module } from '../../core/module';
 import Component from './progress.svelte';
-import { MLP } from '../mlp';
 
-export class Progress extends Module {
+export class Progress<T, U> extends Module {
   title = 'progress';
 
-  #model: MLP;
+  #model: Model<T, U>;
 
-  constructor(m: MLP) {
+  constructor(m: Model<T, U>) {
     super();
     this.#model = m;
   }

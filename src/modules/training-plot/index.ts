@@ -1,7 +1,7 @@
 import { Model } from '../../core';
 import { TrainingPlot, LogSpec } from './training-plot.module';
 
-export function trainingPlot(model: Model, logs?: LogSpec): TrainingPlot {
+export function trainingPlot<T, U>(model: Model<T, U>, logs?: LogSpec): TrainingPlot<T, U> {
   return new TrainingPlot(model, logs);
 }
 

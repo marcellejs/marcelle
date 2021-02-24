@@ -57,14 +57,16 @@ const b = button({ text: 'Train' });
 b.title = 'Training Launcher';
 
 // KNN
-const classifierKNN = knn({ k: 3 }).sync(store);
+const classifierKNN = knn({ k: 3, dataStore: store }).sync('knn-vs-mlp-knn');
 const paramsKNN = parameters(classifierKNN);
 paramsKNN.title = 'KNN: Parameters';
 const progressKNN = progress(classifierKNN);
 progressKNN.title = 'KNN: Training Progress';
 
 // MLP
-const classifierMLP = mlp({ layers: [128, 64], epochs: 30 }).sync(store);
+const classifierMLP = mlp({ layers: [128, 64], epochs: 30, dataStore: store }).sync(
+  'knn-vs-mlp-mlp',
+);
 const paramsMLP = parameters(classifierMLP);
 paramsMLP.title = 'MLP: Parameters';
 const progressMLP = progress(classifierMLP);

@@ -6,7 +6,7 @@ import {
 } from '@tensorflow-models/mobilenet';
 import { GraphModel } from '@tensorflow/tfjs-converter';
 import { io, tidy } from '@tensorflow/tfjs-core';
-import { Classifier, logger, Model, ModelConstructor } from '../../core';
+import { ClassifierResults, logger, Model } from '../../core';
 import { Stream } from '../../core/stream';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './mobilenet.svelte';
@@ -21,10 +21,11 @@ export interface MobilenetResults {
   confidences: { [key: string]: number };
 }
 
-export class Mobilenet extends Classifier(Model as ModelConstructor<Model>) {
+export class Mobilenet extends Model<ImageData, ClassifierResults> {
   title = 'mobilenet';
 
   parameters = {};
+  serviceName = 'undefined';
 
   #mobilenet: (MobileNet & { model?: GraphModel }) | undefined;
   $loading = new Stream(true, true);
@@ -107,5 +108,29 @@ export class Mobilenet extends Classifier(Model as ModelConstructor<Model>) {
   // eslint-disable-next-line class-methods-use-this
   train(): never {
     throw new TrainingError('Model `CocoSsd` cannot be trained');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  save(): never {
+    throw new Error('OnnxImageClassifier does not support saving');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  load(): never {
+    throw new Error('OnnxImageClassifier does not support loading');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  download(): never {
+    throw new Error('OnnxImageClassifier does not support downloading');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  upload(): never {
+    throw new Error('OnnxImageClassifier does not support uploading');
   }
 }

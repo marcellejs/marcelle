@@ -38,7 +38,7 @@ export interface Prediction {
 }
 
 export interface TrainingStatus {
-  status: 'idle' | 'start' | 'epoch' | 'success' | 'error' | 'loaded';
+  status: 'idle' | 'start' | 'epoch' | 'success' | 'error' | 'loaded' | 'loading';
   epoch?: number;
   epochs?: number;
   data?: Record<string, unknown>;
@@ -46,9 +46,7 @@ export interface TrainingStatus {
 
 export interface StoredModel {
   id?: ObjectId;
-  modelName: string;
-  parameters: Record<string, unknown>;
-  modelUrl: string;
-  labels?: string[];
-  data?: unknown;
+  name: string;
+  url: string;
+  metadata?: Record<string, unknown>;
 }

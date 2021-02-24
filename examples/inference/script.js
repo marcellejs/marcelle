@@ -11,7 +11,7 @@ import {
   imageUpload,
   predictionPlot,
   text,
-  tfImageClassifier,
+  tfGenericModel,
   toggle,
 } from '../../dist/marcelle.bundle.esm.js';
 
@@ -23,7 +23,11 @@ const source = imageUpload();
 
 const up = fileUpload();
 up.title = 'Upload model files (.json and .bin)';
-const classifier = tfImageClassifier().sync(dataStore({ location: 'localStorage' }));
+const classifier = tfGenericModel({
+  inputType: 'image',
+  taskType: 'classification',
+  dataStore: dataStore({ location: 'localStorage' }),
+}).sync('inference-example-classifier');
 up.$files.subscribe((fl) => {
   classifier.loadFromFiles(fl);
 });
