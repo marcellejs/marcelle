@@ -30,6 +30,7 @@ const plugins = [
     'process.env.NODE_ENV': process.env.ROLLUP_WATCH
       ? JSON.stringify('development')
       : JSON.stringify('production'),
+    preventAssignment: true,
   }),
   svelte({
     dev: !production,

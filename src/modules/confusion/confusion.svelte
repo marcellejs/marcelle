@@ -1,6 +1,6 @@
 <script>
   import { Chart, CategoryScale, Title, Tooltip } from 'chart.js';
-  import { Matrix, MatrixController } from 'chartjs-chart-matrix';
+  import { MatrixElement, MatrixController } from 'chartjs-chart-matrix';
   import { onDestroy } from 'svelte';
   import ModuleBase from '../../core/ModuleBase.svelte';
 
@@ -9,7 +9,7 @@
   export let confusion;
   export let labels;
 
-  Chart.register(CategoryScale, Title, Tooltip, Matrix, MatrixController);
+  Chart.register(CategoryScale, Title, Tooltip, MatrixElement, MatrixController);
 
   let maxCount = 1;
   let nLabels = 1;
