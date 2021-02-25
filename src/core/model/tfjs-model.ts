@@ -19,7 +19,7 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
 
   @Catch
   async warmup() {
-    const inputShape = this.model.inputs[0].shape.map((x) => x || 1);
+    const inputShape = this.model.inputs[0].shape.map((x) => (x && x > 0 ? x : 1));
     const warmupResult = this.model.predict(tidy(() => zeros(inputShape))) as Tensor;
     await warmupResult.data();
     warmupResult.dispose();

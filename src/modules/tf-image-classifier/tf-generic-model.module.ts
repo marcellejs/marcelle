@@ -71,7 +71,7 @@ export class TFJSGenericModel<
     this.taskType = taskType;
     this.$training.subscribe(({ status }) => {
       if (status === 'loaded') {
-        this.inputShape = Object.values(this.model.inputs[0].shape);
+        this.inputShape = this.model.inputs[0].shape.map((x) => (x && x > 0 ? x : 1));
       }
     });
   }
@@ -183,7 +183,6 @@ export class TFJSGenericModel<
         const jsonData = await readJSONFile(jsonFiles[0]);
         this.loadFn = jsonData.format === 'graph-model' ? loadGraphModel : loadLayersModel;
         this.model = await this.loadFn(browserFiles([jsonFiles[0], ...weightFiles]));
-        this.inputShape = Object.values(this.model.inputs[0].shape);
         await this.warmup();
         await this.save(true);
         this.$training.set({
@@ -211,7 +210,6 @@ export class TFJSGenericModel<
       this.loadFn = modelJson.format === 'graph-model' ? loadGraphModel : loadLayersModel;
       this.model = await this.loadFn(http(url));
       await this.warmup();
-      this.inputShape = Object.values(this.model.inputs[0].shape);
       this.$training.set({
         status: 'loaded',
         data: {
