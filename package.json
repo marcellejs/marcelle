@@ -41,7 +41,7 @@
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "lint": "eslint src",
-    "clean": "rm -rf node_modules dist examples/rollup/node_modules examples/rollup/public"
+    "clean": "rm -rf node_modules dist examples/dist"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.1.0",

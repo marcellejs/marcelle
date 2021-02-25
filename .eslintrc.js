@@ -8,7 +8,7 @@ module.exports = {
     sourceType: 'module',
     project: './tsconfig.json',
   },
-  extends: ['airbnb-typescript/base', 'prettier', 'prettier/@typescript-eslint'],
+  extends: ['airbnb-typescript/base', 'prettier'],
   rules: {
     'import/extensions': [
       'error',

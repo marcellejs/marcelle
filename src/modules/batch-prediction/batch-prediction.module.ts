@@ -123,8 +123,8 @@ export class BatchPrediction extends Module {
       files.filter((f) => f.type === 'application/json').map((f) => readJSONFile(f)),
     );
     const preds = await Promise.all(
-      jsonFiles.map((fileContent: { predictions: Prediction[] }) => {
-        return Promise.all(
+      jsonFiles.map((fileContent: { predictions: Prediction[] }) =>
+        Promise.all(
           fileContent.predictions.map((prediction: Prediction) => {
             const { id, ...predictionNoId } = prediction;
             return this.predictionService
@@ -133,8 +133,8 @@ export class BatchPrediction extends Module {
                 throwError(e);
               });
           }),
-        );
-      }),
+        ),
+      ),
     );
     this.$predictions.set(preds.flat().map((x) => (x as Prediction).id));
   }

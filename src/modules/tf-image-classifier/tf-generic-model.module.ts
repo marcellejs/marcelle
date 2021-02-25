@@ -142,9 +142,7 @@ export class TFJSGenericModel<
       const [width, height] = (outputs as Tensor3D).shape;
 
       const processedOutputs = this.segmentationOptions.applyArgmax
-        ? tidy(() => {
-            return outputs.argMax(-1).mul(0.5);
-          })
+        ? tidy(() => outputs.argMax(-1).mul(0.5))
         : outputs;
       const mask =
         this.segmentationOptions.output === 'image'
@@ -218,6 +216,7 @@ export class TFJSGenericModel<
         },
       });
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.log('[tf-generic-model] Loading error', error);
       this.$training.set({
         status: 'error',

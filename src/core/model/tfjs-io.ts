@@ -37,6 +37,7 @@ function fixSeparableConv2D(artifacts: SpecificModelArtifacts): ModelArtifacts {
           ) {
             removeKernels = true;
           }
+          // eslint-disable-next-line no-param-reassign
           delete artifacts.modelTopology.model_config.config.layers[i].config[field];
         });
       }
@@ -45,7 +46,12 @@ function fixSeparableConv2D(artifacts: SpecificModelArtifacts): ModelArtifacts {
       logger.warning(
         'TFJS Model loading: experimentally removing Kernel attributes from SeparableConv2D layers',
       );
-  } catch (error) {}
+  } catch (error) {
+    logger.warning(
+      'TFJS Model loading: An error occurred whil experimentally removing Kernel attributes from SeparableConv2D layers',
+      error,
+    );
+  }
   return artifacts;
 }
 

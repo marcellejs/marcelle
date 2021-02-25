@@ -262,14 +262,14 @@ export class Dataset extends Module {
       files.filter((f) => f.type === 'application/json').map((f) => readJSONFile(f)),
     );
     await Promise.all(
-      jsonFiles.map((fileContent: { instances: Instance[] }) => {
-        return fileContent.instances.map((instance: Instance) => {
+      jsonFiles.map((fileContent: { instances: Instance[] }) =>
+        fileContent.instances.map((instance: Instance) => {
           const { id, ...instanceNoId } = instance;
           return this.addInstance(instanceNoId).catch((e) => {
             throwError(e);
           });
-        });
-      }),
+        }),
+      ),
     );
   }
 

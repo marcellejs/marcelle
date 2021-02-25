@@ -41,9 +41,7 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
       }
       const files = await this.model
         .save(http(`${this.dataStore.location}/tfjs-models/upload`, requestOpts))
-        .then((res) => {
-          return res.responses[0].json();
-        });
+        .then((res) => res.responses[0].json());
       url = files['model.json'];
     }
 
@@ -102,6 +100,7 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
       });
       return storedModel;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.log('[tfjs-model] Loading error', error);
       this.$training.set({
         status: 'error',
