@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Marcelle - Skin Classification Demo</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <style>
+      html, body {
+        font-family: 'Poppins', sans-serif;
+        box-sizing: border-box;
+        font-weight: 300;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 100%;
+        width: 940px;
+        margin: auto;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 100vh;
+      }
+
+      .demo-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      @media (max-width: 560px) {
+        .demo-container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .demo {
+        border: 2px solid rgb(226,232,240);
+        border-radius: .5rem;
+        margin: 8px;
+        /* text-align: center; */
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      h2 {
+        margin: 0;
+        padding-bottom: 8px;
+        font-size: 1.4rem;
+        font-weight: 500;
+        border-bottom: 1px solid rgb(237,242,247);
+      }
+
+      .description {
+        text-align: left;
+        padding-top: 8px;
+        color: rgb(74,85,104);
+      }
+
+      a.btn {
+        background-color: #667eea;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-top: .5rem;
+        padding-bottom: .5rem;
+        display: flex;
+        align-items: center;
+        border-radius: .25rem;
+        color: white;
+        text-decoration: none;
+        margin-top: 20px;
+      }
+
+      a.btn:hover {
+        background-color: #5a67d8;
+      }
+
+      .icon {
+        width: 1rem;
+        height: 1rem;
+        margin-left: auto;
+      }
+
+      footer {
+        margin-top: 1rem;
+        padding: 1rem;
+        text-align: right;
+        border-top: 1px solid rgb(237,242,247);
+        color: #6a8bad;
+        display: flex;
+        justify-content: space-between;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Marcelle - Examples</h1>
+      </header>
+      <main>
+        <div class="demo-container">
+          <% for (example of examples) { %>
+            <div class="demo">
+              <div>
+                <h2><%= example.name %></h2>
+                <div class="description"><%= example.description %></div>
+              </div>
+              <a class="btn" href="/<%= example.path %>/">
+                Open Demo
+                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="icon" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+              </a>
+            </div>
+          <% } %>
+        </div>
+      </main>
+      <footer>
+        © 2020 Marcelle Pirates Crew
+      </footer>
+    </div>
+  </body>
+  </html>

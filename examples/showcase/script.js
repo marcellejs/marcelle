@@ -1,4 +1,5 @@
 /* eslint-disable import/extensions, no-console */
+import '../../dist/marcelle.css';
 import {
   browser,
   button,
@@ -16,7 +17,7 @@ import {
   textfield,
   toggle,
   webcam,
-} from '../../dist/marcelle.bundle.esm.js';
+} from '../../dist/marcelle.esm.js';
 
 // -----------------------------------------------------------
 // BUTTON

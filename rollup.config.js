@@ -13,7 +13,6 @@ import typescript from '@rollup/plugin-typescript';
 import path from 'path';
 import pkg from './package.json';
 
-const noBundle = process.env.NO_BUNDLE;
 const production = !process.env.ROLLUP_WATCH;
 const analyze = false;
 
@@ -96,4 +95,4 @@ const browserBuild = {
   },
 };
 
-export default noBundle ? esBuild : [esBuild, browserBuild];
+export default production ? [esBuild, browserBuild] : esBuild;

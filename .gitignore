@@ -3,3 +3,4 @@ node_modules
 dist
 types
 *.onnx
+examples/dist
