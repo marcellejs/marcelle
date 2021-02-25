@@ -6,14 +6,13 @@ sidebarDepth: 2
 
 Modules are the building blocks of a Marcelle application and handle various tasks such as capturing images from a webcam, defining a new dataset, instancing a Deep Neural Network (DNN), displaying a confusion matrix, or monitoring the confidence of a model prediction, to name a few. Because Marcelle emphasizes instant feedback and user interaction, modules often provide a graphical user interface that can be displayed on demand in a web application.
 
-The specification of modules is somehow loose in the library, to allow for easy customization and extension. A module is essentially a JavaScript object exposing a set of reactive streams and providing a `mount` method for displaying their associated view. All modules have string properties called `name` and `description`. The `name` is used as title for the cards displayed in a dashboard. Each module instance also carries a unique `id`.
+The specification of modules is somehow loose in the library, to allow for easy customization and extension. A module is essentially a JavaScript object exposing a set of reactive streams and providing a `mount` method for displaying their associated view. All modules have a string property called `title` used as title for the cards displayed in a dashboard. Each module instance also carries a unique `id`.
 
 The minimal TypeScript interface corresponding to a module is as follows:
 
 ```ts
 interface Module {
-  name: string; // module name
-  description: string; // module description
+  title: string; // module name
   id: string; // module id (unique per instance)
   mount(targetSelector?: string): void; // mount the module's view in the DOM
   destroy(): void; // destroy the module's view
@@ -37,10 +36,10 @@ mlp.$training;
 ## Views
 
 ```tsx
-Module.mount(targetSelector?: string): void;
+Module.mount(target?: HTMLElement): void;
 ```
 
-Modules should implement a `mount` method that displays the view assotiated with the module instance. The method takes as argument a CSS selector specifying the target element where the view should be mounted. If no selector is passed, the module will attempt mounting the module on the DOM element which id is the `id` of the module.
+Modules should implement a `mount` method that displays the view assotiated with the module instance. The method takes as optional argument the target HTML element where the view should be mounted. If no target is passed, the module will attempt mounting the module on the DOM element which id is the `id` of the module.
 
 Marcelle does not enforce the use of a particular web framework for programming views, however it uses [Svelte](https://svelte.dev/) internally, for its performance and its native compatibility with reactive data streams.
 

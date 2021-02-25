@@ -7,6 +7,7 @@ export interface ImageUploadOptions {
   width?: number;
   height?: number;
 }
+
 export class ImageUpload extends Module {
   title = 'image upload';
 

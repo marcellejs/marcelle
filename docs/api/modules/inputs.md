@@ -41,10 +41,17 @@ faker.$frames.subscribe((x) => console.log('faker $frames:', x));
 ## ImageUpload
 
 ```tsx
-marcelle.imageUpload(): ImageUpload;
+marcelle.imageUpload({ width?: number, height?: number }): ImageUpload;
 ```
 
-An Image upload component, that creates a stream of images and thumbnails.
+An Image upload component, that creates a stream of images and thumbnails. Images are cropped and rescaled to match the target dimensions, if these are non-zero, otherwise the dimensions are unchanged.
+
+### Parameters
+
+| Option | Type   | Description         | Required | Default |
+| ------ | ------ | ------------------- | :------: | :-----: |
+| width  | number | Target image width  |          |    0    |
+| height | number | Target image height |          |    0    |
 
 ### Streams
 

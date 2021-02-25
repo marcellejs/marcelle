@@ -9,6 +9,7 @@
 - Modules' mount method now accepts an HTML Element rather than a selector
 - `imageDrop` has been renamed to `imageUpload`
 - Dashboards now have a `closable` option, which is disabled by default.
+- Dataset's `$created` stream has been replaced by a more generic `$changes` stream
 
 ### New Features
 
@@ -52,4 +53,4 @@
 
 ## 0.1.0-alpha.4
 
-- First published version
+- First-ish published version

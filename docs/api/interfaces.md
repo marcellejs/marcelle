@@ -18,43 +18,42 @@ The following factory function creates and returns an empty Dashboard Applicatio
 marcelle.dashboard({
   title: string;
   author: string;
-  datasets: Dataset[];
+  closable?: boolean;
 }): Dashboard
 ```
 
 #### Parameters
 
-| Parameter | Type             | Description                             | Required |
-| --------- | ---------------- | --------------------------------------- | :------: |
-| title     | String           | The application's title.                |          |
-| author    | String           | The application's authors/credits.      |          |
-| datasets  | Array\<Dataset\> | The datasets present in the application |          |
+| Parameter | Type    | Description                                                                                                                                 | Required | Default |
+| --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------- | :------: | :-----: |
+| title     | String  | The application's title.                                                                                                                    |          |         |
+| author    | String  | The application's authors/credits.                                                                                                          |          |         |
+| closable  | boolean | Whether the dashboard can be closed. This flag adds a close button to the menu bar, and is useful when the dashboard is displayed on demand |          |  false  |
+
+#### Streams
+
+### Streams
+
+| Name     | Type    | Description                                                        | Hold |
+| -------- | ------- | ------------------------------------------------------------------ | :--: |
+| \$active | boolean | Stream specifying whether the dashboard is active (visible) or not |  ✓   |
+| \$page   | string  | Stream indicating the current page slug                            |  ✓   |
 
 #### Example
 
 ```js
-const dashboard = marcelle.dashboard({
+const dash = dashboard({
   title: 'Marcelle Example - Dashboard',
   author: 'Marcelle Pirates Crew',
-  datasets: [trainingSet],
 });
 
-dashboard
+dash
   .page('Data Management')
   .useLeft(input, featureExtractor)
   .use([label, capture], trainingSetBrowser);
-dashboard
-  .page('Training')
-  .use(
-    b,
-    'KNN (k-Nearest Neighbors)',
-    paramsKNN,
-    progressKNN,
-    'MLP (Multilayer Perceptron)',
-    paramsMLP,
-    progressMLP,
-    plotTrainingMLP,
-  );
+dash.page('Training').use(params, b, prog, plotTraining);
+dash.page('Batch Prediction').use(predictButton, confusionMatrix);
+dash.settings.dataStores(store).datasets(trainingSet).models(classifier).predictions(batchMLP);
 ```
 
 #### .destroy()
@@ -72,6 +71,14 @@ Dashboard.page(name: string): DashboardPage
 ```
 
 Create a new page on the dashboard entitled `name`, and returns the corresponding [`DashboardPage`](#dashboardpage) instance.
+
+#### .settings
+
+```tsx
+Dashboard.settings: DashboardSettings
+```
+
+The dashboard's settings. See [`DashboardSettings`](#dashboardsettings).
 
 #### .start()
 
@@ -107,6 +114,53 @@ useLeft(...modules: Module[]): DashboardPage {
 ```
 
 The `useLeft` method is similar to use except that modules are placed on the left column of the dashboard page. The method only accept modules as argument.
+
+### DashboardSettings
+
+Specifies the contents of the dashboards settings panel.
+
+#### .datasets()
+
+```tsx
+datasets(...datasets: Dataset[]): DashboardSettings
+```
+
+Specify the datasets that can be managed in the settings panel.
+
+#### .dataStores()
+
+```tsx
+dataStores(...stores: DataStore[]): DashboardSettings
+```
+
+Specify the data stores that can be managed in the settings panel.
+
+#### .models()
+
+```tsx
+models(...models: Model<any, any>[]): DashboardSettings
+```
+
+Specify the models that can be managed in the settings panel.
+#### .predictions()
+
+```tsx
+predictions(...predictions: BatchPrediction[]): DashboardSettings
+```
+
+Specify the batch prediction modules that can be managed in the settings panel.
+
+#### .use()
+
+```tsx
+use(...modules: Array<Module | Module[] | string>): DashboardSettings
+```
+
+The `use` method takes an arbitrary number of arguments specifying the modules to display on the page. By default, modules are stacked vertically in the right column of the page. Each argument can either be:
+
+- A module ([`Module`](/api/modules/)), displayed full-width on the right column
+- An array of module, which are then distributed horizontally
+- A string, which defines a section title
 
 ## Wizards
 
