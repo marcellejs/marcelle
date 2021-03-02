@@ -26,5 +26,5 @@ export * from './webcam';
 export * from './coco-ssd';
 export * from './knn';
 export * from './mlp';
-export * from './tf-image-classifier';
+export * from './tf-generic-model';
 export * from './onnx-image-classifier';
