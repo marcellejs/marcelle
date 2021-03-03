@@ -197,6 +197,72 @@ export class Dataset extends Module {
     return data;
   }
 
+  async deleteInstance(id: ObjectId): Promise<void> {
+    const instance = await this.instanceService.get(id);
+    if (!instance) return;
+    const instanceClass = this.#datasetState.classes[instance.label];
+    if (instanceClass.length === 1) {
+      await this.deleteClass(instance.label);
+      return;
+    }
+    await this.instanceService.remove(id);
+    this.#datasetState.classes[instance.label] = this.#datasetState.classes[instance.label].filter(
+      (x) => x !== id,
+    );
+    this.#datasetState.count -= 1;
+    await this.datasetService.patch(this.#datasetId, this.#datasetState);
+    this.$classes.set(this.#datasetState.classes);
+    const newInstances = this.$instances.value.filter((x) => x !== id);
+    this.$instances.set(newInstances);
+    this.$count.set(this.#datasetState.count);
+    this.$changes.set([
+      {
+        level: 'instance',
+        type: 'deleted',
+        data: id,
+      },
+    ]);
+  }
+
+  async changeInstanceLabel(id: ObjectId, newLabel: string): Promise<void> {
+    const instance = await this.instanceService.get(id);
+    if (!instance) return;
+    const instanceClass = this.#datasetState.classes[instance.label];
+    await this.instanceService.patch(id, { label: newLabel });
+    const changes = [];
+    if (instanceClass.length === 1) {
+      delete this.#datasetState.classes[instance.label];
+      changes.push({
+        level: 'class',
+        type: 'deleted',
+        data: instance.label,
+      });
+    } else {
+      this.#datasetState.classes[instance.label] = this.#datasetState.classes[
+        instance.label
+      ].filter((x) => x !== id);
+    }
+    const classExists = Object.keys(this.#datasetState.classes).includes(newLabel);
+    this.#datasetState.classes[newLabel] = (this.#datasetState.classes[newLabel] || []).concat([
+      id,
+    ]);
+    await this.datasetService.patch(this.#datasetId, this.#datasetState);
+    this.$classes.set(this.#datasetState.classes);
+    if (!classExists) {
+      changes.push({
+        level: 'class',
+        type: 'created',
+        data: newLabel,
+      });
+    }
+    changes.push({
+      level: 'instance',
+      type: 'renamed',
+      data: { id, label: newLabel },
+    });
+    this.$changes.set(changes as DatasetChange[]);
+  }
+
   async renameClass(label: string, newLabel: string): Promise<void> {
     const { classes } = this.#datasetState;
     if (!Object.keys(classes).includes(label)) return;

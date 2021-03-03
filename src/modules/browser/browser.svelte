@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import type { Instance, Stream } from '../../core';
+  import type { Instance, ObjectId, Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
   import PopMenu from '../../ui/widgets/PopMenu.svelte';
   import type { Dataset } from '../dataset';
@@ -9,6 +9,7 @@
   export let title: string;
   export let count: Stream<number>;
   export let dataset: Dataset;
+  export let selected: Stream<ObjectId[]>;
 
   let loading = false;
 
@@ -18,9 +19,10 @@
   }> = [];
 
   function onClassAction(label: string, code: string) {
+    let result: string;
     switch (code) {
       case 'edit':
-        const result = window.prompt('Enter the new label', label);
+        result = window.prompt('Enter the new label', label);
         if (result) {
           dataset.renameClass(label, result);
         }
@@ -28,6 +30,17 @@
 
       case 'delete':
         dataset.deleteClass(label);
+        break;
+
+      case 'deleteInstances':
+        deleteSelectedInstances();
+        break;
+
+      case 'relabelInstances':
+        result = window.prompt('Enter the new label', label);
+        if (result) {
+          relabelSelectedInstances(result);
+        }
         break;
 
       default:
@@ -82,6 +95,8 @@
               classes.splice(classIdx, 1);
               classes = classes;
             }
+          } else if (type === 'created') {
+            classes = classes.concat({ label: data, instances: [] });
           }
         } else {
           if (type === 'created') {
@@ -94,12 +109,112 @@
             } else {
               classes = classes.concat([{ label: data.label, instances: [instance] }]);
             }
+          } else if (type === 'deleted') {
+            const classIdx = classes.map(({ label }) => label).indexOf(getLabel(data));
+            if (classIdx >= 0) {
+              classes[classIdx].instances = classes[classIdx].instances.filter(
+                ({ id }) => id !== data,
+              );
+            } else {
+              throw new Error('An unexpected error occurred');
+            }
+          } else if (type === 'renamed') {
+            const prevClassIdx = classes.map(({ label }) => label).indexOf(getLabel(data.id));
+            if (prevClassIdx >= 0) {
+              classes[prevClassIdx].instances = classes[prevClassIdx].instances.filter(
+                ({ id }) => id !== data.id,
+              );
+            }
+            const newClassIdx = classes.map(({ label }) => label).indexOf(data.label);
+            if (newClassIdx >= 0) {
+              const instance = await dataset.instanceService.get(data.id, {
+                query: { $select: ['thumbnail'] },
+              });
+              classes[newClassIdx].instances = classes[newClassIdx].instances.concat([instance]);
+            } else {
+              throw new Error('An unexpected error occurred');
+            }
           }
         }
       });
     });
   });
+
+  function getLabel(id: ObjectId) {
+    for (let i = 0; i < classes.length; i++) {
+      if (classes[i].instances.map((x) => x.id).includes(id)) {
+        return classes[i].label;
+      }
+    }
+    return null;
+    // return classes
+    //   .map((x) => x.instances)
+    //   .flat()
+    //   .filter((x) => x.id === id)
+    //   .map(({ label }) => label)[0];
+  }
+
+  async function deleteSelectedInstances() {
+    await Promise.all(selected.value.map((id) => dataset.deleteInstance(id)));
+    selected.set([]);
+  }
+
+  async function relabelSelectedInstances(newLabel: string) {
+    await Promise.all(selected.value.map((id) => dataset.changeInstanceLabel(id, newLabel)));
+    selected.set([]);
+  }
+
+  let metaPressed = false;
+  let shiftPressed = false;
+  function handleKeydown(event: KeyboardEvent) {
+    if (['Meta', 'Control'].includes(event.key)) {
+      metaPressed = true;
+    } else if (event.key === 'Shift') {
+      shiftPressed = true;
+    } else if (event.key === 'Delete' || (event.key === 'Backspace' && metaPressed)) {
+      deleteSelectedInstances();
+    }
+  }
+  function handleKeyup(event: KeyboardEvent) {
+    if (['Meta', 'Control'].includes(event.key)) {
+      metaPressed = false;
+    } else if (event.key === 'Shift') {
+      shiftPressed = false;
+    }
+  }
+
+  let initialId: ObjectId = null;
+  function selectInstance(id?: ObjectId) {
+    if (metaPressed) {
+      if (!id) return;
+      if (selected.value.includes(id)) {
+        selected.set(selected.value.filter((x) => x !== id));
+      } else {
+        selected.set(selected.value.concat([id]));
+      }
+    } else if (shiftPressed) {
+      if (!initialId || !id) return;
+      const srcLabel = getLabel(initialId);
+      const dstLabel = getLabel(id);
+      if (srcLabel !== dstLabel) return;
+      const instances = classes
+        .filter(({ label }) => label === srcLabel)[0]
+        .instances.map((x) => x.id);
+      const srcIndex = instances.indexOf(initialId);
+      const dstIndex = instances.indexOf(id);
+      selected.set(
+        srcIndex < dstIndex
+          ? instances.slice(srcIndex, dstIndex + 1)
+          : instances.slice(dstIndex, srcIndex + 1),
+      );
+    } else {
+      selected.set(id ? [id] : []);
+      initialId = id;
+    }
+  }
 </script>
+
+<svelte:window on:keydown={handleKeydown} on:keyup={handleKeyup} />
 
 <ModuleBase {title} {loading}>
   {#if classes}
@@ -109,22 +224,41 @@
       <p class="ml-3 mt-2">This dataset is empty.</p>
     {/if}
 
-    <div class="flex flex-wrap">
+    <div class="flex flex-wrap" on:click={() => selectInstance()}>
       {#each classes as { label, instances }}
         <div class="browser-class">
           <div class="browser-class-header">
             <span class="browser-class-title">{label}</span>
             <PopMenu
               actions={[
-                { code: 'edit', text: 'Edit Label' },
-                { code: 'delete', text: 'Delete Class' },
-              ]}
+                { code: 'edit', text: 'Edit class label' },
+                { code: 'delete', text: 'Delete class' },
+              ].concat(
+                $selected.length > 0
+                  ? [
+                      {
+                        code: 'deleteInstances',
+                        text: `Delete selected instance${$selected.length > 1 ? 's' : ''}`,
+                      },
+                      {
+                        code: 'relabelInstances',
+                        text: `Relabel selected instance${$selected.length > 1 ? 's' : ''}`,
+                      },
+                    ]
+                  : [],
+              )}
               on:select={(e) => onClassAction(label, e.detail)}
             />
           </div>
           <div class="browser-class-body">
             {#each instances as { id, thumbnail }}
-              <img src={thumbnail} alt="thumbnail" class="p-1" />
+              <img
+                src={thumbnail}
+                alt="thumbnail"
+                class="m-1"
+                class:selected={$selected.includes(id)}
+                on:click|stopPropagation={() => selectInstance(id)}
+              />
             {/each}
           </div>
         </div>
@@ -155,6 +289,11 @@
 
   .browser-class-body img {
     width: 60px;
-    @apply border-gray-200 rounded-md;
+    box-sizing: content-box;
+    @apply border-2 border-transparent rounded-md;
+  }
+
+  .browser-class-body img.selected {
+    @apply border-teal-700;
   }
 </style>
