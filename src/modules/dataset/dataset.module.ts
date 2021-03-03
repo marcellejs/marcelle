@@ -1,5 +1,5 @@
 import { map } from '@most/core';
-import type { Service, Paginated } from '@feathersjs/feathers';
+import type { Service, Paginated, Params as FeathersParams } from '@feathersjs/feathers';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import { logger } from '../../core/logger';
@@ -178,6 +178,23 @@ export class Dataset extends Module {
         data: { id, label: instance.label },
       },
     ]);
+  }
+
+  async getInstance(id: ObjectId, fields: string[] = undefined): Promise<Instance> {
+    const opts: FeathersParams = {};
+    if (fields) {
+      opts.query = { $select: fields };
+    }
+    return this.instanceService.get(id, opts);
+  }
+
+  async getAllInstances(fields: string[] = undefined): Promise<Instance[]> {
+    const opts: FeathersParams = {};
+    if (fields) {
+      opts.query = { $select: fields };
+    }
+    const { data } = (await this.instanceService.find(opts)) as Paginated<Instance>;
+    return data;
   }
 
   async renameClass(label: string, newLabel: string): Promise<void> {
