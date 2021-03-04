@@ -4,7 +4,7 @@ import {
   batchPrediction,
   datasetBrowser,
   button,
-  confusion,
+  confusionMatrix,
   dashboard,
   dataset,
   dataStore,
@@ -88,9 +88,9 @@ const batchMLP = batchPrediction({ name: 'mlp', dataStore: store });
 const batchKNN = batchPrediction({ name: 'knn', dataStore: store });
 const predictButton = button({ text: 'Update predictions' });
 const predictionAccuracy = text({ text: 'Waiting for predictions...' });
-const confusionMLP = confusion(batchMLP);
+const confusionMLP = confusionMatrix(batchMLP);
 confusionMLP.title = 'MLP: Confusion Matrix';
-const confusionKNN = confusion(batchKNN);
+const confusionKNN = confusionMatrix(batchKNN);
 confusionKNN.title = 'KNN: Confusion Matrix';
 
 predictButton.$click.subscribe(async () => {

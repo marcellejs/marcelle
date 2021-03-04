@@ -58,10 +58,10 @@ predictButton.$click.subscribe(async () => {
 });
 ```
 
-## Confusion
+## ConfusionMatrix
 
 ```tsx
-marcelle.confusion(prediction: BatchPrediction): Confusion;
+marcelle.confusionMatrix(prediction: BatchPrediction): Confusion;
 ```
 
 Displays a confusion matrix from a [BatchPrediction](#batchprediction) module.
@@ -75,14 +75,14 @@ Displays a confusion matrix from a [BatchPrediction](#batchprediction) module.
 ### Screenshot
 
 <div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
-  <img src="./images/confusion.png" alt="Screenshot of the confusion component">
+  <img src="./images/confusion-matrix.png" alt="Screenshot of the confusion-matrix component">
 </div>
 
 ### Example
 
 ```js
 const batchMLP = marcelle.batchPrediction({ name: 'mlp', dataStore: store });
-const confusionMatrix = marcelle.confusion(batchMLP);
+const confusionMatrix = marcelle.confusionMatrix(batchMLP);
 ```
 
 ## PredictionPlot

@@ -10,6 +10,7 @@
 - `imageDrop` has been renamed to `imageUpload`
 - `browser` has been renamed to `datasetBrowser`
 - `progress` has been renamed to `trainingProgress`
+- `confusion` has been renamed to `confusionMatrix`
 - Dashboards now have a `closable` option, which is disabled by default.
 - Dataset's `$created` stream has been replaced by a more generic `$changes` stream
 

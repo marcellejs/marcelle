@@ -4,7 +4,7 @@ import {
   batchPrediction,
   datasetBrowser,
   button,
-  confusion,
+  confusionMatrix,
   dashboard,
   dataset,
   dataStore,
@@ -70,8 +70,8 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 const batchTesting = batchPrediction({ name: 'mobilenet', dataStore: store });
 const predictButton = button({ text: 'Update predictions' });
 const predictionAccuracy = text({ text: 'Waiting for predictions...' });
-const confusionMatrix = confusion(batchTesting);
-confusionMatrix.title = 'Mobilenet: Confusion Matrix';
+const confMat = confusionMatrix(batchTesting);
+confMat.title = 'Mobilenet: Confusion Matrix';
 
 predictButton.$click.subscribe(async () => {
   await batchTesting.clear();
@@ -128,7 +128,7 @@ dash
 dash
   .page('Batch Testing')
   .useLeft(source, classifier)
-  .use(tog, trainingSetBrowser, predictButton, predictionAccuracy, confusionMatrix);
+  .use(tog, trainingSetBrowser, predictButton, predictionAccuracy, confMat);
 dash.settings.dataStores(store).datasets(trainingSet).models(classifier);
 
 dash.start();

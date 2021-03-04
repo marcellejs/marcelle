@@ -2,7 +2,7 @@ export * from './account';
 export * from './batch-prediction';
 export * from './button';
 export * from './chart';
-export * from './confusion';
+export * from './confusion-matrix';
 export * from './dataset';
 export * from './dataset-browser';
 export * from './faker';

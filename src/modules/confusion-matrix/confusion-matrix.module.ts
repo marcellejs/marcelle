@@ -1,23 +1,23 @@
 import { awaitPromises, map } from '@most/core';
 import { dequal } from 'dequal';
 import { Module } from '../../core/module';
-import Component from './confusion.svelte';
+import Component from './confusion-matrix.svelte';
 import { BatchPrediction } from '../batch-prediction';
 import { Stream } from '../../core/stream';
 import { Prediction } from '../../core/types';
 
-export type ConfusionMatrix = Array<{
+export type ConfusionMatrixT = Array<{
   x: string;
   y: string;
   v: number;
 }>;
 
-export class Confusion extends Module {
+export class ConfusionMatrix extends Module {
   title = 'confusion matrix';
 
   #prediction: BatchPrediction;
 
-  $confusion: Stream<ConfusionMatrix>;
+  $confusion: Stream<ConfusionMatrixT>;
   $accuracy: Stream<number>;
   $labels: Stream<string[]> = new Stream([], true);
 

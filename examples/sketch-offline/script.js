@@ -4,7 +4,7 @@ import {
   batchPrediction,
   datasetBrowser,
   button,
-  confusion,
+  confusionMatrix,
   dashboard,
   dataset,
   dataStore,
@@ -65,7 +65,7 @@ const plotTraining = trainingPlot(classifier);
 // -----------------------------------------------------------
 
 const batchMLP = batchPrediction({ name: 'mlp', dataStore: store });
-const confusionMatrix = confusion(batchMLP);
+const confMat = confusionMatrix(batchMLP);
 
 const predictButton = button({ text: 'Update predictions' });
 predictButton.$click.subscribe(async () => {
@@ -100,7 +100,7 @@ dash
   .useLeft(input, featureExtractor)
   .use([label, capture], trainingSetBrowser);
 dash.page('Training').use(params, b, prog, plotTraining);
-dash.page('Batch Prediction').use(predictButton, confusionMatrix);
+dash.page('Batch Prediction').use(predictButton, confMat);
 dash.page('Real-time Prediction').useLeft(input).use(tog, plotResults);
 dash.settings.dataStores(store).datasets(trainingSet).models(classifier);
 
