@@ -54,7 +54,7 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 
 const b = button({ text: 'Train' });
 b.title = 'Training Launcher';
-const classifier = mlp({ layers: [64, 32], epochs: 20, dataStore: store }).sync('default-mlp');
+const classifier = mlp({ layers: [64, 32], epochs: 20, dataStore: store }).sync('mlp-dashboard');
 b.$click.subscribe(() => classifier.train(trainingSet));
 
 const params = parameters(classifier);

@@ -53,7 +53,10 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 // -----------------------------------------------------------
 
 const b = button({ text: 'Train' });
-const classifier = mlp({ layers: [64, 32], epochs: 20 });
+
+const classifier = mlp({ layers: [64, 32], epochs: 20, dataStore: store });
+classifier.sync('sketch-classifier');
+
 b.$click.subscribe(() => classifier.train(trainingSet));
 
 const params = parameters(classifier);

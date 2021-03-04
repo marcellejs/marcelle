@@ -25,7 +25,6 @@ const source = imageUpload({ width: 224, height: 224 });
 const up = fileUpload();
 up.title = 'Upload model files (.json and .bin)';
 const classifier = onnxImageClassifier({ applySoftmax: true, topK: 5 });
-// .sync(dataStore({ location: 'localStorage' }));
 
 fetch('./imagenet_class_index.json')
   .then((res) => res.json())
