@@ -76,7 +76,7 @@ const store = dataStore({ location: 'localStorage' });
 const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
 trainingSet.capture(instances);
 
-const trainingSetBrowser = browser(trainingSet);
+const trainingSetBrowser = datasetBrowser(trainingSet);
 
 // -----------------------------------------------------------
 // DASHBOARDS
@@ -131,7 +131,7 @@ import { umap } from './modules';
 
 // ...
 
-const trainingSetBrowser = browser(trainingSet);
+const trainingSetBrowser = datasetBrowser(trainingSet);
 
 const trainingSetUmap = umap();
 

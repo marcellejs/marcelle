@@ -154,10 +154,10 @@ const instances = input.$images
   .awaitPromises();
 ```
 
-Finally, we plot on the interface the label textfield, the capture button and a dataset [browser](../api/modules/data.html#browser) that provides an interface to visualize the dataset content.
+Finally, we plot on the interface the label textfield, the capture button and a dataset [datasetBrowser](../api/modules/data.html#datasetBrowser) that provides an interface to visualize the dataset content.
 
 ```js
-const trainingSetBrowser = marcelle.browser(trainingSet);
+const trainingSetBrowser = marcelle.datasetBrowser(trainingSet);
 ```
 
 ```js{2}

@@ -1,7 +1,7 @@
 /* eslint-disable import/extensions, no-console */
 import '../../dist/marcelle.css';
 import {
-  browser,
+  datasetBrowser,
   button,
   chart,
   dashboard,
@@ -139,7 +139,7 @@ const store = dataStore({ location: 'localStorage' });
 const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
 trainingSet.capture(instances);
 
-const trainingSetBrowser = browser(trainingSet);
+const trainingSetBrowser = datasetBrowser(trainingSet);
 
 // -----------------------------------------------------------
 // DASHBOARDS

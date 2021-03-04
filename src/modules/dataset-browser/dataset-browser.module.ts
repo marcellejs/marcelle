@@ -1,9 +1,9 @@
 import { Module } from '../../core/module';
-import Component from './browser.svelte';
+import Component from './dataset-browser.svelte';
 import { Dataset } from '../dataset';
 import { ObjectId, Stream } from '../../core';
 
-export class Browser extends Module {
+export class DatasetBrowser extends Module {
   title = 'dataset browser';
 
   #dataset: Dataset;

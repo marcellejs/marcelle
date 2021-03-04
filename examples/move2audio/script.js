@@ -4,7 +4,7 @@ import '../../dist/marcelle.css';
 import { Howl } from 'https://cdn.skypack.dev/howler';
 import {
   batchPrediction,
-  browser,
+  datasetBrowser,
   button,
   confusion,
   dashboard,
@@ -50,7 +50,7 @@ const store = dataStore({ location: 'localStorage' });
 const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
 trainingSet.capture(instances);
 
-const trainingSetBrowser = browser(trainingSet);
+const trainingSetBrowser = datasetBrowser(trainingSet);
 
 // -----------------------------------------------------------
 // TRAINING

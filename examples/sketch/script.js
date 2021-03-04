@@ -1,7 +1,7 @@
 /* eslint-disable import/extensions */
 import '../../dist/marcelle.css';
 import {
-  browser,
+  datasetBrowser,
   button,
   dashboard,
   dataset,
@@ -49,7 +49,7 @@ trainingSet.capture(
   ),
 );
 
-const trainingSetBrowser = browser(trainingSet);
+const trainingSetBrowser = datasetBrowser(trainingSet);
 
 // -----------------------------------------------------------
 // TRAINING

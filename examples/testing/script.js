@@ -2,7 +2,7 @@
 import '../../dist/marcelle.css';
 import {
   batchPrediction,
-  browser,
+  datasetBrowser,
   button,
   confusion,
   dashboard,
@@ -45,7 +45,7 @@ tog.$checked.skipRepeats().subscribe((x) => {
   }
 });
 
-const trainingSetBrowser = browser(trainingSet);
+const trainingSetBrowser = datasetBrowser(trainingSet);
 
 // -----------------------------------------------------------
 // BATCH PREDICTION

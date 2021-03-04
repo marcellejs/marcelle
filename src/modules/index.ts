@@ -1,6 +1,6 @@
 export * from './account';
 export * from './batch-prediction';
-export * from './browser';
+export * from './dataset-browser';
 export * from './button';
 export * from './chart';
 export * from './confusion';

@@ -8,6 +8,7 @@
 - Module `name` property has been replaced by `title`
 - Modules' mount method now accepts an HTML Element rather than a selector
 - `imageDrop` has been renamed to `imageUpload`
+- `browser` has been renamed to `datasetBrowser`
 - Dashboards now have a `closable` option, which is disabled by default.
 - Dataset's `$created` stream has been replaced by a more generic `$changes` stream
 
@@ -40,7 +41,8 @@
 
 ### Bug Fixes
 
-- Quite a few...
+- `webcam` now supports multiple video devices
+- Quite a few others...
 
 ### Internal Changes
 
