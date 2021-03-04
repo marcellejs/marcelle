@@ -43,10 +43,6 @@ const toCamelCase = (str) => {
 
 export default {
   root: 'examples',
-  server: {
-    port: 8080,
-    force: true,
-  },
   plugins: [
     injectHtml({
       injectData: {
