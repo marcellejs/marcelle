@@ -17,6 +17,7 @@
 
   onMount(async () => {
     await tick();
+    await tick();
     ctx = canvasElement.getContext('2d');
     clearDrawing();
     dispatch('canvasElement', canvasElement);
@@ -65,6 +66,25 @@
   }
 </script>
 
+<svelte:body on:mouseup={stopDrawing} />
+
+<ModuleBase {title}>
+  <div class="sketchpad">
+    <canvas
+      id="fxid"
+      class="sketchpad-container"
+      width="300"
+      height="300"
+      bind:this={canvasElement}
+      on:mousemove={draw}
+      on:mousedown={startDrawing}
+    />
+    <div class="controls">
+      <button class="btn small danger" on:click={clearDrawing}> Clear </button>
+    </div>
+  </div>
+</ModuleBase>
+
 <style lang="postcss">
   .sketchpad {
     @apply w-full flex flex-col box-border;
@@ -80,21 +100,3 @@
     @apply m-1;
   }
 </style>
-
-<svelte:body on:mouseup={stopDrawing} />
-
-<ModuleBase {title}>
-  <div class="sketchpad">
-    <canvas
-      id="fxid"
-      class="sketchpad-container"
-      width="300"
-      height="300"
-      bind:this={canvasElement}
-      on:mousemove={draw}
-      on:mousedown={startDrawing} />
-    <div class="controls">
-      <button class="btn small danger" on:click={clearDrawing}> Clear </button>
-    </div>
-  </div>
-</ModuleBase>

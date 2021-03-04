@@ -8,6 +8,7 @@
 
   onMount(async () => {
     await tick();
+    await tick();
     if (Object.keys(charts).length > 1) {
       container.style.gridTemplateColumns = 'repeat(2, minmax(0, 1fr))';
     }

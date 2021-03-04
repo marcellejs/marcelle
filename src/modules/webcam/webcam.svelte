@@ -18,6 +18,7 @@
   let unSub = () => {};
   onMount(async () => {
     await tick();
+    await tick();
     unSub = mediaStream.subscribe((s) => {
       if (s) {
         videoElement.srcObject = s;
@@ -29,6 +30,39 @@
     unSub();
   });
 </script>
+
+<ModuleBase {title}>
+  <div class="webcam">
+    <div style="margin-left: 10px;">
+      <div>
+        <Switch text="activate video" bind:checked={$active} />
+      </div>
+    </div>
+    <div
+      class="webcam-container"
+      bind:clientWidth={webcamContainerWidth}
+      style="flex-direction: {width > height ? 'column' : 'row'};height: {(webcamContainerWidth *
+        height) /
+        width}px"
+    >
+      {#if $active && !$ready}
+        <Spinner />
+      {/if}
+      <video
+        id="webcam-video"
+        class="max-w-none"
+        style="width: {width > height ? `${webcamContainerWidth}px` : 'auto'}; height: {width >
+        height
+          ? 'auto'
+          : `${(webcamContainerWidth * height) / width}px`}"
+        bind:this={videoElement}
+        autoplay
+        muted
+        playsinline
+      />
+    </div>
+  </div>
+</ModuleBase>
 
 <style lang="postcss">
   .webcam {
@@ -44,29 +78,3 @@
     transform: scaleX(-1);
   }
 </style>
-
-<ModuleBase {title}>
-  <div class="webcam">
-    <div style="margin-left: 10px;">
-      <div>
-        <Switch text="activate video" bind:checked={$active} />
-      </div>
-    </div>
-    <div
-      class="webcam-container"
-      bind:clientWidth={webcamContainerWidth}
-      style="flex-direction: {width > height ? 'column' : 'row'};height: {(webcamContainerWidth * height) / width}px">
-      {#if $active && !$ready}
-        <Spinner />
-      {/if}
-      <video
-        id="webcam-video"
-        class="max-w-none"
-        style="width: {width > height ? `${webcamContainerWidth}px` : 'auto'}; height: {width > height ? 'auto' : `${(webcamContainerWidth * height) / width}px`}"
-        bind:this={videoElement}
-        autoplay
-        muted
-        playsinline />
-    </div>
-  </div>
-</ModuleBase>
