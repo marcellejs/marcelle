@@ -58,37 +58,10 @@ predictButton.$click.subscribe(async () => {
 });
 ```
 
-## Confusion
+## ClassificationPlot
 
 ```tsx
-marcelle.confusion(prediction: BatchPrediction): Confusion;
-```
-
-Displays a confusion matrix from a [BatchPrediction](#batchprediction) module.
-
-### Parameters
-
-| Option     | Type            | Description                                            | Required |
-| ---------- | --------------- | ------------------------------------------------------ | :------: |
-| prediction | BatchPrediction | A batch prediction module storing a set of predictions |    ✓     |
-
-### Screenshot
-
-<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
-  <img src="./images/confusion.png" alt="Screenshot of the confusion component">
-</div>
-
-### Example
-
-```js
-const batchMLP = marcelle.batchPrediction({ name: 'mlp', dataStore: store });
-const confusionMatrix = marcelle.confusion(batchMLP);
-```
-
-## PredictionPlot
-
-```tsx
-marcelle.predictionPlot(
+marcelle.classificationPlot(
   predictionStream: Stream<Prediction>
 ): PredictionPlot;
 ```
@@ -115,7 +88,7 @@ interface Prediction {
 ### Screenshot
 
 <div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
-  <img src="./images/predictionPlot.png" alt="Screenshot of the predictionPlot component">
+  <img src="./images/classificationPlot.png" alt="Screenshot of the classificationPlot component">
 </div>
 
 ### Example
@@ -123,7 +96,34 @@ interface Prediction {
 ```js
 const predictionStream = $features.map((feat) => classifier.predict(feat)).awaitPromises();
 
-const plotResults = marcelle.predictionPlot(predictionStream);
+const plotResults = marcelle.classificationPlot(predictionStream);
+```
+
+## ConfusionMatrix
+
+```tsx
+marcelle.confusionMatrix(prediction: BatchPrediction): Confusion;
+```
+
+Displays a confusion matrix from a [BatchPrediction](#batchprediction) module.
+
+### Parameters
+
+| Option     | Type            | Description                                            | Required |
+| ---------- | --------------- | ------------------------------------------------------ | :------: |
+| prediction | BatchPrediction | A batch prediction module storing a set of predictions |    ✓     |
+
+### Screenshot
+
+<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
+  <img src="./images/confusion-matrix.png" alt="Screenshot of the confusion-matrix component">
+</div>
+
+### Example
+
+```js
+const batchMLP = marcelle.batchPrediction({ name: 'mlp', dataStore: store });
+const confusionMatrix = marcelle.confusionMatrix(batchMLP);
 ```
 
 ## VisObjectDetection

@@ -1,9 +1,10 @@
-<script>
+<script lang="ts">
+  import type { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
 
-  export let title;
-  export let loading;
-  export let base;
+  export let title: string;
+  export let loading: Stream<boolean>;
+  export let base: string;
 </script>
 
 <ModuleBase {title} loading={$loading}>

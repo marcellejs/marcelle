@@ -1,11 +1,28 @@
-/* global marcelle */
+/* eslint-disable import/extensions */
+import '../../dist/marcelle.css';
+import {
+  datasetBrowser,
+  button,
+  dashboard,
+  dataset,
+  dataStore,
+  mlp,
+  mobilenet,
+  parameters,
+  classificationPlot,
+  notification,
+  trainingProgress,
+  sketchpad,
+  textfield,
+  trainingPlot,
+} from '../../dist/marcelle.esm.js';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
 // -----------------------------------------------------------
 
-const input = marcelle.sketchpad();
-const featureExtractor = marcelle.mobilenet();
+const input = sketchpad();
+const featureExtractor = mobilenet();
 
 const instances = input.$images
   .hold()
@@ -18,14 +35,14 @@ const instances = input.$images
   }))
   .awaitPromises();
 
-const store = marcelle.dataStore({ location: 'localStorage' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
+const store = dataStore({ location: 'localStorage' });
+const trainingSet = dataset({ name: 'TrainingSet-sketch', dataStore: store });
 
-const labelField = marcelle.textfield();
-labelField.name = 'Correct the prediction if necessary';
+const labelField = textfield();
+labelField.title = 'Correct the prediction if necessary';
 labelField.$text.set('...');
-const addToDataset = marcelle.button({ text: 'Add to Dataset and Train' });
-addToDataset.name = 'Improve the classifier';
+const addToDataset = button({ text: 'Add to Dataset and Train' });
+addToDataset.title = 'Improve the classifier';
 trainingSet.capture(
   addToDataset.$click.snapshot(
     (instance) => ({ ...instance, label: labelField.$text.value }),
@@ -33,21 +50,49 @@ trainingSet.capture(
   ),
 );
 
-const trainingSetBrowser = marcelle.browser(trainingSet);
+const trainingSetBrowser = datasetBrowser(trainingSet);
 
 // -----------------------------------------------------------
 // TRAINING
 // -----------------------------------------------------------
 
-const b = marcelle.button({ text: 'Train' });
-const classifier = marcelle.mlp({ layers: [64, 32], epochs: 20 });
+const b = button({ text: 'Train' });
+const classifier = mlp({ layers: [64, 32], epochs: 20, dataStore: store });
+classifier.sync('sketch-classifier');
 
 b.$click.subscribe(() => classifier.train(trainingSet));
-trainingSet.$created.subscribe(() => classifier.train(trainingSet));
+trainingSet.$changes.subscribe((changes) => {
+  for (let i = 0; i < changes.length; i++) {
+    if (changes[i].level === 'instance' && changes[i].type === 'created') {
+      if (
+        Object.values(trainingSet.$classes.value)
+          .map((x) => x.length)
+          .reduce((x, y) => x || y < 2, false)
+      ) {
+        notification({
+          title: 'Tip',
+          message: 'You need to record at least two examples per class',
+          duration: 5000,
+        });
+      } else if (trainingSet.$labels.value.length < 2) {
+        notification({
+          title: 'Tip',
+          message: 'You need to have at least two classes to train the model',
+          duration: 5000,
+        });
+      } else {
+        classifier.train(trainingSet);
+      }
+      break;
+    } else if (changes[i].level === 'class' && ['deleted', 'renamed'].includes(changes[i].type)) {
+      classifier.train(trainingSet);
+    }
+  }
+});
 
-const params = marcelle.parameters(classifier);
-const prog = marcelle.progress(classifier);
-const plotTraining = marcelle.trainingPlot(classifier);
+const params = parameters(classifier);
+const prog = trainingProgress(classifier);
+const plotTraining = trainingPlot(classifier);
 
 // -----------------------------------------------------------
 // REAL-TIME PREDICTION
@@ -57,6 +102,7 @@ const predictionStream = classifier.$training
   .filter((x) => x.status === 'success')
   .sample(instances)
   .merge(instances)
+  // .filter(() => classifier.ready)
   .map(async ({ features }) => classifier.predict(features))
   .awaitPromises()
   .filter((x) => !!x);
@@ -65,32 +111,37 @@ predictionStream.subscribe(({ label }) => {
   labelField.$text.set(label);
 });
 
-const plotResults = marcelle.predictionPlot(predictionStream);
+const plotResults = classificationPlot(predictionStream);
 
 // -----------------------------------------------------------
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const dashboard = marcelle.dashboard({
+const dash = dashboard({
   title: 'Marcelle Example - Dashboard',
   author: 'Marcelle Pirates Crew',
 });
 
-dashboard
+dash
   .page('Online Learning')
   .useLeft(input, featureExtractor)
   .use(plotResults, [labelField, addToDataset], prog, trainingSetBrowser);
-dashboard.page('Offline Training').useLeft(trainingSetBrowser).use(params, b, prog, plotTraining);
-dashboard.settings.use(trainingSet);
+dash.page('Offline Training').useLeft(trainingSetBrowser).use(params, b, prog, plotTraining);
+dash.settings.dataStores(store).datasets(trainingSet).models(classifier, featureExtractor);
 
-dashboard.start();
+dash.start();
 
-store.authenticate().then(() => {
-  trainingSet.$count.take(1).subscribe((c) => {
-    if (c) {
-      setTimeout(() => {
-        classifier.train(trainingSet);
-      }, 200);
-    }
+// -----------------------------------------------------------
+// HELP MESSAGES
+// -----------------------------------------------------------
+
+input.$images
+  .filter(() => trainingSet.$count.value === 0 && !classifier.ready)
+  .take(1)
+  .subscribe(() => {
+    notification({
+      title: 'Tip',
+      message: 'Start by editing the label and adding the drawing to the dataset',
+      duration: 5000,
+    });
   });
-});

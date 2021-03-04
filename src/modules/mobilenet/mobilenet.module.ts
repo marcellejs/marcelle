@@ -4,10 +4,11 @@ import {
   MobileNetVersion,
   MobileNetAlpha,
 } from '@tensorflow-models/mobilenet';
-import { tidy } from '@tensorflow/tfjs-core';
-import { logger } from '../../core/logger';
-import { Module } from '../../core/module';
+import { GraphModel } from '@tensorflow/tfjs-converter';
+import { io, tidy } from '@tensorflow/tfjs-core';
+import { ClassifierResults, logger, Model } from '../../core';
 import { Stream } from '../../core/stream';
+import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './mobilenet.svelte';
 
 export interface MobilenetOptions {
@@ -20,12 +21,13 @@ export interface MobilenetResults {
   confidences: { [key: string]: number };
 }
 
-export class Mobilenet extends Module {
-  name = 'mobilenet';
-  description = 'Mobilenet input module';
+export class Mobilenet extends Model<ImageData, ClassifierResults> {
+  title = 'mobilenet';
 
-  #mobilenet: MobileNet | undefined;
-  // #convert = createImageConverter();
+  parameters = {};
+  serviceName = 'undefined';
+
+  #mobilenet: (MobileNet & { model?: GraphModel }) | undefined;
   $loading = new Stream(true, true);
   readonly version: MobileNetVersion;
   readonly alpha: MobileNetAlpha;
@@ -44,10 +46,24 @@ export class Mobilenet extends Module {
   }
 
   async setup(): Promise<Mobilenet> {
-    this.#mobilenet = await loadMobilenet({
-      version: this.version,
-      alpha: this.alpha,
-    });
+    const cachedModels = await io.listModels();
+    const cachedMobilenet = Object.keys(cachedModels).filter((x) => x.includes('mobilenet'));
+    try {
+      this.#mobilenet = await loadMobilenet({
+        modelUrl: `indexeddb://mobilenet-v${this.version}-${this.alpha}`,
+        version: this.version,
+        alpha: this.alpha,
+      });
+    } catch (error) {
+      if (cachedMobilenet.length > 0) {
+        await io.removeModel(cachedMobilenet[0]);
+      }
+      this.#mobilenet = await loadMobilenet({
+        version: this.version,
+        alpha: this.alpha,
+      });
+      await this.#mobilenet.model.save(`indexeddb://mobilenet-v${this.version}-${this.alpha}`);
+    }
     logger.info(`Mobilenet v${this.version} loaded with alpha = ${this.alpha}`);
     this.$loading.set(false);
     this.start();
@@ -73,18 +89,48 @@ export class Mobilenet extends Module {
     };
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new Component({
-      target,
+      target: t,
       props: {
-        title: this.name,
+        title: this.title,
         loading: this.$loading,
         version: this.version,
         alpha: this.alpha,
       },
     });
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  train(): never {
+    throw new TrainingError('Model `CocoSsd` cannot be trained');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  save(): never {
+    throw new Error('OnnxImageClassifier does not support saving');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  load(): never {
+    throw new Error('OnnxImageClassifier does not support loading');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  download(): never {
+    throw new Error('OnnxImageClassifier does not support downloading');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  upload(): never {
+    throw new Error('OnnxImageClassifier does not support uploading');
   }
 }

@@ -86,18 +86,19 @@ export interface ChartOptions {
   options?: ChartJsOptions & { xlabel?: string; ylabel?: string };
 }
 
+export interface ChartDataset {
+  dataStream: Stream<number[]> | Stream<Array<{ x: unknown; y: unknown }>>;
+  label: string;
+  options: { type?: string; labels?: string[]; [key: string]: unknown };
+}
+
 export class Chart extends Module {
-  name = 'chart';
-  description = 'Simple chart based on Chart.js';
+  title = 'chart';
 
   #presetName: string;
-  #preset: Record<string, unknown>;
-  #datasets: Array<{
-    dataStream: Stream<number[] | Array<{ x: unknown; y: unknown }>>;
-    label: string;
-    options: Record<string, unknown>;
-  }> = [];
-  #options: ChartJsOptions;
+  #preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };
+  #datasets: Array<ChartDataset> = [];
+  #options: ChartJsOptions & { xlabel?: string; ylabel?: string };
 
   constructor({ preset = 'line', options = {} }: ChartOptions = {}) {
     super();
@@ -111,7 +112,7 @@ export class Chart extends Module {
   }
 
   addSeries(
-    dataStream: Stream<number[] | Array<{ x: unknown; y: unknown }>>,
+    dataStream: Stream<number[]> | Stream<Array<{ x: unknown; y: unknown }>>,
     label: string,
     options: Record<string, unknown> = {},
   ): void {
@@ -128,21 +129,21 @@ export class Chart extends Module {
     }
   }
 
-  removeSeries(dataStream: Stream<number[] | Array<{ x: unknown; y: unknown }>>): void {
+  removeSeries(dataStream: Stream<number[]> | Stream<Array<{ x: unknown; y: unknown }>>): void {
     const index = this.#datasets.map((x) => x.dataStream).indexOf(dataStream);
     if (index > -1) {
       this.#datasets.splice(index, 1);
     }
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new Component({
-      target,
+      target: t,
       props: {
-        title: this.name,
+        title: this.title,
         preset: this.#preset,
         options: this.#options,
         datasets: this.#datasets,

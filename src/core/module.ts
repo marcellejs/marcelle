@@ -4,19 +4,17 @@ import { ModuleInternals } from './types';
 let nextId = 0;
 
 export abstract class Module {
-  public abstract name: string;
-  public abstract description: string;
-  readonly isModule = true;
+  public abstract title: string;
 
   id = `module-${String(nextId++).padStart(3, '0')}`;
 
-  protected $$: ModuleInternals = {
+  $$: ModuleInternals = {
     streams: [],
     app: undefined,
     moduleType: 'generic',
   };
 
-  abstract mount(targetSelector?: string): void;
+  abstract mount(target?: HTMLElement): void;
 
   destroy(): void {
     this.$$.app?.$destroy();

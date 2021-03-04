@@ -1,11 +1,30 @@
-/* global marcelle, mostCore */
+/* eslint-disable import/extensions, no-console */
+import '../../dist/marcelle.css';
+import {
+  datasetBrowser,
+  button,
+  chart,
+  dashboard,
+  dataset,
+  dataStore,
+  faker,
+  imageUpload,
+  select,
+  sketchpad,
+  slider,
+  Stream,
+  text,
+  textfield,
+  toggle,
+  webcam,
+} from '../../dist/marcelle.esm.js';
 
 // -----------------------------------------------------------
 // BUTTON
 // -----------------------------------------------------------
 
-const capture = marcelle.button({ text: 'Hold to record instances' });
-capture.name = 'Capture instances to the training set';
+const capture = button({ text: 'Hold to record instances' });
+capture.title = 'Capture instances to the training set';
 
 capture.$click.subscribe((x) => console.log('button $click:', x));
 
@@ -13,8 +32,8 @@ capture.$click.subscribe((x) => console.log('button $click:', x));
 // TEXTFIELD
 // -----------------------------------------------------------
 
-const label = marcelle.textfield();
-label.name = 'Instance label';
+const label = textfield();
+label.title = 'Instance label';
 
 label.$text.subscribe((x) => console.log('label $text:', x));
 setTimeout(() => {
@@ -25,21 +44,21 @@ setTimeout(() => {
 // TOGGLE
 // -----------------------------------------------------------
 
-const tog = marcelle.toggle({ text: 'Toggle Real-Time Prediction' });
+const tog = toggle({ text: 'Toggle Real-Time Prediction' });
 tog.$checked.subscribe((x) => console.log('toggle $checked:', x));
 
 // -----------------------------------------------------------
 // SELECT
 // -----------------------------------------------------------
 
-const sel = marcelle.select({ options: ['one', 'two', 'three'], value: 'two' });
+const sel = select({ options: ['one', 'two', 'three'], value: 'two' });
 sel.$value.subscribe((x) => console.log('sel $value:', x));
 
 // -----------------------------------------------------------
 // TEXT
 // -----------------------------------------------------------
 
-const text = marcelle.text({
+const t = text({
   text:
     'Just some <strong>HTML</strong> text content... Accepts HTML: <button class="btn">button</button>',
 });
@@ -48,7 +67,7 @@ const text = marcelle.text({
 // SLIDER
 // -----------------------------------------------------------
 
-const slider = marcelle.slider({
+const s = slider({
   values: [2, 8],
   min: 0,
   max: 10,
@@ -56,17 +75,15 @@ const slider = marcelle.slider({
   step: 1,
   range: true,
 });
-slider.$values.subscribe((x) => console.log('slider $values:', x));
+s.$values.subscribe((x) => console.log('slider $values:', x));
 
 // -----------------------------------------------------------
 // CHART
 // -----------------------------------------------------------
 
-const series1 = marcelle
-  .createStream(mostCore.periodic(500))
-  .map(() => Array.from(Array(12), Math.random));
+const series1 = Stream.periodic(500).map(() => Array.from(Array(12), Math.random));
 const series2 = series1.map((x) => x.map((y) => 1 - y + 0.4 * Math.random()));
-const chartExample = marcelle.chart({
+const chartExample = chart({
   options: {
     xlabel: 'x label',
     ylabel: 'y label',
@@ -79,63 +96,63 @@ chartExample.addSeries(series2, 'series 2');
 // FAKER
 // -----------------------------------------------------------
 
-const faker = marcelle.faker({ size: 12, period: 500 });
-faker.$frames.subscribe((x) => console.log('faker $frames:', x));
+const f = faker({ size: 12, period: 500 });
+f.$frames.subscribe((x) => console.log('faker $frames:', x));
 
 // -----------------------------------------------------------
-// IMAGEDROP
+// IMAGE UPLOAD
 // -----------------------------------------------------------
 
-const imgDrop = marcelle.imageDrop();
-imgDrop.$images.subscribe((x) => console.log('imageDrop $images:', x));
+const imgDrop = imageUpload();
+imgDrop.$images.subscribe((x) => console.log('imageUpload $images:', x));
 
 // -----------------------------------------------------------
 // SKETCHPAD
 // -----------------------------------------------------------
 
-const sketch = marcelle.sketchpad();
-sketch.$strokeStart.subscribe(() => console.log('imageDrop $strokeStart'));
-sketch.$strokeEnd.subscribe(() => console.log('imageDrop $strokeEnd'));
+const sketch = sketchpad();
+sketch.$strokeStart.subscribe(() => console.log('sketchpad $strokeStart'));
+sketch.$strokeEnd.subscribe(() => console.log('sketchpad $strokeEnd'));
 
 // -----------------------------------------------------------
 // WEBCAM
 // -----------------------------------------------------------
 
-const webcam = marcelle.webcam();
-webcam.$images.subscribe((x) => console.log('webcam $images:', x));
+const w = webcam();
+w.$images.subscribe((x) => console.log('webcam $images:', x));
 
 // -----------------------------------------------------------
 // DATASET
 // -----------------------------------------------------------
 
-const instances = webcam.$images
+const instances = w.$images
   .filter(() => capture.$down.value)
   .map(async (img) => ({
     type: 'image',
     data: img,
     label: label.$text.value,
-    thumbnail: webcam.$thumbnails.value,
+    thumbnail: w.$thumbnails.value,
   }))
   .awaitPromises();
 
-const store = marcelle.dataStore({ location: 'localStorage' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
+const store = dataStore({ location: 'localStorage' });
+const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
 trainingSet.capture(instances);
 
-const trainingSetBrowser = marcelle.browser(trainingSet);
+const trainingSetBrowser = datasetBrowser(trainingSet);
 
 // -----------------------------------------------------------
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const dashboard = marcelle.dashboard({
+const dash = dashboard({
   title: 'Marcelle Documentation - Module Showcase',
   author: 'Marcelle Pirates Crew',
 });
 
-dashboard.page('Widgets').use(capture, label, tog, sel, text, slider, chartExample);
-dashboard.page('Sources').useLeft(faker, imgDrop, sketch, webcam);
-dashboard.page('Data Management').useLeft(webcam).use([label, capture], trainingSetBrowser);
-dashboard.settings.use(trainingSet);
+dash.page('Widgets').use(capture, label, tog, sel, t, s, chartExample);
+dash.page('Sources').useLeft(f, imgDrop, sketch, w);
+dash.page('Data Management').useLeft(w).use([label, capture], trainingSetBrowser);
+dash.settings.dataStores(store).datasets(trainingSet);
 
-dashboard.start();
+dash.start();

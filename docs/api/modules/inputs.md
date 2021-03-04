@@ -38,13 +38,20 @@ const faker = marcelle.faker({ size: 12, period: 500 });
 faker.$frames.subscribe((x) => console.log('faker $frames:', x));
 ```
 
-## ImageDrop
+## ImageUpload
 
 ```tsx
-marcelle.imageDrop(): ImageDrop;
+marcelle.imageUpload({ width?: number, height?: number }): ImageUpload;
 ```
 
-An Image drag'n'drop component, that creates a stream of images and thumbnails.
+An Image upload component, that creates a stream of images and thumbnails. Images are cropped and rescaled to match the target dimensions, if these are non-zero, otherwise the dimensions are unchanged.
+
+### Parameters
+
+| Option | Type   | Description         | Required | Default |
+| ------ | ------ | ------------------- | :------: | :-----: |
+| width  | number | Target image width  |          |    0    |
+| height | number | Target image height |          |    0    |
 
 ### Streams
 
@@ -56,14 +63,14 @@ An Image drag'n'drop component, that creates a stream of images and thumbnails.
 ### Screenshot
 
 <div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
-  <img src="./images/imageDrop.png" alt="Screenshot of the imageDrop component" width="350">
+  <img src="./images/imageUpload.png" alt="Screenshot of the imageUpload component" width="350">
 </div>
 
 ### Example
 
 ```js
-const imgDrop = marcelle.imageDrop();
-imgDrop.$images.subscribe((x) => console.log('imageDrop $images:', x));
+const imgUpload = marcelle.imageUpload();
+imgUpload.$images.subscribe((x) => console.log('imageUpload $images:', x));
 ```
 
 ## Sketchpad
@@ -93,8 +100,8 @@ An input sketching component allowing the user to draw. The module generates a s
 
 ```js
 const sketch = marcelle.sketchpad();
-sketch.$strokeStart.subscribe(() => console.log('imageDrop $strokeStart'));
-sketch.$strokeEnd.subscribe(() => console.log('imageDrop $strokeEnd'));
+sketch.$strokeStart.subscribe(() => console.log('sketchpad $strokeStart'));
+sketch.$strokeEnd.subscribe(() => console.log('sketchpad $strokeEnd'));
 ```
 
 ## Webcam

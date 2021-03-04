@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import {
     Chart,
     ArcElement,
@@ -24,14 +24,18 @@
     Title,
     Tooltip,
   } from 'chart.js';
+  import type { ChartOptions as ChartJsOptions, ChartConfiguration } from 'chart.js';
   import { onDestroy } from 'svelte';
-  import { mergeDeep } from '../../utils/object.ts';
+  import { mergeDeep } from '../../utils/object';
   import ModuleBase from '../../core/ModuleBase.svelte';
+  import type { ChartDataset } from './chart.module';
 
-  export let title;
-  export let preset;
-  export let options;
-  export let datasets;
+  export let title: string;
+  export let preset: Record<string, { global: unknown; datasets: unknown }>;
+  export let options: ChartJsOptions & { xlabel?: string; ylabel?: string };
+  export let datasets: Array<ChartDataset>;
+
+  // Note: typings are very dirty here...
 
   Chart.register(
     ArcElement,
@@ -75,7 +79,7 @@
     },
   };
 
-  function defaultDatasetOptions(index) {
+  function defaultDatasetOptions(index: number) {
     return {
       borderColor: defaultColors[index % 6],
       backgroundColor: defaultColors[index % 6],
@@ -84,22 +88,29 @@
     };
   }
 
-  function transformDatasets(datasets, opts, globalOptions) {
-    const data = { labels: [] };
+  function transformDatasets(
+    datasets: ChartDataset[],
+    opts: Record<string, unknown>,
+    globalOptions: Partial<ChartConfiguration>,
+  ) {
+    const data: { labels: string[]; datasets?: unknown[] } = { labels: [] };
     let maxElts = 0;
     data.datasets = datasets.map(({ dataStream, label, options }, i) => {
       maxElts = Math.max(maxElts, dataStream.value ? dataStream.value.length : 0);
       if (i === 0) {
         data.labels = options.labels || [];
-        if (!options.labels && dataStream.value) {
-          if (dataStream.value.length > 0 && typeof dataStream.value[0] === 'number') {
-            data.labels = Array.from(Array(dataStream.value.length), (_, i) => i);
+        if (!options.labels && dataStream.value && dataStream.value.length > 0) {
+          if (typeof dataStream.value[0] === 'number') {
+            data.labels = Array.from(Array(dataStream.value.length), (_, i) => i.toString());
           } else {
-            data.labels = dataStream.value.map((o) => o.x);
+            data.labels = (dataStream.value as Array<{
+              x: unknown;
+              y: unknown;
+            }>).map((o: { x: unknown }) => o.x.toString());
           }
         }
       }
-      let o = {
+      let o: Record<string, unknown> = {
         ...defaultDatasetOptions(i),
         ...opts,
         ...options,
@@ -119,16 +130,16 @@
     return data;
   }
 
-  let chart;
-  let unSub = [];
+  let chart: Chart;
+  let unSub: Array<() => void> = [];
 
   onDestroy(() => {
     unSub.forEach((f) => f());
   });
 
-  function setup(canvasElement) {
+  function setup(canvasElement: HTMLCanvasElement) {
     // const t0 = performance.now();
-    let chartOptions = mergeDeep(defaultOptions, preset.global);
+    let chartOptions: Partial<ChartConfiguration> = mergeDeep(defaultOptions, preset.global);
     chartOptions = mergeDeep(chartOptions, {
       data: transformDatasets(datasets, preset.datasets, chartOptions),
       options,
@@ -143,18 +154,18 @@
         options: { scales: { y: { scaleLabel: { display: true, labelString: options.ylabel } } } },
       });
     }
-    // let prevNumLabels = chartOptions.data.labels.length;
     unSub = datasets.map(({ dataStream, options }, i) =>
-      dataStream.subscribe((values) => {
+      dataStream.subscribe((values: Array<number> | Array<{ x: unknown; y: unknown }>) => {
         if (values && chart) {
-          if (!options.labels && i === 0) {
-            //&& values.length !== prevNumLabels
-            if (values.length > 0 && typeof values[0] === 'number') {
-              chartOptions.data.labels = Array.from(Array(values.length), (_, i) => i);
+          if (!options.labels && i === 0 && values.length > 0) {
+            if (typeof values[0] === 'number') {
+              chartOptions.data.labels = Array.from(Array(values.length), (_, i) => i.toString());
             } else {
-              chartOptions.data.labels = values.map((o) => o.x);
+              chartOptions.data.labels = (values as Array<{
+                x: unknown;
+                y: unknown;
+              }>).map((o: { x: unknown }) => o.x.toString());
             }
-            // prevNumLabels = chartOptions.data.labels.length;
           }
           chartOptions.data.datasets[i].data = values;
           chart.update();
@@ -163,7 +174,7 @@
     );
 
     const ctx = canvasElement.getContext('2d');
-    chart = new Chart(ctx, chartOptions);
+    chart = new Chart(ctx, chartOptions as ChartConfiguration);
   }
 </script>
 

@@ -4,33 +4,6 @@ sidebarDepth: 1
 
 # Data Management and UIs
 
-## Browser
-
-```tsx
-marcelle.browser(dataset: Dataset): Browser;
-```
-
-A Dataset browser provides an interface to visualize the contents of a dataset. It takes a dataset as argument, assuming that each instance contains a `thumbnail` property that can be displayed as an image (typically, a base64 dataURI).
-
-### Parameters
-
-| Option  | Type    | Description              | Required |
-| ------- | ------- | ------------------------ | :------: |
-| dataset | Dataset | The dataset to visualize |    ✓     |
-
-### Screenshot
-
-<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
-  <img src="./images/browser.png" alt="Screenshot of the browser component">
-</div>
-
-### Example
-
-```js
-const trainingSetBrowser = marcelle.browser(trainingSet);
-dashboard.page('Data Management').use(trainingSetBrowser);
-```
-
 ## Dataset
 
 ```tsx
@@ -48,14 +21,24 @@ A Dataset module allowing for capturing instances from a stream, storing them in
 
 ### Streams
 
-| Name            | Type                                  | Description                                                                                | Hold |
-| --------------- | ------------------------------------- | ------------------------------------------------------------------------------------------ | :--: |
-| \$created       | Stream\<ObjectId\>                    | Stream of containg the ID at each newly created instance                                   |      |
-| \$instances     | Stream\<ObjectId[]\>                  | Stream of all the ids of the instances contained in the dataset                            |      |
-| \$classes       | Stream\<Record<string, ObjectId[]\>\> | Stream of objects associating each class label to the array of corresponding instance ids. |      |
-| \$labels        | Stream\<string[]\>                    | Stream of labels currently in the dataset                                                  |      |
-| \$count         | Stream\<number\>                      | Total number of instances in the dataset                                                   |      |
-| \$countPerClass | Stream\<Record<string, number\>\>     | The number of instances per class                                                          |      |
+| Name            | Type                                  | Description                                                                                                                                                                                              | Hold |
+| --------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--: |
+| \$changes       | Stream\<DatasetChange\>               | Stream of changes applied to the dataset. Changes can concern a number of modifications (creation, update, deletion, ...) at various levels (dataset, class, instance). The interface is described below |      |
+| \$instances     | Stream\<ObjectId[]\>                  | Stream of all the ids of the instances contained in the dataset                                                                                                                                          |      |
+| \$classes       | Stream\<Record<string, ObjectId[]\>\> | Stream of objects associating each class label to the array of corresponding instance ids.                                                                                                               |      |
+| \$labels        | Stream\<string[]\>                    | Stream of labels currently in the dataset                                                                                                                                                                |      |
+| \$count         | Stream\<number\>                      | Total number of instances in the dataset                                                                                                                                                                 |      |
+| \$countPerClass | Stream\<Record<string, number\>\>     | The number of instances per class                                                                                                                                                                        |      |
+
+Where dataset changes have the following interface:
+
+```ts
+interface DatasetChange {
+  level: 'instance' | 'class' | 'dataset';
+  type: 'created' | 'updated' | 'deleted' | 'renamed';
+  data?: any;
+}
+```
 
 ### Example
 
@@ -63,4 +46,31 @@ A Dataset module allowing for capturing instances from a stream, storing them in
 const store = marcelle.dataStore({ location: 'localStorage' });
 const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
 trainingSet.capture($instances); // Capture a Stream of instances
+```
+
+## DatasetBrowser
+
+```tsx
+marcelle.datasetBrowser(dataset: Dataset): Browser;
+```
+
+A Dataset browser provides an interface to visualize the contents of a dataset. It takes a dataset as argument, assuming that each instance contains a `thumbnail` property that can be displayed as an image (typically, a base64 dataURI).
+
+### Parameters
+
+| Option  | Type    | Description              | Required |
+| ------- | ------- | ------------------------ | :------: |
+| dataset | Dataset | The dataset to visualize |    ✓     |
+
+### Screenshot
+
+<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
+  <img src="./images/dataset-browser.png" alt="Screenshot of the datasetBrowser component">
+</div>
+
+### Example
+
+```js
+const trainingSetBrowser = marcelle.datasetBrowser(trainingSet);
+dashboard.page('Data Management').use(trainingSetBrowser);
 ```

@@ -45,7 +45,7 @@ Note that if you look at the app in your browser (at `http://localhost:8080/`), 
 Two types of interfaces are currently available: [Dashboards](../api/interfaces.html#dashboards) or Wizard [Wizards](../api/interfaces.html#wizards). In this tutorial we will create a dashboard where we will add elements from the pipeline that we would like to display. To create a dashboard, the API provides a `.dashboard()` function:
 
 ```js
-const dashboard = dashboard({
+const myDashboard = dashboard({
   title: 'My First Tutorial',
   author: 'Marcelle Crew',
 });
@@ -54,7 +54,7 @@ const dashboard = dashboard({
 Then to visualise the created dashobaord, we need to `start` it:
 
 ```js
-dashboard.start();
+myDashboard.start();
 ```
 
 Now, you should see an empty dashboard in the browser.
@@ -64,7 +64,7 @@ Now, you should see an empty dashboard in the browser.
 To display a module on the dashboard, we first to create a page (see the [dashboard API](../api/interfaces.html#dashboards) for more details) and specificy all the modules disaplyed on this dashboard page with the `.useLeft()` and `.use()` functions. `.useLeft()` adds modules on the left column of the dashboard while the `.use()` function adds modules on the main central column. In this tutorial we will add the webcam on the left of a dashboard page called "Data Management". Above the `dashboard.start();` statement:
 
 ```js
-dashboard.page('Data Management').useLeft(input);
+myDashboard.page('Data Management').useLeft(input);
 ```
 
 Which should look like this:
@@ -110,10 +110,16 @@ label.name = 'Instance label';
 
 The textfield module has a `$text` stream that we can used when created the stream of instances:
 
-```js
-...
+```js{5}
+const instances = input.$images
+  .map(async (img) => ({
+    type: 'image',
+    data: img,
     label: label.$text.value,
-...
+    thumbnail: input.$thumbnails.value,
+    features: await featureExtractor.process(img),
+  }))
+  .awaitPromises();
 ```
 
 We now create a dataset that can be used to train a classifier. A dataset requires a [DataStore](../api/data-stores.html#datastore) to store the captured data. A datastore can be created in the `localStorage` of your browser, but also on a server using a specified database.
@@ -148,16 +154,61 @@ const instances = input.$images
   .awaitPromises();
 ```
 
-Finally, we plot on the interface the label textfield, the capture button and a dataset [browser](../api/modules/data.html#browser) that provides an interface to visualize the dataset content.
+Finally, we plot on the interface the label textfield, the capture button and a dataset [datasetBrowser](../api/modules/data.html#datasetBrowser) that provides an interface to visualize the dataset content.
 
 ```js
-const trainingSetBrowser = marcelle.browser(trainingSet);
+const trainingSetBrowser = marcelle.datasetBrowser(trainingSet);
 ```
 
-```js
-dashboard.page('Data Management').useLeft(input).use(label, capture, trainingSetBrowser);
+```js{2}
+myDashboard.page('Data Management').useLeft(input).use(label, capture, trainingSetBrowser);
 ```
 
 If you refresh the page in the browser, you should have the following:
 
-TODO
+![Screenshot](./images/getting-started-trainingset-browser.png)
+
+### Training a classifier
+
+Next, we have to declare a classifier to be trained on the training dataset. In this tutorial we use a Multilayer Perceptron (MLP), that can be declared by:
+
+```js
+const classifier = mlp({ layers: [32, 32], epochs: 20 });
+```
+
+To start training, a button is added on the interface:
+
+```js{6}
+const trainingButton = marcelle.button({ text: 'Train' });
+...
+myDashboard
+  .page('Data Management')
+  .useLeft(input)
+  .use(label, capture, trainingSetBrowser, trainingButton);
+```
+
+Then we attached the training method of the MLP classifier to the stream of clicks. As such, each time an event is triggered through a click, the classifier will be trained on the `trainingSet`:
+
+```js
+trainingButton.$click.subscribe(() => {
+  classifier.train(trainingSet);
+});
+```
+
+When training Deep Neural Networks, it is usually important to monitor the training, which typically means to inspect the losses and the accuracies. In Marcelle, the trainingPlot module can be used to do so and then added to the dashboard.
+
+```js{9}
+const plotTraining = trainingPlot(classifier);
+
+...
+
+myDashboard
+  .page('Data Management')
+  .useLeft(input)
+  .use(label, capture, trainingSetBrowser, trainingButton)
+  .uses(plotTraining);
+```
+
+Thus, after addingin instances to the dataset (instances assoicated to more than one class), launching training is visualised as follows:
+
+![Screenshot](./images/getting-started-training.png)

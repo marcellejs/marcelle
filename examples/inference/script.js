@@ -1,11 +1,37 @@
-/* global marcelle */
+/* eslint-disable import/extensions */
+import '../../dist/marcelle.css';
+import {
+  batchPrediction,
+  datasetBrowser,
+  button,
+  confusionMatrix,
+  dashboard,
+  dataset,
+  dataStore,
+  fileUpload,
+  imageUpload,
+  classificationPlot,
+  text,
+  tfGenericModel,
+  toggle,
+} from '../../dist/marcelle.esm.js';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CLASSIFICATION
 // -----------------------------------------------------------
 
-const source = marcelle.imageDrop();
-const classifier = marcelle.tfImageClassifier();
+const source = imageUpload();
+
+const up = fileUpload();
+up.title = 'Upload model files (.json and .bin)';
+const classifier = tfGenericModel({
+  inputType: 'image',
+  taskType: 'classification',
+  dataStore: dataStore({ location: 'localStorage' }),
+}).sync('inference-example-classifier');
+up.$files.subscribe((fl) => {
+  classifier.loadFromFiles(fl);
+});
 
 // -----------------------------------------------------------
 // CAPTURE TO DATASET
@@ -18,10 +44,10 @@ const instances = source.$thumbnails.map((thumbnail) => ({
   thumbnail,
 }));
 
-const store = marcelle.dataStore({ location: 'memory' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
+const store = dataStore({ location: 'memory' });
+const trainingSet = dataset({ name: 'TrainingSet-inference', dataStore: store });
 
-const tog = marcelle.toggle({ text: 'Capture to dataset' });
+const tog = toggle({ text: 'Capture to dataset' });
 tog.$checked.skipRepeats().subscribe((x) => {
   if (x) {
     trainingSet.capture(instances);
@@ -30,17 +56,17 @@ tog.$checked.skipRepeats().subscribe((x) => {
   }
 });
 
-const trainingSetBrowser = marcelle.browser(trainingSet);
+const trainingSetBrowser = datasetBrowser(trainingSet);
 
 // -----------------------------------------------------------
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchTesting = marcelle.batchPrediction({ name: 'mobilenet', dataStore: store });
-const predictButton = marcelle.button({ text: 'Update predictions' });
-const predictionAccuracy = marcelle.text({ text: 'Waiting for predictions...' });
-const confusionMatrix = marcelle.confusion(batchTesting);
-confusionMatrix.name = 'Mobilenet: Confusion Matrix';
+const batchTesting = batchPrediction({ name: 'mobilenet', dataStore: store });
+const predictButton = button({ text: 'Update predictions' });
+const predictionAccuracy = text({ text: 'Waiting for predictions...' });
+const confMat = confusionMatrix(batchTesting);
+confMat.title = 'Mobilenet: Confusion Matrix';
 
 predictButton.$click.subscribe(async () => {
   await batchTesting.clear();
@@ -70,51 +96,52 @@ const betterPredictions = predictionStream.map(({ label, confidences }) => {
   };
 });
 
-const plotResults = marcelle.predictionPlot(betterPredictions);
+const plotResults = classificationPlot(betterPredictions);
 
 const instanceViewer = {
   id: 'my-instance-viewer',
-  mount(targetSelector) {
-    const target = document.querySelector(targetSelector || '#my-instance-viewer');
+  mount(target) {
+    const t = target || document.querySelector('#my-instance-viewer');
     const instanceCanvas = document.createElement('canvas');
     instanceCanvas.classList.add('w-full', 'max-w-full');
     const instanceCtx = instanceCanvas.getContext('2d');
-    target.appendChild(instanceCanvas);
+    t.appendChild(instanceCanvas);
     const unSub = source.$images.subscribe((img) => {
       instanceCanvas.width = img.width;
       instanceCanvas.height = img.height;
       instanceCtx.putImageData(img, 0, 0);
     });
     this.destroy = () => {
-      target.removeChild(instanceCanvas);
+      t.removeChild(instanceCanvas);
       unSub();
     };
   },
+  destroy() {},
 };
 
 // -----------------------------------------------------------
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const dashboard = marcelle.dashboard({
+const dash = dashboard({
   title: 'Marcelle: Interactive Model Testing',
   author: 'Marcelle Pirates Crew',
 });
 
-const help = marcelle.text({
+const help = text({
   text:
     'In this example, you can upload a pre-trained classification model (converted from a Keras model, see examples here: https://keras.io/api/applications/) and perform inference with input images of your choice.',
 });
-help.name = 'Test generic DNN classifier';
+help.title = 'Test generic DNN classifier';
 
-dashboard
+dash
   .page('Real-time Testing')
   .useLeft(source)
-  .use(help, classifier, [instanceViewer, plotResults]);
-dashboard
+  .use(help, [up, classifier], [instanceViewer, plotResults]);
+dash
   .page('Batch Testing')
   .useLeft(source, classifier)
-  .use(tog, trainingSetBrowser, predictButton, predictionAccuracy, confusionMatrix);
-dashboard.settings.use(trainingSet);
+  .use(tog, trainingSetBrowser, predictButton, predictionAccuracy, confMat);
+dash.settings.dataStores(store).datasets(trainingSet).models(classifier);
 
-dashboard.start();
+dash.start();

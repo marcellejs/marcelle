@@ -1,18 +1,24 @@
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
-import { MLP } from '../mlp';
 import { chart, Chart } from '../chart';
 import Component from './training-plot.svelte';
 import { throwError } from '../../utils/error-handling';
+import { Model } from '../../core';
 
-export class TrainingPlot extends Module {
-  name = 'training plot';
-  description = 'Plot the loss/accuracy during training';
+export type LogSpec = string | string[] | { [key: string]: string | string[] };
 
-  plotLosses: Chart;
-  plotAccuracies: Chart;
+export class TrainingPlot<T, U> extends Module {
+  title = 'training plot';
 
-  constructor(public model: MLP) {
+  charts: { [key: string]: Chart } = {};
+
+  constructor(
+    public model: Model<T, U>,
+    logs: LogSpec = {
+      loss: ['loss', 'lossVal'],
+      accuracy: ['accuracy', 'accuracyVal'],
+    },
+  ) {
     super();
     if (!model) {
       const e = new Error('[training plot] No model was provided');
@@ -26,59 +32,65 @@ export class TrainingPlot extends Module {
       e.name = 'Module Compatibility Error';
       throwError(e);
     }
-    const trainingLoss = new Stream([], true);
-    const validationLoss = new Stream([], true);
-    this.plotLosses = chart({
-      preset: 'line-fast',
-      options: {
-        xlabel: 'Epoch',
-        ylabel: 'Loss',
-      },
+    let processedLogs = logs;
+    if (typeof logs === 'string') {
+      processedLogs = [logs];
+    }
+    if (Array.isArray(processedLogs)) {
+      processedLogs = processedLogs.reduce((x, y) => ({ ...x, [y]: y }), {});
+    }
+    const streams: {
+      [key: string]: Stream<number[]>;
+    } = {};
+    Object.entries(processedLogs).forEach(([key, val]) => {
+      const x = Array.isArray(val) ? val : [val];
+      this.charts[key] = chart({
+        preset: 'line-fast',
+        options: {
+          xlabel: 'Epoch',
+          ylabel: key,
+        },
+      });
+      x.forEach((y) => {
+        if (!Object.keys(streams).includes(y)) {
+          streams[y] = new Stream<number[]>([], true);
+        }
+        this.charts[key].addSeries(streams[y], y);
+      });
+      this.charts[key].title = key;
     });
-    this.plotLosses.addSeries(trainingLoss, 'training loss');
-    this.plotLosses.addSeries(validationLoss, 'validation loss');
-    this.plotLosses.name = 'losses';
 
-    const trainingAccuracy = new Stream([], true);
-    const validationAccuracy = new Stream([], true);
-    this.plotAccuracies = chart({
-      preset: 'line-fast',
-      options: {
-        xlabel: 'Epoch',
-        ylabel: 'Accuracy',
-        scales: { y: { suggestedMax: 1 } },
-      },
-    });
-    this.plotAccuracies.addSeries(trainingAccuracy, 'training accuracy');
-    this.plotAccuracies.addSeries(validationAccuracy, 'validation accuracy');
-    this.plotAccuracies.name = 'accuracies';
+    function resetCharts() {
+      Object.values(streams).forEach((stream) => {
+        stream.set([]);
+      });
+    }
 
     model.$training.subscribe((x) => {
       if (x.status === 'start') {
-        trainingLoss.set([]);
-        validationLoss.set([]);
-        trainingAccuracy.set([]);
-        validationAccuracy.set([]);
-      } else if (x.status === 'epoch') {
-        trainingLoss.set(trainingLoss.value.concat([x.data.loss]));
-        validationLoss.set(validationLoss.value.concat([x.data.lossVal]));
-        trainingAccuracy.set(trainingAccuracy.value.concat([x.data.accuracy]));
-        validationAccuracy.set(validationAccuracy.value.concat([x.data.accuracyVal]));
+        resetCharts();
+      } else if (x.data) {
+        Object.entries(x.data).forEach(([key, val]) => {
+          if (!Object.keys(streams).includes(key)) return;
+          if (Array.isArray(val)) {
+            streams[key].set(val as number[]);
+          } else {
+            streams[key].set(streams[key].value.concat([val as number]));
+          }
+        });
       }
     });
     this.start();
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`) as HTMLElement;
-    if (!target) return;
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new Component({
-      target,
+      target: t,
       props: {
-        id: target.id,
-        plotLosses: this.plotLosses,
-        plotAccuracies: this.plotAccuracies,
+        charts: this.charts,
       },
     });
   }

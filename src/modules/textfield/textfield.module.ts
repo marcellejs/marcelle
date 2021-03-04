@@ -3,8 +3,7 @@ import { Stream } from '../../core/stream';
 import Component from './textfield.svelte';
 
 export class Textfield extends Module {
-  name = 'textfield';
-  description = 'Simple text field widget';
+  title = 'textfield';
 
   $text: Stream<string> = new Stream('', true);
 
@@ -13,14 +12,14 @@ export class Textfield extends Module {
     this.start();
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new Component({
-      target,
+      target: t,
       props: {
-        title: this.name,
+        title: this.title,
         text: this.$text,
       },
     });

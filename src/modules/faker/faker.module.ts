@@ -9,8 +9,8 @@ export interface FakerOptions {
 }
 
 export class Faker extends Module {
-  name = 'faker';
-  description = 'Fake data input module';
+  title = 'faker';
+
   size: number;
 
   $frames: Stream<number[]>;
@@ -24,14 +24,14 @@ export class Faker extends Module {
     this.start();
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new Component({
-      target,
+      target: t,
       props: {
-        title: this.name,
+        title: this.title,
         size: this.size,
         frames: this.$frames,
       },

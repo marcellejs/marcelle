@@ -1,33 +1,24 @@
-<script>
-  import { onMount, onDestroy } from 'svelte';
+<script lang="ts">
+  import { onMount, onDestroy, tick } from 'svelte';
+  import type { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
   import Spinner from '../../ui/widgets/Spinner.svelte';
   import Switch from '../../ui/widgets/Switch.svelte';
 
-  export let title;
-  export let width;
-  export let height;
-  export let active;
-  export let mediaStream;
-  export let ready;
+  export let title: string;
+  export let width: number;
+  export let height: number;
+  export let active: Stream<boolean>;
+  export let mediaStream: Stream<MediaStream>;
+  export let ready: Stream<boolean>;
 
-  let videoElement = null;
+  let videoElement: HTMLVideoElement;
   let webcamContainerWidth;
 
   let unSub = () => {};
   onMount(async () => {
-    await new Promise((resolve, reject) => {
-      const rej = setTimeout(() => {
-        reject();
-      }, 5000);
-      const int = setInterval(() => {
-        if (videoElement) {
-          clearTimeout(rej);
-          clearInterval(int);
-          resolve();
-        }
-      }, 200);
-    });
+    await tick();
+    await tick();
     unSub = mediaStream.subscribe((s) => {
       if (s) {
         videoElement.srcObject = s;
@@ -39,6 +30,39 @@
     unSub();
   });
 </script>
+
+<ModuleBase {title}>
+  <div class="webcam">
+    <div style="margin-left: 10px;">
+      <div>
+        <Switch text="activate video" bind:checked={$active} />
+      </div>
+    </div>
+    <div
+      class="webcam-container"
+      bind:clientWidth={webcamContainerWidth}
+      style="flex-direction: {width > height ? 'column' : 'row'};height: {(webcamContainerWidth *
+        height) /
+        width}px"
+    >
+      {#if $active && !$ready}
+        <Spinner />
+      {/if}
+      <video
+        id="webcam-video"
+        class="max-w-none"
+        style="width: {width > height ? `${webcamContainerWidth}px` : 'auto'}; height: {width >
+        height
+          ? 'auto'
+          : `${(webcamContainerWidth * height) / width}px`}"
+        bind:this={videoElement}
+        autoplay
+        muted
+        playsinline
+      />
+    </div>
+  </div>
+</ModuleBase>
 
 <style lang="postcss">
   .webcam {
@@ -54,29 +78,3 @@
     transform: scaleX(-1);
   }
 </style>
-
-<ModuleBase {title}>
-  <div class="webcam">
-    <div style="margin-left: 10px;">
-      <div>
-        <Switch text="activate video" bind:checked={$active} />
-      </div>
-    </div>
-    <div
-      class="webcam-container"
-      bind:clientWidth={webcamContainerWidth}
-      style="flex-direction: {width > height ? 'column' : 'row'};height: {(webcamContainerWidth * height) / width}px">
-      {#if $active && !$ready}
-        <Spinner />
-      {/if}
-      <video
-        id="webcam-video"
-        class="max-w-none"
-        style="width: {width > height ? `${webcamContainerWidth}px` : 'auto'}; height: {width > height ? 'auto' : `${(webcamContainerWidth * height) / width}px`}"
-        bind:this={videoElement}
-        autoplay
-        muted
-        playsinline />
-    </div>
-  </div>
-</ModuleBase>

@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Dashboard",
+    "path": "dashboard",
+    "description": "Simple dashboard for training an image classifier from the webcam"
+  }, {
+    "name": "MLP vs KNN",
+    "path": "mlp-vs-knn",
+    "description": "Dashboard for comparing image classification models interactively"
+  }, {
+    "name": "Wizard",
+    "path": "wizard",
+    "description": "Training wizard for training an image classifier from the webcam"
+  }, {
+    "name": "Sketch",
+    "path": "sketch",
+    "description": "Incremental teaching workflow for sketch classification"
+  }, {
+    "name": "Object Detection with COCO-SSD",
+    "path": "object-detection",
+    "description": "Simple object detection pipeline from single images"
+  }, {
+    "name": "Move2Audio",
+    "path": "move2audio",
+    "description": "Control audio playback from webcam-based image recognition"
+  }
+]

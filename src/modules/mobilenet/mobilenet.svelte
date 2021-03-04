@@ -1,10 +1,12 @@
-<script>
+<script lang="ts">
+  import type { MobileNetAlpha, MobileNetVersion } from '@tensorflow-models/mobilenet';
+  import type { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
 
-  export let title;
-  export let loading;
-  export let version;
-  export let alpha;
+  export let title: string;
+  export let loading: Stream<boolean>;
+  export let version: MobileNetVersion;
+  export let alpha: MobileNetAlpha;
 </script>
 
 <ModuleBase {title} loading={$loading}>

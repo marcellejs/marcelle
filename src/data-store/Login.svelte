@@ -1,22 +1,23 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import Modal from '../ui/util/Modal.svelte';
+  import type { DataStore } from './data-store';
 
   const dispatch = createEventDispatcher();
 
-  export let dataStore;
+  export let dataStore: DataStore;
   export let mode = 'login';
 
-  let loginError = null;
+  let loginError: Error;
 
   function toggleMode() {
     mode = mode === 'login' ? 'register' : 'login';
   }
 
-  async function login(e) {
-    const data = new FormData(e.target);
+  async function login(e: Event) {
+    const data = new FormData(e.target as HTMLFormElement);
     try {
-      await dataStore.login(data.get('email'), data.get('password'));
+      await dataStore.login(data.get('email') as string, data.get('password') as string);
       terminate(true);
     } catch (error) {
       loginError = error;
@@ -24,17 +25,17 @@
     }
   }
 
-  async function signup(e) {
-    const data = new FormData(e.target);
+  async function signup(e: Event) {
+    const data = new FormData(e.target as HTMLFormElement);
     try {
-      await dataStore.signup(data.get('email'), data.get('password'));
+      await dataStore.signup(data.get('email') as string, data.get('password') as string);
       terminate(true);
     } catch (error) {
       terminate(false);
     }
   }
 
-  export function terminate(success) {
+  export function terminate(success: boolean) {
     dispatch('terminate', success);
   }
 </script>

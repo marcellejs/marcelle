@@ -13,6 +13,8 @@ import {
 import { Dataset } from '../dataset';
 import { MLP } from '../mlp';
 import { logger } from '../../core';
+import { readJSONFile, saveBlob } from '../../utils/file-io';
+import { throwError } from '../../utils/error-handling';
 
 export interface BatchPredictionOptions {
   name: string;
@@ -20,8 +22,7 @@ export interface BatchPredictionOptions {
 }
 
 export class BatchPrediction extends Module {
-  name = 'batch prediction';
-  description = 'BatchPrediction';
+  title = 'batch prediction';
 
   #dataStore: DataStore;
   predictionService: Service<Prediction>;
@@ -31,8 +32,13 @@ export class BatchPrediction extends Module {
 
   constructor({ name, dataStore }: BatchPredictionOptions) {
     super();
-    this.name = name;
+    this.title = name;
     this.#dataStore = dataStore || new DataStore();
+    this.$count = new Stream(
+      map((x) => x.length, this.$predictions),
+      true,
+    );
+    this.start();
     this.#dataStore
       .connect()
       .then(() => {
@@ -44,17 +50,16 @@ export class BatchPrediction extends Module {
   }
 
   async setup(): Promise<void> {
-    const serviceName = `predictions-${this.name}`;
-    this.#dataStore.createService(serviceName);
+    const serviceName = `predictions-${this.title}`;
     this.predictionService = this.#dataStore.service(serviceName) as Service<Prediction>;
     this.predictionService.hooks({
       before: {
-        create: [addScope('predictionName', this.name), imageData2DataURL].filter((x) => !!x),
-        find: [limitToScope('predictionName', this.name)],
-        get: [limitToScope('predictionName', this.name)],
-        update: [limitToScope('predictionName', this.name)],
-        patch: [limitToScope('predictionName', this.name)],
-        remove: [limitToScope('predictionName', this.name)],
+        create: [addScope('predictionName', this.title), imageData2DataURL].filter((x) => !!x),
+        find: [limitToScope('predictionName', this.title)],
+        get: [limitToScope('predictionName', this.title)],
+        update: [limitToScope('predictionName', this.title)],
+        patch: [limitToScope('predictionName', this.title)],
+        remove: [limitToScope('predictionName', this.title)],
       },
       after: {
         find: [dataURL2ImageData].filter((x) => !!x),
@@ -62,13 +67,8 @@ export class BatchPrediction extends Module {
       },
     });
 
-    this.$count = new Stream(
-      map((x) => x.length, this.$predictions),
-      true,
-    );
-    this.start();
     const result = await this.predictionService.find({
-      query: { $select: ['id', '_id', 'label'] },
+      query: { $select: ['id', 'label'] },
     });
     const { data } = result as Paginated<Prediction>;
     this.$predictions.set(data.map((x) => x.id));
@@ -98,8 +98,44 @@ export class BatchPrediction extends Module {
     const result = await this.predictionService.find({ query: { $select: ['id'] } });
     const { data } = result as Paginated<Prediction>;
     await Promise.all(data.map(({ id }) => this.predictionService.remove(id)));
+    this.$predictions.set([]);
   }
 
   // eslint-disable-next-line class-methods-use-this
   mount(): void {}
+
+  async download(): Promise<void> {
+    const predictions = await this.predictionService.find();
+    const fileContents = {
+      marcelleMeta: {
+        type: 'predictions',
+      },
+      predictions: (predictions as Paginated<Prediction>).data,
+    };
+    const today = new Date(Date.now());
+    const fileName = `${this.title}-${today.toISOString()}.json`;
+    await saveBlob(JSON.stringify(fileContents), fileName, 'text/plain');
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  async upload(files: File[]): Promise<void> {
+    const jsonFiles = await Promise.all(
+      files.filter((f) => f.type === 'application/json').map((f) => readJSONFile(f)),
+    );
+    const preds = await Promise.all(
+      jsonFiles.map((fileContent: { predictions: Prediction[] }) =>
+        Promise.all(
+          fileContent.predictions.map((prediction: Prediction) => {
+            const { id, ...predictionNoId } = prediction;
+            return this.predictionService
+              .create(predictionNoId, { query: { $select: ['id'] } })
+              .catch((e) => {
+                throwError(e);
+              });
+          }),
+        ),
+      ),
+    );
+    this.$predictions.set(preds.flat().map((x) => (x as Prediction).id));
+  }
 }

@@ -1,7 +1,7 @@
 import { never } from '@most/core';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
-import notify from '../../ui/util/notify';
+import { throwError } from '../../utils/error-handling';
 import Component from './webcam.svelte';
 
 function requestInterval(fn: () => void, delay: number) {
@@ -33,8 +33,7 @@ export interface WebcamOptions {
 }
 
 export class Webcam extends Module {
-  name = 'webcam';
-  description = 'Webcam input module';
+  title = 'webcam';
 
   $active = new Stream(false, true);
   $ready = new Stream(false, true);
@@ -50,9 +49,6 @@ export class Webcam extends Module {
   #webcamWidth: number;
   #webcamHeight: number;
   #videoElement = document.createElement('video');
-  #cameras: MediaDeviceInfo[] = [];
-  #camerasListEmitted = false;
-  #deviceId: string;
   #thumbnailWidth = 80;
   #unsubActive = (): void => {};
   #stopStreaming = (): void => {};
@@ -73,11 +69,7 @@ export class Webcam extends Module {
     this.#unsubActive = this.$active.subscribe((v) => {
       this.#stopStreaming();
       if (v) {
-        if (!this.#camerasListEmitted) {
-          this.loadCameras();
-        } else {
-          this.startCamera();
-        }
+        this.loadCameras();
         this.#stopStreaming = requestInterval(this.process.bind(this), this.period);
       } else {
         this.stopCamera();
@@ -89,14 +81,14 @@ export class Webcam extends Module {
     return this.#width;
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new Component({
-      target,
+      target: t,
       props: {
-        title: this.name,
+        title: this.title,
         width: this.#width,
         height: this.#height,
         active: this.$active,
@@ -128,49 +120,14 @@ export class Webcam extends Module {
     this.#captureCtx = this.#captureCanvas.getContext('2d');
   }
 
-  async loadCamera(deviceId: string): Promise<void> {
-    const constraints = {
-      video: {
-        deviceId: { exact: deviceId },
-      },
-    };
-    try {
-      const s = await navigator.mediaDevices.getUserMedia(constraints);
-      this.#webcamWidth = s.getVideoTracks()[0].getSettings().width;
-      this.#webcamHeight = s.getVideoTracks()[0].getSettings().height;
-      this.loadSrcStream(s);
-    } catch (error) {
-      notify({
-        title: 'Error loading camera',
-        message: error,
-        type: 'danger',
-      });
-    }
-  }
-
   async loadCameras(): Promise<void> {
     try {
-      await navigator.mediaDevices.getUserMedia({ video: true });
-      const deviceInfos = await navigator.mediaDevices.enumerateDevices();
-      for (let i = 0; i !== deviceInfos.length; i++) {
-        const deviceInfo = deviceInfos[i];
-        if (deviceInfo.kind === 'videoinput') {
-          this.#cameras.push(deviceInfo);
-        }
-      }
-      if (!this.#camerasListEmitted) {
-        this.#camerasListEmitted = true;
-      }
-      if (this.#cameras.length === 1) {
-        this.#deviceId = this.#cameras[0].deviceId;
-        this.loadCamera(this.#deviceId);
-      }
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      this.#webcamWidth = mediaStream.getVideoTracks()[0].getSettings().width;
+      this.#webcamHeight = mediaStream.getVideoTracks()[0].getSettings().height;
+      this.loadSrcStream(mediaStream);
     } catch (error) {
-      notify({
-        title: 'Webcam not supported',
-        message: error,
-        type: 'danger',
-      });
+      throwError(new Error('Webcam not supported'));
     }
   }
 
@@ -180,12 +137,6 @@ export class Webcam extends Module {
     this.#videoElement.onloadedmetadata = () => {
       this.$ready.set(true);
     };
-  }
-
-  startCamera(): void {
-    if (this.#deviceId) {
-      this.loadCamera(this.#deviceId);
-    }
   }
 
   stopCamera(): void {
@@ -242,7 +193,6 @@ export class Webcam extends Module {
       const h = (this.#width * this.#webcamHeight) / this.#webcamWidth;
       this.#captureCtx.drawImage(this.#videoElement, 0, this.#height / 2 - h / 2, this.#width, h);
     }
-    // return this.#captureCanvas.toDataURL('image/jpeg');
     return this.#captureCtx.getImageData(0, 0, this.#width, this.#height);
   }
 }

@@ -4,8 +4,7 @@ import { Stream } from '../../core/stream';
 import Component from './sketchpad.svelte';
 
 export class Sketchpad extends Module {
-  name = 'sketchpad';
-  description = 'Sketch input component';
+  title = 'sketchpad';
 
   $images = new Stream<ImageData>(never());
   $thumbnails = new Stream<string>(never());
@@ -28,14 +27,14 @@ export class Sketchpad extends Module {
     this.start();
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new Component({
-      target,
+      target: t,
       props: {
-        title: this.name,
+        title: this.title,
         strokeStart: this.$strokeStart,
         strokeEnd: this.$strokeEnd,
       },

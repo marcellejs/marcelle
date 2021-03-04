@@ -8,19 +8,7 @@ module.exports = {
     sourceType: 'module',
     project: './tsconfig.json',
   },
-  plugins: ['svelte3'],
-  extends: ['airbnb-typescript/base', 'prettier', 'prettier/@typescript-eslint'],
-  overrides: [
-    {
-      files: ['**/*.svelte'],
-      processor: 'svelte3/svelte3',
-      rules: {
-        'import/first': 'off',
-        'import/no-mutable-exports': 'off',
-        '@typescript-eslint/explicit-module-boundary-types': 'off',
-      },
-    },
-  ],
+  extends: ['airbnb-typescript/base', 'prettier'],
   rules: {
     'import/extensions': [
       'error',
@@ -37,4 +25,12 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'no-plusplus': 'off',
   },
+  ignorePatterns: [
+    'node_modules/*',
+    '**/*.svelte',
+    'dist/*',
+    'types',
+    '.prettierrc.js',
+    '.eslintrc.js',
+  ],
 };

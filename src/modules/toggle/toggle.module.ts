@@ -7,8 +7,7 @@ export interface ToggleOptions {
 }
 
 export class Toggle extends Module {
-  name = 'toggle';
-  description = 'just a toggle...';
+  title = 'toggle';
 
   $text: Stream<string>;
   $checked = new Stream(false, true);
@@ -20,14 +19,14 @@ export class Toggle extends Module {
     this.start();
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new Component({
-      target,
+      target: t,
       props: {
-        title: this.name,
+        title: this.title,
         text: this.$text,
         checked: this.$checked,
         disabled: this.$disabled,

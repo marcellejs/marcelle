@@ -7,8 +7,7 @@ export interface TextOptions {
 }
 
 export class Text extends Module {
-  name = 'text';
-  description = 'just a text...';
+  title = 'text';
 
   $text: Stream<string>;
 
@@ -18,14 +17,14 @@ export class Text extends Module {
     this.start();
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new Component({
-      target,
+      target: t,
       props: {
-        title: this.name,
+        title: this.title,
         text: this.$text,
       },
     });

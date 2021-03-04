@@ -1,12 +1,13 @@
-<script>
+<script lang="ts">
+  import type { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
 
-  export let title;
-  export let text;
-  export let down;
-  export let loading;
-  export let disabled;
-  export let type;
+  export let title: string;
+  export let text: Stream<string>;
+  export let down: Stream<boolean>;
+  export let loading: Stream<boolean>;
+  export let disabled: Stream<boolean>;
+  export let type: Stream<string>;
 
   function startDown() {
     down.set(true);

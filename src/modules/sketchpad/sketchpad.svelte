@@ -1,38 +1,29 @@
-<script>
-  import { onMount, createEventDispatcher } from 'svelte';
+<script lang="ts">
+  import { onMount, createEventDispatcher, tick } from 'svelte';
+  import { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
 
-  export let title;
-  export let strokeStart;
-  export let strokeEnd;
+  export let title: string;
+  export let strokeStart: Stream<void>;
+  export let strokeEnd: Stream<void>;
 
-  let canvasElement = null;
+  let canvasElement: HTMLCanvasElement;
   let isDrawing = false;
   let offset = { left: 0, top: 0 };
   let previous = { x: 0, y: 0 };
-  let ctx;
+  let ctx: CanvasRenderingContext2D;
 
   const dispatch = createEventDispatcher();
 
   onMount(async () => {
-    await new Promise((resolve, reject) => {
-      const rej = setTimeout(() => {
-        reject();
-      }, 5000);
-      const int = setInterval(() => {
-        if (canvasElement) {
-          clearTimeout(rej);
-          clearInterval(int);
-          ctx = canvasElement.getContext('2d');
-          clearDrawing();
-          dispatch('canvasElement', canvasElement);
-          resolve();
-        }
-      }, 200);
-    });
+    await tick();
+    await tick();
+    ctx = canvasElement.getContext('2d');
+    clearDrawing();
+    dispatch('canvasElement', canvasElement);
   });
 
-  function draw(e) {
+  function draw(e: MouseEvent) {
     const x = e.clientX - offset.left;
     const y = e.clientY - offset.top;
     if (isDrawing) {
@@ -49,7 +40,7 @@
     previous.y = y;
   }
 
-  function startDrawing(e) {
+  function startDrawing(e: MouseEvent) {
     const rect = canvasElement.getBoundingClientRect();
     offset = {
       top: rect.top + document.body.scrollTop,
@@ -75,6 +66,25 @@
   }
 </script>
 
+<svelte:body on:mouseup={stopDrawing} />
+
+<ModuleBase {title}>
+  <div class="sketchpad">
+    <canvas
+      id="fxid"
+      class="sketchpad-container"
+      width="300"
+      height="300"
+      bind:this={canvasElement}
+      on:mousemove={draw}
+      on:mousedown={startDrawing}
+    />
+    <div class="controls">
+      <button class="btn small danger" on:click={clearDrawing}> Clear </button>
+    </div>
+  </div>
+</ModuleBase>
+
 <style lang="postcss">
   .sketchpad {
     @apply w-full flex flex-col box-border;
@@ -90,22 +100,3 @@
     @apply m-1;
   }
 </style>
-
-<svelte:body on:mouseup={stopDrawing} />
-
-<ModuleBase {title}>
-  <div class="sketchpad">
-    <canvas
-      id="fxid"
-      ref="drawingarea"
-      class="sketchpad-container"
-      width="300"
-      height="300"
-      bind:this={canvasElement}
-      on:mousemove={draw}
-      on:mousedown={startDrawing} />
-    <div class="controls">
-      <button class="btn small danger" on:click={clearDrawing}> Clear </button>
-    </div>
-  </div>
-</ModuleBase>

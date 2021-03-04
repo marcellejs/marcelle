@@ -3,8 +3,7 @@ import Component from './account.svelte';
 import { DataStore } from '../../data-store';
 
 export class Account extends Module {
-  name = 'account manager';
-  description = 'Account manager';
+  title = 'account manager';
 
   #dataStore: DataStore;
 
@@ -13,14 +12,14 @@ export class Account extends Module {
     this.#dataStore = dataStore;
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new Component({
-      target,
+      target: t,
       props: {
-        title: this.name,
+        title: this.title,
         dataStore: this.#dataStore,
       },
     });

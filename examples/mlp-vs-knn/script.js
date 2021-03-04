@@ -1,16 +1,37 @@
-/* global marcelle */
+/* eslint-disable import/extensions */
+import '../../dist/marcelle.css';
+import {
+  batchPrediction,
+  datasetBrowser,
+  button,
+  confusionMatrix,
+  dashboard,
+  dataset,
+  dataStore,
+  mlp,
+  mobilenet,
+  parameters,
+  classificationPlot,
+  trainingProgress,
+  textfield,
+  toggle,
+  trainingPlot,
+  webcam,
+  knn,
+  text,
+} from '../../dist/marcelle.esm.js';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CAPTURE TO DATASET
 // -----------------------------------------------------------
 
-const input = marcelle.webcam();
-const featureExtractor = marcelle.mobilenet();
+const input = webcam();
+const featureExtractor = mobilenet();
 
-const label = marcelle.textfield();
-label.name = 'Instance label';
-const capture = marcelle.button({ text: 'Hold to record instances' });
-capture.name = 'Capture instances to the training set';
+const label = textfield();
+label.title = 'Instance label';
+const capture = button({ text: 'Hold to record instances' });
+capture.title = 'Capture instances to the training set';
 
 const instances = input.$images
   .filter(() => capture.$down.value)
@@ -23,34 +44,36 @@ const instances = input.$images
   }))
   .awaitPromises();
 
-const store = marcelle.dataStore({ location: 'localStorage' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
+const store = dataStore({ location: 'localStorage' });
+const trainingSet = dataset({ name: 'TrainingSet-dashboard', dataStore: store });
 trainingSet.capture(instances);
 
-const trainingSetBrowser = marcelle.browser(trainingSet);
+const trainingSetBrowser = datasetBrowser(trainingSet);
 
 // -----------------------------------------------------------
 // TRAINING
 // -----------------------------------------------------------
 
-const b = marcelle.button({ text: 'Train' });
-b.name = 'Training Launcher';
+const b = button({ text: 'Train' });
+b.title = 'Training Launcher';
 
 // KNN
-const classifierKNN = marcelle.knn({ k: 3 });
-const paramsKNN = marcelle.parameters(classifierKNN);
-paramsKNN.name = 'KNN: Parameters';
-const progressKNN = marcelle.progress(classifierKNN);
-progressKNN.name = 'KNN: Training Progress';
+const classifierKNN = knn({ k: 3, dataStore: store }).sync('mlp-vs-knn-knn');
+const paramsKNN = parameters(classifierKNN);
+paramsKNN.title = 'KNN: Parameters';
+const progressKNN = trainingProgress(classifierKNN);
+progressKNN.title = 'KNN: Training Progress';
 
 // MLP
-const classifierMLP = marcelle.mlp({ layers: [128, 64], epochs: 30 });
-const paramsMLP = marcelle.parameters(classifierMLP);
-paramsMLP.name = 'MLP: Parameters';
-const progressMLP = marcelle.progress(classifierMLP);
-progressMLP.name = 'MLP: Training Progress';
-const plotTrainingMLP = marcelle.trainingPlot(classifierMLP);
-plotTrainingMLP.name = 'MLP: Training Monitoring';
+const classifierMLP = mlp({ layers: [128, 64], epochs: 30, dataStore: store }).sync(
+  'mlp-vs-knn-mlp',
+);
+const paramsMLP = parameters(classifierMLP);
+paramsMLP.title = 'MLP: Parameters';
+const progressMLP = trainingProgress(classifierMLP);
+progressMLP.title = 'MLP: Training Progress';
+const plotTrainingMLP = trainingPlot(classifierMLP);
+plotTrainingMLP.title = 'MLP: Training Monitoring';
 
 b.$click.subscribe(() => {
   classifierKNN.train(trainingSet);
@@ -61,14 +84,14 @@ b.$click.subscribe(() => {
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchMLP = marcelle.batchPrediction({ name: 'mlp', dataStore: store });
-const batchKNN = marcelle.batchPrediction({ name: 'knn', dataStore: store });
-const predictButton = marcelle.button({ text: 'Update predictions' });
-const predictionAccuracy = marcelle.text({ text: 'Waiting for predictions...' });
-const confusionMLP = marcelle.confusion(batchMLP);
-confusionMLP.name = 'MLP: Confusion Matrix';
-const confusionKNN = marcelle.confusion(batchKNN);
-confusionKNN.name = 'KNN: Confusion Matrix';
+const batchMLP = batchPrediction({ name: 'mlp', dataStore: store });
+const batchKNN = batchPrediction({ name: 'knn', dataStore: store });
+const predictButton = button({ text: 'Update predictions' });
+const predictionAccuracy = text({ text: 'Waiting for predictions...' });
+const confusionMLP = confusionMatrix(batchMLP);
+confusionMLP.title = 'MLP: Confusion Matrix';
+const confusionKNN = confusionMatrix(batchKNN);
+confusionKNN.title = 'KNN: Confusion Matrix';
 
 predictButton.$click.subscribe(async () => {
   await batchMLP.clear();
@@ -81,7 +104,7 @@ predictButton.$click.subscribe(async () => {
 // PREDICTION
 // -----------------------------------------------------------
 
-const tog = marcelle.toggle({ text: 'toggle prediction' });
+const tog = toggle({ text: 'toggle prediction' });
 
 const rtFeatureStream = input.$images
   .filter(() => tog.$checked.value)
@@ -95,25 +118,25 @@ const predictionStreamKNN = rtFeatureStream
   .map(async (features) => classifierKNN.predict(features))
   .awaitPromises();
 
-const plotResultsMLP = marcelle.predictionPlot(predictionStreamMLP);
-plotResultsMLP.name = 'Predictions: MLP';
-const plotResultsKNN = marcelle.predictionPlot(predictionStreamKNN);
-plotResultsKNN.name = 'Predictions: KNN';
+const plotResultsMLP = classificationPlot(predictionStreamMLP);
+plotResultsMLP.title = 'Predictions: MLP';
+const plotResultsKNN = classificationPlot(predictionStreamKNN);
+plotResultsKNN.title = 'Predictions: KNN';
 
 // -----------------------------------------------------------
 // DASHBOARDS
 // -----------------------------------------------------------
 
-const dashboard = marcelle.dashboard({
+const dash = dashboard({
   title: 'Marcelle Example - MLP vs KNN',
   author: 'Marcelle Pirates Crew',
 });
 
-dashboard
+dash
   .page('Data Management')
   .useLeft(input, featureExtractor)
   .use([label, capture], trainingSetBrowser);
-dashboard
+dash
   .page('Training')
   .use(
     b,
@@ -125,10 +148,8 @@ dashboard
     progressMLP,
     plotTrainingMLP,
   );
-dashboard
-  .page('Batch Prediction')
-  .use(predictButton, predictionAccuracy, [confusionMLP, confusionKNN]);
-dashboard.page('Real-time prediction').useLeft(input).use(tog, [plotResultsMLP, plotResultsKNN]);
-dashboard.settings.use(trainingSet);
+dash.page('Batch Prediction').use(predictButton, predictionAccuracy, [confusionMLP, confusionKNN]);
+dash.page('Real-time prediction').useLeft(input).use(tog, [plotResultsMLP, plotResultsKNN]);
+dash.settings.dataStores(store).datasets(trainingSet).models(classifierKNN, classifierMLP);
 
-dashboard.start();
+dash.start();

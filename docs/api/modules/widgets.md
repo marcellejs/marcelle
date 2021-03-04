@@ -41,6 +41,37 @@ capture.name = 'Capture instances to the training set';
 capture.$click.subscribe((x) => console.log('button $click:', x));
 ```
 
+## FileUpload
+
+```tsx
+fileUpload(): FileUpload;
+```
+
+A generic File upload component.
+
+### Streams
+
+| Name    | Type   | Description                                                                                                 | Hold |
+| ------- | ------ | ----------------------------------------------------------------------------------------------------------- | :--: |
+| \$files | File[] | Stream of uploaded files. If several files are dropped simultaneously, stream events are an array of files. |      |
+
+### Screenshot
+
+<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
+  <img src="./images/file-upload.png" alt="Screenshot of the file-upload component" width="400">
+</div>
+
+### Example
+
+```js
+const up = fileUpload();
+up.title = 'Upload model files (.json and .bin)';
+
+up.$files.subscribe((files) => {
+  console.log('files', files);
+});
+```
+
 ## Select
 
 ```tsx

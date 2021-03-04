@@ -4,6 +4,7 @@
   },
   "svelte.plugin.css.diagnostics.enable": false,
   "editor.formatOnSave": true,
+  "css.validate": false,
   "eslint.validate": ["javascript", "javascriptreact", "svelte"],
   "[svelte]": {
     "editor.defaultFormatter": "svelte.svelte-vscode"

@@ -16,8 +16,7 @@ export interface SliderOptions {
 }
 
 export class Slider extends Module {
-  name = 'slider';
-  description = 'just a slider...';
+  title = 'slider';
 
   $values: Stream<number[]>;
   $min: Stream<number>;
@@ -55,14 +54,14 @@ export class Slider extends Module {
     this.start();
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new Component({
-      target,
+      target: t,
       props: {
-        title: this.name,
+        title: this.title,
         values: this.$values,
         min: this.$min,
         max: this.$max,

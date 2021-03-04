@@ -1,6 +1,7 @@
-import { ObjectDetection, ObjectDetectionBaseModel } from '@tensorflow-models/coco-ssd';
+import { load, ObjectDetection, ObjectDetectionBaseModel } from '@tensorflow-models/coco-ssd';
+import { io } from '@tensorflow/tfjs-core';
+import { Model, ObjectDetectorResults } from '../../core';
 import { logger } from '../../core/logger';
-import { ObjectDetector, ObjectDetectorResults } from '../../core/object-detector';
 import { Stream } from '../../core/stream';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './coco-ssd.svelte';
@@ -9,25 +10,35 @@ export interface CocoSsdOptions {
   base?: ObjectDetectionBaseModel;
 }
 
-export class CocoSsd extends ObjectDetector<ImageData, ObjectDetectorResults> {
-  name = 'COCO-SSD Object Detection';
-  description = 'Object detection module using the tfjs coco-ssd model';
+export class CocoSsd extends Model<ImageData, ObjectDetectorResults> {
+  title = 'COCO-SSD Object Detection';
 
   parameters = {};
+  serviceName = 'undefined';
 
-  #model: ObjectDetection;
+  #coco: ObjectDetection;
   #base: ObjectDetectionBaseModel;
   $loading: Stream<boolean> = new Stream(true as boolean, true);
 
   constructor({ base = 'lite_mobilenet_v2' }: CocoSsdOptions = {}) {
     super();
     this.#base = base;
-    this.#model = new ObjectDetection(base);
     this.setup();
   }
 
   async setup(): Promise<void> {
-    await this.#model.load();
+    const cachedModels = await io.listModels();
+    const cachedCoco = Object.keys(cachedModels).filter((x) => x.includes('cocossd'));
+    try {
+      this.#coco = await load({ base: this.#base, modelUrl: `indexeddb://cocossd-${this.#base}` });
+    } catch (error) {
+      if (cachedCoco.length > 0) {
+        await io.removeModel(cachedCoco[0]);
+      }
+      this.#coco = await load({ base: this.#base });
+      // @ts-ignore
+      await this.#coco.model.save(`indexeddb://cocossd-${this.#base}`);
+    }
     logger.info('COCO-SSD loaded with base `lite_mobilenet_v2`');
     this.$loading.set(false);
     this.start();
@@ -41,10 +52,10 @@ export class CocoSsd extends ObjectDetector<ImageData, ObjectDetectorResults> {
 
   @Catch
   async predict(img: ImageData): Promise<ObjectDetectorResults> {
-    if (!this.#model) {
+    if (!this.#coco) {
       throw new Error('Model is not loaded');
     }
-    const predictions = await this.#model.detect(img);
+    const predictions = await this.#coco.detect(img);
     const outputs = predictions.map((x) => ({
       bbox: x.bbox,
       class: x.class,
@@ -53,17 +64,41 @@ export class CocoSsd extends ObjectDetector<ImageData, ObjectDetectorResults> {
     return { outputs };
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new Component({
-      target,
+      target: t,
       props: {
-        title: this.name,
+        title: this.title,
         loading: this.$loading,
         base: this.#base,
       },
     });
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  save(): never {
+    throw new Error('OnnxImageClassifier does not support saving');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  load(): never {
+    throw new Error('OnnxImageClassifier does not support loading');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  download(): never {
+    throw new Error('OnnxImageClassifier does not support downloading');
+  }
+
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  upload(): never {
+    throw new Error('OnnxImageClassifier does not support uploading');
   }
 }

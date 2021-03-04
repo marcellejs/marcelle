@@ -8,8 +8,7 @@ export interface SelectOptions {
 }
 
 export class Select extends Module {
-  name = 'select';
-  description = 'just a select...';
+  title = 'select';
 
   $options: Stream<string[]>;
   $value: Stream<string>;
@@ -21,14 +20,14 @@ export class Select extends Module {
     this.start();
   }
 
-  mount(targetSelector?: string): void {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
+  mount(target?: HTMLElement): void {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new Component({
-      target,
+      target: t,
       props: {
-        title: this.name,
+        title: this.title,
         options: this.$options,
         value: this.$value,
       },

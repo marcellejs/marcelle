@@ -44,33 +44,6 @@ const params = marcelle.parameters(classifier);
 dashboard.page('Training').use(params);
 ```
 
-## Progress
-
-```tsx
-marcelle.progress(m: Model): Progress;
-```
-
-Displays the progress of the training process for a given model.
-
-### Parameters
-
-| Option | Type  | Description                                            | Required |
-| ------ | ----- | ------------------------------------------------------ | :------: |
-| m      | Model | A machine learning model exposing a `$training` stream |    ✓     |
-
-### Screenshot
-
-<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
-  <img src="./images/progress.png" alt="Screenshot of the progress component">
-</div>
-
-### Example
-
-```js
-const classifier = marcelle.mlp({ layers: [64, 32], epochs: 20 });
-const prog = marcelle.progress(classifier);
-```
-
 ## TrainingPlot
 
 ```tsx
@@ -96,4 +69,31 @@ Displays the training/validation loss and accuracies during the training of a ne
 ```js
 const classifier = marcelle.mlp({ layers: [64, 32], epochs: 20 });
 const prog = marcelle.trainingPlot(classifier);
+```
+
+## TrainingProgress
+
+```tsx
+marcelle.trainingProgress(m: Model): Progress;
+```
+
+Displays the progress of the training process for a given model.
+
+### Parameters
+
+| Option | Type  | Description                                            | Required |
+| ------ | ----- | ------------------------------------------------------ | :------: |
+| m      | Model | A machine learning model exposing a `$training` stream |    ✓     |
+
+### Screenshot
+
+<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
+  <img src="./images/training-progress.png" alt="Screenshot of the training-progress component">
+</div>
+
+### Example
+
+```js
+const classifier = marcelle.mlp({ layers: [64, 32], epochs: 20 });
+const prog = marcelle.trainingProgress(classifier);
 ```
