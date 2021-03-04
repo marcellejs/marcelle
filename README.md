@@ -27,7 +27,7 @@ Marcelle is a web-based reactive toolkit facilitating the design of custom ML pi
 
 ## Installation
 
-[See online documentation](https://marcelle.netlify.app/installation.html)
+[See online documentation](https://marcelle.dev/installation.html)
 
 Using NPM:
 
@@ -43,18 +43,9 @@ yarn add @marcellejs/core@next
 
 ## Usage
 
-See [Online Documentation](https://marcelle.netlify.app) and [Examples](https://glitch.com/@marcelle.crew/marcelle-examples).
+See [Online Documentation](https://marcelle.dev)
 
 ## 🛠 Developing
-
-### Setting up VSCode
-
-[Download VSCode](https://code.visualstudio.com/) and install the following extensions:
-
-- [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
-- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-- [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-- [Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
 
 ### Building the library
 
@@ -71,6 +62,15 @@ yarn dev # OR npm run dev
 ```
 
 To generate the typescript declaration files (useful for the rollup example), run `yarn build:types` in production, or `yarn dev:types` in development.
+
+### Setting up VSCode
+
+[Download VSCode](https://code.visualstudio.com/) and install the following extensions:
+
+- [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
+- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
 
 ## ✍️ Authors
 
