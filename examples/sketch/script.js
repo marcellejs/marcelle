@@ -10,7 +10,7 @@ import {
   mobilenet,
   parameters,
   predictionPlot,
-  progress,
+  trainingProgress,
   sketchpad,
   textfield,
   trainingPlot,
@@ -69,7 +69,7 @@ trainingSet.$changes.subscribe((changes) => {
 });
 
 const params = parameters(classifier);
-const prog = progress(classifier);
+const prog = trainingProgress(classifier);
 const plotTraining = trainingPlot(classifier);
 
 // -----------------------------------------------------------

@@ -9,6 +9,7 @@
 - Modules' mount method now accepts an HTML Element rather than a selector
 - `imageDrop` has been renamed to `imageUpload`
 - `browser` has been renamed to `datasetBrowser`
+- `progress` has been renamed to `trainingProgress`
 - Dashboards now have a `closable` option, which is disabled by default.
 - Dataset's `$created` stream has been replaced by a more generic `$changes` stream
 
@@ -21,6 +22,7 @@
 - Dashboard settings have been improved (TODO: give details + breaking changes)
 - `trainingPlot`: The logs to display can be be configured in the module's options. It is possible to pass either a scalar (incremental mode) an array for each log.
 - `imageUpload` now supports target image dimensions and automatically crops and resizes images
+- `datasetBrowser` now allows the selection, deletion or class change of instances
 
 ### New Modules
 

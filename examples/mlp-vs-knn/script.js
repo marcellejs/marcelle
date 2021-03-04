@@ -12,7 +12,7 @@ import {
   mobilenet,
   parameters,
   predictionPlot,
-  progress,
+  trainingProgress,
   textfield,
   toggle,
   trainingPlot,
@@ -61,7 +61,7 @@ b.title = 'Training Launcher';
 const classifierKNN = knn({ k: 3, dataStore: store }).sync('knn-vs-mlp-knn');
 const paramsKNN = parameters(classifierKNN);
 paramsKNN.title = 'KNN: Parameters';
-const progressKNN = progress(classifierKNN);
+const progressKNN = trainingProgress(classifierKNN);
 progressKNN.title = 'KNN: Training Progress';
 
 // MLP
@@ -70,7 +70,7 @@ const classifierMLP = mlp({ layers: [128, 64], epochs: 30, dataStore: store }).s
 );
 const paramsMLP = parameters(classifierMLP);
 paramsMLP.title = 'MLP: Parameters';
-const progressMLP = progress(classifierMLP);
+const progressMLP = trainingProgress(classifierMLP);
 progressMLP.title = 'MLP: Training Progress';
 const plotTrainingMLP = trainingPlot(classifierMLP);
 plotTrainingMLP.title = 'MLP: Training Monitoring';

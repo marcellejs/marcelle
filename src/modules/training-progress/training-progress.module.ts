@@ -1,9 +1,9 @@
 import { Model } from '../../core';
 import { Module } from '../../core/module';
-import Component from './progress.svelte';
+import Component from './training-progress.svelte';
 
-export class Progress<T, U> extends Module {
-  title = 'progress';
+export class TrainingProgress<T, U> extends Module {
+  title = 'training progress';
 
   #model: Model<T, U>;
 

@@ -14,7 +14,7 @@ import {
   mobilenet,
   parameters,
   predictionPlot,
-  progress,
+  trainingProgress,
   text,
   textfield,
   toggle,
@@ -61,7 +61,7 @@ const classifier = mlp({ layers: [64, 32], epochs: 20 });
 b.$click.subscribe(() => classifier.train(trainingSet));
 
 const params = parameters(classifier);
-const prog = progress(classifier);
+const prog = trainingProgress(classifier);
 const plotTraining = trainingPlot(classifier);
 
 // -----------------------------------------------------------
