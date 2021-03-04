@@ -35,7 +35,7 @@ const instances = input.$images
   .awaitPromises();
 
 const store = dataStore({ location: 'localStorage' });
-const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
+const trainingSet = dataset({ name: 'TrainingSet-sketch', dataStore: store });
 
 const labelField = textfield();
 labelField.title = 'Correct the prediction if necessary';

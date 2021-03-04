@@ -43,7 +43,7 @@ const instances = capture.$click
   .awaitPromises();
 
 const store = dataStore({ location: 'localStorage' });
-const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
+const trainingSet = dataset({ name: 'TrainingSet-sketch', dataStore: store });
 trainingSet.capture(instances);
 
 const trainingSetBrowser = datasetBrowser(trainingSet);
