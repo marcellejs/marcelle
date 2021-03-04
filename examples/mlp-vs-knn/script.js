@@ -11,7 +11,7 @@ import {
   mlp,
   mobilenet,
   parameters,
-  predictionPlot,
+  classificationPlot,
   trainingProgress,
   textfield,
   toggle,
@@ -118,9 +118,9 @@ const predictionStreamKNN = rtFeatureStream
   .map(async (features) => classifierKNN.predict(features))
   .awaitPromises();
 
-const plotResultsMLP = predictionPlot(predictionStreamMLP);
+const plotResultsMLP = classificationPlot(predictionStreamMLP);
 plotResultsMLP.title = 'Predictions: MLP';
-const plotResultsKNN = predictionPlot(predictionStreamKNN);
+const plotResultsKNN = classificationPlot(predictionStreamKNN);
 plotResultsKNN.title = 'Predictions: KNN';
 
 // -----------------------------------------------------------

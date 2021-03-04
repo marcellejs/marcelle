@@ -5,8 +5,8 @@ import { Prediction } from '../../core/types';
 import { chart, Chart } from '../chart';
 import { text, Text } from '../text';
 
-export class PredictionPlot extends Module {
-  title = 'prediction plot';
+export class ClassificationPlot extends Module {
+  title = 'classification plot';
 
   $confidenceStream: Stream<{ x: string; y: number }[]>;
   #plotConfidences: Chart;

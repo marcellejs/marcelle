@@ -11,7 +11,7 @@ import {
   mlp,
   mobilenet,
   parameters,
-  predictionPlot,
+  classificationPlot,
   trainingProgress,
   textfield,
   toggle,
@@ -85,7 +85,7 @@ const predictionStream = input.$images
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
-const plotResults = predictionPlot(predictionStream);
+const plotResults = classificationPlot(predictionStream);
 
 // -----------------------------------------------------------
 // DASHBOARDS

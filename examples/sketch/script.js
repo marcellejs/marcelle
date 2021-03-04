@@ -9,7 +9,7 @@ import {
   mlp,
   mobilenet,
   parameters,
-  predictionPlot,
+  classificationPlot,
   trainingProgress,
   sketchpad,
   textfield,
@@ -88,7 +88,7 @@ predictionStream.subscribe(({ label }) => {
   labelField.$text.set(label);
 });
 
-const plotResults = predictionPlot(predictionStream);
+const plotResults = classificationPlot(predictionStream);
 
 // -----------------------------------------------------------
 // DASHBOARDS

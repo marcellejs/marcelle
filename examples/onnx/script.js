@@ -10,7 +10,7 @@ import {
   dataStore,
   fileUpload,
   imageUpload,
-  predictionPlot,
+  classificationPlot,
   text,
   onnxImageClassifier,
   toggle,
@@ -83,7 +83,7 @@ predictButton.$click.subscribe(async () => {
 // -----------------------------------------------------------
 
 const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
-const plotResults = predictionPlot(predictionStream);
+const plotResults = classificationPlot(predictionStream);
 
 const instanceViewer = {
   id: 'my-instance-viewer',

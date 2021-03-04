@@ -10,7 +10,7 @@ import {
   dataStore,
   imageUpload,
   mobilenet,
-  predictionPlot,
+  classificationPlot,
   text,
   toggle,
 } from '../../dist/marcelle.esm.js';
@@ -76,7 +76,7 @@ batchTesting.$predictions.subscribe(async () => {
 // -----------------------------------------------------------
 
 const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
-const plotResults = predictionPlot(predictionStream);
+const plotResults = classificationPlot(predictionStream);
 
 const instanceViewer = {
   id: 'my-instance-viewer',

@@ -10,7 +10,7 @@ import {
   dataStore,
   fileUpload,
   imageUpload,
-  predictionPlot,
+  classificationPlot,
   text,
   tfGenericModel,
   toggle,
@@ -96,7 +96,7 @@ const betterPredictions = predictionStream.map(({ label, confidences }) => {
   };
 });
 
-const plotResults = predictionPlot(betterPredictions);
+const plotResults = classificationPlot(betterPredictions);
 
 const instanceViewer = {
   id: 'my-instance-viewer',
