@@ -1,8 +1,8 @@
-import notify from '../ui/util/notify';
+import { notification } from '../ui/util/notification';
 
 window.onerror = (message) => {
   if (typeof message === 'string') {
-    notify({
+    notification({
       title: 'An error occurred',
       message,
       type: 'danger',
@@ -11,7 +11,7 @@ window.onerror = (message) => {
 };
 
 window.addEventListener('unhandledrejection', (event) => {
-  notify({
+  notification({
     title: 'An error occurred',
     message: event.reason,
     type: 'danger',

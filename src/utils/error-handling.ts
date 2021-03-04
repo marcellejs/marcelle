@@ -1,5 +1,5 @@
 import { logger } from '../core/logger';
-import notify from '../ui/util/notify';
+import { notification } from '../ui/util/notification';
 
 export function Catch(
   target: unknown,
@@ -14,7 +14,7 @@ export function Catch(
       return originalMethod.apply(this, args);
     } catch (error) {
       logger.error(error);
-      notify({
+      notification({
         title: error.name,
         message: error.message,
         type: 'danger',
@@ -56,7 +56,7 @@ export class TrainingError extends Error {
 
 export function throwError(error: Error, { duration = 3000 } = {}): void {
   logger.error(`${error.name}: ${error.message}`, error);
-  notify({
+  notification({
     title: error.name,
     message: error.message,
     type: 'danger',

@@ -1,7 +1,7 @@
 import { never } from '@most/core';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
-import notify from '../../ui/util/notify';
+import { throwError } from '../../utils/error-handling';
 import Component from './webcam.svelte';
 
 function requestInterval(fn: () => void, delay: number) {
@@ -127,11 +127,7 @@ export class Webcam extends Module {
       this.#webcamHeight = mediaStream.getVideoTracks()[0].getSettings().height;
       this.loadSrcStream(mediaStream);
     } catch (error) {
-      notify({
-        title: 'Webcam not supported',
-        message: error,
-        type: 'danger',
-      });
+      throwError(new Error('Webcam not supported'));
     }
   }
 

@@ -10,6 +10,7 @@ import {
   mobilenet,
   parameters,
   classificationPlot,
+  notification,
   trainingProgress,
   sketchpad,
   textfield,
@@ -63,8 +64,28 @@ b.$click.subscribe(() => classifier.train(trainingSet));
 trainingSet.$changes.subscribe((changes) => {
   for (let i = 0; i < changes.length; i++) {
     if (changes[i].level === 'instance' && changes[i].type === 'created') {
-      classifier.train(trainingSet);
+      if (
+        Object.values(trainingSet.$classes.value)
+          .map((x) => x.length)
+          .reduce((x, y) => x || y < 2, false)
+      ) {
+        notification({
+          title: 'Tip',
+          message: 'You need to record at least two examples per class',
+          duration: 5000,
+        });
+      } else if (trainingSet.$labels.value.length < 2) {
+        notification({
+          title: 'Tip',
+          message: 'You need to have at least two classes to train the model',
+          duration: 5000,
+        });
+      } else {
+        classifier.train(trainingSet);
+      }
       break;
+    } else if (changes[i].level === 'class' && ['deleted', 'renamed'].includes(changes[i].type)) {
+      classifier.train(trainingSet);
     }
   }
 });
@@ -81,6 +102,7 @@ const predictionStream = classifier.$training
   .filter((x) => x.status === 'success')
   .sample(instances)
   .merge(instances)
+  // .filter(() => classifier.ready)
   .map(async ({ features }) => classifier.predict(features))
   .awaitPromises()
   .filter((x) => !!x);
@@ -109,12 +131,17 @@ dash.settings.dataStores(store).datasets(trainingSet).models(classifier, feature
 
 dash.start();
 
-store.authenticate().then(() => {
-  trainingSet.$count.take(1).subscribe((c) => {
-    if (c) {
-      setTimeout(() => {
-        classifier.train(trainingSet);
-      }, 200);
-    }
+// -----------------------------------------------------------
+// HELP MESSAGES
+// -----------------------------------------------------------
+
+input.$images
+  .filter(() => trainingSet.$count.value === 0 && !classifier.ready)
+  .take(1)
+  .subscribe(() => {
+    notification({
+      title: 'Tip',
+      message: 'Start by editing the label and adding the drawing to the dataset',
+      duration: 5000,
+    });
   });
-});

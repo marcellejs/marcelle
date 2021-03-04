@@ -4,7 +4,7 @@ import Notification from './Notification.svelte';
 let notificationContainer: HTMLDivElement | undefined;
 let app: SvelteComponent | undefined;
 
-export default function notify({
+export function notification({
   title,
   message,
   duration = 3000,

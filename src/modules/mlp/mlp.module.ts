@@ -132,7 +132,7 @@ export class MLP extends TFJSModel<TensorLike, ClassifierResults> {
   }
 
   async predict(x: TensorLike): Promise<ClassifierResults> {
-    if (!this.model) return null;
+    if (!this.model) return { label: undefined, confidences: {} };
     return tidy(() => {
       const pred = this.model.predict(tensor(x)) as Tensor2D;
       const label = this.labels[pred.gather(0).argMax().arraySync() as number];

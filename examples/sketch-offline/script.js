@@ -17,6 +17,7 @@ import {
   textfield,
   toggle,
   trainingPlot,
+  throwError,
 } from '../../dist/marcelle.esm.js';
 
 // -----------------------------------------------------------
@@ -72,6 +73,10 @@ const confMat = confusionMatrix(batchMLP);
 
 const predictButton = button({ text: 'Update predictions' });
 predictButton.$click.subscribe(async () => {
+  console.log('classifier', classifier);
+  if (!classifier.ready) {
+    throwError(new Error('No classifier has been trained'));
+  }
   await batchMLP.clear();
   await batchMLP.predict(classifier, trainingSet);
 });
@@ -81,9 +86,17 @@ predictButton.$click.subscribe(async () => {
 // -----------------------------------------------------------
 
 const tog = toggle({ text: 'toggle prediction' });
+tog.$checked.subscribe((checked) => {
+  if (checked && !classifier.ready) {
+    throwError(new Error('No classifier has been trained'));
+    setTimeout(() => {
+      tog.$checked.set(false);
+    }, 500);
+  }
+});
 
 const predictionStream = input.$images
-  .filter(() => tog.$checked.value)
+  .filter(() => tog.$checked.value && classifier.ready)
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 

@@ -12,6 +12,7 @@ import './ui/style/styles.css';
 export * from './core';
 export * from './data-store';
 export { throwError } from './utils/error-handling';
+export { notification } from './ui/util/notification';
 
 // Dashboards & Wizards
 export { dashboard } from './dashboard';

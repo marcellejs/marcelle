@@ -23,10 +23,17 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
   #storedModelId: string;
   protected syncModelName: string;
 
+  ready: boolean = false;
+
   constructor({ dataStore }: Partial<ModelOptions> = {}) {
     super();
     this.dataStore = dataStore;
     this.$training.start();
+    this.$training.subscribe(({ status }) => {
+      if (status === 'success' || status === 'loaded') {
+        this.ready = true;
+      }
+    });
   }
 
   abstract train(dataset: Dataset): void;
