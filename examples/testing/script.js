@@ -13,6 +13,7 @@ import {
   classificationPlot,
   text,
   toggle,
+  imageDisplay,
 } from '../../dist/marcelle.esm.js';
 
 // -----------------------------------------------------------
@@ -78,25 +79,7 @@ batchTesting.$predictions.subscribe(async () => {
 const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
 const plotResults = classificationPlot(predictionStream);
 
-const instanceViewer = {
-  id: 'my-instance-viewer',
-  mount(target) {
-    const t = target || document.querySelector('#my-instance-viewer');
-    const instanceCanvas = document.createElement('canvas');
-    instanceCanvas.classList.add('w-full', 'max-w-full');
-    const instanceCtx = instanceCanvas.getContext('2d');
-    t.appendChild(instanceCanvas);
-    const unSub = source.$images.subscribe((img) => {
-      instanceCanvas.width = img.width;
-      instanceCanvas.height = img.height;
-      instanceCtx.putImageData(img, 0, 0);
-    });
-    this.destroy = () => {
-      t.removeChild(instanceCanvas);
-      unSub();
-    };
-  },
-};
+const instanceViewer = imageDisplay(source.$images);
 
 const buttonCorrect = button({ text: 'Yes! 😛' });
 buttonCorrect.title = '';

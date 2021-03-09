@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- New module: `imageDisplay` for displaying image streams
+
+## v0.2.0
+
 ### Breaking changes
 
 - `tfImageClassifier` has been replaced by `tfGenericModel`
