@@ -189,12 +189,24 @@ export class Dataset extends Module {
   }
 
   async getAllInstances(fields: string[] = undefined): Promise<Instance[]> {
-    const opts: FeathersParams = {};
+    const baseQuery: FeathersParams['query'] = {
+      $limit: 30,
+    };
     if (fields) {
-      opts.query = { $select: fields };
+      baseQuery.$select = fields;
     }
-    const { data } = (await this.instanceService.find(opts)) as Paginated<Instance>;
-    return data;
+    const results = (await Promise.all(
+      Array.from(Array(Math.ceil(this.$count.value / 30)), (_, i) => {
+        const query = { ...baseQuery, $skip: i * 30 };
+        return this.instanceService.find({ query });
+      }),
+    )) as Paginated<Instance>[];
+    const allInstances = results.map(({ data }) => data).flat();
+    console.log(
+      'allInstances',
+      allInstances.map(({ label }) => label),
+    );
+    return allInstances;
   }
 
   async deleteInstance(id: ObjectId): Promise<void> {

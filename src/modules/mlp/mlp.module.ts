@@ -33,12 +33,7 @@ async function dataSplit(
   trainProportion: number,
   numClasses = -1,
 ): Promise<TrainingData> {
-  // split is an interval, between 0 and 1
-  const allInstances = await Promise.all(
-    dataset.$instances.value.map((id) =>
-      dataset.instanceService.get(id, { query: { $select: ['id', 'features'] } }),
-    ),
-  );
+  const allInstances = await dataset.getAllInstances(['id', 'features', 'label']);
 
   let data: TrainingData;
   tidy(() => {
