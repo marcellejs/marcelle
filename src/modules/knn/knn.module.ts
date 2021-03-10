@@ -30,7 +30,7 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
   }
 
   @Catch
-  train(dataset: Dataset): void {
+  train(dataset: Dataset, inputField: string = 'features'): void {
     this.labels = dataset.$labels.value;
     if (this.labels.length < 1) {
       this.$training.set({ status: 'error' });
@@ -41,7 +41,7 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
       this.classifier.clearAllClasses();
       await Promise.all(
         this.labels.map(async (label, i) => {
-          await this.activateClass(dataset, label);
+          await this.activateClass(dataset, label, inputField);
           this.$training.set({
             status: 'epoch',
             epoch: i,
@@ -67,15 +67,21 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
     return { label, confidences };
   }
 
-  async activateClass(dataset: Dataset, label: string): Promise<void> {
+  async activateClass(
+    dataset: Dataset,
+    label: string,
+    inputField: string = 'features',
+  ): Promise<void> {
     const allInstances = await Promise.all(
       dataset.$instances.value.map((id) =>
-        dataset.instanceService.get(id, { query: { $select: ['id', 'features'] } }),
+        dataset.instanceService.get(id, { query: { $select: ['id', inputField] } }),
       ),
     );
     dataset.$classes.value[label].forEach((id) => {
-      const { features } = allInstances.find((x) => x.id === id) as { features: number[][] };
-      this.classifier.addExample(tensor2d(features), label);
+      const instance = allInstances.find((x) => x.id === id) as {
+        [inputField: string]: number[][];
+      };
+      this.classifier.addExample(tensor2d(instance[inputField]), label);
     });
   }
 
