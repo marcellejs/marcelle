@@ -31,9 +31,9 @@ export class Dashboard {
     this.closable = closable;
   }
 
-  page(name: string): DashboardPage {
+  page(name: string, showSidebar?: boolean): DashboardPage {
     if (!Object.keys(this.panels).includes(name)) {
-      this.panels[name] = new DashboardPage(name);
+      this.panels[name] = new DashboardPage(name, showSidebar);
     }
     return this.panels[name];
   }
