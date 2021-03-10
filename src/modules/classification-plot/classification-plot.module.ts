@@ -24,7 +24,7 @@ export class ClassificationPlot extends Module {
     this.#plotConfidences = chart({
       preset: 'bar-fast',
       options: {
-        aspectRatio: 3,
+        aspectRatio: 2,
         xlabel: 'Label',
         ylabel: 'Confidence',
         scales: { y: { suggestedMax: 1 } },
