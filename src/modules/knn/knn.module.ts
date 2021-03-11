@@ -3,7 +3,7 @@ import { tensor, tensor2d } from '@tensorflow/tfjs-core';
 import { KNNClassifier } from '@tensorflow-models/knn-classifier';
 import { Stream, Model, ClassifierResults, StoredModel, ObjectId, ModelOptions } from '../../core';
 import { Dataset } from '../dataset/dataset.module';
-import { Catch, throwError } from '../../utils/error-handling';
+import { Catch } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
 
@@ -55,10 +55,8 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
 
   @Catch
   async predict(x: TensorLike): Promise<ClassifierResults> {
-    if (!this.classifier) {
-      const e = new Error('Model is not defined');
-      e.name = '[KNN] Prediction Error';
-      throwError(e);
+    if (!this.classifier || !this.labels || this.labels.length < 1) {
+      return { label: undefined, confidences: {} };
     }
     const { label, confidences } = await this.classifier.predictClass(
       tensor(x),
