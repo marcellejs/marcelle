@@ -327,14 +327,12 @@ export class Dataset extends Module {
   }
 
   async clear(): Promise<void> {
-    const { total } = (await this.instanceService.find({
-      query: { $limit: 0 },
-    })) as Paginated<Instance>;
-    const result = await this.instanceService.find({ query: { $select: ['id'], $limit: total } });
-    const { data } = result as Paginated<Instance>;
-    await Promise.all(data.map(({ id }) => this.instanceService.remove(id)));
-    this.$instances.set([]);
-    this.$classes.set({});
+    const labels = this.$labels.value;
+    let p = Promise.resolve();
+    for (let i = 0; i < labels.length; i++) {
+      p = p.then(() => this.deleteClass(labels[i]));
+    }
+    return p;
   }
 
   async download(): Promise<void> {
