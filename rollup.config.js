@@ -32,7 +32,6 @@ const plugins = [
     preventAssignment: true,
   }),
   svelte({
-    dev: !production,
     emitCss: true,
     preprocess: preprocess({
       postcss: true,
