@@ -46,10 +46,6 @@ This will scaffold a new Marcelle project with the following structure (it might
 ├── src
 │   ├── index.js   # Main application script
 │   └── modules    # Directory containing local modules bundled with your application
-│       ├── dataset-info
-│       │   ├── dataset-info.module.js
-│       │   ├── dataset-info.svelte
-│       │   └── index.js
 │       └── index.js
 └── vite.config.js # Build tool configuration file
 ```
