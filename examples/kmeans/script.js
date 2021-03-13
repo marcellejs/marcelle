@@ -9,8 +9,12 @@ import {
   mobilenet,
   clusteringPlot,
   textfield,
+  toggle,
   webcam,
   kmeans,
+  parameters,
+  throwError,
+  classificationPlot,
 } from '../../dist/marcelle.esm.js';
 
 // -----------------------------------------------------------
@@ -47,10 +51,10 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 // -----------------------------------------------------------
 
 const b = button({ text: 'Train' });
-b.title = 'Training Launcher';
+b.title = 'Training k-means';
 
-// KMeans
-const clusteringKMeans = kmeans({ k: 3, steps: 10, dataStore: store }).sync('knn-vs-mlp-knn');
+const clusteringKMeans = kmeans({ k: 3, dataStore: store }).sync('knn-vs-mlp-knn');
+const params = parameters(clusteringKMeans);
 
 b.$click.subscribe(() => {
   clusteringKMeans.train(trainingSet);
@@ -59,36 +63,29 @@ b.$click.subscribe(() => {
 const pltClusteringRes = clusteringPlot(trainingSet);
 
 clusteringKMeans.$clusters.subscribe(() => {
-  // pltClusteringRes.setClusters(clusteringKMeans.$clusters);
   pltClusteringRes.render(clusteringKMeans);
 });
 
-// VIZ
-
-// clusteringKMeans.$centers.subscribe(() => {
-//   console.log('centers', clusteringKMeans.$centers.value);
-// });
-
 // -----------------------------------------------------------
-// PREDICTION
+// REALTIME CLUSTER PREDICTION
 // -----------------------------------------------------------
 
-// const tog = toggle({ text: 'toggle prediction' });
+const tog = toggle({ text: 'toggle prediction' });
+tog.$checked.subscribe((checked) => {
+  if (checked && !clusteringKMeans.ready) {
+    throwError(new Error('No classifier has been trained'));
+    setTimeout(() => {
+      tog.$checked.set(false);
+    }, 500);
+  }
+});
 
-// const rtFeatureStream = input.$images
-//   .filter(() => tog.$checked.value)
-//   .map(async (img) => featureExtractor.process(img))
-//   .awaitPromises();
+const predictionStream = input.$images
+  .filter(() => tog.$checked.value && clusteringKMeans.ready)
+  .map(async (img) => clusteringKMeans.predict(await featureExtractor.process(img)))
+  .awaitPromises();
 
-// const predictionClustering = rtFeatureStream
-//   .map(async (features) => ClusteringKMeans.predict(features))
-//   .awaitPromises();
-
-// const plotResultsKMeans = clusteringPlot(predictionClustering);
-// const plotResultsMLP = predictionPlot(predictionStreamMLP);
-// plotResultsMLP.title = 'Predictions: MLP';
-// const plotResultsKNN = predictionPlot(predictionStreamKNN);
-// plotResultsKNN.title = 'Predictions: KNN';
+const predPlot = classificationPlot(predictionStream);
 
 // -----------------------------------------------------------
 // DASHBOARDS
@@ -103,7 +100,8 @@ dash
   .page('Data Management')
   .useLeft(input, featureExtractor)
   .use([label, capture], trainingSetBrowser)
-  .use(b, pltClusteringRes);
+  .use(b, params, pltClusteringRes)
+  .use(tog, predPlot);
 dash.page('Training').useLeft(input, featureExtractor).use(b, pltClusteringRes);
 dash.settings.dataStores(store).datasets(trainingSet);
 

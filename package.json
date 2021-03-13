@@ -103,6 +103,7 @@
     "feathers-localstorage": "^5.2.0",
     "feathers-memory": "^4.1.0",
     "ml-kmeans": "^5.0.0",
+    "ml-pca": "^4.0.1",
     "onnxjs": "^0.1.8",
     "scatter-gl": "^0.0.7",
     "socket.io-client": "^2.3.1"
