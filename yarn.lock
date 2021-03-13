@@ -5699,6 +5699,11 @@ is-accessor-descriptor@^1.0.0:
   dependencies:
     kind-of "^6.0.0"
 
+is-any-array@^0.1.0:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/is-any-array/-/is-any-array-0.1.1.tgz#519776164315fcad0fd96a913e02409b18346fef"
+  integrity sha512-qTiELO+kpTKqPgxPYbshMERlzaFu29JDnpB8s3bjg+JkxBpw29/qqSaOdKv2pCdaG92rLGeG/zG2GauX58hfoA==
+
 is-arguments@^1.0.4:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/is-arguments/-/is-arguments-1.1.0.tgz#62353031dfbee07ceb34656a6bde59efecae8dd9"
@@ -6883,6 +6888,70 @@ mkdirp@^1.0.3, mkdirp@^1.0.4, mkdirp@~1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
+
+ml-array-max@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/ml-array-max/-/ml-array-max-1.2.2.tgz#a60a87347f439c4dce3b8a9c7dd22349411c2a2d"
+  integrity sha512-madTKaDI8+mLe8J58/csySylVPJJP1MpDhrqBbZU53PphwVQ8kSi4DxgvY039yYYV5O7Q2e7r06r6ovsROVmoQ==
+  dependencies:
+    is-any-array "^0.1.0"
+
+ml-array-min@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/ml-array-min/-/ml-array-min-1.2.1.tgz#9a9b44a4fd7543e1dffc7b8526595c843e6c71e2"
+  integrity sha512-afC0DB/qlyxjgsbCRk3C6GvwM72kDzQV6YSPEzBS50kwu1/ofKve4t5A0AA+VhhGXe/XyYy8j9yuAtng+QGLEQ==
+  dependencies:
+    is-any-array "^0.1.0"
+
+ml-array-rescale@^1.3.2:
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/ml-array-rescale/-/ml-array-rescale-1.3.4.tgz#62aa50cb2dc30aacb86e2701792bec05a125218a"
+  integrity sha512-CI4+Vk69/sdJyuADh2mtzFvh9rulNOPLYPQIrnQkeOZQrT+a4E5sToHQiW/elMjtG+ArGRnzAl6qPmgsLvoRxQ==
+  dependencies:
+    is-any-array "^0.1.0"
+    ml-array-max "^1.2.2"
+    ml-array-min "^1.2.1"
+
+ml-distance-euclidean@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/ml-distance-euclidean/-/ml-distance-euclidean-2.0.0.tgz#3a668d236649d1b8fec96380b9435c6f42c9a817"
+  integrity sha512-yC9/2o8QF0A3m/0IXqCTXCzz2pNEzvmcE/9HFKOZGnTjatvBbsn4lWYJkxENkA4Ug2fnYl7PXQxnPi21sgMy/Q==
+
+ml-kmeans@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/ml-kmeans/-/ml-kmeans-5.0.0.tgz#ba89702cf6cd66341cd9f4c15e530d820988f136"
+  integrity sha512-QsWg10bVLRvd58hFHBu3wKjVH14+5/q+xJ29YwLN04mIr3mYmT8CuZDLAi59PLLZQQL54na8bBPSqjPEHJ1aBg==
+  dependencies:
+    ml-distance-euclidean "^2.0.0"
+    ml-matrix "^6.1.2"
+    ml-nearest-vector "^2.0.1"
+    ml-random "^0.5.0"
+
+ml-matrix@^6.1.2:
+  version "6.6.0"
+  resolved "https://registry.yarnpkg.com/ml-matrix/-/ml-matrix-6.6.0.tgz#b46f60b80baece9c05d8b368b97a520c15785f22"
+  integrity sha512-ca3+z0VwvzmhTQ1KuvUTSQJxDruzbdkfkThp4XptLOGAKbEtedgWfPTsBVicxOf+3NTR69Zqiw8fRFZM747FAQ==
+  dependencies:
+    ml-array-rescale "^1.3.2"
+
+ml-nearest-vector@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/ml-nearest-vector/-/ml-nearest-vector-2.0.1.tgz#fa9dae2e39e9abe2a2a53a3404f0fe077803d240"
+  integrity sha512-gMPwNm3eed59ewJYiCK/+wElWBfNoD6JizH965ePiQgCo0pvQL63w4YdZhLs5eUV0iWcq6brVMUBL6iMySHnqg==
+  dependencies:
+    ml-distance-euclidean "^2.0.0"
+
+ml-random@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/ml-random/-/ml-random-0.5.0.tgz#d6f7c0e8fbcebee05a14ece9a411769508c5eb3b"
+  integrity sha512-zLJBmNb34LOz+vN6BD8l3aYm/VWYWbmAunrLMPs4dHf4gTl8BWlhil72j56HubPg86zrXioIs4qoHq7Topy6tw==
+  dependencies:
+    ml-xsadd "^2.0.0"
+
+ml-xsadd@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/ml-xsadd/-/ml-xsadd-2.0.0.tgz#e289308aaf1d68627d7baf198e7571192899f588"
+  integrity sha512-VoAYUqmPRmzKbbqRejjqceGFp3VF81Qe8XXFGU0UXLxB7Mf4GGvyGq5Qn3k4AiQgDEV6WzobqlPOd+j0+m6IrA==
 
 modern-normalize@^1.0.0:
   version "1.0.0"
@@ -8970,6 +9039,13 @@ sax@~1.2.4:
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
   integrity sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
 
+scatter-gl@^0.0.7:
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/scatter-gl/-/scatter-gl-0.0.7.tgz#08b695fe01b36d5e384d348ea5ac5b7da3387888"
+  integrity sha512-aQIkbuEjCeiY/nevZQv2TZMvqG/wZbOvTlJTHliP+ACN8b5Bhc/TCM/F45uOE4f1xciQkGvpZIR6AX6vUQQVwg==
+  dependencies:
+    three "^0.113"
+
 schema-utils@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/schema-utils/-/schema-utils-1.0.0.tgz#0b79a93204d7b600d4b2850d1f66c2a34951c770"
@@ -9864,6 +9940,11 @@ text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
+
+three@^0.113:
+  version "0.113.2"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.113.2.tgz#04791d491fe4359330f9dbe7b767db18bfb35d67"
+  integrity sha512-x3vrKW41/UtbWbWduWKGlfIc043SvHWr3YltehYq+UGb9YglQ2oztNGvl2eut05JtNSmP11Mh3t6Xak5/0e+Fg==
 
 through2@^2.0.0:
   version "2.0.5"

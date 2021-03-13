@@ -3,6 +3,7 @@ export * from './batch-prediction';
 export * from './button';
 export * from './chart';
 export * from './classification-plot';
+export * from './clustering-plot';
 export * from './confusion-matrix';
 export * from './dataset';
 export * from './dataset-browser';
@@ -26,6 +27,7 @@ export * from './webcam';
 // Models
 export * from './coco-ssd';
 export * from './knn';
+export * from './kmeans';
 export * from './mlp';
 export * from './tf-generic-model';
 export * from './onnx-image-classifier';
