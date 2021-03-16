@@ -1,5 +1,5 @@
 import type { TensorLike } from '@tensorflow/tfjs-core';
-import { kmeans } from 'ml-kmeans';
+import kmeans from 'ml-kmeans';
 import { Stream, Model, ClusteringResults, ModelOptions, StoredModel, ObjectId } from '../../core';
 import { Dataset } from '../dataset/dataset.module';
 import { Catch, throwError } from '../../utils/error-handling';
@@ -21,11 +21,11 @@ function euclideanDistance(a: number[], b: number[]): number {
 
 export class KMeans extends Model<number[], ClusteringResults> {
   title = 'k-means';
+  serviceName = 'kmeans-models';
 
   parameters: {
     k: Stream<number>;
   };
-  serviceName = 'knn-models';
 
   $centers: Stream<number[][]>;
   $clusters: Stream<number[]>;
@@ -39,6 +39,7 @@ export class KMeans extends Model<number[], ClusteringResults> {
     };
     this.$centers = new Stream([], false);
     this.$clusters = new Stream([], false);
+    this.start();
   }
 
   @Catch
@@ -67,8 +68,8 @@ export class KMeans extends Model<number[], ClusteringResults> {
         minDistance = dist;
         cluster = i;
       }
-      confidences[`${i}`] = dist;
-      distSum += dist;
+      confidences[`${i}`] = Math.exp(dist);
+      distSum += Math.exp(dist);
     }
     Object.entries(confidences).forEach(([key]) => {
       confidences[key] /= distSum;
@@ -79,6 +80,22 @@ export class KMeans extends Model<number[], ClusteringResults> {
       throwError(e);
     }
     return { cluster, confidences };
+  }
+
+  @Catch
+  async batchPredict(dataset: Dataset): Promise<ClusteringResults[]> {
+    const allInstances = await dataset.getAllInstances(['features']);
+    const data = allInstances.map((x) => x.features[0]);
+    const resPromises: ClusteringResults[] = [];
+    for (let i = 0; i < data.length; i++) {
+      this.predict([data[i]]).then((result) => resPromises.push(result));
+    }
+    if (this.$centers.value.length === 0) {
+      const e = new Error('KMeans is not trained');
+      e.name = '[KMeans] Prediction Error';
+      throwError(e);
+    }
+    return resPromises;
   }
 
   async save(update: boolean, metadata?: Record<string, unknown>) {
@@ -113,20 +130,13 @@ export class KMeans extends Model<number[], ClusteringResults> {
   }
 
   private async write(metadata: Record<string, unknown> = {}): Promise<StoredModel | null> {
-    const datasetObj: Record<string, number[][]> = {};
-    this.$clusters.value.forEach((value, i) => {
-      if (!Object.keys(datasetObj).includes(`${value}`)) {
-        datasetObj[`${value}`] = [];
-      }
-      datasetObj[`${value}`].push(this.dataset[i]);
-    });
     const name = this.syncModelName || toKebabCase(this.title);
     return {
       name,
       url: '',
       metadata: {
-        labels: this.$clusters.value,
-        data: datasetObj,
+        clusters: this.$clusters.value,
+        centers: this.$centers.value,
         ...metadata,
       },
     };

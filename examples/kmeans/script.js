@@ -7,12 +7,12 @@ import {
   dataset,
   dataStore,
   mobilenet,
-  clusteringPlot,
   textfield,
   toggle,
   webcam,
   kmeans,
   parameters,
+  scatterPlot,
   throwError,
   classificationPlot,
 } from '../../dist/marcelle.esm.js';
@@ -53,18 +53,23 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 const b = button({ text: 'Train' });
 b.title = 'Training k-means';
 
-const clusteringKMeans = kmeans({ k: 3, dataStore: store }).sync('knn-vs-mlp-knn');
+const clusteringKMeans = kmeans({ k: 3, dataStore: store });
 const params = parameters(clusteringKMeans);
 
 b.$click.subscribe(() => {
   clusteringKMeans.train(trainingSet);
 });
 
-const pltClusteringRes = clusteringPlot(trainingSet);
+// -----------------------------------------------------------
+// PLOT CLUSTERS
+// -----------------------------------------------------------
 
-clusteringKMeans.$clusters.subscribe(() => {
-  pltClusteringRes.render(clusteringKMeans);
-});
+const featureStream = trainingSet.$instances
+  .map(() => trainingSet.getAllInstances(['features']))
+  .awaitPromises()
+  .map((c) => c.map((x) => [x.features[0][0], x.features[0][1]]));
+
+const clusteringScatterPlot = scatterPlot(featureStream, clusteringKMeans.$clusters);
 
 // -----------------------------------------------------------
 // REALTIME CLUSTER PREDICTION
@@ -100,9 +105,9 @@ dash
   .page('Data Management')
   .useLeft(input, featureExtractor)
   .use([label, capture], trainingSetBrowser)
-  .use(b, params, pltClusteringRes)
+  .use(b, params, clusteringScatterPlot)
   .use(tog, predPlot);
-dash.page('Training').useLeft(input, featureExtractor).use(b, pltClusteringRes);
+dash.page('Training').useLeft(input, featureExtractor).use(b);
 dash.settings.dataStores(store).datasets(trainingSet);
 
 dash.start();
