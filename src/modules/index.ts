@@ -29,6 +29,5 @@ export * from './coco-ssd';
 export * from './knn';
 export * from './kmeans';
 export * from './mlp';
-export * from './pca';
 export * from './tf-generic-model';
 export * from './onnx-image-classifier';
