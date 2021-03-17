@@ -202,10 +202,6 @@ export class Dataset extends Module {
       }),
     )) as Paginated<Instance>[];
     const allInstances = results.map(({ data }) => data).flat();
-    console.log(
-      'allInstances',
-      allInstances.map(({ label }) => label),
-    );
     return allInstances;
   }
 
