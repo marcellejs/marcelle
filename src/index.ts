@@ -1,4 +1,3 @@
-import '@tensorflow/tfjs-backend-cpu';
 import '@tensorflow/tfjs-backend-webgl';
 // import { memory } from '@tensorflow/tfjs-core';
 import './utils';
