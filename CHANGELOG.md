@@ -3,6 +3,12 @@
 ## Unreleased
 
 - New module: `imageDisplay` for displaying image streams
+- Update tensorflow.js to version 3
+- bundled build now includes tfjs
+- KNN now avoids throwing in the predict method
+- dataset's clear method has been fixed
+- dashboard pages now take an optional `showSidebar` argument (true by default)
+
 
 ## v0.2.0
 
