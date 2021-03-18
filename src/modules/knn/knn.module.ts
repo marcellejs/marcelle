@@ -1,5 +1,4 @@
-import type { Tensor2D, TensorLike } from '@tensorflow/tfjs-core';
-import { tensor, tensor2d } from '@tensorflow/tfjs-core';
+import { tensor, tensor2d, Tensor2D, TensorLike } from '@tensorflow/tfjs-core';
 import { KNNClassifier } from '@tensorflow-models/knn-classifier';
 import { Stream, Model, ClassifierResults, StoredModel, ObjectId, ModelOptions } from '../../core';
 import { Dataset } from '../dataset/dataset.module';

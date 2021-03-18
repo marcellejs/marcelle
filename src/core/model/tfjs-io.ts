@@ -1,8 +1,7 @@
 import { io } from '@tensorflow/tfjs-core';
-import { ModelArtifacts } from '@tensorflow/tfjs-core/dist/io/io';
 import { logger } from '../logger';
 
-interface SpecificModelArtifacts extends ModelArtifacts {
+interface SpecificModelArtifacts extends io.ModelArtifacts {
   modelTopology: {
     model_config: {
       config: {
@@ -15,7 +14,7 @@ interface SpecificModelArtifacts extends ModelArtifacts {
   };
 }
 
-function fixSeparableConv2D(artifacts: SpecificModelArtifacts): ModelArtifacts {
+function fixSeparableConv2D(artifacts: SpecificModelArtifacts): io.ModelArtifacts {
   if (
     !artifacts.modelTopology.model_config ||
     !artifacts.modelTopology.model_config.config ||
@@ -58,7 +57,7 @@ function fixSeparableConv2D(artifacts: SpecificModelArtifacts): ModelArtifacts {
 export function http(...args: Parameters<typeof io.http>): ReturnType<typeof io.http> {
   const loader = io.http(...args);
   const superLoad = loader.load.bind(loader);
-  loader.load = async function loadx(): Promise<ModelArtifacts> {
+  loader.load = async function loadx(): Promise<io.ModelArtifacts> {
     const x = await superLoad();
     return fixSeparableConv2D(x as SpecificModelArtifacts);
   };
@@ -70,7 +69,7 @@ export function browserFiles(
 ): ReturnType<typeof io.browserFiles> {
   const loader = io.browserFiles(...args);
   const superLoad = loader.load.bind(loader);
-  loader.load = async function loadx(): Promise<ModelArtifacts> {
+  loader.load = async function loadx(): Promise<io.ModelArtifacts> {
     const x = await superLoad();
     return fixSeparableConv2D(x as SpecificModelArtifacts);
   };
