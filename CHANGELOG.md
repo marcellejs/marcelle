@@ -9,7 +9,6 @@
 - dataset's clear method has been fixed
 - dashboard pages now take an optional `showSidebar` argument (true by default)
 
-
 ## v0.2.0
 
 ### Breaking changes
