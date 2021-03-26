@@ -38,29 +38,28 @@ Then, update the main application entry point (`src/index.js`) with the applicat
 import '@marcellejs/core/dist/marcelle.css';
 import {
   datasetBrowser,
-  webcam,
   mobilenet,
   dataset,
   button,
   dataStore,
   dashboard,
+  text,
+  imageUpload,
   textfield,
 } from '@marcellejs/core';
+import { umap } from './modules';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
 // -----------------------------------------------------------
 
-const input = webcam();
+const input = imageUpload({ width: 224, height: 224 });
 const featureExtractor = mobilenet();
 
-const label = textfield();
-label.name = 'Instance label';
-const capture = button({ text: 'Hold to record instances' });
-capture.name = 'Capture instances to the training set';
+const label = textfield({ text: 'cat' });
+label.title = 'Label (to record in the dataset)';
 
 const instances = input.$images
-  .filter(() => capture.$down.value)
   .map(async (img) => ({
     type: 'image',
     data: img,
@@ -76,6 +75,23 @@ trainingSet.capture(instances);
 
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
+const trainingSetUmap = umap(trainingSet);
+
+const updateUMap = button({ text: 'Update Visualization' });
+updateUMap.$click.subscribe(() => {
+  trainingSetUmap.update();
+});
+
+const selectedInstance = trainingSetUmap.$selected
+  .filter((x) => x.length === 1)
+  .map((id) => trainingSet.getInstance(id))
+  .awaitPromises();
+
+const img = text();
+selectedInstance.subscribe((instance) => {
+  img.$text.set(`<img src="${instance.thumbnail}">`);
+});
+
 // -----------------------------------------------------------
 // DASHBOARDS
 // -----------------------------------------------------------
@@ -85,17 +101,18 @@ const dash = dashboard({
   author: 'Marcelle Pirates Crew',
 });
 
-dash
-  .page('Data Management')
-  .useLeft(input, featureExtractor)
-  .use([label, capture], trainingSetBrowser);
+dash.page('Data Management')
+  .useLeft(input, label, featureExtractor)
+  .use(trainingSetBrowser);
 dash.settings.datasets(trainingSet);
 
 dash.start();
-
 :::
 
-The application's input is a webcam, which images are preprocessed using the pretrained neural network Mobilenet. Training data can be captured to a dataset called `TrainingSet`.
+The application's input is an image upload component, and images are preprocessed using the pretrained neural network Mobilenet. Training data can be captured to a dataset called `TrainingSet`.
+You can download the data [here](/cats-dogs.zip). Unzip the folder, then in the Marcelle application:
+- Select 'cat' in the menu and drop all cat images
+- Select 'dog' in the menu and drop all dog images
 
 You should obtain the following application:
 

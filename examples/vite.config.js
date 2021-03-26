@@ -49,7 +49,7 @@ export default {
         examples,
       },
     }),
-    svelte(),
+    svelte({ emitCss: false }),
   ],
   build: {
     rollupOptions: {
