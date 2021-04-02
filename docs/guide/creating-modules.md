@@ -64,7 +64,7 @@ const instances = input.$images
       type: 'image',
       data: img,
       label: label.$text.value,
-      thumbnail: input.$thumbnails.value,
+      thumbnail,
       features: await featureExtractor.process(img),
     }),
     input.$thumbnails,
