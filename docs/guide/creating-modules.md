@@ -47,7 +47,6 @@ import {
   imageUpload,
   textfield,
 } from '@marcellejs/core';
-import { umap } from './modules';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
@@ -60,13 +59,16 @@ const label = textfield({ text: 'cat' });
 label.title = 'Label (to record in the dataset)';
 
 const instances = input.$images
-  .map(async (img) => ({
-    type: 'image',
-    data: img,
-    label: label.$text.value,
-    thumbnail: input.$thumbnails.value,
-    features: await featureExtractor.process(img),
-  }))
+  .zip(
+    async (thumbnail, img) => ({
+      type: 'image',
+      data: img,
+      label: label.$text.value,
+      thumbnail: input.$thumbnails.value,
+      features: await featureExtractor.process(img),
+    }),
+    input.$thumbnails,
+  )
   .awaitPromises();
 
 const store = dataStore({ location: 'localStorage' });
@@ -74,23 +76,6 @@ const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
 trainingSet.capture(instances);
 
 const trainingSetBrowser = datasetBrowser(trainingSet);
-
-const trainingSetUmap = umap(trainingSet);
-
-const updateUMap = button({ text: 'Update Visualization' });
-updateUMap.$click.subscribe(() => {
-  trainingSetUmap.update();
-});
-
-const selectedInstance = trainingSetUmap.$selected
-  .filter((x) => x.length === 1)
-  .map((id) => trainingSet.getInstance(id))
-  .awaitPromises();
-
-const img = text();
-selectedInstance.subscribe((instance) => {
-  img.$text.set(`<img src="${instance.thumbnail}">`);
-});
 
 // -----------------------------------------------------------
 // DASHBOARDS
@@ -101,9 +86,7 @@ const dash = dashboard({
   author: 'Marcelle Pirates Crew',
 });
 
-dash.page('Data Management')
-  .useLeft(input, label, featureExtractor)
-  .use(trainingSetBrowser);
+dash.page('Data Management').useLeft(input, label, featureExtractor).use(trainingSetBrowser);
 dash.settings.datasets(trainingSet);
 
 dash.start();
