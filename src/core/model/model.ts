@@ -19,7 +19,7 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
   $training = new Stream<TrainingStatus>({ status: 'idle' }, true);
 
   dataStore?: DataStore;
-  service: Service<StoredModel>;
+
   #storedModelId: string;
   protected syncModelName: string;
 
@@ -39,10 +39,18 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
   abstract train(dataset: Dataset): void;
   abstract predict(x: InputType): Promise<OutputType>;
 
-  abstract save(update: boolean, metadata?: Record<string, unknown>): Promise<ObjectId | null>;
-  abstract load(id?: ObjectId): Promise<StoredModel>;
+  abstract save(
+    name: string,
+    metadata?: Record<string, unknown>,
+    update?: boolean,
+  ): Promise<ObjectId | null>;
+  abstract load(idOrName: ObjectId | string): Promise<StoredModel>;
   abstract download(metadata?: Record<string, unknown>): Promise<void>;
   abstract upload(...files: File[]): Promise<StoredModel>;
+
+  get service(): Service<StoredModel> {
+    return this.dataStore?.service(this.serviceName) as Service<StoredModel>;
+  }
 
   @checkProperty('dataStore')
   sync(name: string) {
@@ -54,7 +62,7 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
   }
 
   protected async setupSync() {
-    this.service = this.dataStore.service(this.serviceName) as Service<StoredModel>;
+    if (!this.service) return;
     const { data } = (await this.service.find({
       query: {
         name: this.syncModelName,
@@ -66,18 +74,17 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
       },
     })) as Paginated<StoredModel>;
     if (data.length === 1) {
-      this.#storedModelId = data[0].id;
-      this.load().catch(() => {});
+      this.load(data[0].id);
     }
     this.$training.subscribe(({ status, data: meta }) => {
       if (status === 'success' || (status === 'loaded' && meta?.source !== 'datastore')) {
-        this.save(true);
+        this.save(this.syncModelName, {}, true);
       }
     });
   }
 
   @checkProperty('dataStore')
-  protected async saveToDatastore(model: StoredModel, update = true): Promise<ObjectId> {
+  protected async saveToDatastore(model: StoredModel, update = false): Promise<ObjectId> {
     if (!this.service) return null;
     if (!model) return null;
     if (update && this.#storedModelId) {
@@ -92,11 +99,27 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
   }
 
   @checkProperty('dataStore')
-  protected async loadFromDatastore(id?: ObjectId): Promise<StoredModel> {
-    if (!this.service || (!id && !this.#storedModelId)) return null;
-    const model = await this.service.get(id || this.#storedModelId);
+  protected async loadFromDatastore(idOrName: ObjectId | string): Promise<StoredModel> {
+    if (!this.service || !idOrName) return null;
+    let model;
+    try {
+      model = await this.service.get(idOrName);
+    } catch (error) {
+      const { data } = (await this.service.find({
+        query: {
+          name: idOrName,
+          $limit: 1,
+          $sort: {
+            updatedAt: -1,
+          },
+        },
+      })) as Paginated<StoredModel>;
+      if (data.length === 1) {
+        model = data[0];
+      }
+    }
     if (model) {
-      const name = this.syncModelName || toKebabCase(this.title);
+      const name = model.name;
       logger.info(
         `Model ${name} was loaded from data store at location ${this.dataStore.location}`,
       );

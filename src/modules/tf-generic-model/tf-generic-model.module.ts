@@ -182,7 +182,7 @@ export class TFJSGenericModel<
         this.loadFn = jsonData.format === 'graph-model' ? loadGraphModel : loadLayersModel;
         this.model = await this.loadFn(browserFiles([jsonFiles[0], ...weightFiles]));
         await this.warmup();
-        await this.save(true);
+        await this.save(this.id);
         this.$training.set({
           status: 'loaded',
           data: {

@@ -86,13 +86,14 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
     delete this.classifier;
   }
 
-  async save(update: boolean, metadata?: Record<string, unknown>) {
+  async save(name: string, metadata?: Record<string, unknown>, update = false) {
     const storedModel = await this.write(metadata);
+    storedModel.name = name;
     return this.saveToDatastore(storedModel, update);
   }
 
-  async load(id?: ObjectId): Promise<StoredModel> {
-    const storedModel = await this.loadFromDatastore(id);
+  async load(idOrName?: ObjectId | string): Promise<StoredModel> {
+    const storedModel = await this.loadFromDatastore(idOrName);
     await this.read(storedModel);
     return storedModel;
   }

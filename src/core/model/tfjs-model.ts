@@ -26,12 +26,12 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
   }
 
   @checkProperty('dataStore')
-  async save(update: boolean, metadata?: Record<string, unknown>): Promise<ObjectId> {
+  async save(name: string, metadata?: Record<string, unknown>, update = false): Promise<ObjectId> {
     if (!this.model) return null;
     let url: string;
     if (this.dataStore.backend === DataStoreBackend.LocalStorage) {
-      await this.model.save(`indexeddb://${this.syncModelName}`);
-      url = `indexeddb://${this.syncModelName}`;
+      await this.model.save(`indexeddb://${name}`);
+      url = `indexeddb://${name}`;
     } else if (this.dataStore.backend === DataStoreBackend.Remote) {
       const requestOpts: { requestInit?: unknown } = {};
       if (this.dataStore.requiresAuth) {
@@ -46,7 +46,7 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
     }
 
     const storedModel = {
-      name: this.syncModelName,
+      name,
       url,
       metadata: {
         tfjsModelFormat: this.model instanceof LayersModel ? 'layers-model' : 'graph-model',
@@ -58,12 +58,13 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
   }
 
   @checkProperty('dataStore')
-  async load(id?: ObjectId): Promise<StoredModel> {
+  async load(idOrName: ObjectId | string): Promise<StoredModel> {
+    if (!idOrName) return null;
     this.$training.set({
       status: 'loading',
     });
     try {
-      const storedModel = await this.loadFromDatastore(id);
+      const storedModel = await this.loadFromDatastore(idOrName);
       this.loadFn =
         storedModel.metadata.tfjsModelFormat === 'graph-model' ? loadGraphModel : loadLayersModel;
       let model: LayersModel | GraphModel;

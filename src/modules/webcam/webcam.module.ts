@@ -127,6 +127,7 @@ export class Webcam extends Module {
       this.#webcamHeight = mediaStream.getVideoTracks()[0].getSettings().height;
       this.loadSrcStream(mediaStream);
     } catch (error) {
+      alert(error);
       throwError(new Error('Webcam not supported'));
     }
   }

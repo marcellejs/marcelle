@@ -24,6 +24,7 @@ module.exports = {
     '@typescript-eslint/lines-between-class-members': 'off',
     'import/prefer-default-export': 'off',
     'no-plusplus': 'off',
+    'prefer-destructuring': 'off',
   },
   ignorePatterns: [
     'node_modules/*',
