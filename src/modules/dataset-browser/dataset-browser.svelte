@@ -115,8 +115,6 @@
               classes[classIdx].instances = classes[classIdx].instances.filter(
                 ({ id }) => id !== data,
               );
-            } else {
-              throw new Error('An unexpected error occurred');
             }
           } else if (type === 'renamed') {
             const prevClassIdx = classes.map(({ label }) => label).indexOf(getLabel(data.id));
@@ -147,20 +145,27 @@
       }
     }
     return null;
-    // return classes
-    //   .map((x) => x.instances)
-    //   .flat()
-    //   .filter((x) => x.id === id)
-    //   .map(({ label }) => label)[0];
   }
 
   async function deleteSelectedInstances() {
-    await Promise.all(selected.value.map((id) => dataset.deleteInstance(id)));
+    let p = Promise.resolve();
+    selected.value.forEach((id) => {
+      p = p.then(() => {
+        return dataset.deleteInstance(id);
+      });
+    });
+    await p;
     selected.set([]);
   }
 
   async function relabelSelectedInstances(newLabel: string) {
-    await Promise.all(selected.value.map((id) => dataset.changeInstanceLabel(id, newLabel)));
+    let p = Promise.resolve();
+    selected.value.forEach((id) => {
+      p = p.then(() => {
+        return dataset.changeInstanceLabel(id, newLabel);
+      });
+    });
+    await p;
     selected.set([]);
   }
 

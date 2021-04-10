@@ -47,6 +47,7 @@ export interface TrainingStatus {
 export interface StoredModel {
   id?: ObjectId;
   name: string;
-  url: string;
+  // url: string;
+  files: Array<[string, string]>;
   metadata?: Record<string, unknown>;
 }

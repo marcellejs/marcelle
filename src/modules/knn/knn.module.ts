@@ -86,13 +86,14 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
     delete this.classifier;
   }
 
-  async save(update: boolean, metadata?: Record<string, unknown>) {
+  async save(name: string, metadata?: Record<string, unknown>, id: ObjectId = null) {
     const storedModel = await this.write(metadata);
-    return this.saveToDatastore(storedModel, update);
+    storedModel.name = name;
+    return this.saveToDatastore(storedModel, id);
   }
 
-  async load(id?: ObjectId): Promise<StoredModel> {
-    const storedModel = await this.loadFromDatastore(id);
+  async load(idOrName?: ObjectId | string): Promise<StoredModel> {
+    const storedModel = await this.loadFromDatastore(idOrName);
     await this.read(storedModel);
     return storedModel;
   }
@@ -128,7 +129,7 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
     const name = this.syncModelName || toKebabCase(this.title);
     return {
       name,
-      url: '',
+      files: [],
       metadata: {
         labels: this.labels,
         data: datasetObj,

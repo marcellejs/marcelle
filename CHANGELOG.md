@@ -1,13 +1,24 @@
 # Marcelle changelog
 
-## Unreleased
+## v0.3.0
+
+### Breaking changes
+
+- bundled build now includes tfjs
+- The `StoredModel` interface has been updated following the addition of GridFs support for model upload on remote servers.
+
+### New Features
 
 - New module: `imageDisplay` for displaying image streams
+- Datasets and models now support real-time synchronization across clients when using a server-side backend
+- dashboard pages now take an optional `showSidebar` argument (true by default)
+
+### Misc
+
 - Update tensorflow.js to version 3
-- bundled build now includes tfjs
 - KNN now avoids throwing in the predict method
 - dataset's clear method has been fixed
-- dashboard pages now take an optional `showSidebar` argument (true by default)
+- Various bug fixes
 
 ## v0.2.0
 
