@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { Paginated, Service } from '@feathersjs/feathers';
 import type { Dataset } from '../../modules/dataset';
 import type { ObjectId, Parametrable, StoredModel, TrainingStatus } from '../types';
@@ -77,13 +78,27 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
       id = data[0].id;
       this.load(id);
     }
+    let skipNextUpdate = false;
     this.$training.subscribe(({ status, data: meta }) => {
       if (status === 'success' || (status === 'loaded' && meta?.source !== 'datastore')) {
+        skipNextUpdate = true;
         this.save(this.syncModelName, {}, id).then((newId) => {
           id = newId;
         });
       }
     });
+    const cb = (s: StoredModel & { _id: ObjectId }) => {
+      if (s._id === id || (!id && s.name === this.syncModelName)) {
+        id = s._id;
+        if (!skipNextUpdate) {
+          this.load(id);
+        }
+        skipNextUpdate = false;
+      }
+    };
+    this.service.on('created', cb);
+    this.service.on('updated', cb);
+    this.service.on('patched', cb);
   }
 
   @checkProperty('dataStore')
