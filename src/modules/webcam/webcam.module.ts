@@ -152,8 +152,8 @@ export class Webcam extends Module {
 
   process(): void {
     if (!this.$ready.value) return;
-    this.$images.set(this.captureImage());
     this.$thumbnails.set(this.captureThumbnail());
+    this.$images.set(this.captureImage());
   }
 
   captureThumbnail(): string {

@@ -12,7 +12,7 @@ export class DashboardPage {
   modules: Array<Module | Module[] | string> = [];
   modulesLeft: Module[] = [];
 
-  constructor(public name: string) {}
+  constructor(public name: string, public showSidebar = true) {}
 
   use(...modules: Array<Module | Module[] | string>): DashboardPage {
     this.modules = this.modules.concat(modules);

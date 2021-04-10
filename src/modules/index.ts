@@ -8,6 +8,7 @@ export * from './dataset';
 export * from './dataset-browser';
 export * from './faker';
 export * from './file-upload';
+export * from './image-display';
 export * from './image-upload';
 export * from './mobilenet';
 export * from './parameters';

@@ -1,9 +1,8 @@
-import type { Tensor2D, TensorLike } from '@tensorflow/tfjs-core';
-import { tensor, tensor2d } from '@tensorflow/tfjs-core';
+import { tensor, tensor2d, Tensor2D, TensorLike } from '@tensorflow/tfjs-core';
 import { KNNClassifier } from '@tensorflow-models/knn-classifier';
 import { Stream, Model, ClassifierResults, StoredModel, ObjectId, ModelOptions } from '../../core';
 import { Dataset } from '../dataset/dataset.module';
-import { Catch, throwError } from '../../utils/error-handling';
+import { Catch } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
 
@@ -30,7 +29,7 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
   }
 
   @Catch
-  train(dataset: Dataset): void {
+  train(dataset: Dataset, inputField: string = 'features'): void {
     this.labels = dataset.$labels.value;
     if (this.labels.length < 1) {
       this.$training.set({ status: 'error' });
@@ -41,7 +40,7 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
       this.classifier.clearAllClasses();
       await Promise.all(
         this.labels.map(async (label, i) => {
-          await this.activateClass(dataset, label);
+          await this.activateClass(dataset, label, inputField);
           this.$training.set({
             status: 'epoch',
             epoch: i,
@@ -55,10 +54,8 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
 
   @Catch
   async predict(x: TensorLike): Promise<ClassifierResults> {
-    if (!this.classifier) {
-      const e = new Error('Model is not defined');
-      e.name = '[KNN] Prediction Error';
-      throwError(e);
+    if (!this.classifier || !this.labels || this.labels.length < 1) {
+      return { label: undefined, confidences: {} };
     }
     const { label, confidences } = await this.classifier.predictClass(
       tensor(x),
@@ -67,15 +64,21 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
     return { label, confidences };
   }
 
-  async activateClass(dataset: Dataset, label: string): Promise<void> {
+  async activateClass(
+    dataset: Dataset,
+    label: string,
+    inputField: string = 'features',
+  ): Promise<void> {
     const allInstances = await Promise.all(
       dataset.$instances.value.map((id) =>
-        dataset.instanceService.get(id, { query: { $select: ['id', 'features'] } }),
+        dataset.instanceService.get(id, { query: { $select: ['id', inputField] } }),
       ),
     );
     dataset.$classes.value[label].forEach((id) => {
-      const { features } = allInstances.find((x) => x.id === id) as { features: number[][] };
-      this.classifier.addExample(tensor2d(features), label);
+      const instance = allInstances.find((x) => x.id === id) as {
+        [inputField: string]: number[][];
+      };
+      this.classifier.addExample(tensor2d(instance[inputField]), label);
     });
   }
 
@@ -83,13 +86,14 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
     delete this.classifier;
   }
 
-  async save(update: boolean, metadata?: Record<string, unknown>) {
+  async save(name: string, metadata?: Record<string, unknown>, id: ObjectId = null) {
     const storedModel = await this.write(metadata);
-    return this.saveToDatastore(storedModel, update);
+    storedModel.name = name;
+    return this.saveToDatastore(storedModel, id);
   }
 
-  async load(id?: ObjectId): Promise<StoredModel> {
-    const storedModel = await this.loadFromDatastore(id);
+  async load(idOrName?: ObjectId | string): Promise<StoredModel> {
+    const storedModel = await this.loadFromDatastore(idOrName);
     await this.read(storedModel);
     return storedModel;
   }
@@ -125,7 +129,7 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
     const name = this.syncModelName || toKebabCase(this.title);
     return {
       name,
-      url: '',
+      files: [],
       metadata: {
         labels: this.labels,
         data: datasetObj,

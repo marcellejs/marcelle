@@ -5,7 +5,6 @@ import {
   layers as tfLayers,
   Sequential,
 } from '@tensorflow/tfjs-layers';
-import type { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core';
 import { Stream, logger, ClassifierResults, TFJSModelOptions, TFJSModel } from '../../core';
 import { Dataset } from '../dataset/dataset.module';
 import { Catch, TrainingError } from '../../utils/error-handling';
@@ -33,12 +32,7 @@ async function dataSplit(
   trainProportion: number,
   numClasses = -1,
 ): Promise<TrainingData> {
-  // split is an interval, between 0 and 1
-  const allInstances = await Promise.all(
-    dataset.$instances.value.map((id) =>
-      dataset.instanceService.get(id, { query: { $select: ['id', 'features'] } }),
-    ),
-  );
+  const allInstances = await dataset.getAllInstances(['id', 'features', 'label']);
 
   let data: TrainingData;
   tidy(() => {
@@ -150,7 +144,7 @@ export class MLP extends TFJSModel<TensorLike, ClassifierResults> {
     logger.debug('[MLP] Building a model with layers:', this.parameters.layers);
     this.model = sequential();
     this.parameters.layers.value.forEach((units, i) => {
-      const layerParams: DenseLayerArgs = {
+      const layerParams: Parameters<typeof tfLayers.dense>[0] = {
         units,
         activation: 'relu', // potentially add kernel init
       };

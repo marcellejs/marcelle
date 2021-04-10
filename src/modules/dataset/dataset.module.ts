@@ -1,5 +1,7 @@
 import { map } from '@most/core';
+import { cloneDeep } from 'lodash';
 import type { Service, Paginated, Params as FeathersParams } from '@feathersjs/feathers';
+import { dequal } from 'dequal';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import { logger } from '../../core/logger';
@@ -142,6 +144,103 @@ export class Dataset extends Module {
         type: 'created',
       },
     ]);
+    this.watchChanges();
+  }
+
+  watchChanges() {
+    const cb = (x: DatasetInfo) => {
+      if (x.id === this.#datasetId) {
+        this.updateState(x);
+      }
+    };
+    this.datasetService.on('updated', cb);
+    this.datasetService.on('patched', cb);
+  }
+
+  updateState(x: DatasetInfo) {
+    if (dequal(x, this.#datasetState)) return;
+    const changes: DatasetChange[] = [];
+    if (!dequal(x.labels, this.#datasetState.labels)) {
+      const labelsCreated = x.labels.filter((y) => !this.#datasetState.labels.includes(y));
+      const labelsDeleted = this.#datasetState.labels.filter((y) => !x.labels.includes(y));
+      if (
+        labelsCreated.length === 1 &&
+        labelsDeleted.length === 1 &&
+        dequal(x.classes[labelsCreated[0]], this.#datasetState.classes[labelsDeleted[0]])
+      ) {
+        changes.push({
+          level: 'class',
+          type: 'renamed',
+          data: {
+            srcLabel: labelsDeleted[0],
+            label: labelsCreated[0],
+          },
+        });
+      } else {
+        labelsCreated.forEach((newLabel) => {
+          changes.push({
+            level: 'class',
+            type: 'created',
+            data: newLabel,
+          });
+        });
+        labelsDeleted.forEach((deletedLabel) => {
+          changes.push({
+            level: 'class',
+            type: 'deleted',
+            data: deletedLabel,
+          });
+        });
+      }
+      this.$labels.set(x.labels);
+    }
+    const newInstances = Object.entries(x.classes)
+      .map(([label, ids]) => ids.map((id) => ({ id, label })))
+      .flat();
+    const oldInstances = Object.entries(this.#datasetState.classes)
+      .map(([label, ids]) => ids.map((id) => ({ id, label })))
+      .flat();
+    if (!dequal(newInstances, oldInstances)) {
+      const instancesCreated = newInstances.filter(
+        (y) => !oldInstances.map((z) => z.id).includes(y.id),
+      );
+      const instancesDeleted = oldInstances.filter(
+        (y) => !newInstances.map((z) => z.id).includes(y.id),
+      );
+      const instancesRenamed: { id: ObjectId; label: string }[] = [];
+      newInstances.forEach(({ id, label }) => {
+        const oldIdx = oldInstances.map((z) => z.id).indexOf(id);
+        if (oldIdx >= 0 && label !== oldInstances[oldIdx].label) {
+          instancesRenamed.push({ id, label });
+        }
+      });
+      instancesCreated.forEach((data) => {
+        changes.push({
+          level: 'instance',
+          type: 'created',
+          data,
+        });
+      });
+      instancesDeleted.forEach(({ id }) => {
+        changes.push({
+          level: 'instance',
+          type: 'deleted',
+          data: id,
+        });
+      });
+      instancesRenamed.forEach((data) => {
+        changes.push({
+          level: 'instance',
+          type: 'renamed',
+          data,
+        });
+      });
+      this.$instances.set(instancesCreated.map(({ id }) => id));
+      this.$count.set(x.count);
+    }
+    this.#datasetState = x;
+    this.$classes.set(x.classes);
+    this.$changes.set(changes);
   }
 
   capture(instanceStream: Stream<Instance>): void {
@@ -155,31 +254,6 @@ export class Dataset extends Module {
     });
   }
 
-  async addInstance(instance: Instance) {
-    if (!instance) return;
-    const { id } = await this.instanceService.create(instance);
-    const labelExists = Object.keys(this.#datasetState.classes).includes(instance.label);
-    this.#datasetState.count += 1;
-    if (labelExists) {
-      this.#datasetState.classes[instance.label].push(id);
-    } else {
-      this.#datasetState.labels.push(instance.label);
-      this.$labels.set(this.#datasetState.labels);
-      this.#datasetState.classes[instance.label] = [id];
-    }
-    await this.datasetService.patch(this.#datasetId, this.#datasetState);
-    this.$count.set(this.#datasetState.count);
-    this.$classes.set(this.#datasetState.classes);
-    this.$instances.set([...this.$instances.value, id]);
-    this.$changes.set([
-      {
-        level: 'instance',
-        type: 'created',
-        data: { id, label: instance.label },
-      },
-    ]);
-  }
-
   async getInstance(id: ObjectId, fields: string[] = undefined): Promise<Instance> {
     const opts: FeathersParams = {};
     if (fields) {
@@ -189,82 +263,76 @@ export class Dataset extends Module {
   }
 
   async getAllInstances(fields: string[] = undefined): Promise<Instance[]> {
-    const opts: FeathersParams = {};
+    const baseQuery: FeathersParams['query'] = {
+      $limit: 30,
+    };
     if (fields) {
-      opts.query = { $select: fields };
+      baseQuery.$select = fields;
     }
-    const { data } = (await this.instanceService.find(opts)) as Paginated<Instance>;
-    return data;
+    const results = (await Promise.all(
+      Array.from(Array(Math.ceil(this.$count.value / 30)), (_, i) => {
+        const query = { ...baseQuery, $skip: i * 30 };
+        return this.instanceService.find({ query });
+      }),
+    )) as Paginated<Instance>[];
+    const allInstances = results.map(({ data }) => data).flat();
+    return allInstances;
+  }
+
+  async addInstance(instance: Instance) {
+    if (!instance) return;
+    const ds = cloneDeep(this.#datasetState);
+    const { id } = await this.instanceService.create(instance);
+    const labelExists = Object.keys(ds.classes).includes(instance.label);
+    ds.count += 1;
+    if (labelExists) {
+      ds.classes[instance.label].push(id);
+    } else {
+      ds.labels.push(instance.label);
+      ds.classes[instance.label] = [id];
+    }
+    await this.datasetService.patch(this.#datasetId, ds);
   }
 
   async deleteInstance(id: ObjectId): Promise<void> {
     const instance = await this.instanceService.get(id);
     if (!instance) return;
-    const instanceClass = this.#datasetState.classes[instance.label];
+    const ds = cloneDeep(this.#datasetState);
+    const instanceClass = ds.classes[instance.label];
     if (instanceClass.length === 1) {
       await this.deleteClass(instance.label);
       return;
     }
     await this.instanceService.remove(id);
-    this.#datasetState.classes[instance.label] = this.#datasetState.classes[instance.label].filter(
-      (x) => x !== id,
-    );
-    this.#datasetState.count -= 1;
-    await this.datasetService.patch(this.#datasetId, this.#datasetState);
-    this.$classes.set(this.#datasetState.classes);
-    const newInstances = this.$instances.value.filter((x) => x !== id);
-    this.$instances.set(newInstances);
-    this.$count.set(this.#datasetState.count);
-    this.$changes.set([
-      {
-        level: 'instance',
-        type: 'deleted',
-        data: id,
-      },
-    ]);
+    ds.classes[instance.label] = ds.classes[instance.label].filter((x) => x !== id);
+    ds.count -= 1;
+    await this.datasetService.patch(this.#datasetId, ds);
   }
 
   async changeInstanceLabel(id: ObjectId, newLabel: string): Promise<void> {
     const instance = await this.instanceService.get(id);
     if (!instance) return;
-    const instanceClass = this.#datasetState.classes[instance.label];
+    const ds = cloneDeep(this.#datasetState);
+    const instanceClass = ds.classes[instance.label];
     await this.instanceService.patch(id, { label: newLabel });
-    const changes = [];
     if (instanceClass.length === 1) {
-      delete this.#datasetState.classes[instance.label];
-      changes.push({
-        level: 'class',
-        type: 'deleted',
-        data: instance.label,
-      });
+      delete ds.classes[instance.label];
+      ds.labels = ds.labels.filter((x) => x !== instance.label);
     } else {
-      this.#datasetState.classes[instance.label] = this.#datasetState.classes[
-        instance.label
-      ].filter((x) => x !== id);
+      ds.classes[instance.label] = ds.classes[instance.label].filter((x) => x !== id);
     }
-    const classExists = Object.keys(this.#datasetState.classes).includes(newLabel);
-    this.#datasetState.classes[newLabel] = (this.#datasetState.classes[newLabel] || []).concat([
-      id,
-    ]);
-    await this.datasetService.patch(this.#datasetId, this.#datasetState);
-    this.$classes.set(this.#datasetState.classes);
-    if (!classExists) {
-      changes.push({
-        level: 'class',
-        type: 'created',
-        data: newLabel,
-      });
+    if (ds.classes[newLabel]) {
+      ds.classes[newLabel].push(id);
+    } else {
+      ds.classes[newLabel] = [id];
+      ds.labels.push(newLabel);
     }
-    changes.push({
-      level: 'instance',
-      type: 'renamed',
-      data: { id, label: newLabel },
-    });
-    this.$changes.set(changes as DatasetChange[]);
+    await this.datasetService.patch(this.#datasetId, ds);
   }
 
   async renameClass(label: string, newLabel: string): Promise<void> {
-    const { classes } = this.#datasetState;
+    const ds = cloneDeep(this.#datasetState);
+    const { classes } = ds;
     if (!Object.keys(classes).includes(label)) return;
     await Promise.all(
       classes[label].map((id) => this.instanceService.patch(id, { label: newLabel })),
@@ -275,54 +343,29 @@ export class Dataset extends Module {
       classes[newLabel] = classes[label];
     }
     delete classes[label];
-    this.#datasetState.labels = Object.keys(classes);
-    await this.datasetService.patch(this.#datasetId, this.#datasetState);
-    this.$classes.set(classes);
-    this.$labels.set(this.#datasetState.labels);
-    this.$changes.set([
-      {
-        level: 'class',
-        type: 'renamed',
-        data: {
-          srcLabel: label,
-          label: newLabel,
-        },
-      },
-    ]);
+    ds.labels = Object.keys(classes);
+    await this.datasetService.patch(this.#datasetId, ds);
   }
 
   async deleteClass(label: string): Promise<void> {
-    const { classes } = this.#datasetState;
+    const ds = cloneDeep(this.#datasetState);
+    const { classes } = ds;
     if (!Object.keys(classes).includes(label)) return;
     const delIns = classes[label];
     delete classes[label];
     await Promise.all(delIns.map((id) => this.instanceService.remove(id)));
-    this.#datasetState.labels = Object.keys(classes);
-    this.#datasetState.count -= delIns.length;
-    await this.datasetService.patch(this.#datasetId, this.#datasetState);
-    this.$classes.set(classes);
-    this.$labels.set(this.#datasetState.labels);
-    const newInstances = this.$instances.value.filter((x) => !delIns.includes(x));
-    this.$instances.set(newInstances);
-    this.$count.set(this.#datasetState.count);
-    this.$changes.set([
-      {
-        level: 'class',
-        type: 'deleted',
-        data: label,
-      },
-    ]);
+    ds.labels = Object.keys(classes);
+    ds.count -= delIns.length;
+    await this.datasetService.patch(this.#datasetId, ds);
   }
 
   async clear(): Promise<void> {
-    const { total } = (await this.instanceService.find({
-      query: { $limit: 0 },
-    })) as Paginated<Instance>;
-    const result = await this.instanceService.find({ query: { $select: ['id'], $limit: total } });
-    const { data } = result as Paginated<Instance>;
-    await Promise.all(data.map(({ id }) => this.instanceService.remove(id)));
-    this.$instances.set([]);
-    this.$classes.set({});
+    const labels = this.$labels.value;
+    let p = Promise.resolve();
+    for (let i = 0; i < labels.length; i++) {
+      p = p.then(() => this.deleteClass(labels[i]));
+    }
+    return p;
   }
 
   async download(): Promise<void> {

@@ -1,5 +1,4 @@
 import commonjs from '@rollup/plugin-commonjs';
-import externalGlobals from 'rollup-plugin-external-globals';
 import filesize from 'rollup-plugin-filesize';
 import preprocess from 'svelte-preprocess';
 import postcss from 'rollup-plugin-postcss';
@@ -16,14 +15,6 @@ import pkg from './package.json';
 const production = !process.env.ROLLUP_WATCH;
 const analyze = false;
 
-const globals = {
-  '@tensorflow/tfjs-core': 'tf',
-  '@tensorflow/tfjs-converter': 'tf',
-  '@tensorflow/tfjs-layers': 'tf',
-  '@tensorflow/tfjs-backend-webgl': 'tf',
-  '@tensorflow/tfjs-backend-cpu': 'tf',
-};
-
 const plugins = [
   replace({
     'process.env.NODE_ENV': process.env.ROLLUP_WATCH
@@ -32,7 +23,6 @@ const plugins = [
     preventAssignment: true,
   }),
   svelte({
-    dev: !production,
     emitCss: true,
     preprocess: preprocess({
       postcss: true,
@@ -70,7 +60,6 @@ const esBuild = {
 const browserBuild = {
   input: 'src/index.ts',
   plugins: plugins.concat([
-    externalGlobals(globals),
     production && terser(),
     production && filesize(),
     analyze && sizes({ details: false }),

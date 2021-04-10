@@ -2,7 +2,7 @@ import { map } from '@most/core';
 import { Service, Paginated } from '@feathersjs/feathers';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
-import type { Instance, Prediction, ObjectId } from '../../core/types';
+import type { Prediction, ObjectId } from '../../core/types';
 import { DataStore } from '../../data-store/data-store';
 import {
   addScope,
@@ -75,10 +75,7 @@ export class BatchPrediction extends Module {
   }
 
   async predict(model: MLP, dataset: Dataset, inputField = 'features'): Promise<void> {
-    const result = await dataset.instanceService.find({
-      query: { $select: ['id', inputField, 'label'] },
-    });
-    const { data } = result as Paginated<Instance>;
+    const data = await dataset.getAllInstances(['id', inputField, 'label']);
     const predictionIds = await Promise.all(
       data.map(({ id, [inputField]: features, label }) =>
         model

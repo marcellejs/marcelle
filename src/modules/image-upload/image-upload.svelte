@@ -70,8 +70,8 @@
         height || ((image as any) as HTMLCanvasElement).height,
       );
     const thumbData = ((thumbnail as any) as HTMLCanvasElement).toDataURL('image/jpeg');
-    images.set(imgData);
     thumbnails.set(thumbData);
+    images.set(imgData);
   }
 
   async function processFiles(f: FileList) {

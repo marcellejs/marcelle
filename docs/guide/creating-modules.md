@@ -1,6 +1,6 @@
 # Creating Modules
 
-Marcelle can be easily extended using custom modules, that can be created locally in an application.
+Marcelle can be extended using custom modules, that can be created locally in an application.
 
 In this tutorial, we will create a custom module for the visualization of datasets using Uniform Manifold Approximation and Projection (UMAP). UMAP is a dimension reduction technique that can be used for visualisation similarly to t-SNE, but also for general non-linear dimension reduction.
 
@@ -13,8 +13,6 @@ The details for the underlying mathematics can be found in the [following paper 
 > McInnes, L, Healy, J, _UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction_, ArXiv e-prints 1802.03426, 2018
 
 ## Generating the application
-
-> Note: if you already have an application generated with the CLI which contains at least one dataset, you can skip this step.
 
 Let's start by generating a new Marcelle application using the CLI:
 
@@ -36,16 +34,17 @@ Then, update the main application entry point (`src/index.js`) with the applicat
 
 ::: details src/index.js
 
-```js
-import '@marcellejs/core/dist/bundle.css';
+````js
+import '@marcellejs/core/dist/marcelle.css';
 import {
-  browser,
-  webcam,
+  datasetBrowser,
   mobilenet,
   dataset,
   button,
   dataStore,
   dashboard,
+  text,
+  imageUpload,
   textfield,
 } from '@marcellejs/core';
 
@@ -53,23 +52,23 @@ import {
 // INPUT PIPELINE & DATA CAPTURE
 // -----------------------------------------------------------
 
-const input = webcam();
+const input = imageUpload({ width: 224, height: 224 });
 const featureExtractor = mobilenet();
 
-const label = textfield();
-label.name = 'Instance label';
-const capture = button({ text: 'Hold to record instances' });
-capture.name = 'Capture instances to the training set';
+const label = textfield({ text: 'cat' });
+label.title = 'Label (to record in the dataset)';
 
 const instances = input.$images
-  .filter(() => capture.$down.value)
-  .map(async (img) => ({
-    type: 'image',
-    data: img,
-    label: label.$text.value,
-    thumbnail: input.$thumbnails.value,
-    features: await featureExtractor.process(img),
-  }))
+  .zip(
+    async (thumbnail, img) => ({
+      type: 'image',
+      data: img,
+      label: label.$text.value,
+      thumbnail,
+      features: await featureExtractor.process(img),
+    }),
+    input.$thumbnails,
+  )
   .awaitPromises();
 
 const store = dataStore({ location: 'localStorage' });
@@ -87,18 +86,16 @@ const dash = dashboard({
   author: 'Marcelle Pirates Crew',
 });
 
-dash
-  .page('Data Management')
-  .useLeft(input, featureExtractor)
-  .use([label, capture], trainingSetBrowser);
-dash.settings.use(trainingSet);
+dash.page('Data Management').useLeft(input, label, featureExtractor).use(trainingSetBrowser);
+dash.settings.datasets(trainingSet);
 
 dash.start();
-```
-
 :::
 
-The application's input is a webcam, which images are preprocessed using the pretrained neural network Mobilenet. Training data can be captured to a dataset called `TrainingSet`.
+The application's input is an image upload component, and images are preprocessed using the pretrained neural network Mobilenet. Training data can be captured to a dataset called `TrainingSet`.
+You can download the data [here](/cats-dogs.zip). Unzip the folder, then in the Marcelle application:
+- Select 'cat' in the menu and drop all cat images
+- Select 'dog' in the menu and drop all dog images
 
 You should obtain the following application:
 
@@ -110,7 +107,7 @@ Modules are essentially JavaScript objects exposing a set of streams for communi
 
 ```bash
 marcelle generate module
-```
+````
 
 Choosing the name `umap`, the CLI will generate the following files:
 
@@ -152,23 +149,102 @@ You should see the custom module appear in the dashboard:
   <img src="./images/modules-umap-default.png" alt="Screenshot of the default custom module">
 </div>
 
+## Anatomy of a module
+
+Let's inspect what constitutes a module. A module is composed of three files
+
+- `src/modules/umap/umap.module.js` contains the main module class definition
+- `src/modules/umap/umap.svelte` is a [Svelte](https://svelte.dev/) component defining our module's view
+- `src/modules/umap/index.js` is used to export a constructor function for the module
+
+The main module definition is a class in `umap.module.js`:
+
+```js
+// Our custom UMAP module extends the base class "Module"
+export class Umap extends Module {
+  constructor(options) {
+    super();
+    this.title = 'umap [custom module 🤖]';
+    this.options = options;
+  }
+
+  // Module methods
+}
+```
+
+The constructor specifies the module's `title`, which is displayed when a module is added to the dashboard. Additionally, we can pass parameters to the module's constructor. In this case, the module accepts an arbitrary object of options.
+
+Let's try passing options to the module. In the main script, update the instanciation of the module:
+
+```js
+const trainingSetUmap = umap({ someParam: 'Yes', other: 33 });
+```
+
+The list of parameters should be displayed in the module view on the dashboard. Module views are created using the module's `.mount()` method. This method can either be called manually by the user, or automatically if the module is added to a dashboard's page. The `mount` method optionally takes a HTML element where the module should be displayed. If no target element is specified, the module will be mounted on the element with `id` corresponding to the module's unique id (automatically generated).
+
+Marcelle does not enforce the use of a particular framework to build the view of a modular. While the core library uses the [Svelte](https://svelte.dev/) framework, it is possible to use any frontend framework such as Vue or React, or even to program the view using vanilla JavaScript.
+
+When using svelte, the mount method has the following form:
+
+```js
+  mount(target) {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
+    this.destroy();
+    this.$$.app = new Component({
+      target: t,
+      props: {
+        title: this.title,
+        options: this.options,
+      },
+    });
+  }
+```
+
+Where the actual view is defined in the svelte _component_ `umap.svelte`. A Svelte component is composed of:
+
+- a `<script>` part defining the component's data and logic in JavaScript
+- a `<style>` part defining CSS classes
+- the view definition in HTML
+
+In our example, we define "props" in the script part by using the keyword `export`. Props are parameters that can be passed to our component when it is instanciated in the `mount` method. Our component accepts two props: `title` and `options`, that are then displayed in the HTML. Note that use use curly braces `{options}` to display in the HTML the contents of a JavaScript variable or expression.
+
+```html
+<script>
+  import { ModuleBase } from '@marcellejs/core';
+
+  export let title;
+  export let options;
+</script>
+
+<style>
+  .my-color {
+    color: seagreen;
+  }
+</style>
+
+<ModuleBase {title}>
+  <div>This is a <span class="my-color">custom</span> module with the following options:</div>
+  <p>{JSON.stringify(options)}</p>
+</ModuleBase>
+```
+
+This tutorial won't extensively cover Svelte. For details, please refer to Svelte online documentation: [https://svelte.dev/](https://svelte.dev/)
+
 ## Connecting to the dataset
 
-Connect to the (quite undocumented, see [here](https://docs.feathersjs.com/api/services.html#service-methods)) data store service storing instances:
+Our UMAP module will apply to any dataset to visualize its instances on a 2D map. We start by specifying a dataset as the main parameter in our constructor. We then define a method `update` that will fetch all instances in the dataset and log them to the console.
 
-```js{2,6,9-13}
+```js{2,5,8-11}
 export class Umap extends Module {
   constructor(dataset) {
     super();
-    this.name = 'umap [custom module 🤖]';
-    this.description = 'TODO: Umap description';
+    this.title = 'umap [custom module 🤖]';
     this.dataset = dataset;
   }
 
   async update() {
-    const instances = await this.dataset.instanceService.find({
-      query: { $select: ['features', 'label'] },
-    });
+    const instances = await this.dataset.getAllInstances();
     console.log('instances', instances);
   }
 }
@@ -176,7 +252,7 @@ export class Umap extends Module {
 
 Let's add a button to our dashboard to trigger an update of our module. When implementing UMAP, this will allow us to trigger the computation of UMAP. We start by passing our `trainingSet` to `umap`. Then, we create a new button module, which triggers an update when clicked. Finally, we add the button to the dashboard.
 
-```js{3-6,13}
+```js{1,3-6,13}
 const trainingSetUmap = umap(trainingSet);
 
 const updateUMap = button({ text: 'Update Visualization' });
@@ -192,11 +268,7 @@ dash
   .use([label, capture], trainingSetBrowser, updateUMap, trainingSetUmap);
 ```
 
-When clicking the 'Update Visualization' button, the following message should appear in the console:
-
-`instances > Object { total: 12, limit: 100, skip: 0, data: (12) […] }`
-
-Each instance in the `data` array should be an object with properties `features` and `label`.
+When clicking the 'Update Visualization' button, an array containing the data of all instances should be displayed in the console.
 
 ## Computing UMAP
 
@@ -208,25 +280,23 @@ npm install umap-js
 
 We can then import the library and compute UMAP asynchronously, following the library's [documentation](https://github.com/PAIR-code/umap-js#asynchronous-fitting). We use the `fitAsync` method, that takes as input a 2D data array. We can convert the instances fetched from the dataset as such an array, by concatenating all feature vectors.
 
-```js{2,12-18}
+```js{2,11-16}
 import { Module } from '@marcellejs/core';
-import UMAP from 'umap-js';
+import { UMAP } from 'umap-js';
 import Component from './umap.svelte';
 
 export class Umap extends Module {
   // ...
 
   async update() {
-    const instances = await this.dataset.instanceService.find({
-      query: { $select: ['features', 'label'] },
-    });
+    const instances = await this.dataset.getAllInstances();
     // Concatenate all instance features in a 2D array:
-    const umapData = instances.data.reduce((data, { features }) => data.concat(features), []);
-    const umap = new UMAP.UMAP();
-    const embedding = await umap.fitAsync(umapData, (epochNumber) => {
+    const umapData = instances.reduce((data, { features }) => data.concat(features), []);
+    const umap = new UMAP();
+    const finalEmbedding = await umap.fitAsync(umapData, (epochNumber) => {
       console.log('Epoch', epochNumber, umap.getEmbedding());
     });
-    console.log('Final embedding', embedding);
+    console.log('Final embedding', finalEmbedding);
   }
 
   //...
@@ -243,32 +313,29 @@ For now, the results of the UMAP computation are limited to our module. In Marce
 
 First, we initialize the stream in the constructor, and call the module's `start()` method to start stream processing. Then, we will imperatively push values into the stream at each iteration of the UMAP fitting process.
 
-```js{1,11-12,22-25}
+```js{1,10-11,20,22}
 import { Module, Stream } from '@marcellejs/core';
-import UMAP from 'umap-js';
+import { UMAP } from 'umap-js';
 import Component from './umap.svelte';
 
 export class Umap extends Module {
   constructor(dataset) {
     super();
-    this.name = 'umap [custom module 🤖]';
-    this.description = 'TODO: Umap description';
+    this.title = 'umap [custom module 🤖]';
     this.dataset = dataset;
     this.$embedding = new Stream([], true);
     this.start();
   }
 
   async update() {
-    const instances = await this.dataset.instanceService.find({
-      query: { $select: ['features', 'label'] },
-    });
+    const instances = await this.dataset.getAllInstances();
     // Concatenate all instance features in a 2D array:
-    const umapData = instances.data.reduce((data, { features }) => data.concat(features), []);
-    const umap = new UMAP.UMAP();
-    const embedding = await umap.fitAsync(umapData, () => {
+    const umapData = instances.reduce((data, { features }) => data.concat(features), []);
+    const umap = new UMAP();
+    const finalEmbedding = await umap.fitAsync(umapData, () => {
       this.$embedding.set(umap.getEmbedding());
     });
-    this.$embedding.set(embedding);
+    this.$embedding.set(finalEmbedding);
   }
 
   // ...
@@ -287,17 +354,13 @@ We are now ready to visualize the resulting embedding using a scatterplot. The v
 
 Let's edit `umap.svelte` to pass our stream of embeddings to the component:
 
-```html{5,13}
+```html
 <script>
   import { ModuleBase } from '@marcellejs/core';
 
   export let title;
   export let embedding;
 </script>
-
-<style></style>
-
-<svelte:options accessors />
 
 <ModuleBase {title}>
   <div>{$embedding}</div>
@@ -339,11 +402,9 @@ We then integrate scatter-gl in the Svelte component:
 
 ```html
 <script>
-  import s from 'scatter-gl';
+  import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
   import { ModuleBase } from '@marcellejs/core';
-
-  const { ScatterGL } = s;
 
   export let title;
   export let embedding;
@@ -366,15 +427,15 @@ We then integrate scatter-gl in the Svelte component:
   });
 </script>
 
+<ModuleBase {title}>
+  <div id="scatter-container" bind:this="{scatterContainer}" />
+</ModuleBase>
+
 <style>
   #scatter-container {
     height: 400px;
   }
 </style>
-
-<ModuleBase {title}>
-  <div id="scatter-container" bind:this="{scatterContainer}" />
-</ModuleBase>
 ```
 
 This code requires basic svelte knowledge. The main elements are:
@@ -391,6 +452,8 @@ We obtain the following visualization:
 
 ## Further Improvements
 
+### Adding Colors
+
 We can further improve the component, for instance by using the instances' labels to define the point colors in the scatterplot. The main steps to add this feature are:
 
 1. Create a `$labels` stream which events are an array of the labels of each instance in the training set
@@ -401,16 +464,15 @@ We can further improve the component, for instance by using the instances' label
 
 `umap.module.js`:
 
-```js{12,22-23,40}
+```js{11,19-20,37}
 import { Module, Stream } from '@marcellejs/core';
-import UMAP from 'umap-js';
+import { UMAP } from 'umap-js';
 import Component from './umap.svelte';
 
 export class Umap extends Module {
   constructor(dataset) {
     super();
-    this.name = 'umap [custom module 🤖]';
-    this.description = 'TODO: Umap description';
+    this.title = 'umap [custom module 🤖]';
     this.dataset = dataset;
     this.$embedding = new Stream([], true);
     this.$labels = new Stream([], true);
@@ -418,28 +480,26 @@ export class Umap extends Module {
   }
 
   async update() {
-    const instances = await this.dataset.instanceService.find({
-      query: { $select: ['features', 'label'] },
-    });
+    const instances = await this.dataset.getAllInstances();
     // Concatenate all instance features in a 2D array:
-    const umapData = instances.data.reduce((data, { features }) => data.concat(features), []);
-    const labels = instances.data.map((x) => x.label);
+    const umapData = instances.reduce((data, { features }) => data.concat(features), []);
+    const labels = instances.map(({ label }) => label);
     this.$labels.set(labels);
-    const umap = new UMAP.UMAP();
-    const embedding = await umap.fitAsync(umapData, () => {
+    const umap = new UMAP();
+    const finalEmbedding = await umap.fitAsync(umapData, () => {
       this.$embedding.set(umap.getEmbedding());
     });
-    this.$embedding.set(embedding);
+    this.$embedding.set(finalEmbedding);
   }
 
-  mount(targetSelector) {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
+  mount(target) {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new Component({
-      target,
+      target: t,
       props: {
-        title: this.name,
+        title: this.title,
         embedding: this.$embedding,
         labels: this.$labels,
       },
@@ -450,13 +510,11 @@ export class Umap extends Module {
 
 `umap.svelte`:
 
-```html{10,20-29}
+```html{8,27-32}
 <script>
-  import s from 'scatter-gl';
+  import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
   import { ModuleBase } from '@marcellejs/core';
-
-  const { ScatterGL } = s;
 
   export let title;
   export let embedding;
@@ -464,47 +522,52 @@ export class Umap extends Module {
 
   let scatterContainer;
   let scatterGL;
+
   onMount(() => {
     scatterGL = new ScatterGL(scatterContainer, {
       styles: {
         point: { scaleDefault: 1.6, scaleSelected: 2, scaleHover: 2 },
       },
     });
-    labels.subscribe((labs) => {
-      const classIndices = Array.from(new Set(labs));
-      const hues = [...new Array(classIndices.length)].map((_, i) =>
-        Math.floor((255 / classIndices.length) * i),
-      );
-      const heavyTransparentColorsByLabel = hues.map((hue) => `hsla(${hue}, 100%, 50%, 0.75)`);
-      scatterGL.setPointColorer((index, selectedIndices, hoverIndex) => {
-        return heavyTransparentColorsByLabel[classIndices.indexOf(labs[index])];
-      });
-    });
+
     embedding.subscribe((points) => {
       if (points.length > 0) {
         const dataset = new ScatterGL.Dataset(points);
         scatterGL.render(dataset);
       }
     });
+
+    labels.subscribe((labs) => {
+      const uniqueLabels = Array.from(new Set(labs));
+      const hues = uniqueLabels.map((_, i) => Math.floor((255 * i) / uniqueLabels.length));
+      const colors = hues.map((h) => `hsla(${h}, 100%, 50%, 0.75)`);
+      scatterGL.setPointColorer((i) => colors[uniqueLabels.indexOf(labs[i])]);
+    });
   });
 </script>
+
+<ModuleBase {title}>
+  <div id="scatter-container" bind:this={scatterContainer} />
+</ModuleBase>
 
 <style>
   #scatter-container {
     height: 400px;
   }
 </style>
-
-<svelte:options accessors />
-
-<ModuleBase {title}>
-  <div id="scatter-container" bind:this="{scatterContainer}" />
-</ModuleBase>
 ```
 
 :::
 
 ![UMAP with colors animation](./images/modules-umap-anim-colors.gif)
+
+### Option for 2D/3D visualization
+
+We can also easily support 3D visualization, using UMAP's option [`nComponents`](https://github.com/PAIR-code/umap-js#parameters).
+
+### Reacting to point selection
+
+Finally, it is useful to visualize the images associated with each point in the visualization. We can do this by creating a stream called `$selected` that contains the ids of the selected instances.
 
 ## Final Result
 

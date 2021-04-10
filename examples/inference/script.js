@@ -9,6 +9,7 @@ import {
   dataset,
   dataStore,
   fileUpload,
+  imageDisplay,
   imageUpload,
   classificationPlot,
   text,
@@ -98,26 +99,7 @@ const betterPredictions = predictionStream.map(({ label, confidences }) => {
 
 const plotResults = classificationPlot(betterPredictions);
 
-const instanceViewer = {
-  id: 'my-instance-viewer',
-  mount(target) {
-    const t = target || document.querySelector('#my-instance-viewer');
-    const instanceCanvas = document.createElement('canvas');
-    instanceCanvas.classList.add('w-full', 'max-w-full');
-    const instanceCtx = instanceCanvas.getContext('2d');
-    t.appendChild(instanceCanvas);
-    const unSub = source.$images.subscribe((img) => {
-      instanceCanvas.width = img.width;
-      instanceCanvas.height = img.height;
-      instanceCtx.putImageData(img, 0, 0);
-    });
-    this.destroy = () => {
-      t.removeChild(instanceCanvas);
-      unSub();
-    };
-  },
-  destroy() {},
-};
+const instanceViewer = imageDisplay(source.$images);
 
 // -----------------------------------------------------------
 // DASHBOARDS
@@ -136,8 +118,8 @@ help.title = 'Test generic DNN classifier';
 
 dash
   .page('Real-time Testing')
-  .useLeft(source)
-  .use(help, [up, classifier], [instanceViewer, plotResults]);
+  .useLeft(up, classifier)
+  .use([source, help], [instanceViewer, plotResults]);
 dash
   .page('Batch Testing')
   .useLeft(source, classifier)
