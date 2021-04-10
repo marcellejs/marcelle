@@ -20,7 +20,6 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
 
   dataStore?: DataStore;
 
-  #storedModelId: string;
   protected syncModelName: string;
 
   ready: boolean = false;
@@ -42,7 +41,7 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
   abstract save(
     name: string,
     metadata?: Record<string, unknown>,
-    update?: boolean,
+    id?: ObjectId,
   ): Promise<ObjectId | null>;
   abstract load(idOrName: ObjectId | string): Promise<StoredModel>;
   abstract download(metadata?: Record<string, unknown>): Promise<void>;
@@ -73,29 +72,34 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
         },
       },
     })) as Paginated<StoredModel>;
+    let id: ObjectId = null;
     if (data.length === 1) {
-      this.load(data[0].id);
+      id = data[0].id;
+      this.load(id);
     }
     this.$training.subscribe(({ status, data: meta }) => {
       if (status === 'success' || (status === 'loaded' && meta?.source !== 'datastore')) {
-        this.save(this.syncModelName, {}, true);
+        this.save(this.syncModelName, {}, id).then((newId) => {
+          id = newId;
+        });
       }
     });
   }
 
   @checkProperty('dataStore')
-  protected async saveToDatastore(model: StoredModel, update = false): Promise<ObjectId> {
+  protected async saveToDatastore(model: StoredModel, id: ObjectId = null): Promise<ObjectId> {
     if (!this.service) return null;
     if (!model) return null;
-    if (update && this.#storedModelId) {
-      await this.service.update(this.#storedModelId, model);
+    let newId = id;
+    if (id) {
+      await this.service.update(id, model);
     } else {
       const res = await this.service.create(model);
-      this.#storedModelId = res.id;
+      newId = res.id;
     }
     const name = this.syncModelName || toKebabCase(this.title);
     logger.info(`Model ${name} was saved to data store at location ${this.dataStore.location}`);
-    return this.#storedModelId;
+    return newId;
   }
 
   @checkProperty('dataStore')
