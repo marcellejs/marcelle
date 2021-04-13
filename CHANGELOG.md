@@ -1,5 +1,10 @@
 # Marcelle changelog
 
+## v0.3.1
+
+- Fix concurrent state updates in datasets
+- Set webcam to face the environment by default on mobile devices
+
 ## v0.3.0
 
 ### Breaking changes

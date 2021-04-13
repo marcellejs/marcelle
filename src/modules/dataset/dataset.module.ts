@@ -16,6 +16,7 @@ import {
 import { readJSONFile, saveBlob } from '../../utils/file-io';
 import { throwError } from '../../utils/error-handling';
 import { toKebabCase } from '../../utils/string';
+import { preventConcurrentCalls } from '../../utils/asynchronicity';
 
 export interface DatasetOptions {
   name: string;
@@ -46,6 +47,7 @@ export class Dataset extends Module {
   datasetService: Service<DatasetInfo>;
   #datasetId: ObjectId;
   #datasetState: DatasetInfo;
+  statePromise: Promise<void> = Promise.resolve();
 
   $changes: Stream<DatasetChange[]> = new Stream([]);
   $instances: Stream<ObjectId[]> = new Stream<ObjectId[]>([], true);
@@ -279,6 +281,7 @@ export class Dataset extends Module {
     return allInstances;
   }
 
+  @preventConcurrentCalls('statePromise')
   async addInstance(instance: Instance) {
     if (!instance) return;
     const ds = cloneDeep(this.#datasetState);
@@ -294,6 +297,7 @@ export class Dataset extends Module {
     await this.datasetService.patch(this.#datasetId, ds);
   }
 
+  @preventConcurrentCalls('statePromise')
   async deleteInstance(id: ObjectId): Promise<void> {
     const instance = await this.instanceService.get(id);
     if (!instance) return;
@@ -309,6 +313,7 @@ export class Dataset extends Module {
     await this.datasetService.patch(this.#datasetId, ds);
   }
 
+  @preventConcurrentCalls('statePromise')
   async changeInstanceLabel(id: ObjectId, newLabel: string): Promise<void> {
     const instance = await this.instanceService.get(id);
     if (!instance) return;
@@ -330,6 +335,7 @@ export class Dataset extends Module {
     await this.datasetService.patch(this.#datasetId, ds);
   }
 
+  @preventConcurrentCalls('statePromise')
   async renameClass(label: string, newLabel: string): Promise<void> {
     const ds = cloneDeep(this.#datasetState);
     const { classes } = ds;
@@ -347,6 +353,7 @@ export class Dataset extends Module {
     await this.datasetService.patch(this.#datasetId, ds);
   }
 
+  @preventConcurrentCalls('statePromise')
   async deleteClass(label: string): Promise<void> {
     const ds = cloneDeep(this.#datasetState);
     const { classes } = ds;
