@@ -120,6 +120,7 @@ wizardButton.$down.subscribe((x) => {
   capture.$down.set(x);
 });
 trainingSet.$countPerClass.subscribe((c) => {
+  if (!c) return;
   const label = labelInput.$text.value;
   const numExamples = c[label];
   wizardText.$text.set(
@@ -152,6 +153,7 @@ wiz
   .use([input, plotResults]);
 
 function configureWizard(label) {
+  if (!trainingSet.$countPerClass.value) return;
   labelInput.$text.set(label);
   wizardButton.$text.set(`Record Examples (class ${label})`);
   const numExamples = trainingSet.$countPerClass.value[label];
@@ -213,11 +215,14 @@ predictionStream.subscribe(async ({ label, confidences }) => {
   if (label !== PrevLabel) {
     d.innerText = `predicted label: ${label}`;
     if (label === 'A') {
-      resultImg.src = 'https://media.giphy.com/media/vVzH2XY3Y0Ar6/giphy.gif';
+      resultImg.src = 'https://media.giphy.com/media/M9gPbRZTWqZP2/giphy.gif';
+      // resultImg.src = 'https://media.giphy.com/media/vVzH2XY3Y0Ar6/giphy.gif';
     } else if (label === 'B') {
-      resultImg.src = 'https://media.giphy.com/media/IhvYFmzVNHgCQ/giphy.gif';
+      resultImg.src = 'https://media.giphy.com/media/i6JLRbk4f2gIU/giphy.gif';
+      // resultImg.src = 'https://media.giphy.com/media/IhvYFmzVNHgCQ/giphy.gif';
     } else {
-      resultImg.src = 'https://media.giphy.com/media/sphmLQaP0wAdG/giphy.gif';
+      resultImg.src = 'https://media.giphy.com/media/hWpgTWoWkqi2NmFeks/giphy.gif';
+      // resultImg.src = 'https://media.giphy.com/media/sphmLQaP0wAdG/giphy.gif';
     }
     PrevLabel = label;
   }
