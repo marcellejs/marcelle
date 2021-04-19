@@ -20,20 +20,11 @@
 
   async function updateClassesFromDataset() {
     loading = true;
-    classes = await Promise.all(
-      Object.entries(dataset.$classes.value).map(async ([label, instanceIds]) => {
-        return {
-          label,
-          instances: await Promise.all(
-            instanceIds.map((id) =>
-              dataset.instanceService.get(id, {
-                query: { $select: ['thumbnail'] },
-              }),
-            ),
-          ),
-        };
-      }),
-    );
+    classes = [];
+    for (const label of Object.keys(dataset.$classes.value)) {
+      const instances = await dataset.getAllInstances(['thumbnail'], { label });
+      classes = classes.concat([{ label, instances }]);
+    }
     loading = false;
   }
 

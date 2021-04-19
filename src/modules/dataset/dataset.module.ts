@@ -265,20 +265,30 @@ export class Dataset extends Module {
     return this.instanceService.get(id, opts);
   }
 
-  async getAllInstances(fields: string[] = undefined): Promise<Instance[]> {
+  async getAllInstances(
+    fields: string[] = undefined,
+    query: FeathersParams['query'] = {},
+  ): Promise<Instance[]> {
     const baseQuery: FeathersParams['query'] = {
+      ...query,
       $limit: 30,
     };
     if (fields) {
       baseQuery.$select = fields;
     }
-    const results = (await Promise.all(
-      Array.from(Array(Math.ceil(this.$count.value / 30)), (_, i) => {
-        const query = { ...baseQuery, $skip: i * 30 };
-        return this.instanceService.find({ query });
-      }),
-    )) as Paginated<Instance>[];
-    const allInstances = results.map(({ data }) => data).flat();
+    const numBatches = Math.ceil(this.$count.value / baseQuery.$limit);
+    const queries = Array.from(Array(numBatches), (_, i) => ({
+      ...baseQuery,
+      $skip: i * 30,
+    }));
+    // const allInstances = ((await Promise.all(
+    //   queries.map((query) => this.instanceService.find({ query })),
+    // )) as Paginated<Instance>[]).map(({ data }) => data).flat;
+    let allInstances: Instance[] = [];
+    for (const q of queries) {
+      const { data } = (await this.instanceService.find({ query: q })) as Paginated<Instance>;
+      allInstances = allInstances.concat(data);
+    }
     return allInstances;
   }
 
@@ -341,9 +351,10 @@ export class Dataset extends Module {
     const ds = cloneDeep(this.#datasetState);
     const { classes } = ds;
     if (!Object.keys(classes).includes(label)) return;
-    await Promise.all(
-      classes[label].map((id) => this.instanceService.patch(id, { label: newLabel })),
+    const patchPromises = classes[label].map((id) =>
+      this.instanceService.patch(id, { label: newLabel }),
     );
+    await Promise.all(patchPromises);
     if (Object.keys(classes).includes(newLabel)) {
       classes[newLabel] = classes[newLabel].concat(classes[label]);
     } else {
@@ -392,20 +403,20 @@ export class Dataset extends Module {
 
   // eslint-disable-next-line class-methods-use-this
   async upload(files: File[]): Promise<void> {
-    const jsonFiles = await Promise.all(
-      files.filter((f) => f.type === 'application/json').map((f) => readJSONFile(f)),
+    const filePromises = files
+      .filter((f) => f.type === 'application/json')
+      .map((f) => readJSONFile(f));
+    const jsonFiles = await Promise.all(filePromises);
+    const addPromises = jsonFiles.map((fileContent: { instances: Instance[] }) =>
+      fileContent.instances.map((instance: Instance) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, ...instanceNoId } = instance;
+        return this.addInstance(instanceNoId).catch((e) => {
+          throwError(e);
+        });
+      }),
     );
-    await Promise.all(
-      jsonFiles.map((fileContent: { instances: Instance[] }) =>
-        fileContent.instances.map((instance: Instance) => {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { id, ...instanceNoId } = instance;
-          return this.addInstance(instanceNoId).catch((e) => {
-            throwError(e);
-          });
-        }),
-      ),
-    );
+    await Promise.all(addPromises);
   }
 
   mount(): void {

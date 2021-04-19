@@ -38,16 +38,14 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
     this.$training.set({ status: 'start', epochs: this.labels.length });
     setTimeout(async () => {
       this.classifier.clearAllClasses();
-      await Promise.all(
-        this.labels.map(async (label, i) => {
-          await this.activateClass(dataset, label, inputField);
-          this.$training.set({
-            status: 'epoch',
-            epoch: i,
-            epochs: this.labels.length,
-          });
-        }),
-      );
+      for (const [i, label] of this.labels.entries()) {
+        await this.activateClass(dataset, label, inputField);
+        this.$training.set({
+          status: 'epoch',
+          epoch: i,
+          epochs: this.labels.length,
+        });
+      }
       this.$training.set({ status: 'success' });
     }, 100);
   }
@@ -65,11 +63,7 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
   }
 
   async activateClass(dataset: Dataset, label: string, inputField = 'features'): Promise<void> {
-    const allInstances = await Promise.all(
-      dataset.$instances.value.map((id) =>
-        dataset.instanceService.get(id, { query: { $select: ['id', inputField] } }),
-      ),
-    );
+    const allInstances = await dataset.getAllInstances(['id', inputField], { label });
     for (const id of dataset.$classes.value[label]) {
       const instance = allInstances.find((x) => x.id === id) as {
         [inputField: string]: number[][];
