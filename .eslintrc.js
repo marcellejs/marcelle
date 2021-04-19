@@ -7,12 +7,18 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint', 'prettier'],
+  plugins: ['svelte3', '@typescript-eslint', 'prettier'],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'prettier',
+  ],
+  overrides: [
+    {
+      files: ['*.svelte'],
+      processor: 'svelte3/svelte3',
+    },
   ],
   rules: {
     // Errors
@@ -110,15 +116,19 @@ module.exports = {
     semi: ['error', 'always'],
     // ES6
     'no-var': 'error',
+    // -------------
     // TBD:
     // https://eslint.org/docs/rules/no-extra-parens
     // https://eslint.org/docs/rules/class-methods-use-this
     // https://eslint.org/docs/rules/dot-location
     // https://eslint.org/docs/rules/no-else-return
+    // -------------
+  },
+  settings: {
+    'svelte3/typescript': require('typescript'),
   },
   ignorePatterns: [
     'node_modules/*',
-    '**/*.svelte',
     'dist/*',
     'types',
     '.prettierrc.js',

@@ -47,7 +47,7 @@
   });
 
   const dispatch = createEventDispatcher();
-  export function quit() {
+  export function quit(): void {
     dispatch('quit');
   }
 

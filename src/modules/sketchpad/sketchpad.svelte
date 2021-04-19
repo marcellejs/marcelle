@@ -15,6 +15,13 @@
 
   const dispatch = createEventDispatcher();
 
+  function clearDrawing() {
+    ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+    isDrawing = false;
+  }
+
   onMount(async () => {
     await tick();
     await tick();
@@ -55,13 +62,6 @@
     if (isDrawing) {
       strokeEnd.set();
     }
-    isDrawing = false;
-  }
-
-  function clearDrawing() {
-    ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
     isDrawing = false;
   }
 </script>

@@ -26,7 +26,7 @@
     showApp = true;
   });
 
-  export function quit() {
+  export function quit(): void {
     showApp = false;
     setTimeout(() => {
       dispatch('quit');

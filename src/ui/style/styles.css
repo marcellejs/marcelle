@@ -60,3 +60,14 @@ h2 {
 .wizard .card-title {
   display: none !important;
 }
+
+.rangeSlider > .rangeBar,
+.rangeSlider > .rangeHandle > .rangeNub,
+.rangeSlider > .rangeHandle > .rangeFloat {
+  @apply bg-teal-500;
+}
+.rangeSlider.focus > .rangeBar,
+.rangeSlider > .rangeHandle.active > .rangeNub,
+.rangeSlider > .rangeHandle.active > .rangeFloat {
+  @apply bg-teal-400;
+}

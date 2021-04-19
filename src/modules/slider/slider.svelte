@@ -15,19 +15,6 @@
   export let formatter;
 </script>
 
-<style global lang="postcss">
-  .rangeSlider > .rangeBar,
-  .rangeSlider > .rangeHandle > .rangeNub,
-  .rangeSlider > .rangeHandle > .rangeFloat {
-    @apply bg-teal-500;
-  }
-  .rangeSlider.focus > .rangeBar,
-  .rangeSlider > .rangeHandle.active > .rangeNub,
-  .rangeSlider > .rangeHandle.active > .rangeFloat {
-    @apply bg-teal-400;
-  }
-</style>
-
 <ModuleBase {title}>
   <RangeSlider
     bind:values={$values}
@@ -41,5 +28,10 @@
     {pipstep}
     {formatter}
     all="label"
-    springValues={{ stiffness: 0.2, damping: 0.8 }} />
+    springValues={{ stiffness: 0.2, damping: 0.8 }}
+  />
 </ModuleBase>
+
+<style global lang="postcss">
+  /* Moved to styles.css */
+</style>

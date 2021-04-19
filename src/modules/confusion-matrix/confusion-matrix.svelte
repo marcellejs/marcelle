@@ -106,7 +106,6 @@
     unSub.push(
       confusion.subscribe((conf) => {
         maxCount = conf.reduce((m, { v }) => Math.max(m, v), 0);
-        console;
         defaultOptions.data.datasets[0].data = conf;
         chart.update();
       }),

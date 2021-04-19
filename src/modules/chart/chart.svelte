@@ -89,19 +89,19 @@
   }
 
   function transformDatasets(
-    datasets: ChartDataset[],
+    ds: ChartDataset[],
     opts: Record<string, unknown>,
     globalOptions: Partial<ChartConfiguration>,
   ) {
     const data: { labels: string[]; datasets?: unknown[] } = { labels: [] };
     let maxElts = 0;
-    data.datasets = datasets.map(({ dataStream, label, options }, i) => {
+    data.datasets = ds.map(({ dataStream, label, options: localOptions }, i) => {
       maxElts = Math.max(maxElts, dataStream.value ? dataStream.value.length : 0);
       if (i === 0) {
-        data.labels = options.labels || [];
-        if (!options.labels && dataStream.value && dataStream.value.length > 0) {
+        data.labels = localOptions.labels || [];
+        if (!localOptions.labels && dataStream.value && dataStream.value.length > 0) {
           if (typeof dataStream.value[0] === 'number') {
-            data.labels = Array.from(Array(dataStream.value.length), (_, i) => i.toString());
+            data.labels = Array.from(Array(dataStream.value.length), (_, j) => j.toString());
           } else {
             data.labels = (dataStream.value as Array<{
               x: unknown;
@@ -113,14 +113,14 @@
       let o: Record<string, unknown> = {
         ...defaultDatasetOptions(i),
         ...opts,
-        ...options,
+        ...localOptions,
         label: label,
         data: dataStream.value || [],
       };
       if (
-        (['bar', 'bar-fast'].includes(options.type) ||
-          (['bar', 'bar-fast'].includes(globalOptions.type) && !options.type)) &&
-        datasets.length === 1
+        (['bar', 'bar-fast'].includes(localOptions.type) ||
+          (['bar', 'bar-fast'].includes(globalOptions.type) && !localOptions.type)) &&
+        ds.length === 1
       ) {
         o.borderColor = defaultColors;
         o.backgroundColor = defaultColors;
@@ -156,12 +156,12 @@
         options: { scales: { y: { scaleLabel: { display: true, labelString: options.ylabel } } } },
       });
     }
-    unSub = datasets.map(({ dataStream, options }, i) =>
+    unSub = datasets.map(({ dataStream, options: localOptions }, i) =>
       dataStream.subscribe((values: Array<number> | Array<{ x: unknown; y: unknown }>) => {
         if (values && chart) {
-          if (!options.labels && i === 0 && values.length > 0) {
+          if (!localOptions.labels && i === 0 && values.length > 0) {
             if (typeof values[0] === 'number') {
-              chartOptions.data.labels = Array.from(Array(values.length), (_, i) => i.toString());
+              chartOptions.data.labels = Array.from(Array(values.length), (_, j) => j.toString());
             } else {
               chartOptions.data.labels = (values as Array<{
                 x: unknown;
