@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import '../../dist/marcelle.css';
 import {
   batchPrediction,
@@ -14,7 +13,7 @@ import {
   text,
   toggle,
   imageDisplay,
-} from '../../dist/marcelle.esm.js';
+} from '../../dist/marcelle.esm';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CLASSIFICATION

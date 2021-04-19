@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import '../../dist/marcelle.css';
 import {
   batchPrediction,
@@ -19,7 +18,7 @@ import {
   webcam,
   knn,
   text,
-} from '../../dist/marcelle.esm.js';
+} from '../../dist/marcelle.esm';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CAPTURE TO DATASET

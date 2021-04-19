@@ -17,6 +17,7 @@ import { readJSONFile, saveBlob } from '../../utils/file-io';
 import { throwError } from '../../utils/error-handling';
 import { toKebabCase } from '../../utils/string';
 import { preventConcurrentCalls } from '../../utils/asynchronicity';
+import { noop } from '../../utils/misc';
 
 export interface DatasetOptions {
   name: string;
@@ -34,13 +35,13 @@ interface DatasetInfo {
 interface DatasetChange {
   level: 'instance' | 'class' | 'dataset';
   type: 'created' | 'updated' | 'deleted' | 'renamed';
-  data?: any;
+  data?: unknown;
 }
 
 export class Dataset extends Module {
   title = 'dataset';
 
-  #unsubscribe: () => void = () => {};
+  #unsubscribe: () => void = noop;
   #dataStore: DataStore;
 
   instanceService: Service<Instance>;
@@ -149,7 +150,7 @@ export class Dataset extends Module {
     this.watchChanges();
   }
 
-  watchChanges() {
+  watchChanges(): void {
     const cb = (x: DatasetInfo) => {
       if (x.id === this.#datasetId) {
         this.updateState(x);
@@ -159,7 +160,7 @@ export class Dataset extends Module {
     this.datasetService.on('patched', cb);
   }
 
-  updateState(x: DatasetInfo) {
+  updateState(x: DatasetInfo): void {
     if (dequal(x, this.#datasetState)) return;
     const changes: DatasetChange[] = [];
     if (!dequal(x.labels, this.#datasetState.labels)) {
@@ -248,7 +249,7 @@ export class Dataset extends Module {
   capture(instanceStream: Stream<Instance>): void {
     this.#unsubscribe();
     if (!instanceStream) {
-      this.#unsubscribe = () => {};
+      this.#unsubscribe = noop;
       return;
     }
     this.#unsubscribe = instanceStream.subscribe((instance: Instance) => {
@@ -282,7 +283,7 @@ export class Dataset extends Module {
   }
 
   @preventConcurrentCalls('statePromise')
-  async addInstance(instance: Instance) {
+  async addInstance(instance: Instance): Promise<void> {
     if (!instance) return;
     const ds = cloneDeep(this.#datasetState);
     const { id } = await this.instanceService.create(instance);
@@ -397,6 +398,7 @@ export class Dataset extends Module {
     await Promise.all(
       jsonFiles.map((fileContent: { instances: Instance[] }) =>
         fileContent.instances.map((instance: Instance) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { id, ...instanceNoId } = instance;
           return this.addInstance(instanceNoId).catch((e) => {
             throwError(e);
@@ -406,8 +408,9 @@ export class Dataset extends Module {
     );
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  mount(): void {}
+  mount(): void {
+    // Nothing to show
+  }
 
   stop(): void {
     super.stop();

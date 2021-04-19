@@ -98,8 +98,9 @@ export class BatchPrediction extends Module {
     this.$predictions.set([]);
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  mount(): void {}
+  mount(): void {
+    // Nothing to show
+  }
 
   async download(): Promise<void> {
     const predictions = await this.predictionService.find();
@@ -123,6 +124,7 @@ export class BatchPrediction extends Module {
       jsonFiles.map((fileContent: { predictions: Prediction[] }) =>
         Promise.all(
           fileContent.predictions.map((prediction: Prediction) => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { id, ...predictionNoId } = prediction;
             return this.predictionService
               .create(predictionNoId, { query: { $select: ['id'] } })

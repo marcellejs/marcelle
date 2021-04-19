@@ -2,6 +2,7 @@ import { never } from '@most/core';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import { throwError } from '../../utils/error-handling';
+import { noop } from '../../utils/misc';
 import Component from './webcam.svelte';
 
 function requestInterval(fn: () => void, delay: number) {
@@ -50,8 +51,8 @@ export class Webcam extends Module {
   #webcamHeight: number;
   #videoElement = document.createElement('video');
   #thumbnailWidth = 80;
-  #unsubActive = (): void => {};
-  #stopStreaming = (): void => {};
+  #unsubActive = noop;
+  #stopStreaming = noop;
   #thumbnailCanvas: HTMLCanvasElement;
   #thumbnailCtx: CanvasRenderingContext2D;
   #captureCanvas: HTMLCanvasElement;

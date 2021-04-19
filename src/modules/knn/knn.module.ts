@@ -29,7 +29,7 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
   }
 
   @Catch
-  train(dataset: Dataset, inputField: string = 'features'): void {
+  train(dataset: Dataset, inputField = 'features'): void {
     this.labels = dataset.$labels.value;
     if (this.labels.length < 1) {
       this.$training.set({ status: 'error' });
@@ -64,11 +64,7 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
     return { label, confidences };
   }
 
-  async activateClass(
-    dataset: Dataset,
-    label: string,
-    inputField: string = 'features',
-  ): Promise<void> {
+  async activateClass(dataset: Dataset, label: string, inputField = 'features'): Promise<void> {
     const allInstances = await Promise.all(
       dataset.$instances.value.map((id) =>
         dataset.instanceService.get(id, { query: { $select: ['id', inputField] } }),
@@ -86,7 +82,11 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
     delete this.classifier;
   }
 
-  async save(name: string, metadata?: Record<string, unknown>, id: ObjectId = null) {
+  async save(
+    name: string,
+    metadata?: Record<string, unknown>,
+    id: ObjectId = null,
+  ): Promise<ObjectId> {
     const storedModel = await this.write(metadata);
     storedModel.name = name;
     return this.saveToDatastore(storedModel, id);
@@ -98,7 +98,7 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
     return storedModel;
   }
 
-  async download(metadata?: Record<string, unknown>) {
+  async download(metadata?: Record<string, unknown>): Promise<void> {
     const model = await this.write(metadata);
     saveBlob(JSON.stringify(model), `${model.name}.json`, 'text/plain');
   }

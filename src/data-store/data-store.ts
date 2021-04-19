@@ -9,6 +9,7 @@ import { logger } from '../core/logger';
 import Login from './Login.svelte';
 import { throwError } from '../utils/error-handling';
 import { Stream } from '../core/stream';
+import { noop } from '../utils/misc';
 
 function isValidUrl(str: string) {
   try {
@@ -50,7 +51,7 @@ export class DataStore {
 
   backend: DataStoreBackend;
 
-  #createService: (name: string) => void = () => {};
+  #createService: (name: string) => void = noop;
 
   constructor({ location = 'memory' }: DataStoreOptions = {}) {
     this.feathers = feathers();

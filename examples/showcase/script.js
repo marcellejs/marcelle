@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions, no-console */
 import '../../dist/marcelle.css';
 import {
   datasetBrowser,
@@ -17,7 +16,7 @@ import {
   textfield,
   toggle,
   webcam,
-} from '../../dist/marcelle.esm.js';
+} from '../../dist/marcelle.esm';
 
 // -----------------------------------------------------------
 // BUTTON

@@ -1,5 +1,3 @@
-/* eslint-disable import/extensions, import/no-unresolved */
-// /* global Howl */
 import '../../dist/marcelle.css';
 import { Howl } from 'https://cdn.skypack.dev/howler';
 import {
@@ -21,7 +19,7 @@ import {
   trainingPlot,
   webcam,
   wizard,
-} from '../../dist/marcelle.esm.js';
+} from '../../dist/marcelle.esm';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE

@@ -13,6 +13,7 @@ export class DashboardSettings {
   name = 'settings';
   modules: Array<Module | Module[] | string> = [];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   xModels: Model<any, any>[] = [];
   xDatasets: Dataset[] = [];
   xPredictions: BatchPrediction[] = [];
@@ -28,6 +29,7 @@ export class DashboardSettings {
     return this;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   models(...models: Model<any, any>[]): DashboardSettings {
     this.xModels = models;
     return this;
