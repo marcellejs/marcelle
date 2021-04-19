@@ -46,22 +46,26 @@ export class DashboardSettings {
   }
 
   mount(): void {
-    this.modules.forEach((m) => {
+    for (const m of this.modules) {
       if (isModuleArray(m)) {
-        m.forEach((n) => n.mount());
+        for (const n of m) {
+          n.mount();
+        }
       } else if (!isTitle(m)) {
         m.mount();
       }
-    });
+    }
   }
 
   destroy(): void {
-    this.modules.forEach((m) => {
+    for (const m of this.modules) {
       if (isModuleArray(m)) {
-        m.forEach((n) => n.destroy());
+        for (const n of m) {
+          n.destroy();
+        }
       } else if (!isTitle(m)) {
         m.destroy();
       }
-    });
+    }
   }
 }

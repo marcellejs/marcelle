@@ -104,9 +104,9 @@ export class Webcam extends Module {
     this.#stopStreaming();
     this.#unsubActive();
     if (this.$mediastream.value) {
-      this.$mediastream.value.getTracks().forEach((track) => {
+      for (const track of this.$mediastream.value.getTracks()) {
         track.stop();
-      });
+      }
     }
   }
 
@@ -145,10 +145,11 @@ export class Webcam extends Module {
   stopCamera(): void {
     if (this.$mediastream.value) {
       const tracks = this.$mediastream.value.getTracks();
-      tracks.forEach((track) => {
+      for (const track of tracks) {
         track.stop();
         this.#videoElement.srcObject = null;
-      });
+      }
+
       this.$ready.set(false);
     }
   }

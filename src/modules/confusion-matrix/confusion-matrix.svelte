@@ -114,7 +114,9 @@
   }
 
   onDestroy(() => {
-    unSub.forEach((f) => f());
+    for (const f of unSub) {
+      f();
+    }
   });
 </script>
 

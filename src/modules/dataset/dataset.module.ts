@@ -180,20 +180,20 @@ export class Dataset extends Module {
           },
         });
       } else {
-        labelsCreated.forEach((newLabel) => {
+        for (const newLabel of labelsCreated) {
           changes.push({
             level: 'class',
             type: 'created',
             data: newLabel,
           });
-        });
-        labelsDeleted.forEach((deletedLabel) => {
+        }
+        for (const deletedLabel of labelsDeleted) {
           changes.push({
             level: 'class',
             type: 'deleted',
             data: deletedLabel,
           });
-        });
+        }
       }
       this.$labels.set(x.labels);
     }
@@ -211,33 +211,33 @@ export class Dataset extends Module {
         (y) => !newInstances.map((z) => z.id).includes(y.id),
       );
       const instancesRenamed: { id: ObjectId; label: string }[] = [];
-      newInstances.forEach(({ id, label }) => {
+      for (const { id, label } of newInstances) {
         const oldIdx = oldInstances.map((z) => z.id).indexOf(id);
         if (oldIdx >= 0 && label !== oldInstances[oldIdx].label) {
           instancesRenamed.push({ id, label });
         }
-      });
-      instancesCreated.forEach((data) => {
+      }
+      for (const data of instancesCreated) {
         changes.push({
           level: 'instance',
           type: 'created',
           data,
         });
-      });
-      instancesDeleted.forEach(({ id }) => {
+      }
+      for (const { id } of instancesDeleted) {
         changes.push({
           level: 'instance',
           type: 'deleted',
           data: id,
         });
-      });
-      instancesRenamed.forEach((data) => {
+      }
+      for (const data of instancesRenamed) {
         changes.push({
           level: 'instance',
           type: 'renamed',
           data,
         });
-      });
+      }
       this.$instances.set(instancesCreated.map(({ id }) => id));
       this.$count.set(x.count);
     }

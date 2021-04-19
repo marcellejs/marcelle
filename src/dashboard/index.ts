@@ -54,9 +54,9 @@ export class Dashboard {
     this.app.$on('quit', () => {
       this.$active.set(false);
       this.app?.$destroy();
-      Object.values(this.panels).forEach((panel) => {
+      for (const panel of Object.values(this.panels)) {
         panel.destroy();
-      });
+      }
       this.app = undefined;
     });
   }

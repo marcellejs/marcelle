@@ -71,7 +71,7 @@
   onMount(() => {
     updateClassesFromDataset();
     dataset.$changes.subscribe(async (changes) => {
-      changes.forEach(async ({ level, type, data }) => {
+      for (const { level, type, data } of changes as any[]) {
         if (level === 'dataset') {
           if (type === 'created') {
             updateClassesFromDataset();
@@ -134,7 +134,7 @@
             }
           }
         }
-      });
+      }
     });
   });
 
@@ -149,22 +149,22 @@
 
   async function deleteSelectedInstances() {
     let p = Promise.resolve();
-    selected.value.forEach((id) => {
+    for (const id of selected.value) {
       p = p.then(() => {
         return dataset.deleteInstance(id);
       });
-    });
+    }
     await p;
     selected.set([]);
   }
 
   async function relabelSelectedInstances(newLabel: string) {
     let p = Promise.resolve();
-    selected.value.forEach((id) => {
+    for (const id of selected.value) {
       p = p.then(() => {
         return dataset.changeInstanceLabel(id, newLabel);
       });
-    });
+    }
     await p;
     selected.set([]);
   }

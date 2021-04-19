@@ -134,7 +134,9 @@
   let unSub: Array<() => void> = [];
 
   onDestroy(() => {
-    unSub.forEach((f) => f());
+    for (const f of unSub) {
+      f();
+    }
   });
 
   function setup(canvasElement: HTMLCanvasElement) {

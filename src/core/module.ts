@@ -31,9 +31,9 @@ export abstract class Module {
   }
 
   stop(): void {
-    this.$$.streams.forEach((s) => {
+    for (const s of this.$$.streams) {
       s.stop();
-    });
+    }
   }
 
   dispose(): void {

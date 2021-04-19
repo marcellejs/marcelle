@@ -195,14 +195,17 @@ const sounds = [
   'Trap Loop Minimal 2.mp3',
   'Trap Melody Full.mp3',
 ].map((x) => new Howl({ src: [x], loop: true, volume: 0 }));
-sounds.forEach((s) =>
-  s.once('load', () => {
-    numLoaded += 1;
-    if (numLoaded === 3) {
-      sounds.forEach((x) => x.play());
+const onload = () => {
+  numLoaded += 1;
+  if (numLoaded === 3) {
+    for (const x of sounds) {
+      x.play();
     }
-  }),
-);
+  }
+};
+for (const s of sounds) {
+  s.once('load', onload);
+}
 
 // Update the GIFs with real-time recognition
 const d = document.querySelector('#results');
@@ -224,9 +227,9 @@ predictionStream.subscribe(async ({ label, confidences }) => {
     }
     PrevLabel = label;
   }
-  Object.values(confidences).forEach((x, i) => {
+  for (const [i, x] of Object.values(confidences).entries()) {
     sounds[i].volume(x);
-  });
+  }
 });
 
 document.querySelector('#open-wizard').addEventListener('click', () => {

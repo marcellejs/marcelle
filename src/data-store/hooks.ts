@@ -21,12 +21,12 @@ export function renameIdField(context: HookContext): HookContext {
       result.id = result._id;
       delete result._id;
     } else if (result.total && Array.isArray(result.data)) {
-      (result.data as [{ _id?: string }]).forEach((x, i) => {
+      for (const [i, x] of (result.data as [{ _id?: string }]).entries()) {
         if (x._id) {
           result.data[i].id = result.data[i]._id;
           delete result.data[i]._id;
         }
-      });
+      }
     }
   } else if (params && params.query) {
     if (params.query.id) {

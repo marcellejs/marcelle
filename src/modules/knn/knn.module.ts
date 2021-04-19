@@ -70,12 +70,12 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
         dataset.instanceService.get(id, { query: { $select: ['id', inputField] } }),
       ),
     );
-    dataset.$classes.value[label].forEach((id) => {
+    for (const id of dataset.$classes.value[label]) {
       const instance = allInstances.find((x) => x.id === id) as {
         [inputField: string]: number[][];
       };
       this.classifier.addExample(tensor2d(instance[inputField]), label);
-    });
+    }
   }
 
   clear(): void {
@@ -122,10 +122,10 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
     if (!this.classifier) return null;
     const dataset = this.classifier.getClassifierDataset();
     const datasetObj: Record<string, number[][]> = {};
-    Object.keys(dataset).forEach((key) => {
+    for (const key of Object.keys(dataset)) {
       const data = dataset[key].arraySync();
       datasetObj[key] = data;
-    });
+    }
     const name = this.syncModelName || toKebabCase(this.title);
     return {
       name,
@@ -143,9 +143,10 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
     const dataset = s.metadata.data as Record<string, number[][]>;
     if (!dataset) return;
     const tensorObj: Record<string, Tensor2D> = {};
-    Object.entries(dataset).forEach(([key, d]) => {
+    for (const [key, d] of Object.entries(dataset)) {
       tensorObj[key] = tensor2d(d);
-    });
+    }
+
     this.labels = s.metadata.labels as string[];
     this.classifier.setClassifierDataset(tensorObj);
     this.$training.set({

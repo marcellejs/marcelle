@@ -26,9 +26,10 @@ function fixSeparableConv2D(artifacts: SpecificModelArtifacts): io.ModelArtifact
   }
   try {
     let removeKernels = false;
-    artifacts.modelTopology.model_config.config.layers.forEach((layer, i) => {
+    for (const [i, layer] of artifacts.modelTopology.model_config.config.layers.entries()) {
       if (layer.class_name === 'SeparableConv2D') {
-        ['kernel_constraint', 'kernel_initializer', 'kernel_regularizer'].forEach((field) => {
+        const fields = ['kernel_constraint', 'kernel_initializer', 'kernel_regularizer'];
+        for (const field of fields) {
           if (
             Object.keys(artifacts.modelTopology.model_config.config.layers[i].config).includes(
               field,
@@ -38,9 +39,9 @@ function fixSeparableConv2D(artifacts: SpecificModelArtifacts): io.ModelArtifact
           }
           // eslint-disable-next-line no-param-reassign
           delete artifacts.modelTopology.model_config.config.layers[i].config[field];
-        });
+        }
       }
-    });
+    }
     if (removeKernels) {
       logger.warning(
         'TFJS Model loading: experimentally removing Kernel attributes from SeparableConv2D layers',

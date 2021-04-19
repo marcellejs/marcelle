@@ -68,9 +68,9 @@ export class Stream<T> {
   private runListeners(value: T) {
     this.value = value;
     this.#hasValue = true;
-    this.subscribers.forEach((listener) => {
+    for (const listener of this.subscribers) {
       listener(value);
-    });
+    }
   }
 
   subscribe(run: (value: T) => void = dummySubscriber, invalidate = noop): () => void {
