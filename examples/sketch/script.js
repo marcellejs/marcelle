@@ -34,7 +34,7 @@ const instances = input.$images
   }))
   .awaitPromises();
 
-const store = dataStore({ location: 'localStorage' });
+const store = dataStore('localStorage');
 const trainingSet = dataset({ name: 'TrainingSet-sketch', dataStore: store });
 
 const labelField = textfield();

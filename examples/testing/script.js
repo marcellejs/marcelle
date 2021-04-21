@@ -33,7 +33,7 @@ const instances = source.$thumbnails.map((thumbnail) => ({
   thumbnail,
 }));
 
-const store = dataStore({ location: 'memory' });
+const store = dataStore('memory');
 const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
 
 const tog = toggle({ text: 'Capture to dataset' });

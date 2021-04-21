@@ -31,10 +31,6 @@ interface User {
   email: string;
 }
 
-export interface DataStoreOptions {
-  location?: string;
-}
-
 export class DataStore {
   readonly isDataStore = true;
 
@@ -53,7 +49,7 @@ export class DataStore {
 
   #createService: (name: string) => void = noop;
 
-  constructor({ location = 'memory' }: DataStoreOptions = {}) {
+  constructor(location = 'memory') {
     this.feathers = feathers();
     this.location = location;
     if (isValidUrl(location)) {
