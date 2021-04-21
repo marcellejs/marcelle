@@ -12,6 +12,7 @@ export * from './core';
 export * from './data-store';
 export { throwError } from './utils/error-handling';
 export { notification } from './ui/util/notification';
+export { LazyIterable } from './utils/lazy-iterable';
 
 // Dashboards & Wizards
 export { dashboard } from './dashboard';
