@@ -11,7 +11,6 @@ export abstract class Module {
   $$: ModuleInternals = {
     streams: [],
     app: undefined,
-    moduleType: 'generic',
   };
 
   abstract mount(target?: HTMLElement): void;

@@ -5,7 +5,6 @@ export interface ModuleInternals {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   streams: Array<Stream<any>>;
   app?: SvelteComponent;
-  readonly moduleType: string;
   [key: string]: unknown;
 }
 

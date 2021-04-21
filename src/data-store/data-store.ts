@@ -32,21 +32,18 @@ interface User {
 }
 
 export class DataStore {
-  readonly isDataStore = true;
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   feathers: feathers.Application<any>;
   requiresAuth = false;
   user: User;
-  location: string;
 
-  #connectPromise: Promise<void>;
-  #authenticationPromise: Promise<void>;
+  backend: DataStoreBackend;
+  location: string;
 
   $services: Stream<string[]> = new Stream([], true);
 
-  backend: DataStoreBackend;
-
+  #connectPromise: Promise<void>;
+  #authenticationPromise: Promise<void>;
   #createService: (name: string) => void = noop;
 
   constructor(location = 'memory') {
