@@ -25,24 +25,32 @@ export class DashboardPage {
   }
 
   mount(): void {
-    this.modules.forEach((m) => {
+    for (const m of this.modules) {
       if (isModuleArray(m)) {
-        m.forEach((n) => n.mount());
+        for (const n of m) {
+          n.mount();
+        }
       } else if (!isTitle(m)) {
         m.mount();
       }
-    });
-    this.modulesLeft.forEach((m) => m.mount());
+    }
+    for (const m of this.modulesLeft) {
+      m.mount();
+    }
   }
 
   destroy(): void {
-    this.modules.forEach((m) => {
+    for (const m of this.modules) {
       if (isModuleArray(m)) {
-        m.forEach((n) => n.destroy());
+        for (const n of m) {
+          n.destroy();
+        }
       } else if (!isTitle(m)) {
         m.destroy();
       }
-    });
-    this.modulesLeft.forEach((m) => m.destroy());
+    }
+    for (const m of this.modulesLeft) {
+      m.destroy();
+    }
   }
 }

@@ -59,9 +59,9 @@ class Route {
   }
 
   run(params: RoutieParams) {
-    this.fns.forEach((fn) => {
+    for (const fn of this.fns) {
       fn.apply(this, params);
-    });
+    }
   }
 
   match(path: string, params: RoutieParams): boolean {

@@ -44,7 +44,7 @@ async function dataSplit(
       validation_x: tensor2d([], [0, 1]),
       validation_y: tensor2d([], [0, nClasses]),
     };
-    labels.forEach((label: string) => {
+    for (const label of labels) {
       const instances = dataset.$classes.value[label];
       const numInstances = instances.length;
       const shuffledIds = shuffleArray(instances);
@@ -53,23 +53,23 @@ async function dataSplit(
       const validationIds = shuffledIds.slice(thresh, numInstances);
       const y = Array(nClasses).fill(0);
       y[labels.indexOf(label)] = 1;
-      trainingIds.forEach((id) => {
+      for (const id of trainingIds) {
         const { features } = allInstances.find((x) => x.id === id) as { features: number[][] };
         if (data.training_x.shape[1] === 0) {
           data.training_x.shape[1] = features[0].length;
         }
         data.training_x = data.training_x.concat(tensor2d(features));
         data.training_y = data.training_y.concat(tensor2d([y]));
-      });
-      validationIds.forEach((id) => {
+      }
+      for (const id of validationIds) {
         const { features } = allInstances.find((x) => x.id === id) as { features: number[][] };
         if (data.validation_x.shape[1] === 0) {
           data.validation_x.shape[1] = features[0].length;
         }
         data.validation_x = data.validation_x.concat(tensor2d(features));
         data.validation_y = data.validation_y.concat(tensor2d([y]));
-      });
-    });
+      }
+    }
     keep(data.training_x);
     keep(data.training_y);
     keep(data.validation_x);
@@ -143,7 +143,7 @@ export class MLP extends TFJSModel<TensorLike, ClassifierResults> {
   buildModel(inputDim: number, numClasses: number): void {
     logger.debug('[MLP] Building a model with layers:', this.parameters.layers);
     this.model = sequential();
-    this.parameters.layers.value.forEach((units, i) => {
+    for (const [i, units] of this.parameters.layers.value.entries()) {
       const layerParams: Parameters<typeof tfLayers.dense>[0] = {
         units,
         activation: 'relu', // potentially add kernel init
@@ -152,7 +152,8 @@ export class MLP extends TFJSModel<TensorLike, ClassifierResults> {
         layerParams.inputDim = inputDim;
       }
       this.model.add(tfLayers.dense(layerParams));
-    });
+    }
+
     this.model.add(
       tfLayers.dense({
         units: numClasses,

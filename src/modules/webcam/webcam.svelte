@@ -4,6 +4,7 @@
   import ModuleBase from '../../core/ModuleBase.svelte';
   import Spinner from '../../ui/widgets/Spinner.svelte';
   import Switch from '../../ui/widgets/Switch.svelte';
+  import { noop } from '../../utils/misc';
 
   export let title: string;
   export let width: number;
@@ -15,7 +16,7 @@
   let videoElement: HTMLVideoElement;
   let webcamContainerWidth;
 
-  let unSub = () => {};
+  let unSub = noop;
   onMount(async () => {
     await tick();
     await tick();

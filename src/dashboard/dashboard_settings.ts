@@ -13,6 +13,7 @@ export class DashboardSettings {
   name = 'settings';
   modules: Array<Module | Module[] | string> = [];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   xModels: Model<any, any>[] = [];
   xDatasets: Dataset[] = [];
   xPredictions: BatchPrediction[] = [];
@@ -28,6 +29,7 @@ export class DashboardSettings {
     return this;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   models(...models: Model<any, any>[]): DashboardSettings {
     this.xModels = models;
     return this;
@@ -44,22 +46,26 @@ export class DashboardSettings {
   }
 
   mount(): void {
-    this.modules.forEach((m) => {
+    for (const m of this.modules) {
       if (isModuleArray(m)) {
-        m.forEach((n) => n.mount());
+        for (const n of m) {
+          n.mount();
+        }
       } else if (!isTitle(m)) {
         m.mount();
       }
-    });
+    }
   }
 
   destroy(): void {
-    this.modules.forEach((m) => {
+    for (const m of this.modules) {
       if (isModuleArray(m)) {
-        m.forEach((n) => n.destroy());
+        for (const n of m) {
+          n.destroy();
+        }
       } else if (!isTitle(m)) {
         m.destroy();
       }
-    });
+    }
   }
 }

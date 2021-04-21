@@ -44,7 +44,7 @@ export class OnnxImageClassifier extends Model<ImageData, ClassifierResults> {
   normalization: OnnxImageClassifierOptions['normalization'];
   applySoftmax: boolean;
   topK: number;
-  modelName: string = '';
+  modelName = '';
   labels: string[];
 
   #session: InferenceSession;
@@ -180,7 +180,7 @@ export class OnnxImageClassifier extends Model<ImageData, ClassifierResults> {
   }
 
   @Catch
-  async loadModel(source: string | ArrayBuffer, modelName: string) {
+  async loadModel(source: string | ArrayBuffer, modelName: string): Promise<void> {
     this.#session = new InferenceSession();
     await this.#session.loadModel(source as string);
     this.modelName = modelName;
@@ -199,9 +199,10 @@ export class OnnxImageClassifier extends Model<ImageData, ClassifierResults> {
   }
 
   @Catch
-  async detectInputShape() {
+  async detectInputShape(): Promise<void> {
     if (!this.#autoDetectShape) return;
     logger.log('Detecting input shape from model...');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const expectedDims = (this.#session as any).session._model._graph._allData[0].type.shape.dims;
     if (expectedDims.length === 4) {
       if (expectedDims[3] < 5) {

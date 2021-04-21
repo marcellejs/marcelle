@@ -17,6 +17,7 @@ import { readJSONFile, saveBlob } from '../../utils/file-io';
 import { throwError } from '../../utils/error-handling';
 import { toKebabCase } from '../../utils/string';
 import { preventConcurrentCalls } from '../../utils/asynchronicity';
+import { noop } from '../../utils/misc';
 
 export interface DatasetOptions {
   name: string;
@@ -34,13 +35,13 @@ interface DatasetInfo {
 interface DatasetChange {
   level: 'instance' | 'class' | 'dataset';
   type: 'created' | 'updated' | 'deleted' | 'renamed';
-  data?: any;
+  data?: unknown;
 }
 
 export class Dataset extends Module {
   title = 'dataset';
 
-  #unsubscribe: () => void = () => {};
+  #unsubscribe: () => void = noop;
   #dataStore: DataStore;
 
   instanceService: Service<Instance>;
@@ -149,7 +150,7 @@ export class Dataset extends Module {
     this.watchChanges();
   }
 
-  watchChanges() {
+  watchChanges(): void {
     const cb = (x: DatasetInfo) => {
       if (x.id === this.#datasetId) {
         this.updateState(x);
@@ -159,7 +160,7 @@ export class Dataset extends Module {
     this.datasetService.on('patched', cb);
   }
 
-  updateState(x: DatasetInfo) {
+  updateState(x: DatasetInfo): void {
     if (dequal(x, this.#datasetState)) return;
     const changes: DatasetChange[] = [];
     if (!dequal(x.labels, this.#datasetState.labels)) {
@@ -179,20 +180,20 @@ export class Dataset extends Module {
           },
         });
       } else {
-        labelsCreated.forEach((newLabel) => {
+        for (const newLabel of labelsCreated) {
           changes.push({
             level: 'class',
             type: 'created',
             data: newLabel,
           });
-        });
-        labelsDeleted.forEach((deletedLabel) => {
+        }
+        for (const deletedLabel of labelsDeleted) {
           changes.push({
             level: 'class',
             type: 'deleted',
             data: deletedLabel,
           });
-        });
+        }
       }
       this.$labels.set(x.labels);
     }
@@ -210,33 +211,33 @@ export class Dataset extends Module {
         (y) => !newInstances.map((z) => z.id).includes(y.id),
       );
       const instancesRenamed: { id: ObjectId; label: string }[] = [];
-      newInstances.forEach(({ id, label }) => {
+      for (const { id, label } of newInstances) {
         const oldIdx = oldInstances.map((z) => z.id).indexOf(id);
         if (oldIdx >= 0 && label !== oldInstances[oldIdx].label) {
           instancesRenamed.push({ id, label });
         }
-      });
-      instancesCreated.forEach((data) => {
+      }
+      for (const data of instancesCreated) {
         changes.push({
           level: 'instance',
           type: 'created',
           data,
         });
-      });
-      instancesDeleted.forEach(({ id }) => {
+      }
+      for (const { id } of instancesDeleted) {
         changes.push({
           level: 'instance',
           type: 'deleted',
           data: id,
         });
-      });
-      instancesRenamed.forEach((data) => {
+      }
+      for (const data of instancesRenamed) {
         changes.push({
           level: 'instance',
           type: 'renamed',
           data,
         });
-      });
+      }
       this.$instances.set(instancesCreated.map(({ id }) => id));
       this.$count.set(x.count);
     }
@@ -248,7 +249,7 @@ export class Dataset extends Module {
   capture(instanceStream: Stream<Instance>): void {
     this.#unsubscribe();
     if (!instanceStream) {
-      this.#unsubscribe = () => {};
+      this.#unsubscribe = noop;
       return;
     }
     this.#unsubscribe = instanceStream.subscribe((instance: Instance) => {
@@ -264,25 +265,35 @@ export class Dataset extends Module {
     return this.instanceService.get(id, opts);
   }
 
-  async getAllInstances(fields: string[] = undefined): Promise<Instance[]> {
+  async getAllInstances(
+    fields: string[] = undefined,
+    query: FeathersParams['query'] = {},
+  ): Promise<Instance[]> {
     const baseQuery: FeathersParams['query'] = {
+      ...query,
       $limit: 30,
     };
     if (fields) {
       baseQuery.$select = fields;
     }
-    const results = (await Promise.all(
-      Array.from(Array(Math.ceil(this.$count.value / 30)), (_, i) => {
-        const query = { ...baseQuery, $skip: i * 30 };
-        return this.instanceService.find({ query });
-      }),
-    )) as Paginated<Instance>[];
-    const allInstances = results.map(({ data }) => data).flat();
+    const numBatches = Math.ceil(this.$count.value / baseQuery.$limit);
+    const queries = Array.from(Array(numBatches), (_, i) => ({
+      ...baseQuery,
+      $skip: i * 30,
+    }));
+    // const allInstances = ((await Promise.all(
+    //   queries.map((query) => this.instanceService.find({ query })),
+    // )) as Paginated<Instance>[]).map(({ data }) => data).flat;
+    let allInstances: Instance[] = [];
+    for (const q of queries) {
+      const { data } = (await this.instanceService.find({ query: q })) as Paginated<Instance>;
+      allInstances = allInstances.concat(data);
+    }
     return allInstances;
   }
 
   @preventConcurrentCalls('statePromise')
-  async addInstance(instance: Instance) {
+  async addInstance(instance: Instance): Promise<void> {
     if (!instance) return;
     const ds = cloneDeep(this.#datasetState);
     const { id } = await this.instanceService.create(instance);
@@ -340,9 +351,10 @@ export class Dataset extends Module {
     const ds = cloneDeep(this.#datasetState);
     const { classes } = ds;
     if (!Object.keys(classes).includes(label)) return;
-    await Promise.all(
-      classes[label].map((id) => this.instanceService.patch(id, { label: newLabel })),
+    const patchPromises = classes[label].map((id) =>
+      this.instanceService.patch(id, { label: newLabel }),
     );
+    await Promise.all(patchPromises);
     if (Object.keys(classes).includes(newLabel)) {
       classes[newLabel] = classes[newLabel].concat(classes[label]);
     } else {
@@ -391,23 +403,25 @@ export class Dataset extends Module {
 
   // eslint-disable-next-line class-methods-use-this
   async upload(files: File[]): Promise<void> {
-    const jsonFiles = await Promise.all(
-      files.filter((f) => f.type === 'application/json').map((f) => readJSONFile(f)),
+    const filePromises = files
+      .filter((f) => f.type === 'application/json')
+      .map((f) => readJSONFile(f));
+    const jsonFiles = await Promise.all(filePromises);
+    const addPromises = jsonFiles.map((fileContent: { instances: Instance[] }) =>
+      fileContent.instances.map((instance: Instance) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, ...instanceNoId } = instance;
+        return this.addInstance(instanceNoId).catch((e) => {
+          throwError(e);
+        });
+      }),
     );
-    await Promise.all(
-      jsonFiles.map((fileContent: { instances: Instance[] }) =>
-        fileContent.instances.map((instance: Instance) => {
-          const { id, ...instanceNoId } = instance;
-          return this.addInstance(instanceNoId).catch((e) => {
-            throwError(e);
-          });
-        }),
-      ),
-    );
+    await Promise.all(addPromises);
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  mount(): void {}
+  mount(): void {
+    // Nothing to show
+  }
 
   stop(): void {
     super.stop();

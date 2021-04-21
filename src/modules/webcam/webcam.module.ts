@@ -2,6 +2,7 @@ import { never } from '@most/core';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import { throwError } from '../../utils/error-handling';
+import { noop } from '../../utils/misc';
 import Component from './webcam.svelte';
 
 function requestInterval(fn: () => void, delay: number) {
@@ -50,8 +51,8 @@ export class Webcam extends Module {
   #webcamHeight: number;
   #videoElement = document.createElement('video');
   #thumbnailWidth = 80;
-  #unsubActive = (): void => {};
-  #stopStreaming = (): void => {};
+  #unsubActive = noop;
+  #stopStreaming = noop;
   #thumbnailCanvas: HTMLCanvasElement;
   #thumbnailCtx: CanvasRenderingContext2D;
   #captureCanvas: HTMLCanvasElement;
@@ -103,9 +104,9 @@ export class Webcam extends Module {
     this.#stopStreaming();
     this.#unsubActive();
     if (this.$mediastream.value) {
-      this.$mediastream.value.getTracks().forEach((track) => {
+      for (const track of this.$mediastream.value.getTracks()) {
         track.stop();
-      });
+      }
     }
   }
 
@@ -144,10 +145,11 @@ export class Webcam extends Module {
   stopCamera(): void {
     if (this.$mediastream.value) {
       const tracks = this.$mediastream.value.getTracks();
-      tracks.forEach((track) => {
+      for (const track of tracks) {
         track.stop();
         this.#videoElement.srcObject = null;
-      });
+      }
+
       this.$ready.set(false);
     }
   }

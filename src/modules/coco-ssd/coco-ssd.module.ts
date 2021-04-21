@@ -36,8 +36,8 @@ export class CocoSsd extends Model<ImageData, ObjectDetectorResults> {
         await io.removeModel(cachedCoco[0]);
       }
       this.#coco = await load({ base: this.#base });
-      // @ts-ignore
-      await this.#coco.model.save(`indexeddb://cocossd-${this.#base}`);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (this.#coco as any).model.save(`indexeddb://cocossd-${this.#base}`);
     }
     logger.info('COCO-SSD loaded with base `lite_mobilenet_v2`');
     this.$loading.set(false);

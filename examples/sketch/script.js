@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import '../../dist/marcelle.css';
 import {
   datasetBrowser,
@@ -15,7 +14,7 @@ import {
   sketchpad,
   textfield,
   trainingPlot,
-} from '../../dist/marcelle.esm.js';
+} from '../../dist/marcelle.esm';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
