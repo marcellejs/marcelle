@@ -33,7 +33,11 @@ export function renameIdField(context: HookContext): HookContext {
       context.params.query._id = context.params.query.id;
       delete context.params.query.id;
     }
-    if (params.query.$select && params.query.$select.includes('id')) {
+    if (
+      params.query.$select &&
+      params.query.$select.includes('id') &&
+      !params.query.$select.includes('_id')
+    ) {
       context.params.query.$select.push('_id');
     }
   }
