@@ -112,6 +112,8 @@ module.exports = {
     // 'no-use-before-define': ['error', { functions: true, classes: true, variables: true }],
     'no-use-before-define': 'off',
     '@typescript-eslint/no-use-before-define': ['error'],
+    'no-redeclare': 'off',
+    '@typescript-eslint/no-redeclare': ['error'],
     // Style
     semi: ['error', 'always'],
     // ES6
