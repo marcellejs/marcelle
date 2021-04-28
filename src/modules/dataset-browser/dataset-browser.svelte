@@ -4,7 +4,7 @@
   import type { Instance, ObjectId, Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
   import PopMenu from '../../ui/widgets/PopMenu.svelte';
-  import type { Dataset } from '../dataset';
+  import type { Dataset } from '../../dataset';
 
   export let title: string;
   export let count: Stream<number>;
@@ -22,7 +22,11 @@
     loading = true;
     classes = [];
     for (const label of Object.keys(dataset.$classes.value)) {
-      const instances = await dataset.getAllInstances(['thumbnail'], { label });
+      const instances = await dataset
+        .items()
+        .query({ label })
+        .select(['id', 'thumbnail'])
+        .toArray();
       classes = classes.concat([{ label, instances }]);
     }
     loading = false;
@@ -38,20 +42,20 @@
   }
 
   async function deleteSelectedInstances() {
-    let p = Promise.resolve();
+    let p: Promise<unknown> = Promise.resolve();
     for (const id of selected.value) {
       // eslint-disable-next-line no-loop-func
-      p = p.then(() => dataset.deleteInstance(id));
+      p = p.then(() => dataset.remove(id));
     }
     await p;
     selected.set([]);
   }
 
   async function relabelSelectedInstances(newLabel: string) {
-    let p = Promise.resolve();
+    let p: Promise<unknown> = Promise.resolve();
     for (const id of selected.value) {
       // eslint-disable-next-line no-loop-func
-      p = p.then(() => dataset.changeInstanceLabel(id, newLabel));
+      p = p.then(() => dataset.patch(id, { label: newLabel }));
     }
     await p;
     selected.set([]);
@@ -149,40 +153,15 @@
           if (type === 'created') {
             updateClassesFromDataset();
           }
-        } else if (level === 'class') {
-          if (type === 'renamed') {
-            const srcIdx = classes.map(({ label }) => label).indexOf(data.srcLabel);
-            const dstIdx = classes.map(({ label }) => label).indexOf(data.label);
-            if (dstIdx >= 0) {
-              classes[dstIdx].instances = classes[dstIdx].instances.concat(
-                classes[srcIdx].instances,
-              );
-              classes.splice(srcIdx, 1);
-              classes = classes;
-            } else {
-              classes[srcIdx].label = data.label;
-            }
-          } else if (type === 'deleted') {
-            const classIdx = classes.map(({ label }) => label).indexOf(data);
-            if (classIdx >= 0) {
-              classes.splice(classIdx, 1);
-              classes = classes;
-            }
-          } else if (type === 'created') {
-            classes = classes.concat({ label: data, instances: [] });
-          }
-        } else {
+        } else if (level === 'instance') {
           if (type === 'created') {
-            const instance = await dataset.instanceService.get(data.id, {
-              query: { $select: ['thumbnail'] },
-            });
             const classIdx = classes.map(({ label }) => label).indexOf(data.label);
             if (classIdx >= 0) {
-              classes[classIdx].instances = classes[classIdx].instances.concat([instance]);
+              classes[classIdx].instances = classes[classIdx].instances.concat([data]);
             } else {
-              classes = classes.concat([{ label: data.label, instances: [instance] }]);
+              classes = classes.concat([{ label: data.label, instances: [data] }]);
             }
-          } else if (type === 'deleted') {
+          } else if (type === 'removed') {
             const classIdx = classes.map(({ label }) => label).indexOf(getLabel(data));
             if (classIdx >= 0) {
               classes[classIdx].instances = classes[classIdx].instances.filter(
@@ -198,15 +177,13 @@
             }
             const newClassIdx = classes.map(({ label }) => label).indexOf(data.label);
             if (newClassIdx >= 0) {
-              const instance = await dataset.instanceService.get(data.id, {
-                query: { $select: ['thumbnail'] },
-              });
-              classes[newClassIdx].instances = classes[newClassIdx].instances.concat([instance]);
+              classes[newClassIdx].instances = classes[newClassIdx].instances.concat([data]);
             } else {
-              throw new Error('An unexpected error occurred');
+              classes = classes.concat([{ label: data.label, instances: [data] }]);
             }
           }
         }
+        classes = classes.filter((x) => x.instances.length > 0);
       }
     });
   });

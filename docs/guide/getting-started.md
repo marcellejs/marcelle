@@ -202,8 +202,8 @@ We now create a dataset that can be used to train a classifier. A dataset requir
 Once the datastore has been instanciated, we declare a marcelle [dataset](../api/modules/data.html#dataset) with a given name and a given datastore. The dataset has a `capture` method to store an incoming stream of instances. In Marcelle, these three steps can be done as such:
 
 ```js
-const store = marcelle.dataStore({ location: 'localStorage' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
+const store = marcelle.dataStore('localStorage');
+const trainingSet = marcelle.dataset('TrainingSet', store);
 trainingSet.capture(instances);
 ```
 
@@ -351,8 +351,8 @@ const instances = capture.$click
   }))
   .awaitPromises();
 
-const store = marcelle.dataStore({ location: 'localStorage' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
+const store = marcelle.dataStore('localStorage');
+const trainingSet = marcelle.dataset('TrainingSet', store);
 trainingSet.capture(instances);
 
 const trainingSetBrowser = marcelle.datasetBrowser(trainingSet);

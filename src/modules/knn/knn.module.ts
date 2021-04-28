@@ -1,7 +1,7 @@
 import { tensor, tensor2d, Tensor2D, TensorLike } from '@tensorflow/tfjs-core';
 import { KNNClassifier } from '@tensorflow-models/knn-classifier';
 import { Stream, Model, ClassifierResults, StoredModel, ObjectId, ModelOptions } from '../../core';
-import { Dataset } from '../dataset/dataset.module';
+import { Dataset } from '../../dataset';
 import { Catch } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
@@ -63,7 +63,11 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
   }
 
   async activateClass(dataset: Dataset, label: string, inputField = 'features'): Promise<void> {
-    const allInstances = await dataset.getAllInstances(['id', inputField], { label });
+    const allInstances = await dataset
+      .items()
+      .query({ label })
+      .select(['id', inputField])
+      .toArray();
     for (const id of dataset.$classes.value[label]) {
       const instance = allInstances.find((x) => x.id === id) as {
         [inputField: string]: number[][];

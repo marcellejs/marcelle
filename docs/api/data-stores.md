@@ -14,7 +14,7 @@ We use the [Feathers](https://feathersjs.com/) framework to facilitate the creat
 The following factory function creates and returns a Marcelle data store:
 
 ```tsx
-dataStore({ location: string }): DataStore
+dataStore(location: string): DataStore
 ```
 
 The `location` argument can either be:

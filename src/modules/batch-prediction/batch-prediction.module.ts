@@ -10,7 +10,7 @@ import {
   imageData2DataURL,
   dataURL2ImageData,
 } from '../../data-store/hooks';
-import { Dataset } from '../dataset';
+import { Dataset } from '../../dataset';
 import { MLP } from '../mlp';
 import { logger } from '../../core';
 import { readJSONFile, saveBlob } from '../../utils/file-io';
@@ -75,7 +75,7 @@ export class BatchPrediction extends Module {
   }
 
   async predict(model: MLP, dataset: Dataset, inputField = 'features'): Promise<void> {
-    const data = await dataset.getAllInstances(['id', inputField, 'label']);
+    const data = await dataset.items().select(['id', inputField, 'label']).toArray();
     const predictionIds = await Promise.all(
       data.map(({ id, [inputField]: features, label }) =>
         model

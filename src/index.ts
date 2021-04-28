@@ -10,6 +10,7 @@ import './ui/style/styles.css';
 // Core library
 export * from './core';
 export * from './data-store';
+export * from './dataset';
 export { throwError } from './utils/error-handling';
 export { notification } from './ui/util/notification';
 export { LazyIterable } from './utils/lazy-iterable';

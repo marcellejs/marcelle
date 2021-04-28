@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { Paginated, Service } from '@feathersjs/feathers';
-import type { Dataset } from '../../modules/dataset';
+import type { Dataset } from '../../dataset';
 import type { ObjectId, Parametrable, StoredModel, TrainingStatus } from '../types';
 import { Stream } from '../stream';
 import { DataStore } from '../../data-store';

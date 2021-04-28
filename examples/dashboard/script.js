@@ -43,7 +43,7 @@ const instances = input.$images
   .awaitPromises();
 
 const store = dataStore('localStorage');
-const trainingSet = dataset({ name: 'TrainingSet-dashboard', dataStore: store });
+const trainingSet = dataset('TrainingSet-dashboard', store);
 trainingSet.capture(instances);
 
 const trainingSetBrowser = datasetBrowser(trainingSet);

@@ -45,7 +45,7 @@ const instances = input.$images
   .awaitPromises();
 
 const store = dataStore('localStorage');
-const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
+const trainingSet = dataset('TrainingSet-move2audio', store);
 trainingSet.capture(instances);
 
 const trainingSetBrowser = datasetBrowser(trainingSet);
@@ -117,10 +117,10 @@ const wizardText = text({ text: 'Waiting for examples...' });
 wizardButton.$down.subscribe((x) => {
   capture.$down.set(x);
 });
-trainingSet.$countPerClass.subscribe((c) => {
+trainingSet.$classes.subscribe((c) => {
   if (!c) return;
   const label = labelInput.$text.value;
-  const numExamples = c[label];
+  const numExamples = (c[label] || []).length;
   wizardText.$text.set(
     numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
   );
@@ -151,10 +151,10 @@ wiz
   .use([input, plotResults]);
 
 function configureWizard(label) {
-  if (!trainingSet.$countPerClass.value) return;
+  if (!trainingSet.$classes.value) return;
   labelInput.$text.set(label);
   wizardButton.$text.set(`Record Examples (class ${label})`);
-  const numExamples = trainingSet.$countPerClass.value[label];
+  const numExamples = (trainingSet.$classes.value[label] || []).length;
   wizardText.$text.set(
     numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
   );
@@ -217,18 +217,15 @@ predictionStream.subscribe(async ({ label, confidences }) => {
     d.innerText = `predicted label: ${label}`;
     if (label === 'A') {
       resultImg.src = 'https://media.giphy.com/media/M9gPbRZTWqZP2/giphy.gif';
-      // resultImg.src = 'https://media.giphy.com/media/vVzH2XY3Y0Ar6/giphy.gif';
     } else if (label === 'B') {
       resultImg.src = 'https://media.giphy.com/media/i6JLRbk4f2gIU/giphy.gif';
-      // resultImg.src = 'https://media.giphy.com/media/IhvYFmzVNHgCQ/giphy.gif';
     } else {
       resultImg.src = 'https://media.giphy.com/media/hWpgTWoWkqi2NmFeks/giphy.gif';
-      // resultImg.src = 'https://media.giphy.com/media/sphmLQaP0wAdG/giphy.gif';
     }
     PrevLabel = label;
   }
-  for (const [i, x] of Object.values(confidences).entries()) {
-    sounds[i].volume(x);
+  for (const [i, x] of ['A', 'B', 'C'].entries()) {
+    sounds[i].volume(confidences[x] || 0);
   }
 });
 

@@ -71,8 +71,8 @@ const instances = input.$images
   )
   .awaitPromises();
 
-const store = dataStore({ location: 'localStorage' });
-const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
+const store = dataStore('localStorage' );
+const trainingSet = dataset('TrainingSet', store);
 trainingSet.capture(instances);
 
 const trainingSetBrowser = datasetBrowser(trainingSet);

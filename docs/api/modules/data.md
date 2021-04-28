@@ -7,7 +7,7 @@ sidebarDepth: 1
 ## Dataset
 
 ```tsx
-marcelle.dataset({ name: string, dataStore?: DataStore }): Dataset;
+marcelle.dataset(name: string, dataStore?: DataStore): Dataset;
 ```
 
 A Dataset module allowing for capturing instances from a stream, storing them in a local or remote [data-store](/api/data-stores.html).
@@ -43,8 +43,8 @@ interface DatasetChange {
 ### Example
 
 ```js
-const store = marcelle.dataStore({ location: 'localStorage' });
-const trainingSet = marcelle.dataset({ name: 'TrainingSet', dataStore: store });
+const store = marcelle.dataStore('localStorage');
+const trainingSet = marcelle.dataset('TrainingSet', store);
 trainingSet.capture($instances); // Capture a Stream of instances
 ```
 

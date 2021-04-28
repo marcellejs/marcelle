@@ -44,7 +44,7 @@ const instances = input.$images
   .awaitPromises();
 
 const store = dataStore('localStorage');
-const trainingSet = dataset({ name: 'TrainingSet-wizard', dataStore: store });
+const trainingSet = dataset('TrainingSet-wizard', store);
 trainingSet.capture(instances);
 
 const trainingSetBrowser = datasetBrowser(trainingSet);
@@ -121,9 +121,9 @@ const wizardText = text({ text: 'Waiting for examples...' });
 wizardButton.$down.subscribe((x) => {
   capture.$down.set(x);
 });
-trainingSet.$countPerClass.subscribe((c) => {
+trainingSet.$classes.subscribe((c) => {
   const label = labelInput.$text.value;
-  const numExamples = c[label];
+  const numExamples = (c[label] || []).length;
   wizardText.$text.set(
     numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
   );
@@ -152,7 +152,7 @@ wiz
 function configureWizard(label) {
   labelInput.$text.set(label);
   wizardButton.$text.set(`Record Examples (class ${label})`);
-  const numExamples = trainingSet.$countPerClass.value[label];
+  const numExamples = (trainingSet.$classes.value[label] || []).length;
   wizardText.$text.set(
     numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
   );

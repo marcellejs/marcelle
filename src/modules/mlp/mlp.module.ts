@@ -6,7 +6,7 @@ import {
   Sequential,
 } from '@tensorflow/tfjs-layers';
 import { Stream, logger, ClassifierResults, TFJSModelOptions, TFJSModel } from '../../core';
-import { Dataset } from '../dataset/dataset.module';
+import { Dataset } from '../../dataset';
 import { Catch, TrainingError } from '../../utils/error-handling';
 
 interface TrainingData {
@@ -32,7 +32,7 @@ async function dataSplit(
   trainProportion: number,
   numClasses = -1,
 ): Promise<TrainingData> {
-  const allInstances = await dataset.getAllInstances(['id', 'features', 'label']);
+  const allInstances = await dataset.items().select(['id', 'features', 'label']).toArray();
 
   let data: TrainingData;
   tidy(() => {

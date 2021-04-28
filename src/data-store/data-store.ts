@@ -69,6 +69,7 @@ export class DataStore {
           storage: window.localStorage,
           name,
           id: '_id',
+          multi: true,
           paginate: {
             default: 100,
             max: 200,

@@ -1,6 +1,7 @@
 import type { Model, Module } from '../core';
 import { DataStore } from '../data-store';
-import { BatchPrediction, Dataset } from '../modules';
+import { Dataset } from '../dataset';
+import { BatchPrediction } from '../modules';
 
 function isTitle(x: Module | Module[] | string): x is string {
   return typeof x === 'string';
