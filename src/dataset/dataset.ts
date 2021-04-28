@@ -199,12 +199,12 @@ export class Dataset extends Module {
     await this.patch(null, { label: newLabel }, { query: { label } });
   }
 
-  async deleteClass(label: string): Promise<void> {
+  async removeClass(label: string): Promise<void> {
     await this.remove(null, { query: { label } });
   }
 
   async clear(): Promise<void> {
-    await Promise.all(this.$labels.value.map((label) => this.deleteClass(label)));
+    await Promise.all(this.$labels.value.map((label) => this.removeClass(label)));
   }
 
   async download(): Promise<void> {

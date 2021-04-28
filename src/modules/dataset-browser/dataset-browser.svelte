@@ -122,7 +122,7 @@
         break;
 
       case 'delete':
-        dataset.deleteClass(label);
+        dataset.removeClass(label);
         break;
 
       case 'deleteInstances':
