@@ -162,6 +162,12 @@ export class Dataset<InputType, OutputType> extends Module {
     await this.remove(null, { query: {} });
   }
 
+  async distinct(field: string): Promise<OutputType[]> {
+    return (this.instanceService.find({ query: { $distinct: field } }) as Promise<[]>) as Promise<
+      OutputType[]
+    >;
+  }
+
   async download(): Promise<void> {
     const instances = await this.instanceService.find();
     const fileContents = {
