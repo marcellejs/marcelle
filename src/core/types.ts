@@ -17,13 +17,11 @@ export interface Parametrable {
 
 export type ObjectId = string;
 
-export interface Instance {
+export interface Instance<InputType, OutputType> {
   id?: ObjectId;
-  label: string;
-  data: unknown;
+  x: InputType;
+  y: OutputType;
   thumbnail?: string;
-  features?: number[][];
-  type?: string;
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 

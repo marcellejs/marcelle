@@ -11,8 +11,7 @@ import {
   dataURL2ImageData,
 } from '../../data-store/hooks';
 import { Dataset } from '../../dataset';
-import { MLP } from '../mlp';
-import { logger } from '../../core';
+import { logger, Model } from '../../core';
 import { readJSONFile, saveBlob } from '../../utils/file-io';
 import { throwError } from '../../utils/error-handling';
 
@@ -74,15 +73,15 @@ export class BatchPrediction extends Module {
     this.$predictions.set(data.map((x) => x.id));
   }
 
-  async predict(model: MLP, dataset: Dataset, inputField = 'features'): Promise<void> {
-    const data = await dataset.items().select(['id', inputField, 'label']).toArray();
+  async predict<T, U>(model: Model<T, U>, dataset: Dataset<T, string>): Promise<void> {
+    const data = await dataset.items().select(['id', 'x', 'y']).toArray();
     const predictionIds = await Promise.all(
-      data.map(({ id, [inputField]: features, label }) =>
+      data.map(({ id, x, y }) =>
         model
-          .predict(features)
+          .predict(x)
           .then((prediction) =>
             this.predictionService.create(
-              { ...prediction, instanceId: id, trueLabel: label },
+              { ...prediction, instanceId: id, trueLabel: y },
               { query: { $select: ['id'] } },
             ),
           ),

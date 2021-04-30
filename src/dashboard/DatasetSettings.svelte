@@ -1,14 +1,13 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
 
-  import type { Dataset } from '../modules/dataset';
+  import type { Dataset } from '../dataset';
 
-  export let dataset: Dataset;
+  export let dataset: Dataset<unknown, unknown>;
 
   let uploadInput: HTMLInputElement;
 
   $: count = dataset.$count;
-  $: classes = dataset.$classes;
 
   function downloadDataset() {
     dataset.download();
@@ -39,13 +38,10 @@
 <span class="card-title">{dataset.title}</span>
 <p class="pb-2">
   {#if $count}
-    This dataset contains
-    {$count}
-    instance{$count ? 's' : ''}
-    from
-    {Object.keys($classes).length}
-    classe{Object.keys($classes).length ? 's' : ''}.
-  {:else}This dataset is empty{/if}
+    This dataset contains {$count} instance{$count ? 's' : ''}.
+  {:else}
+    This dataset is empty
+  {/if}
 </p>
 <div class="flex">
   {#if $count}<button class="btn" on:click={downloadDataset}>Download Dataset</button>{/if}

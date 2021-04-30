@@ -32,22 +32,19 @@ label.title = 'Instance label';
 const capture = button({ text: 'Hold to record instances' });
 capture.title = 'Capture instances to the training set';
 
-const instances = input.$images
-  .filter(() => capture.$down.value)
-  .map(async (img) => ({
-    type: 'image',
-    data: img,
-    label: label.$text.value,
-    thumbnail: input.$thumbnails.value,
-    features: await featureExtractor.process(img),
-  }))
-  .awaitPromises();
-
 const store = dataStore('localStorage');
 const trainingSet = dataset('TrainingSet-dashboard', store);
-trainingSet.capture(instances);
-
 const trainingSetBrowser = datasetBrowser(trainingSet);
+
+input.$images
+  .filter(() => capture.$down.value)
+  .map(async (img) => ({
+    x: await featureExtractor.process(img),
+    thumbnail: input.$thumbnails.value,
+    y: label.$text.value,
+  }))
+  .awaitPromises()
+  .subscribe(trainingSet.create.bind(trainingSet));
 
 // -----------------------------------------------------------
 // TRAINING

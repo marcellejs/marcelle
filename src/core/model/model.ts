@@ -36,7 +36,7 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
     });
   }
 
-  abstract train(dataset: Dataset): void;
+  abstract train(dataset: Dataset<InputType, unknown>): void;
   abstract predict(x: InputType): Promise<OutputType>;
 
   abstract save(

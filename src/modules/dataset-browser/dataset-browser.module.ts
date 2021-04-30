@@ -3,13 +3,13 @@ import Component from './dataset-browser.svelte';
 import type { Dataset } from '../../dataset';
 import { ObjectId, Stream } from '../../core';
 
-export class DatasetBrowser extends Module {
+export class DatasetBrowser<InputType> extends Module {
   title = 'dataset browser';
 
-  #dataset: Dataset;
+  #dataset: Dataset<InputType, string>;
   $selected: Stream<ObjectId[]> = new Stream([], true);
 
-  constructor(dataset: Dataset) {
+  constructor(dataset: Dataset<InputType, string>) {
     super();
     this.#dataset = dataset;
     this.start();
@@ -24,7 +24,6 @@ export class DatasetBrowser extends Module {
       props: {
         title: this.title,
         count: this.#dataset.$count,
-        classes: this.#dataset.$classes,
         dataset: this.#dataset,
         selected: this.$selected,
       },
