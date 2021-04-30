@@ -4,7 +4,7 @@ import feathers, { Service } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio-client';
 import memoryService from 'feathers-memory';
 import localStorageService from 'feathers-localstorage';
-import { addObjectId, renameIdField, createDate, updateDate } from './hooks';
+import { addObjectId, renameIdField, createDate, updateDate, findDistinct } from './hooks';
 import { logger } from '../core/logger';
 import Login from './Login.svelte';
 import { throwError } from '../utils/error-handling';
@@ -188,10 +188,11 @@ export class DataStore {
 
   setupAppHooks(): void {
     const beforeCreate = this.backend !== DataStoreBackend.Remote ? [addObjectId] : [];
+    const findDistinctHook = this.backend !== DataStoreBackend.Remote ? [findDistinct] : [];
     this.feathers.hooks({
       before: {
-        find: [renameIdField],
-        create: beforeCreate.concat([createDate]),
+        find: [...findDistinctHook, renameIdField],
+        create: [...beforeCreate, createDate],
         update: [updateDate],
         patch: [updateDate],
       },

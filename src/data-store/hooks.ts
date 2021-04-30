@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { HookContext } from '@feathersjs/feathers';
+import { HookContext, Paginated } from '@feathersjs/feathers';
 import genId from './objectid';
 import { convertURIToImageData } from '../utils/image';
 
@@ -127,6 +127,25 @@ export async function dataURL2ImageData(context: HookContext): Promise<HookConte
       }
     }
   }
+
+  return context;
+}
+
+export async function findDistinct(context: HookContext): Promise<HookContext> {
+  if (!context.params?.query?.$distinct || context.type !== 'before' || context.method !== 'find') {
+    return context;
+  }
+  const { $distinct, ...query } = context.params.query;
+
+  query.$select = [$distinct];
+  query.$limit = 0;
+  const { total } = (await await context.service.find({ query })) as Paginated<
+    Record<string, unknown>
+  >;
+  query.$limit = total;
+  const { data } = (await context.service.find({ query })) as Paginated<Record<string, unknown>>;
+  const res = Array.from(new Set(data.map((item) => item[$distinct])));
+  context.result = res;
 
   return context;
 }
