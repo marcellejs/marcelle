@@ -123,6 +123,10 @@ export class Dataset<InputType, OutputType> extends Module {
     return iterableFromService(this.instanceService);
   }
 
+  async find(params?: FeathersParams): Promise<Paginated<Instance<InputType, OutputType>>> {
+    return this.instanceService.find(params) as Promise<Paginated<Instance<InputType, OutputType>>>;
+  }
+
   async get(id: ObjectId, params?: FeathersParams): Promise<Instance<InputType, OutputType>> {
     return this.instanceService.get(id, params);
   }
@@ -134,7 +138,7 @@ export class Dataset<InputType, OutputType> extends Module {
     return this.instanceService.create(instance, params);
   }
 
-  update(
+  async update(
     id: ObjectId,
     instance: Instance<InputType, OutputType>,
     params?: FeathersParams,
@@ -142,7 +146,7 @@ export class Dataset<InputType, OutputType> extends Module {
     return this.instanceService.update(id, instance, params);
   }
 
-  patch(
+  async patch(
     id: ObjectId,
     changes: Partial<Instance<InputType, OutputType>>,
     params?: FeathersParams,
@@ -150,7 +154,7 @@ export class Dataset<InputType, OutputType> extends Module {
     return this.instanceService.patch(id, changes, params);
   }
 
-  remove(id: ObjectId, params?: FeathersParams): Promise<Instance<InputType, OutputType>> {
+  async remove(id: ObjectId, params?: FeathersParams): Promise<Instance<InputType, OutputType>> {
     return this.instanceService.remove(id, params);
   }
 
