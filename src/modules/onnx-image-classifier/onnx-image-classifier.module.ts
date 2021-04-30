@@ -2,7 +2,7 @@
 import { tidy, browser, reshape, tensor1d } from '@tensorflow/tfjs-core';
 import { Tensor as OnnxTensor, InferenceSession } from 'onnxjs';
 import { ClassifierResults, Model, Stream, logger } from '../../core';
-import { Catch } from '../../utils/error-handling';
+import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './onnx-image-classifier.svelte';
 
 // Questions:
@@ -69,9 +69,10 @@ export class OnnxImageClassifier extends Model<ImageData, ClassifierResults> {
     this.start();
   }
 
+  @Catch
   // eslint-disable-next-line class-methods-use-this
-  train(): void {
-    logger.log('This model cannot be trained');
+  train(): never {
+    throw new TrainingError('Model `OnnxImageClassifier` cannot be trained');
   }
 
   @Catch

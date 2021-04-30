@@ -1,13 +1,21 @@
 import { tensor2d, train, Tensor2D, TensorLike, tensor, tidy, keep } from '@tensorflow/tfjs-core';
-import { TensorLike2D } from '@tensorflow/tfjs-core/dist/types';
+import type { TensorLike2D } from '@tensorflow/tfjs-core/dist/types';
 import {
   loadLayersModel,
   sequential,
   layers as tfLayers,
   Sequential,
 } from '@tensorflow/tfjs-layers';
-import { Stream, logger, ClassifierResults, TFJSModelOptions, TFJSModel } from '../../core';
-import { Dataset } from '../../dataset';
+import {
+  Stream,
+  logger,
+  ClassifierResults,
+  TFJSModelOptions,
+  TFJSModel,
+  Instance,
+} from '../../core';
+import type { ServiceIterable } from '../../data-store/service-iterable';
+import { Dataset, isDataset } from '../../dataset';
 import { Catch, TrainingError } from '../../utils/error-handling';
 
 interface TrainingData {
@@ -29,15 +37,13 @@ function shuffleArray<T>(a: T[]): T[] {
 }
 
 async function dataSplit(
-  dataset: Dataset<TensorLike, string>,
+  dataset: ServiceIterable<Instance<TensorLike, string>>,
   trainProportion: number,
   labels: string[],
 ): Promise<TrainingData> {
-  const classes: Record<string, TensorLike[]> = {};
-  for (const label of labels) {
-    classes[label] = (await dataset.items().query({ y: label }).select(['x']).toArray()).map(
-      ({ x }) => x,
-    );
+  const classes: Record<string, TensorLike[]> = labels.reduce((c, l) => ({ ...c, [l]: [] }), {});
+  for await (const { x, y } of dataset) {
+    classes[y].push(x);
   }
 
   let data: TrainingData;
@@ -113,11 +119,16 @@ export class MLP extends TFJSModel<TensorLike, ClassifierResults> {
   }
 
   @Catch
-  async train(dataset: Dataset<TensorLike, string>): Promise<void> {
-    this.labels = await dataset.distinct('y');
+  async train(
+    dataset: Dataset<TensorLike, string> | ServiceIterable<Instance<TensorLike, string>>,
+  ): Promise<void> {
+    this.labels = isDataset(dataset)
+      ? await dataset.distinct('y')
+      : (this.labels = Array.from(new Set(await dataset.map(({ y }) => y).toArray())));
+    const ds = isDataset(dataset) ? dataset.items() : dataset;
     this.$training.set({ status: 'start', epochs: this.parameters.epochs.value });
     setTimeout(async () => {
-      const data = await dataSplit(dataset, 0.75, this.labels);
+      const data = await dataSplit(ds, 0.75, this.labels);
       this.buildModel(data.training_x.shape[1], data.training_y.shape[1]);
       this.fit(data);
     }, 100);

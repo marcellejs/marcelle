@@ -1,10 +1,19 @@
 import { tensor, tensor2d, Tensor2D, TensorLike } from '@tensorflow/tfjs-core';
 import { KNNClassifier } from '@tensorflow-models/knn-classifier';
-import { Stream, Model, ClassifierResults, StoredModel, ObjectId, ModelOptions } from '../../core';
-import { Dataset } from '../../dataset';
+import {
+  Stream,
+  Model,
+  ClassifierResults,
+  StoredModel,
+  ObjectId,
+  ModelOptions,
+  Instance,
+} from '../../core';
+import { Dataset, isDataset } from '../../dataset';
 import { Catch } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
+import { ServiceIterable } from '../../data-store/service-iterable';
 
 export interface KNNOptions extends ModelOptions {
   k: number;
@@ -29,22 +38,22 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
   }
 
   @Catch
-  async train(dataset: Dataset<TensorLike, string>): Promise<void> {
-    this.labels = await dataset.distinct('y');
+  async train(
+    dataset: Dataset<TensorLike, string> | ServiceIterable<Instance<TensorLike, string>>,
+  ): Promise<void> {
+    this.labels = isDataset(dataset)
+      ? await dataset.distinct('y')
+      : (this.labels = Array.from(new Set(await dataset.map(({ y }) => y).toArray())));
+    const ds = isDataset(dataset) ? dataset.items() : dataset;
     if (this.labels.length < 1) {
       this.$training.set({ status: 'error' });
       throw new Error('Cannot train a kNN with no classes');
     }
-    this.$training.set({ status: 'start', epochs: this.labels.length });
+    this.$training.set({ status: 'start', epochs: 1 });
     setTimeout(async () => {
       this.classifier.clearAllClasses();
-      for (const [i, label] of this.labels.entries()) {
-        await this.activateClass(dataset, label);
-        this.$training.set({
-          status: 'epoch',
-          epoch: i,
-          epochs: this.labels.length,
-        });
+      for await (const { x, y } of ds) {
+        this.classifier.addExample(tensor(x), y);
       }
       this.$training.set({ status: 'success' });
     }, 100);
@@ -60,12 +69,6 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
       this.parameters.k.value,
     );
     return { label, confidences };
-  }
-
-  async activateClass(dataset: Dataset<TensorLike, string>, label: string): Promise<void> {
-    for await (const { x } of dataset.items().query({ y: label }).select(['x'])) {
-      this.classifier.addExample(tensor(x), label);
-    }
   }
 
   clear(): void {

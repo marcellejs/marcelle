@@ -17,6 +17,7 @@ export class Dataset<InputType, OutputType> extends Module {
   title = 'dataset';
   name: string;
 
+  readonly isDataset = true;
   #store: DataStore;
   ready: Promise<void>;
 

@@ -1,13 +1,14 @@
 /* eslint-disable no-underscore-dangle */
 import { Paginated, Service } from '@feathersjs/feathers';
 import type { Dataset } from '../../dataset';
-import type { ObjectId, Parametrable, StoredModel, TrainingStatus } from '../types';
+import type { Instance, ObjectId, Parametrable, StoredModel, TrainingStatus } from '../types';
 import { Stream } from '../stream';
 import { DataStore } from '../../data-store';
 import { checkProperty } from '../../utils/error-handling';
 import { Module } from '../module';
 import { logger } from '../logger';
 import { toKebabCase } from '../../utils/string';
+import { ServiceIterable } from '../../data-store/service-iterable';
 
 export interface ModelOptions {
   dataStore: DataStore;
@@ -36,7 +37,9 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
     });
   }
 
-  abstract train(dataset: Dataset<InputType, unknown>): void;
+  abstract train(
+    dataset: Dataset<InputType, unknown> | ServiceIterable<Instance<InputType, unknown>>,
+  ): void;
   abstract predict(x: InputType): Promise<OutputType>;
 
   abstract save(
