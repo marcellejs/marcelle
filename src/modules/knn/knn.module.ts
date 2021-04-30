@@ -30,8 +30,7 @@ export class KNN extends Model<TensorLike, ClassifierResults> {
 
   @Catch
   async train(dataset: Dataset<TensorLike, string>): Promise<void> {
-    const allInstances = await dataset.items().select(['y']).toArray();
-    this.labels = Array.from(new Set(allInstances.map(({ y }) => y)));
+    this.labels = await dataset.distinct('y');
     if (this.labels.length < 1) {
       this.$training.set({ status: 'error' });
       throw new Error('Cannot train a kNN with no classes');

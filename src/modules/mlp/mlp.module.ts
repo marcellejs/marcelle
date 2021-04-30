@@ -114,8 +114,7 @@ export class MLP extends TFJSModel<TensorLike, ClassifierResults> {
 
   @Catch
   async train(dataset: Dataset<TensorLike, string>): Promise<void> {
-    const allInstances = await dataset.items().select(['y']).toArray();
-    this.labels = Array.from(new Set(allInstances.map(({ y }) => y)));
+    this.labels = await dataset.distinct('y');
     this.$training.set({ status: 'start', epochs: this.parameters.epochs.value });
     setTimeout(async () => {
       const data = await dataSplit(dataset, 0.75, this.labels);
