@@ -90,15 +90,16 @@ const ctx1 = canvas1.getContext('2d');
 export async function imageData2DataURL(context: HookContext): Promise<HookContext> {
   const { data } = context;
 
-  const isImageData = data.data instanceof ImageData;
-  if (isImageData) {
-    const w = data.data.width;
-    const h = data.data.height;
-    canvas1.width = w;
-    canvas1.height = h;
-    ctx1.putImageData(data.data, 0, 0); // synchronous
+  for (const [key, val] of Object.entries(data)) {
+    if (val instanceof ImageData) {
+      const w = val.width;
+      const h = val.height;
+      canvas1.width = w;
+      canvas1.height = h;
+      ctx1.putImageData(val, 0, 0); // synchronous
 
-    context.data.data = canvas1.toDataURL('image/jpeg');
+      context.data[key] = canvas1.toDataURL('image/jpeg');
+    }
   }
 
   return context;
@@ -108,24 +109,23 @@ export async function dataURL2ImageData(context: HookContext): Promise<HookConte
   if (!context.result) return context;
   const { result } = context;
 
-  const hasImageData = (x: { data?: string }) =>
-    x.data && typeof x.data === 'string' && x.data.slice(0, 22) === 'data:image/jpeg;base64';
+  const hasImageData = (data: unknown) =>
+    data && typeof data === 'string' && data.slice(0, 22) === 'data:image/jpeg;base64';
 
-  if (result._id && hasImageData(result)) {
-    result.data = await convertURIToImageData(result.data);
-  } else if (result.total && Array.isArray(result.data)) {
-    const fn = async (p: Promise<null>, x: { data?: string }, i: number): Promise<null> => {
-      if (hasImageData(x)) {
-        return p.then(() =>
-          convertURIToImageData(x.data).then((d) => {
-            result.data[i].data = d;
-            return null;
-          }),
-        );
+  if (result._id) {
+    for (const [key, val] of Object.entries(result).filter(([k]) => k !== 'thumbnail')) {
+      if (hasImageData(val)) {
+        result[key] = await convertURIToImageData(val as string);
       }
-      return p;
-    };
-    await (result.data as [{ data: string }]).reduce(fn, Promise.resolve(null));
+    }
+  } else if (result.total && Array.isArray(result.data)) {
+    for (const [i, v] of result.data.entries()) {
+      for (const [key, val] of Object.entries(v).filter(([k]) => k !== 'thumbnail')) {
+        if (hasImageData(val)) {
+          result.data[i][key] = await convertURIToImageData(val as string);
+        }
+      }
+    }
   }
 
   return context;
