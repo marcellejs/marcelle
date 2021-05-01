@@ -2,7 +2,7 @@ import { map } from '@most/core';
 import { Service, Paginated } from '@feathersjs/feathers';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
-import type { Prediction, ObjectId } from '../../core/types';
+import type { Prediction, ObjectId, Instance } from '../../core/types';
 import { DataStore } from '../../data-store/data-store';
 import {
   addScope,
@@ -10,10 +10,11 @@ import {
   imageData2DataURL,
   dataURL2ImageData,
 } from '../../data-store/hooks';
-import { Dataset } from '../../dataset';
+import { Dataset, isDataset } from '../../dataset';
 import { logger, Model } from '../../core';
 import { readJSONFile, saveBlob } from '../../utils/file-io';
 import { throwError } from '../../utils/error-handling';
+import { ServiceIterable } from '../../data-store/service-iterable';
 
 export interface BatchPredictionOptions {
   name: string;
@@ -73,21 +74,21 @@ export class BatchPrediction extends Module {
     this.$predictions.set(data.map((x) => x.id));
   }
 
-  async predict<T, U>(model: Model<T, U>, dataset: Dataset<T, string>): Promise<void> {
-    const data = await dataset.items().select(['id', 'x', 'y']).toArray();
-    const predictionIds = await Promise.all(
-      data.map(({ id, x, y }) =>
-        model
-          .predict(x)
-          .then((prediction) =>
-            this.predictionService.create(
-              { ...prediction, instanceId: id, trueLabel: y },
-              { query: { $select: ['id'] } },
-            ),
-          ),
-      ),
-    );
-    this.$predictions.set(predictionIds.map((x) => x.id));
+  async predict<T, U>(
+    model: Model<T, U>,
+    dataset: Dataset<T, string> | ServiceIterable<Instance<T, string>>,
+  ): Promise<void> {
+    const ds = isDataset(dataset) ? dataset.items() : dataset;
+    const predictionIds = [];
+    for await (const { id, x, y } of ds) {
+      const prediction = await model.predict(x);
+      const { id: predId } = await this.predictionService.create(
+        { ...prediction, instanceId: id, trueLabel: y },
+        { query: { $select: ['id'] } },
+      );
+      predictionIds.push(predId);
+      this.$predictions.set(predictionIds);
+    }
   }
 
   async clear(): Promise<void> {
