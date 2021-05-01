@@ -18,13 +18,11 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
   abstract parameters: Parametrable['parameters'];
   abstract serviceName: string;
 
-  $training = new Stream<TrainingStatus>({ status: 'idle' }, true);
-
   dataStore?: DataStore;
-
   protected syncModelName: string;
-
   ready = false;
+
+  $training = new Stream<TrainingStatus>({ status: 'idle' }, true);
 
   constructor({ dataStore }: Partial<ModelOptions> = {}) {
     super();

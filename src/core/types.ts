@@ -25,15 +25,6 @@ export interface Instance<InputType, OutputType> {
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-export interface Prediction {
-  id?: ObjectId;
-  instanceId: ObjectId;
-  label?: string;
-  trueLabel?: string;
-  confidences?: Record<string, number>;
-  [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-}
-
 export interface TrainingStatus {
   status: 'idle' | 'start' | 'epoch' | 'success' | 'error' | 'loaded' | 'loading';
   epoch?: number;
@@ -44,7 +35,15 @@ export interface TrainingStatus {
 export interface StoredModel {
   id?: ObjectId;
   name: string;
-  // url: string;
   files: Array<[string, string]>;
   metadata?: Record<string, unknown>;
+}
+
+export interface Prediction {
+  id?: ObjectId;
+  instanceId: ObjectId;
+  label?: string;
+  trueLabel?: string;
+  confidences?: Record<string, number>;
+  [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }

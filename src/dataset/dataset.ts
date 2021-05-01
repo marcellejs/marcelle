@@ -44,7 +44,7 @@ export class Dataset<InputType, OutputType> extends Module {
     });
   }
 
-  async setup(): Promise<void> {
+  protected async setup(): Promise<void> {
     const instanceServiceName = toKebabCase(`instances-${this.name}`);
     this.instanceService = this.#store.service(instanceServiceName) as Service<
       Instance<InputType, OutputType>
@@ -77,7 +77,7 @@ export class Dataset<InputType, OutputType> extends Module {
     this.watchChanges();
   }
 
-  watchChanges(): void {
+  protected watchChanges(): void {
     this.instanceService.on('created', (x: Instance<InputType, OutputType>) => {
       this.$count.set(this.$count.value + 1);
       this.$changes.set([
