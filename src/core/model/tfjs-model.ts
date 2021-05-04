@@ -9,9 +9,9 @@ import { ObjectId, StoredModel } from '../types';
 import { Model, ModelOptions } from './model';
 import { browserFiles, http } from './tfjs-io';
 
-export type TFJSModelOptions = ModelOptions;
+export type TFJSBaseModelOptions = ModelOptions;
 
-export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, OutputType> {
+export abstract class TFJSBaseModel<InputType, OutputType> extends Model<InputType, OutputType> {
   serviceName = 'tfjs-models';
   model: LayersModel | GraphModel;
   loadFn: typeof loadLayersModel | typeof loadGraphModel;

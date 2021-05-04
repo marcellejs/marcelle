@@ -1,7 +1,7 @@
-import { Textfield } from './textfield.module';
+import { TextField } from './text-field.module';
 
-export function textfield(): Textfield {
-  return new Textfield();
+export function textField(): TextField {
+  return new TextField();
 }
 
-export type { Textfield };
+export type { TextField };

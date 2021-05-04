@@ -10,11 +10,11 @@ export * from './faker';
 export * from './file-upload';
 export * from './image-display';
 export * from './image-upload';
-export * from './mobilenet';
+export * from './mobileNet';
 export * from './parameters';
 export * from './sketchpad';
 export * from './text';
-export * from './textfield';
+export * from './textField';
 export * from './toggle';
 export * from './training-plot';
 export * from './training-progress';
@@ -25,8 +25,8 @@ export * from './webcam';
 
 // Models
 export * from './coco-ssd';
-export * from './knn';
+export * from './knnClassifier';
 export * from './kmeans';
-export * from './mlp';
-export * from './tf-generic-model';
-export * from './onnx-image-classifier';
+export * from './mlpClassifier';
+export * from './tfjsModel';
+export * from './onnxModel';

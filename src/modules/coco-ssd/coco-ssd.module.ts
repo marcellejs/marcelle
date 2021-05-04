@@ -81,24 +81,24 @@ export class CocoSsd extends Model<ImageData, ObjectDetectorResults> {
   @Catch
   // eslint-disable-next-line class-methods-use-this
   save(): never {
-    throw new Error('OnnxImageClassifier does not support saving');
+    throw new Error('CocoSsd does not support saving');
   }
 
   @Catch
   // eslint-disable-next-line class-methods-use-this
   load(): never {
-    throw new Error('OnnxImageClassifier does not support loading');
+    throw new Error('CocoSsd does not support loading');
   }
 
   @Catch
   // eslint-disable-next-line class-methods-use-this
   download(): never {
-    throw new Error('OnnxImageClassifier does not support downloading');
+    throw new Error('CocoSsd does not support downloading');
   }
 
   @Catch
   // eslint-disable-next-line class-methods-use-this
   upload(): never {
-    throw new Error('OnnxImageClassifier does not support uploading');
+    throw new Error('CocoSsd does not support uploading');
   }
 }

@@ -1,7 +1,7 @@
-import { Mobilenet, MobilenetOptions } from './mobilenet.module';
+import { MobileNet, MobileNetOptions } from './mobile-net.module';
 
-export function mobilenet(options?: MobilenetOptions): Mobilenet {
-  return new Mobilenet(options);
+export function mobileNet(options?: MobileNetOptions): MobileNet {
+  return new MobileNet(options);
 }
 
-export type { Mobilenet, MobilenetOptions };
+export type { MobileNet, MobileNetOptions };

@@ -7,7 +7,7 @@ import {
   dashboard,
   dataset,
   dataStore,
-  mlp,
+  mlpClassifier,
   mobilenet,
   parameters,
   classificationPlot,
@@ -46,7 +46,9 @@ input.$images
 
 const b = button({ text: 'Train' });
 b.title = 'Training Launcher';
-const classifier = mlp({ layers: [64, 32], epochs: 20, dataStore: store }).sync('mlp-dashboard');
+const classifier = mlpClassifier({ layers: [64, 32], epochs: 20, dataStore: store }).sync(
+  'mlp-dashboard',
+);
 
 b.$click.subscribe(() =>
   classifier.train(

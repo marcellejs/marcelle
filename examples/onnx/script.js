@@ -11,7 +11,7 @@ import {
   imageUpload,
   classificationPlot,
   text,
-  onnxImageClassifier,
+  onnxModel,
   toggle,
   imageDisplay,
 } from '../../dist/marcelle.esm';
@@ -24,7 +24,7 @@ const source = imageUpload({ width: 224, height: 224 });
 
 const up = fileUpload();
 up.title = 'Upload model files (.json and .bin)';
-const classifier = onnxImageClassifier({ applySoftmax: true, topK: 5 });
+const classifier = onnxModel({ applySoftmax: true, topK: 5 });
 
 fetch('./imagenet_class_index.json')
   .then((res) => res.json())

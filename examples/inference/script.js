@@ -12,7 +12,7 @@ import {
   imageUpload,
   classificationPlot,
   text,
-  tfGenericModel,
+  tfjsModel,
   toggle,
 } from '../../dist/marcelle.esm';
 
@@ -24,7 +24,7 @@ const source = imageUpload();
 
 const up = fileUpload();
 up.title = 'Upload model files (.json and .bin)';
-const classifier = tfGenericModel({
+const classifier = tfjsModel({
   inputType: 'image',
   taskType: 'classification',
   dataStore: dataStore('localStorage'),

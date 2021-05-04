@@ -8,7 +8,7 @@ import {
   dashboard,
   dataset,
   dataStore,
-  mlp,
+  mlpClassifier,
   mobilenet,
   parameters,
   classificationPlot,
@@ -52,7 +52,7 @@ input.$images
 // -----------------------------------------------------------
 
 const b = button({ text: 'Train' });
-const classifier = mlp({ layers: [64, 32], epochs: 20, dataStore: store });
+const classifier = mlpClassifier({ layers: [64, 32], epochs: 20, dataStore: store });
 classifier.sync('move2audio-classifier');
 b.$click.subscribe(() => classifier.train(trainingSet));
 
