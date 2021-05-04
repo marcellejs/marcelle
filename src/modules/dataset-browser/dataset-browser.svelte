@@ -4,54 +4,52 @@
   import type { Instance, ObjectId, Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
   import PopMenu from '../../ui/widgets/PopMenu.svelte';
-  import type { Dataset } from '../dataset';
+  import type { Dataset } from '../../dataset';
 
   export let title: string;
   export let count: Stream<number>;
-  export let dataset: Dataset;
+  export let dataset: Dataset<unknown, string>;
   export let selected: Stream<ObjectId[]>;
 
   let loading = false;
 
-  let classes: Array<{
-    label: string;
-    instances: Instance[];
-  }> = [];
+  let classes: Record<string, Partial<Instance<unknown, string>>[]> = {};
 
   async function updateClassesFromDataset() {
+    if (loading) return;
     loading = true;
-    classes = [];
-    for (const label of Object.keys(dataset.$classes.value)) {
-      const instances = await dataset.getAllInstances(['thumbnail'], { label });
-      classes = classes.concat([{ label, instances }]);
+    classes = {};
+    await dataset.ready;
+    for await (const instance of dataset.items().select(['id', 'y', 'thumbnail'])) {
+      classes[instance.y] = (classes[instance.y] || []).concat([instance]);
     }
     loading = false;
   }
 
   function getLabel(id: ObjectId) {
-    for (let i = 0; i < classes.length; i++) {
-      if (classes[i].instances.map((x) => x.id).includes(id)) {
-        return classes[i].label;
+    for (const [label, instances] of Object.entries(classes)) {
+      if (instances.map((x) => x.id).includes(id)) {
+        return label;
       }
     }
     return null;
   }
 
   async function deleteSelectedInstances() {
-    let p = Promise.resolve();
+    let p: Promise<unknown> = Promise.resolve();
     for (const id of selected.value) {
       // eslint-disable-next-line no-loop-func
-      p = p.then(() => dataset.deleteInstance(id));
+      p = p.then(() => dataset.remove(id));
     }
     await p;
     selected.set([]);
   }
 
   async function relabelSelectedInstances(newLabel: string) {
-    let p = Promise.resolve();
+    let p: Promise<unknown> = Promise.resolve();
     for (const id of selected.value) {
       // eslint-disable-next-line no-loop-func
-      p = p.then(() => dataset.changeInstanceLabel(id, newLabel));
+      p = p.then(() => dataset.patch(id, { y: newLabel }));
     }
     await p;
     selected.set([]);
@@ -90,9 +88,7 @@
       const srcLabel = getLabel(initialId);
       const dstLabel = getLabel(id);
       if (srcLabel !== dstLabel) return;
-      const instances = classes
-        .filter(({ label }) => label === srcLabel)[0]
-        .instances.map((x) => x.id);
+      const instances = classes[srcLabel].map((x) => x.id);
       const srcIndex = instances.indexOf(initialId);
       const dstIndex = instances.indexOf(id);
       selected.set(
@@ -113,12 +109,12 @@
         // eslint-disable-next-line no-alert
         result = window.prompt('Enter the new label', label);
         if (result) {
-          dataset.renameClass(label, result);
+          dataset.patch(null, { y: result }, { query: { y: label } });
         }
         break;
 
       case 'delete':
-        dataset.deleteClass(label);
+        dataset.remove(null, { query: { y: label } });
         break;
 
       case 'deleteInstances':
@@ -149,61 +145,26 @@
           if (type === 'created') {
             updateClassesFromDataset();
           }
-        } else if (level === 'class') {
-          if (type === 'renamed') {
-            const srcIdx = classes.map(({ label }) => label).indexOf(data.srcLabel);
-            const dstIdx = classes.map(({ label }) => label).indexOf(data.label);
-            if (dstIdx >= 0) {
-              classes[dstIdx].instances = classes[dstIdx].instances.concat(
-                classes[srcIdx].instances,
-              );
-              classes.splice(srcIdx, 1);
-              classes = classes;
-            } else {
-              classes[srcIdx].label = data.label;
-            }
-          } else if (type === 'deleted') {
-            const classIdx = classes.map(({ label }) => label).indexOf(data);
-            if (classIdx >= 0) {
-              classes.splice(classIdx, 1);
-              classes = classes;
-            }
-          } else if (type === 'created') {
-            classes = classes.concat({ label: data, instances: [] });
-          }
-        } else {
+        } else if (level === 'instance') {
           if (type === 'created') {
-            const instance = await dataset.instanceService.get(data.id, {
-              query: { $select: ['thumbnail'] },
-            });
-            const classIdx = classes.map(({ label }) => label).indexOf(data.label);
-            if (classIdx >= 0) {
-              classes[classIdx].instances = classes[classIdx].instances.concat([instance]);
-            } else {
-              classes = classes.concat([{ label: data.label, instances: [instance] }]);
+            classes[data.y] = (classes[data.y] || []).concat([
+              { id: data.id, y: data.y, thumbnail: data.thumbnail },
+            ]);
+          } else if (type === 'updated') {
+            const originalLabel = getLabel(data.id);
+            classes[originalLabel] = classes[originalLabel].filter(({ id }) => id !== data.id);
+            if (classes[originalLabel].length === 0) {
+              delete classes[originalLabel];
+              classes = classes;
             }
-          } else if (type === 'deleted') {
-            const classIdx = classes.map(({ label }) => label).indexOf(getLabel(data));
-            if (classIdx >= 0) {
-              classes[classIdx].instances = classes[classIdx].instances.filter(
-                ({ id }) => id !== data,
-              );
-            }
-          } else if (type === 'renamed') {
-            const prevClassIdx = classes.map(({ label }) => label).indexOf(getLabel(data.id));
-            if (prevClassIdx >= 0) {
-              classes[prevClassIdx].instances = classes[prevClassIdx].instances.filter(
-                ({ id }) => id !== data.id,
-              );
-            }
-            const newClassIdx = classes.map(({ label }) => label).indexOf(data.label);
-            if (newClassIdx >= 0) {
-              const instance = await dataset.instanceService.get(data.id, {
-                query: { $select: ['thumbnail'] },
-              });
-              classes[newClassIdx].instances = classes[newClassIdx].instances.concat([instance]);
-            } else {
-              throw new Error('An unexpected error occurred');
+            classes[data.y] = (classes[data.y] || []).concat([
+              { id: data.id, y: data.y, thumbnail: data.thumbnail },
+            ]);
+          } else if (type === 'removed') {
+            classes[data.y] = classes[data.y].filter(({ id }) => id !== data.id);
+            if (classes[data.y].length === 0) {
+              delete classes[data.y];
+              classes = classes;
             }
           }
         }
@@ -223,7 +184,7 @@
     {/if}
 
     <div class="flex flex-wrap" on:click={() => selectInstance()}>
-      {#each classes as { label, instances }}
+      {#each Object.entries(classes) as [label, instances]}
         <div class="browser-class">
           <div class="browser-class-header">
             <span class="browser-class-title">{label}</span>

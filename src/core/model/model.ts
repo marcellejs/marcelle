@@ -1,13 +1,14 @@
 /* eslint-disable no-underscore-dangle */
 import { Paginated, Service } from '@feathersjs/feathers';
-import type { Dataset } from '../../modules/dataset';
-import type { ObjectId, Parametrable, StoredModel, TrainingStatus } from '../types';
+import type { Dataset } from '../../dataset';
+import type { Instance, ObjectId, Parametrable, StoredModel, TrainingStatus } from '../types';
 import { Stream } from '../stream';
 import { DataStore } from '../../data-store';
 import { checkProperty } from '../../utils/error-handling';
 import { Module } from '../module';
 import { logger } from '../logger';
 import { toKebabCase } from '../../utils/string';
+import { ServiceIterable } from '../../data-store/service-iterable';
 
 export interface ModelOptions {
   dataStore: DataStore;
@@ -17,13 +18,11 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
   abstract parameters: Parametrable['parameters'];
   abstract serviceName: string;
 
-  $training = new Stream<TrainingStatus>({ status: 'idle' }, true);
-
   dataStore?: DataStore;
-
   protected syncModelName: string;
-
   ready = false;
+
+  $training = new Stream<TrainingStatus>({ status: 'idle' }, true);
 
   constructor({ dataStore }: Partial<ModelOptions> = {}) {
     super();
@@ -36,7 +35,9 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
     });
   }
 
-  abstract train(dataset: Dataset): void;
+  abstract train(
+    dataset: Dataset<InputType, unknown> | ServiceIterable<Instance<InputType, unknown>>,
+  ): void;
   abstract predict(x: InputType): Promise<OutputType>;
 
   abstract save(

@@ -31,22 +31,14 @@ label.title = 'Instance label';
 const capture = button({ text: 'Hold to record instances' });
 capture.title = 'Capture instances to the training set';
 
-const instances = input.$images
-  .filter(() => capture.$down.value)
-  .map(async (img) => ({
-    type: 'image',
-    data: img,
-    label: label.$text.value,
-    thumbnail: input.$thumbnails.value,
-    features: await featureExtractor.process(img),
-  }))
-  .awaitPromises();
-
-const store = dataStore({ location: 'localStorage' });
-const trainingSet = dataset({ name: 'TrainingSet-dashboard', dataStore: store });
-trainingSet.capture(instances);
-
+const store = dataStore('localStorage');
+const trainingSet = dataset('TrainingSet-dashboard', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
+
+input.$images
+  .filter(() => capture.$down.value)
+  .map((x) => ({ x, y: label.$text.value, thumbnail: input.$thumbnails.value }))
+  .subscribe(trainingSet.create.bind(trainingSet));
 
 // -----------------------------------------------------------
 // TRAINING
@@ -55,7 +47,14 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 const b = button({ text: 'Train' });
 b.title = 'Training Launcher';
 const classifier = mlp({ layers: [64, 32], epochs: 20, dataStore: store }).sync('mlp-dashboard');
-b.$click.subscribe(() => classifier.train(trainingSet));
+
+b.$click.subscribe(() =>
+  classifier.train(
+    trainingSet
+      .items()
+      .map(async (instance) => ({ ...instance, x: await featureExtractor.process(instance.x) })),
+  ),
+);
 
 const params = parameters(classifier);
 const prog = trainingProgress(classifier);
@@ -74,7 +73,12 @@ predictButton.$click.subscribe(async () => {
     throwError(new Error('No classifier has been trained'));
   }
   await batchMLP.clear();
-  await batchMLP.predict(classifier, trainingSet);
+  await batchMLP.predict(
+    classifier,
+    trainingSet
+      .items()
+      .map(async (instance) => ({ ...instance, x: await featureExtractor.process(instance.x) })),
+  );
 });
 
 // -----------------------------------------------------------

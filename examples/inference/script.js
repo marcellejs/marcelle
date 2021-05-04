@@ -27,7 +27,7 @@ up.title = 'Upload model files (.json and .bin)';
 const classifier = tfGenericModel({
   inputType: 'image',
   taskType: 'classification',
-  dataStore: dataStore({ location: 'localStorage' }),
+  dataStore: dataStore('localStorage'),
 }).sync('inference-example-classifier');
 up.$files.subscribe((fl) => {
   classifier.loadFromFiles(fl);
@@ -44,8 +44,8 @@ const instances = source.$thumbnails.map((thumbnail) => ({
   thumbnail,
 }));
 
-const store = dataStore({ location: 'memory' });
-const trainingSet = dataset({ name: 'TrainingSet-inference', dataStore: store });
+const store = dataStore('memory');
+const trainingSet = dataset('TrainingSet-inference', store);
 
 const tog = toggle({ text: 'Capture to dataset' });
 tog.$checked.skipRepeats().subscribe((x) => {

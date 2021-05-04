@@ -4,7 +4,6 @@ export * from './button';
 export * from './chart';
 export * from './classification-plot';
 export * from './confusion-matrix';
-export * from './dataset';
 export * from './dataset-browser';
 export * from './faker';
 export * from './file-upload';

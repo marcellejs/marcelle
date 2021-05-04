@@ -31,22 +31,19 @@ label.title = 'Instance label';
 const capture = button({ text: 'Capture this drawing' });
 capture.title = 'Capture instances to the training set';
 
-const instances = capture.$click
+const store = dataStore('localStorage');
+const trainingSet = dataset('TrainingSet-sketch', store);
+const trainingSetBrowser = datasetBrowser(trainingSet);
+
+capture.$click
   .sample(input.$images)
   .map(async (img) => ({
-    type: 'sketch',
-    data: img,
-    label: label.$text.value,
+    x: await featureExtractor.process(img),
+    y: label.$text.value,
     thumbnail: input.$thumbnails.value,
-    features: await featureExtractor.process(img),
   }))
-  .awaitPromises();
-
-const store = dataStore({ location: 'localStorage' });
-const trainingSet = dataset({ name: 'TrainingSet-sketch', dataStore: store });
-trainingSet.capture(instances);
-
-const trainingSetBrowser = datasetBrowser(trainingSet);
+  .awaitPromises()
+  .subscribe(trainingSet.create.bind(trainingSet));
 
 // -----------------------------------------------------------
 // TRAINING
@@ -72,7 +69,6 @@ const confMat = confusionMatrix(batchMLP);
 
 const predictButton = button({ text: 'Update predictions' });
 predictButton.$click.subscribe(async () => {
-  console.log('classifier', classifier);
   if (!classifier.ready) {
     throwError(new Error('No classifier has been trained'));
   }
@@ -94,12 +90,12 @@ tog.$checked.subscribe((checked) => {
   }
 });
 
-const predictionStream = input.$images
+const $predictions = input.$images
   .filter(() => tog.$checked.value && classifier.ready)
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
-const plotResults = classificationPlot(predictionStream);
+const plotResults = classificationPlot($predictions);
 
 // -----------------------------------------------------------
 // DASHBOARDS

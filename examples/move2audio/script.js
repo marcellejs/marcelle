@@ -33,22 +33,19 @@ labelInput.title = 'Instance label';
 const capture = button({ text: 'Hold to record instances' });
 capture.title = 'Capture instances to the training set';
 
-const instances = input.$images
+const store = dataStore('localStorage');
+const trainingSet = dataset('TrainingSet-move2audio', store);
+const trainingSetBrowser = datasetBrowser(trainingSet);
+
+input.$images
   .filter(() => capture.$down.value)
   .map(async (img) => ({
-    type: 'image',
-    data: img,
-    label: labelInput.$text.value,
+    x: await featureExtractor.process(img),
+    y: labelInput.$text.value,
     thumbnail: input.$thumbnails.value,
-    features: await featureExtractor.process(img),
   }))
-  .awaitPromises();
-
-const store = dataStore({ location: 'localStorage' });
-const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
-trainingSet.capture(instances);
-
-const trainingSetBrowser = datasetBrowser(trainingSet);
+  .awaitPromises()
+  .subscribe(trainingSet.create.bind(trainingSet));
 
 // -----------------------------------------------------------
 // TRAINING
@@ -82,12 +79,12 @@ predictButton.$click.subscribe(async () => {
 
 const tog = toggle({ text: 'toggle prediction' });
 
-const predictionStream = input.$images
+const $predictions = input.$images
   .filter(() => tog.$checked.value)
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
-const plotResults = classificationPlot(predictionStream);
+const plotResults = classificationPlot($predictions);
 
 // -----------------------------------------------------------
 // DASHBOARDS
@@ -117,10 +114,23 @@ const wizardText = text({ text: 'Waiting for examples...' });
 wizardButton.$down.subscribe((x) => {
   capture.$down.set(x);
 });
-trainingSet.$countPerClass.subscribe((c) => {
-  if (!c) return;
+
+let countPerClass = { A: 0, B: 0, C: 0 };
+trainingSet.$changes.subscribe(async (changes) => {
+  for (const { level, type, data } of changes) {
+    if (level === 'instance' && type === 'created') {
+      countPerClass[data.y] += 1;
+    } else if (level === 'instance' && type === 'removed') {
+      countPerClass[data.y] -= 1;
+    } else {
+      const allInstances = await trainingSet.items().select(['y']).toArray();
+      for (const l of ['A', 'B', 'C']) {
+        countPerClass[l] = allInstances.filter(({ y }) => y === l).length;
+      }
+    }
+  }
   const label = labelInput.$text.value;
-  const numExamples = c[label];
+  const numExamples = countPerClass[label] || 0;
   wizardText.$text.set(
     numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
   );
@@ -150,23 +160,21 @@ wiz
   .description('Reproduce your gestures to test if the classifier works as expected')
   .use([input, plotResults]);
 
-function configureWizard(label) {
-  if (!trainingSet.$countPerClass.value) return;
-  labelInput.$text.set(label);
+labelInput.$text.subscribe((label) => {
   wizardButton.$text.set(`Record Examples (class ${label})`);
-  const numExamples = trainingSet.$countPerClass.value[label];
+  const numExamples = countPerClass[label] || 0;
   wizardText.$text.set(
     numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
   );
-}
+});
 
 wiz.$current.subscribe((stepIndex) => {
   if (stepIndex === 0) {
-    configureWizard('A');
+    labelInput.$text.set('A');
   } else if (stepIndex === 1) {
-    configureWizard('B');
+    labelInput.$text.set('B');
   } else if (stepIndex === 2) {
-    configureWizard('C');
+    labelInput.$text.set('C');
   }
   if (stepIndex === 4) {
     tog.$checked.set(true);
@@ -212,23 +220,20 @@ const d = document.querySelector('#results');
 const resultImg = document.querySelector('#result-img');
 
 let PrevLabel = '';
-predictionStream.subscribe(async ({ label, confidences }) => {
+$predictions.subscribe(async ({ label, confidences }) => {
   if (label !== PrevLabel) {
     d.innerText = `predicted label: ${label}`;
     if (label === 'A') {
       resultImg.src = 'https://media.giphy.com/media/M9gPbRZTWqZP2/giphy.gif';
-      // resultImg.src = 'https://media.giphy.com/media/vVzH2XY3Y0Ar6/giphy.gif';
     } else if (label === 'B') {
       resultImg.src = 'https://media.giphy.com/media/i6JLRbk4f2gIU/giphy.gif';
-      // resultImg.src = 'https://media.giphy.com/media/IhvYFmzVNHgCQ/giphy.gif';
     } else {
       resultImg.src = 'https://media.giphy.com/media/hWpgTWoWkqi2NmFeks/giphy.gif';
-      // resultImg.src = 'https://media.giphy.com/media/sphmLQaP0wAdG/giphy.gif';
     }
     PrevLabel = label;
   }
-  for (const [i, x] of Object.values(confidences).entries()) {
-    sounds[i].volume(x);
+  for (const [i, x] of ['A', 'B', 'C'].entries()) {
+    sounds[i].volume(confidences[x] || 0);
   }
 });
 

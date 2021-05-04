@@ -1,12 +1,21 @@
 import { tensor2d, train, Tensor2D, TensorLike, tensor, tidy, keep } from '@tensorflow/tfjs-core';
+import type { TensorLike2D } from '@tensorflow/tfjs-core/dist/types';
 import {
   loadLayersModel,
   sequential,
   layers as tfLayers,
   Sequential,
 } from '@tensorflow/tfjs-layers';
-import { Stream, logger, ClassifierResults, TFJSModelOptions, TFJSModel } from '../../core';
-import { Dataset } from '../dataset/dataset.module';
+import {
+  Stream,
+  logger,
+  ClassifierResults,
+  TFJSModelOptions,
+  TFJSModel,
+  Instance,
+} from '../../core';
+import type { ServiceIterable } from '../../data-store/service-iterable';
+import { Dataset, isDataset } from '../../dataset';
 import { Catch, TrainingError } from '../../utils/error-handling';
 
 interface TrainingData {
@@ -28,45 +37,44 @@ function shuffleArray<T>(a: T[]): T[] {
 }
 
 async function dataSplit(
-  dataset: Dataset,
+  dataset: ServiceIterable<Instance<TensorLike, string>>,
   trainProportion: number,
-  numClasses = -1,
+  labels: string[],
 ): Promise<TrainingData> {
-  const allInstances = await dataset.getAllInstances(['id', 'features', 'label']);
+  const classes: Record<string, TensorLike[]> = labels.reduce((c, l) => ({ ...c, [l]: [] }), {});
+  for await (const { x, y } of dataset) {
+    classes[y].push(x);
+  }
 
   let data: TrainingData;
   tidy(() => {
-    const labels = dataset.$labels.value;
-    const nClasses = numClasses < 0 ? labels.length : numClasses;
     data = {
       training_x: tensor2d([], [0, 1]),
-      training_y: tensor2d([], [0, nClasses]),
+      training_y: tensor2d([], [0, labels.length]),
       validation_x: tensor2d([], [0, 1]),
-      validation_y: tensor2d([], [0, nClasses]),
+      validation_y: tensor2d([], [0, labels.length]),
     };
     for (const label of labels) {
-      const instances = dataset.$classes.value[label];
+      const instances = classes[label];
       const numInstances = instances.length;
-      const shuffledIds = shuffleArray(instances);
+      const shuffledInstances = shuffleArray(instances);
       const thresh = Math.floor(trainProportion * numInstances);
-      const trainingIds = shuffledIds.slice(0, thresh);
-      const validationIds = shuffledIds.slice(thresh, numInstances);
-      const y = Array(nClasses).fill(0);
+      const trainingInstances = shuffledInstances.slice(0, thresh);
+      const validationInstances = shuffledInstances.slice(thresh, numInstances);
+      const y = Array(labels.length).fill(0);
       y[labels.indexOf(label)] = 1;
-      for (const id of trainingIds) {
-        const { features } = allInstances.find((x) => x.id === id) as { features: number[][] };
+      for (const features of trainingInstances) {
         if (data.training_x.shape[1] === 0) {
-          data.training_x.shape[1] = features[0].length;
+          data.training_x.shape[1] = (features as number[][])[0].length;
         }
-        data.training_x = data.training_x.concat(tensor2d(features));
+        data.training_x = data.training_x.concat(tensor2d(features as TensorLike2D));
         data.training_y = data.training_y.concat(tensor2d([y]));
       }
-      for (const id of validationIds) {
-        const { features } = allInstances.find((x) => x.id === id) as { features: number[][] };
+      for (const features of validationInstances) {
         if (data.validation_x.shape[1] === 0) {
-          data.validation_x.shape[1] = features[0].length;
+          data.validation_x.shape[1] = (features as number[][])[0].length;
         }
-        data.validation_x = data.validation_x.concat(tensor2d(features));
+        data.validation_x = data.validation_x.concat(tensor2d(features as TensorLike2D));
         data.validation_y = data.validation_y.concat(tensor2d([y]));
       }
     }
@@ -111,15 +119,16 @@ export class MLP extends TFJSModel<TensorLike, ClassifierResults> {
   }
 
   @Catch
-  train(dataset: Dataset): void {
-    this.labels = dataset.$labels.value || [];
-    if (this.labels.length < 2) {
-      this.$training.set({ status: 'error' });
-      throw new TrainingError('Cannot train a MLP with less than 2 classes');
-    }
+  async train(
+    dataset: Dataset<TensorLike, string> | ServiceIterable<Instance<TensorLike, string>>,
+  ): Promise<void> {
+    this.labels = isDataset(dataset)
+      ? await dataset.distinct('y')
+      : (this.labels = Array.from(new Set(await dataset.map(({ y }) => y).toArray())));
+    const ds = isDataset(dataset) ? dataset.items() : dataset;
     this.$training.set({ status: 'start', epochs: this.parameters.epochs.value });
     setTimeout(async () => {
-      const data = await dataSplit(dataset, 0.75);
+      const data = await dataSplit(ds, 0.75, this.labels);
       this.buildModel(data.training_x.shape[1], data.training_y.shape[1]);
       this.fit(data);
     }, 100);
