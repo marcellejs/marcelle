@@ -1,6 +1,7 @@
 import type { Model, Module } from '../core';
-import { DataStore } from '../data-store';
-import { BatchPrediction, Dataset } from '../modules';
+import type { DataStore } from '../data-store';
+import type { Dataset } from '../dataset';
+import type { BatchPrediction } from '../modules';
 
 function isTitle(x: Module | Module[] | string): x is string {
   return typeof x === 'string';
@@ -13,8 +14,9 @@ export class DashboardSettings {
   name = 'settings';
   modules: Array<Module | Module[] | string> = [];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   xModels: Model<any, any>[] = [];
-  xDatasets: Dataset[] = [];
+  xDatasets: Dataset<unknown, unknown>[] = [];
   xPredictions: BatchPrediction[] = [];
   xDataStores: DataStore[] = [];
 
@@ -28,12 +30,13 @@ export class DashboardSettings {
     return this;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   models(...models: Model<any, any>[]): DashboardSettings {
     this.xModels = models;
     return this;
   }
 
-  datasets(...datasets: Dataset[]): DashboardSettings {
+  datasets(...datasets: Dataset<unknown, unknown>[]): DashboardSettings {
     this.xDatasets = datasets;
     return this;
   }
@@ -44,22 +47,26 @@ export class DashboardSettings {
   }
 
   mount(): void {
-    this.modules.forEach((m) => {
+    for (const m of this.modules) {
       if (isModuleArray(m)) {
-        m.forEach((n) => n.mount());
+        for (const n of m) {
+          n.mount();
+        }
       } else if (!isTitle(m)) {
         m.mount();
       }
-    });
+    }
   }
 
   destroy(): void {
-    this.modules.forEach((m) => {
+    for (const m of this.modules) {
       if (isModuleArray(m)) {
-        m.forEach((n) => n.destroy());
+        for (const n of m) {
+          n.destroy();
+        }
       } else if (!isTitle(m)) {
         m.destroy();
       }
-    });
+    }
   }
 }

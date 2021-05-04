@@ -3,10 +3,11 @@ import { asap, newDefaultScheduler } from '@most/scheduler';
 import { createAdapter } from '@most/adapter';
 import { Stream as MostStream, Disposable, Scheduler, Sink, Time } from '@most/types';
 import { SeedValue } from '@most/core/dist/combinator/loop';
+import { noop } from '../utils/misc';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function dummySubscriber<T>(value: T): void {
-  // eslint-disable-line @typescript-eslint/no-empty-function
+  // Do nothing
 }
 
 const scheduler = newDefaultScheduler();
@@ -67,12 +68,12 @@ export class Stream<T> {
   private runListeners(value: T) {
     this.value = value;
     this.#hasValue = true;
-    this.subscribers.forEach((listener) => {
+    for (const listener of this.subscribers) {
       listener(value);
-    });
+    }
   }
 
-  subscribe(run: (value: T) => void = dummySubscriber, invalidate = () => {}): () => void {
+  subscribe(run: (value: T) => void = dummySubscriber, invalidate = noop): () => void {
     if (this.#hold && this.#running && this.#hasValue) {
       run(this.value);
     }
@@ -109,7 +110,9 @@ export class Stream<T> {
             error(e) {
               reject(e);
             },
-            dispose() {},
+            dispose() {
+              // nothing here.
+            },
           },
           scheduler,
         );

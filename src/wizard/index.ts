@@ -8,6 +8,10 @@ export class Wizard {
 
   $current = new Stream(0, true);
 
+  constructor() {
+    this.$current.start();
+  }
+
   step(): WizardStep {
     const s = new WizardStep(this.step.bind(this));
     this.steps.push(s);

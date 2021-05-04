@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import '../../dist/marcelle.css';
 import {
   cocoSsd,
@@ -8,7 +7,7 @@ import {
   toggle,
   visObjectDetection,
   webcam,
-} from '../../dist/marcelle.esm.js';
+} from '../../dist/marcelle.esm';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CLASSIFICATION

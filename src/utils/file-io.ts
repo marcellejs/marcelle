@@ -12,6 +12,7 @@ export async function saveBlob(
   link.click();
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function readJSONFile(f: File): Promise<any> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

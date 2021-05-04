@@ -1,8 +1,8 @@
-<script lag="ts">
-  import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte';
+<script lang="ts">
+  import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();
-  export function quit() {
+  export function quit(): void {
     dispatch('quit');
   }
 
@@ -10,6 +10,15 @@
     quit();
   }
 </script>
+
+<div class="modal-container">
+  <div class="overlay">
+    <div on:click={onOutsideClick} class="absolute inset-0 bg-gray-500 opacity-50" />
+  </div>
+  <div class="modal">
+    <slot />
+  </div>
+</div>
 
 <style type="text/postcss">
   .modal-container {
@@ -35,12 +44,3 @@
     }
   }
 </style>
-
-<div class="modal-container">
-  <div class="overlay">
-    <div on:click={onOutsideClick} class="absolute inset-0 bg-gray-500 opacity-50" />
-  </div>
-  <div class="modal">
-    <slot />
-  </div>
-</div>

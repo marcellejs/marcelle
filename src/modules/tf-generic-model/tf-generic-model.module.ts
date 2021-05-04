@@ -12,8 +12,7 @@ import {
 import { loadGraphModel } from '@tensorflow/tfjs-converter';
 import { loadLayersModel } from '@tensorflow/tfjs-layers';
 import { ClassifierResults, TFJSModel, TFJSModelOptions } from '../../core';
-import { logger } from '../../core/logger';
-import { Catch } from '../../utils/error-handling';
+import { Catch, TrainingError } from '../../utils/error-handling';
 import { readJSONFile } from '../../utils/file-io';
 import Component from './tf-generic-model.svelte';
 import { browserFiles, http } from '../../core/model/tfjs-io';
@@ -76,8 +75,10 @@ export class TFJSGenericModel<
     });
   }
 
-  train(): void {
-    logger.log('This model cannot be trained', this.model);
+  @Catch
+  // eslint-disable-next-line class-methods-use-this
+  train(): never {
+    throw new TrainingError('Model `TfGenericModel` cannot be trained');
   }
 
   @Catch
@@ -182,7 +183,7 @@ export class TFJSGenericModel<
         this.loadFn = jsonData.format === 'graph-model' ? loadGraphModel : loadLayersModel;
         this.model = await this.loadFn(browserFiles([jsonFiles[0], ...weightFiles]));
         await this.warmup();
-        await this.save(true);
+        await this.save(this.id);
         this.$training.set({
           status: 'loaded',
           data: {

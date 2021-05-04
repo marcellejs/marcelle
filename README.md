@@ -6,7 +6,7 @@
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
-[![npm version](https://img.shields.io/npm/v/@marcellejs/core/next)]()
+[![npm version](https://img.shields.io/npm/v/@marcellejs/core)]()
 
 </div>
 

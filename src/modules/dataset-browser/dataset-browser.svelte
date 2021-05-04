@@ -4,163 +4,54 @@
   import type { Instance, ObjectId, Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
   import PopMenu from '../../ui/widgets/PopMenu.svelte';
-  import type { Dataset } from '../dataset';
+  import type { Dataset } from '../../dataset';
 
   export let title: string;
   export let count: Stream<number>;
-  export let dataset: Dataset;
+  export let dataset: Dataset<unknown, string>;
   export let selected: Stream<ObjectId[]>;
 
   let loading = false;
 
-  let classes: Array<{
-    label: string;
-    instances: Instance[];
-  }> = [];
-
-  function onClassAction(label: string, code: string) {
-    let result: string;
-    switch (code) {
-      case 'edit':
-        result = window.prompt('Enter the new label', label);
-        if (result) {
-          dataset.renameClass(label, result);
-        }
-        break;
-
-      case 'delete':
-        dataset.deleteClass(label);
-        break;
-
-      case 'deleteInstances':
-        deleteSelectedInstances();
-        break;
-
-      case 'relabelInstances':
-        result = window.prompt('Enter the new label', label);
-        if (result) {
-          relabelSelectedInstances(result);
-        }
-        break;
-
-      default:
-        alert(`Class ${label}: ${code}`);
-        break;
-    }
-  }
+  let classes: Record<string, Partial<Instance<unknown, string>>[]> = {};
 
   async function updateClassesFromDataset() {
+    if (loading) return;
     loading = true;
-    classes = await Promise.all(
-      Object.entries(dataset.$classes.value).map(async ([label, instanceIds]) => {
-        return {
-          label,
-          instances: await Promise.all(
-            instanceIds.map((id) =>
-              dataset.instanceService.get(id, {
-                query: { $select: ['thumbnail'] },
-              }),
-            ),
-          ),
-        };
-      }),
-    );
+    classes = {};
+    await dataset.ready;
+    for await (const instance of dataset.items().select(['id', 'y', 'thumbnail'])) {
+      classes[instance.y] = (classes[instance.y] || []).concat([instance]);
+    }
     loading = false;
   }
 
-  onMount(() => {
-    updateClassesFromDataset();
-    dataset.$changes.subscribe(async (changes) => {
-      changes.forEach(async ({ level, type, data }) => {
-        if (level === 'dataset') {
-          if (type === 'created') {
-            updateClassesFromDataset();
-          }
-        } else if (level === 'class') {
-          if (type === 'renamed') {
-            const srcIdx = classes.map(({ label }) => label).indexOf(data.srcLabel);
-            const dstIdx = classes.map(({ label }) => label).indexOf(data.label);
-            if (dstIdx >= 0) {
-              classes[dstIdx].instances = classes[dstIdx].instances.concat(
-                classes[srcIdx].instances,
-              );
-              classes.splice(srcIdx, 1);
-              classes = classes;
-            } else {
-              classes[srcIdx].label = data.label;
-            }
-          } else if (type === 'deleted') {
-            const classIdx = classes.map(({ label }) => label).indexOf(data);
-            if (classIdx >= 0) {
-              classes.splice(classIdx, 1);
-              classes = classes;
-            }
-          } else if (type === 'created') {
-            classes = classes.concat({ label: data, instances: [] });
-          }
-        } else {
-          if (type === 'created') {
-            const instance = await dataset.instanceService.get(data.id, {
-              query: { $select: ['thumbnail'] },
-            });
-            const classIdx = classes.map(({ label }) => label).indexOf(data.label);
-            if (classIdx >= 0) {
-              classes[classIdx].instances = classes[classIdx].instances.concat([instance]);
-            } else {
-              classes = classes.concat([{ label: data.label, instances: [instance] }]);
-            }
-          } else if (type === 'deleted') {
-            const classIdx = classes.map(({ label }) => label).indexOf(getLabel(data));
-            if (classIdx >= 0) {
-              classes[classIdx].instances = classes[classIdx].instances.filter(
-                ({ id }) => id !== data,
-              );
-            } else {
-              throw new Error('An unexpected error occurred');
-            }
-          } else if (type === 'renamed') {
-            const prevClassIdx = classes.map(({ label }) => label).indexOf(getLabel(data.id));
-            if (prevClassIdx >= 0) {
-              classes[prevClassIdx].instances = classes[prevClassIdx].instances.filter(
-                ({ id }) => id !== data.id,
-              );
-            }
-            const newClassIdx = classes.map(({ label }) => label).indexOf(data.label);
-            if (newClassIdx >= 0) {
-              const instance = await dataset.instanceService.get(data.id, {
-                query: { $select: ['thumbnail'] },
-              });
-              classes[newClassIdx].instances = classes[newClassIdx].instances.concat([instance]);
-            } else {
-              throw new Error('An unexpected error occurred');
-            }
-          }
-        }
-      });
-    });
-  });
-
   function getLabel(id: ObjectId) {
-    for (let i = 0; i < classes.length; i++) {
-      if (classes[i].instances.map((x) => x.id).includes(id)) {
-        return classes[i].label;
+    for (const [label, instances] of Object.entries(classes)) {
+      if (instances.map((x) => x.id).includes(id)) {
+        return label;
       }
     }
     return null;
-    // return classes
-    //   .map((x) => x.instances)
-    //   .flat()
-    //   .filter((x) => x.id === id)
-    //   .map(({ label }) => label)[0];
   }
 
   async function deleteSelectedInstances() {
-    await Promise.all(selected.value.map((id) => dataset.deleteInstance(id)));
+    let p: Promise<unknown> = Promise.resolve();
+    for (const id of selected.value) {
+      // eslint-disable-next-line no-loop-func
+      p = p.then(() => dataset.remove(id));
+    }
+    await p;
     selected.set([]);
   }
 
   async function relabelSelectedInstances(newLabel: string) {
-    await Promise.all(selected.value.map((id) => dataset.changeInstanceLabel(id, newLabel)));
+    let p: Promise<unknown> = Promise.resolve();
+    for (const id of selected.value) {
+      // eslint-disable-next-line no-loop-func
+      p = p.then(() => dataset.patch(id, { y: newLabel }));
+    }
+    await p;
     selected.set([]);
   }
 
@@ -197,9 +88,7 @@
       const srcLabel = getLabel(initialId);
       const dstLabel = getLabel(id);
       if (srcLabel !== dstLabel) return;
-      const instances = classes
-        .filter(({ label }) => label === srcLabel)[0]
-        .instances.map((x) => x.id);
+      const instances = classes[srcLabel].map((x) => x.id);
       const srcIndex = instances.indexOf(initialId);
       const dstIndex = instances.indexOf(id);
       selected.set(
@@ -212,6 +101,76 @@
       initialId = id;
     }
   }
+
+  function onClassAction(label: string, code: string) {
+    let result: string;
+    switch (code) {
+      case 'edit':
+        // eslint-disable-next-line no-alert
+        result = window.prompt('Enter the new label', label);
+        if (result) {
+          dataset.patch(null, { y: result }, { query: { y: label } });
+        }
+        break;
+
+      case 'delete':
+        dataset.remove(null, { query: { y: label } });
+        break;
+
+      case 'deleteInstances':
+        deleteSelectedInstances();
+        break;
+
+      case 'relabelInstances':
+        // eslint-disable-next-line no-alert
+        result = window.prompt('Enter the new label', label);
+        if (result) {
+          relabelSelectedInstances(result);
+        }
+        break;
+
+      default:
+        // eslint-disable-next-line no-alert
+        alert(`Class ${label}: ${code}`);
+        break;
+    }
+  }
+
+  onMount(() => {
+    updateClassesFromDataset();
+    dataset.$changes.subscribe(async (changes) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const { level, type, data } of changes as any[]) {
+        if (level === 'dataset') {
+          if (type === 'created') {
+            updateClassesFromDataset();
+          }
+        } else if (level === 'instance') {
+          if (type === 'created') {
+            classes[data.y] = (classes[data.y] || []).concat([
+              { id: data.id, y: data.y, thumbnail: data.thumbnail },
+            ]);
+          } else if (type === 'updated') {
+            const originalLabel = getLabel(data.id);
+            classes[originalLabel] = classes[originalLabel].filter(({ id }) => id !== data.id);
+            if (classes[originalLabel].length === 0) {
+              delete classes[originalLabel];
+              classes = classes;
+            }
+            classes[data.y] = (classes[data.y] || []).concat([
+              { id: data.id, y: data.y, thumbnail: data.thumbnail },
+            ]);
+          } else if (type === 'removed') {
+            classes[data.y] = classes[data.y].filter(({ id }) => id !== data.id);
+            if (classes[data.y].length === 0) {
+              delete classes[data.y];
+              classes = classes;
+            }
+          }
+        }
+      }
+    });
+  });
 </script>
 
 <svelte:window on:keydown={handleKeydown} on:keyup={handleKeyup} />
@@ -225,7 +184,7 @@
     {/if}
 
     <div class="flex flex-wrap" on:click={() => selectInstance()}>
-      {#each classes as { label, instances }}
+      {#each Object.entries(classes) as [label, instances]}
         <div class="browser-class">
           <div class="browser-class-header">
             <span class="browser-class-title">{label}</span>

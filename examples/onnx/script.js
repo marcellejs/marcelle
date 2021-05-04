@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import '../../dist/marcelle.css';
 import {
   batchPrediction,
@@ -15,7 +14,7 @@ import {
   onnxImageClassifier,
   toggle,
   imageDisplay,
-} from '../../dist/marcelle.esm.js';
+} from '../../dist/marcelle.esm';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CLASSIFICATION
@@ -49,8 +48,8 @@ const instances = source.$thumbnails.map((thumbnail) => ({
   thumbnail,
 }));
 
-const store = dataStore({ location: 'memory' });
-const trainingSet = dataset({ name: 'TrainingSet-onnx', dataStore: store });
+const store = dataStore('memory');
+const trainingSet = dataset('TrainingSet-onnx', store);
 
 const tog = toggle({ text: 'Capture to dataset' });
 tog.$checked.skipRepeats().subscribe((x) => {

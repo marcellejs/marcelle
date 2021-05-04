@@ -5,7 +5,6 @@ export interface ModuleInternals {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   streams: Array<Stream<any>>;
   app?: SvelteComponent;
-  readonly moduleType: string;
   [key: string]: unknown;
 }
 
@@ -18,22 +17,11 @@ export interface Parametrable {
 
 export type ObjectId = string;
 
-export interface Instance {
+export interface Instance<InputType, OutputType> {
   id?: ObjectId;
-  label: string;
-  data: unknown;
+  x: InputType;
+  y: OutputType;
   thumbnail?: string;
-  features?: number[][];
-  type?: string;
-  [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-}
-
-export interface Prediction {
-  id?: ObjectId;
-  instanceId: ObjectId;
-  label?: string;
-  trueLabel?: string;
-  confidences?: Record<string, number>;
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
@@ -47,6 +35,15 @@ export interface TrainingStatus {
 export interface StoredModel {
   id?: ObjectId;
   name: string;
-  url: string;
+  files: Array<[string, string]>;
   metadata?: Record<string, unknown>;
+}
+
+export interface Prediction {
+  id?: ObjectId;
+  instanceId: ObjectId;
+  label?: string;
+  trueLabel?: string;
+  confidences?: Record<string, number>;
+  [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }

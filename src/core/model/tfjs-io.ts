@@ -1,8 +1,7 @@
 import { io } from '@tensorflow/tfjs-core';
-import { ModelArtifacts } from '@tensorflow/tfjs-core/dist/io/io';
 import { logger } from '../logger';
 
-interface SpecificModelArtifacts extends ModelArtifacts {
+interface SpecificModelArtifacts extends io.ModelArtifacts {
   modelTopology: {
     model_config: {
       config: {
@@ -15,7 +14,7 @@ interface SpecificModelArtifacts extends ModelArtifacts {
   };
 }
 
-function fixSeparableConv2D(artifacts: SpecificModelArtifacts): ModelArtifacts {
+function fixSeparableConv2D(artifacts: SpecificModelArtifacts): io.ModelArtifacts {
   if (
     !artifacts.modelTopology.model_config ||
     !artifacts.modelTopology.model_config.config ||
@@ -27,9 +26,10 @@ function fixSeparableConv2D(artifacts: SpecificModelArtifacts): ModelArtifacts {
   }
   try {
     let removeKernels = false;
-    artifacts.modelTopology.model_config.config.layers.forEach((layer, i) => {
+    for (const [i, layer] of artifacts.modelTopology.model_config.config.layers.entries()) {
       if (layer.class_name === 'SeparableConv2D') {
-        ['kernel_constraint', 'kernel_initializer', 'kernel_regularizer'].forEach((field) => {
+        const fields = ['kernel_constraint', 'kernel_initializer', 'kernel_regularizer'];
+        for (const field of fields) {
           if (
             Object.keys(artifacts.modelTopology.model_config.config.layers[i].config).includes(
               field,
@@ -39,13 +39,14 @@ function fixSeparableConv2D(artifacts: SpecificModelArtifacts): ModelArtifacts {
           }
           // eslint-disable-next-line no-param-reassign
           delete artifacts.modelTopology.model_config.config.layers[i].config[field];
-        });
+        }
       }
-    });
-    if (removeKernels)
+    }
+    if (removeKernels) {
       logger.warning(
         'TFJS Model loading: experimentally removing Kernel attributes from SeparableConv2D layers',
       );
+    }
   } catch (error) {
     logger.warning(
       'TFJS Model loading: An error occurred whil experimentally removing Kernel attributes from SeparableConv2D layers',
@@ -58,7 +59,7 @@ function fixSeparableConv2D(artifacts: SpecificModelArtifacts): ModelArtifacts {
 export function http(...args: Parameters<typeof io.http>): ReturnType<typeof io.http> {
   const loader = io.http(...args);
   const superLoad = loader.load.bind(loader);
-  loader.load = async function loadx(): Promise<ModelArtifacts> {
+  loader.load = async function loadx(): Promise<io.ModelArtifacts> {
     const x = await superLoad();
     return fixSeparableConv2D(x as SpecificModelArtifacts);
   };
@@ -70,7 +71,7 @@ export function browserFiles(
 ): ReturnType<typeof io.browserFiles> {
   const loader = io.browserFiles(...args);
   const superLoad = loader.load.bind(loader);
-  loader.load = async function loadx(): Promise<ModelArtifacts> {
+  loader.load = async function loadx(): Promise<io.ModelArtifacts> {
     const x = await superLoad();
     return fixSeparableConv2D(x as SpecificModelArtifacts);
   };

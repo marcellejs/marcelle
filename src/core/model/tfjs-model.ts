@@ -18,7 +18,7 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
   labels?: string[];
 
   @Catch
-  async warmup() {
+  protected async warmup(): Promise<void> {
     const inputShape = this.model.inputs[0].shape.map((x) => (x && x > 0 ? x : 1));
     const warmupResult = this.model.predict(tidy(() => zeros(inputShape))) as Tensor;
     await warmupResult.data();
@@ -26,12 +26,16 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
   }
 
   @checkProperty('dataStore')
-  async save(update: boolean, metadata?: Record<string, unknown>): Promise<ObjectId> {
+  async save(
+    name: string,
+    metadata?: Record<string, unknown>,
+    id: ObjectId = null,
+  ): Promise<ObjectId> {
     if (!this.model) return null;
-    let url: string;
+    let files: [string, string][];
     if (this.dataStore.backend === DataStoreBackend.LocalStorage) {
-      await this.model.save(`indexeddb://${this.syncModelName}`);
-      url = `indexeddb://${this.syncModelName}`;
+      await this.model.save(`indexeddb://${name}`);
+      files = [['main', `indexeddb://${name}`]];
     } else if (this.dataStore.backend === DataStoreBackend.Remote) {
       const requestOpts: { requestInit?: unknown } = {};
       if (this.dataStore.requiresAuth) {
@@ -39,36 +43,36 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
         const headers = new Headers({ Authorization: `Bearer ${jwt}` });
         requestOpts.requestInit = { headers };
       }
-      const files = await this.model
+      files = await this.model
         .save(http(`${this.dataStore.location}/tfjs-models/upload`, requestOpts))
         .then((res) => res.responses[0].json());
-      url = files['model.json'];
     }
 
     const storedModel = {
-      name: this.syncModelName,
-      url,
+      name,
+      files,
       metadata: {
         tfjsModelFormat: this.model instanceof LayersModel ? 'layers-model' : 'graph-model',
         ...(this.labels && { labels: this.labels }),
         ...metadata,
       },
     };
-    return this.saveToDatastore(storedModel, update);
+    return this.saveToDatastore(storedModel, id);
   }
 
   @checkProperty('dataStore')
-  async load(id?: ObjectId): Promise<StoredModel> {
+  async load(idOrName: ObjectId | string): Promise<StoredModel> {
+    if (!idOrName) return null;
     this.$training.set({
       status: 'loading',
     });
     try {
-      const storedModel = await this.loadFromDatastore(id);
+      const storedModel = await this.loadFromDatastore(idOrName);
       this.loadFn =
         storedModel.metadata.tfjsModelFormat === 'graph-model' ? loadGraphModel : loadLayersModel;
       let model: LayersModel | GraphModel;
       if (this.dataStore.backend === DataStoreBackend.LocalStorage) {
-        model = await this.loadFn(storedModel.url);
+        model = await this.loadFn(storedModel.files[0][1]);
       } else if (this.dataStore.backend === DataStoreBackend.Remote) {
         const requestOpts: { requestInit?: unknown } = {};
         if (this.dataStore.requiresAuth) {
@@ -78,7 +82,7 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
         }
 
         model = await this.loadFn(
-          http(`${this.dataStore.location}/tfjs-models/${storedModel.url}`, requestOpts),
+          http(`${this.dataStore.location}/tfjs-models/${storedModel.id}/model.json`, requestOpts),
         );
       }
       if (model) {
@@ -109,7 +113,7 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
     }
   }
 
-  async download(metadata?: Record<string, unknown>) {
+  async download(metadata?: Record<string, unknown>): Promise<void> {
     const name = this.syncModelName || toKebabCase(this.title);
     const meta = {
       type: 'tfjs-model',
@@ -175,7 +179,7 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
             source: 'file',
           },
         });
-        return { name: meta.name, url: '', metadata: meta };
+        return { name: meta.name, files: [], metadata: meta };
       }
 
       const e = new Error('The provided files are not compatible with this model');
@@ -189,5 +193,3 @@ export abstract class TFJSModel<InputType, OutputType> extends Model<InputType, 
     }
   }
 }
-
-export type TFJSModelConstructor<X, Y, T extends TFJSModel<X, Y>> = new (...args: any[]) => T;

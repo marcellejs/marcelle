@@ -1,3 +1,5 @@
+<svelte:options accessors />
+
 <script lang="ts">
   import Number from './Number.svelte';
   import NumberArray from './NumberArray.svelte';
@@ -5,10 +7,9 @@
   import type { Stream } from '../../core';
 
   export let title: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let parameters: Record<string, Stream<any>>;
 </script>
-
-<svelte:options accessors />
 
 <ModuleBase {title}>
   <div class="m-2">

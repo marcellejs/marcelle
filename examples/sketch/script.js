@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import '../../dist/marcelle.css';
 import {
   datasetBrowser,
@@ -15,7 +14,7 @@ import {
   sketchpad,
   textfield,
   trainingPlot,
-} from '../../dist/marcelle.esm.js';
+} from '../../dist/marcelle.esm';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
@@ -24,33 +23,28 @@ import {
 const input = sketchpad();
 const featureExtractor = mobilenet();
 
-const instances = input.$images
-  .hold()
-  .snapshot((thumbnail, data) => ({ thumbnail, data }), input.$thumbnails)
-  .map(async (instance) => ({
-    ...instance,
-    type: 'sketch',
-    label: 'default',
-    features: await featureExtractor.process(instance.data),
-  }))
-  .awaitPromises();
-
-const store = dataStore({ location: 'localStorage' });
-const trainingSet = dataset({ name: 'TrainingSet-sketch', dataStore: store });
+const store = dataStore('localStorage');
+const trainingSet = dataset('TrainingSet-sketch', store);
+const trainingSetBrowser = datasetBrowser(trainingSet);
 
 const labelField = textfield();
 labelField.title = 'Correct the prediction if necessary';
 labelField.$text.set('...');
 const addToDataset = button({ text: 'Add to Dataset and Train' });
 addToDataset.title = 'Improve the classifier';
-trainingSet.capture(
-  addToDataset.$click.snapshot(
-    (instance) => ({ ...instance, label: labelField.$text.value }),
-    instances,
-  ),
-);
 
-const trainingSetBrowser = datasetBrowser(trainingSet);
+const $instances = input.$images
+  .hold()
+  .snapshot(
+    async (thumbnail, img) => ({ thumbnail, x: await featureExtractor.process(img) }),
+    input.$thumbnails,
+  )
+  .awaitPromises();
+
+addToDataset.$click
+  .sample($instances)
+  .map((instance) => ({ ...instance, y: labelField.$text.value }))
+  .subscribe(trainingSet.create.bind(trainingSet));
 
 // -----------------------------------------------------------
 // TRAINING
@@ -61,20 +55,20 @@ const classifier = mlp({ layers: [64, 32], epochs: 20, dataStore: store });
 classifier.sync('sketch-classifier');
 
 b.$click.subscribe(() => classifier.train(trainingSet));
-trainingSet.$changes.subscribe((changes) => {
-  for (let i = 0; i < changes.length; i++) {
-    if (changes[i].level === 'instance' && changes[i].type === 'created') {
-      if (
-        Object.values(trainingSet.$classes.value)
-          .map((x) => x.length)
-          .reduce((x, y) => x || y < 2, false)
-      ) {
+
+let countPerClass = {};
+trainingSet.$changes.subscribe(async (changes) => {
+  for (const { level, type, data } of changes) {
+    if (level === 'instance' && type === 'created') {
+      if (!(data.y in countPerClass)) countPerClass[data.y] = 0;
+      countPerClass[data.y] += 1;
+      if (Object.values(countPerClass).reduce((x, y) => x || y < 2, false)) {
         notification({
           title: 'Tip',
           message: 'You need to record at least two examples per class',
           duration: 5000,
         });
-      } else if (trainingSet.$labels.value.length < 2) {
+      } else if (Object.keys(countPerClass).length < 2) {
         notification({
           title: 'Tip',
           message: 'You need to have at least two classes to train the model',
@@ -83,9 +77,13 @@ trainingSet.$changes.subscribe((changes) => {
       } else {
         classifier.train(trainingSet);
       }
-      break;
-    } else if (changes[i].level === 'class' && ['deleted', 'renamed'].includes(changes[i].type)) {
+      // classifier.train(trainingSet);
+    } else if (level === 'instance' && type === 'removed') {
+      countPerClass[data.y] -= 1;
       classifier.train(trainingSet);
+    } else {
+      const allInstances = await trainingSet.items().select(['y']).toArray();
+      countPerClass = allInstances.reduce((cpc, { y }) => ({ ...cpc, [y]: (cpc[y] || 0) + 1 }), {});
     }
   }
 });
@@ -98,20 +96,19 @@ const plotTraining = trainingPlot(classifier);
 // REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
-const predictionStream = classifier.$training
+const $predictions = classifier.$training
   .filter((x) => x.status === 'success')
-  .sample(instances)
-  .merge(instances)
-  // .filter(() => classifier.ready)
-  .map(async ({ features }) => classifier.predict(features))
+  .sample($instances)
+  .merge($instances)
+  .map(({ x }) => classifier.predict(x))
   .awaitPromises()
   .filter((x) => !!x);
 
-predictionStream.subscribe(({ label }) => {
+$predictions.subscribe(({ label }) => {
   labelField.$text.set(label);
 });
 
-const plotResults = classificationPlot(predictionStream);
+const plotResults = classificationPlot($predictions);
 
 // -----------------------------------------------------------
 // DASHBOARDS

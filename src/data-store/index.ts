@@ -1,7 +1,7 @@
-import { DataStore, DataStoreOptions } from './data-store';
+import { DataStore } from './data-store';
 
-export function dataStore({ location = 'memory' }: DataStoreOptions = {}): DataStore {
-  return new DataStore({ location });
+export function dataStore(location?: string): DataStore {
+  return new DataStore(location);
 }
 
 export type { DataStore };

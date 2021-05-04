@@ -4,11 +4,12 @@ import feathers, { Service } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio-client';
 import memoryService from 'feathers-memory';
 import localStorageService from 'feathers-localstorage';
-import { addObjectId, renameIdField, createDate, updateDate } from './hooks';
+import { addObjectId, renameIdField, createDate, updateDate, findDistinct } from './hooks';
 import { logger } from '../core/logger';
 import Login from './Login.svelte';
 import { throwError } from '../utils/error-handling';
 import { Stream } from '../core/stream';
+import { noop } from '../utils/misc';
 
 function isValidUrl(str: string) {
   try {
@@ -30,29 +31,22 @@ interface User {
   email: string;
 }
 
-export interface DataStoreOptions {
-  location?: string;
-}
-
 export class DataStore {
-  readonly isDataStore = true;
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   feathers: feathers.Application<any>;
   requiresAuth = false;
   user: User;
-  location: string;
 
-  #connectPromise: Promise<void>;
-  #authenticationPromise: Promise<void>;
+  backend: DataStoreBackend;
+  location: string;
 
   $services: Stream<string[]> = new Stream([], true);
 
-  backend: DataStoreBackend;
+  #connectPromise: Promise<void>;
+  #authenticationPromise: Promise<void>;
+  #createService: (name: string) => void = noop;
 
-  #createService: (name: string) => void = () => {};
-
-  constructor({ location = 'memory' }: DataStoreOptions = {}) {
+  constructor(location = 'memory') {
     this.feathers = feathers();
     this.location = location;
     if (isValidUrl(location)) {
@@ -75,6 +69,7 @@ export class DataStore {
           storage: window.localStorage,
           name,
           id: '_id',
+          multi: true,
           paginate: {
             default: 100,
             max: 200,
@@ -193,10 +188,11 @@ export class DataStore {
 
   setupAppHooks(): void {
     const beforeCreate = this.backend !== DataStoreBackend.Remote ? [addObjectId] : [];
+    const findDistinctHook = this.backend !== DataStoreBackend.Remote ? [findDistinct] : [];
     this.feathers.hooks({
       before: {
-        find: [renameIdField],
-        create: beforeCreate.concat([createDate]),
+        find: [...findDistinctHook, renameIdField],
+        create: [...beforeCreate, createDate],
         update: [updateDate],
         patch: [updateDate],
       },
