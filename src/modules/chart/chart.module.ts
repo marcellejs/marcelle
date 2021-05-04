@@ -79,10 +79,25 @@ const presets = {
       },
     },
   },
+  scatter: {
+    global: {
+      type: 'scatter',
+      options: {
+        scales: {
+          xAxes: [
+            {
+              type: 'linear',
+              position: 'bottom',
+            },
+          ],
+        },
+      },
+    },
+  },
 };
 
 export interface ChartOptions {
-  preset?: 'line' | 'line-fast' | 'bar' | 'bar-fast';
+  preset?: 'line' | 'line-fast' | 'bar' | 'bar-fast' | 'scatter';
   options?: ChartJsOptions & { xlabel?: string; ylabel?: string };
 }
 
@@ -127,6 +142,17 @@ export class Chart extends Module {
     } else {
       this.#datasets.push({ dataStream, label, options });
     }
+  }
+
+  setColors(colorStream: Stream<number[]>): void {
+    function alternatePointStyles(ctx: any) {
+      const index = ctx.dataIndex;
+      return colorStream.value[index] === 1 ? 'red' : 'green';
+    }
+    this.#datasets[0].label = 'clusters';
+    this.#datasets[0].options.backgroundColor = colorStream.value;
+    this.#datasets[0].options.color = colorStream.value; //alternatePointStyles;
+    console.log('colorStream.value', this.#datasets, this.#options);
   }
 
   removeSeries(dataStream: Stream<number[]> | Stream<Array<{ x: unknown; y: unknown }>>): void {
