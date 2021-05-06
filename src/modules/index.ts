@@ -6,7 +6,6 @@ export * from './confidence-plot';
 export * from './confusion-matrix';
 export * from './dataset-browser';
 export * from './detection-boxes';
-export * from './faker';
 export * from './file-upload';
 export * from './generic-chart';
 export * from './image-display';

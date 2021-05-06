@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import '../../dist/marcelle.css';
 import {
   datasetBrowser,
@@ -6,7 +7,6 @@ import {
   dashboard,
   dataset,
   dataStore,
-  faker,
   imageUpload,
   select,
   sketchPad,
@@ -92,13 +92,6 @@ chartExample.addSeries(series1, 'series 1');
 chartExample.addSeries(series2, 'series 2');
 
 // -----------------------------------------------------------
-// FAKER
-// -----------------------------------------------------------
-
-const f = faker({ size: 12, period: 500 });
-f.$frames.subscribe((x) => console.log('faker $frames:', x));
-
-// -----------------------------------------------------------
 // IMAGE UPLOAD
 // -----------------------------------------------------------
 
@@ -150,7 +143,7 @@ const dash = dashboard({
 });
 
 dash.page('Widgets').use(capture, label, tog, sel, t, s, chartExample);
-dash.page('Sources').useLeft(f, imgDrop, sketch, w);
+dash.page('Sources').useLeft(imgDrop, sketch, w);
 dash.page('Data Management').useLeft(w).use([label, capture], trainingSetBrowser);
 dash.settings.dataStores(store).datasets(trainingSet);
 
