@@ -145,14 +145,14 @@ export class GenericChart extends Module {
   }
 
   setColors(colorStream: Stream<number[]>): void {
-    function alternatePointStyles(ctx: any) {
-      const index = ctx.dataIndex;
-      return colorStream.value[index] === 1 ? 'red' : 'green';
-    }
+    // function alternatePointStyles(ctx: any) {
+    //   const index = ctx.dataIndex;
+    //   return colorStream.value[index] === 1 ? 'red' : 'green';
+    // }
     this.#datasets[0].label = 'clusters';
     this.#datasets[0].options.backgroundColor = colorStream.value;
     this.#datasets[0].options.color = colorStream.value; //alternatePointStyles;
-    console.log('colorStream.value', this.#datasets, this.#options);
+    // console.log('colorStream.value', this.#datasets, this.#options);
   }
 
   removeSeries(dataStream: Stream<number[]> | Stream<Array<{ x: unknown; y: unknown }>>): void {

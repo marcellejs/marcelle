@@ -32,7 +32,7 @@ function euclideanDistance(a: number[], b: number[]): number {
   );
 }
 
-export class KMeansClustering extends Model<number[], ClusteringResults> {
+export class KMeansClustering extends Model<number[][], ClusteringResults> {
   title = 'k-means clustering';
   serviceName = 'kmeans-clusering-models';
 
@@ -58,7 +58,7 @@ export class KMeansClustering extends Model<number[], ClusteringResults> {
 
   @Catch
   async train(
-    dataset: Dataset<number[], undefined> | ServiceIterable<Instance<number[], undefined>>,
+    dataset: Dataset<number[][], undefined> | ServiceIterable<Instance<number[][], undefined>>,
   ): Promise<void> {
     this.$training.set({ status: 'start', epochs: 1 });
     const ds = isDataset(dataset) ? dataset.items() : dataset;
@@ -72,7 +72,7 @@ export class KMeansClustering extends Model<number[], ClusteringResults> {
   }
 
   @Catch
-  async predict(x: number[]): Promise<ClusteringResults> {
+  async predict(x: number[][]): Promise<ClusteringResults> {
     let cluster = 0;
     let minDistance = 1000;
     const confidences: { [key: string]: number } = {};
@@ -100,9 +100,9 @@ export class KMeansClustering extends Model<number[], ClusteringResults> {
   }
 
   @Catch
-  async batchPredict(dataset: Dataset<number[], undefined>): Promise<ClusteringResults[]> {
+  async batchPredict(dataset: Dataset<number[][], undefined>): Promise<ClusteringResults[]> {
     // const allInstances = await dataset.getAllInstances(['features']);
-    const data: number[][] = []; //allInstances.map((x) => x.features[0]);
+    const data: number[][][] = []; //allInstances.map((x) => x.features[0]);
     const ds = isDataset(dataset) ? dataset.items() : dataset;
     for await (const { x } of ds) {
       data.push(x);
@@ -135,7 +135,7 @@ export class KMeansClustering extends Model<number[], ClusteringResults> {
     return storedModel;
   }
 
-  async download(metadata?: Record<string, unknown>) {
+  async download(metadata?: Record<string, unknown>): Promise<void> {
     const model = await this.write(metadata);
     saveBlob(JSON.stringify(model), `${model.name}.json`, 'text/plain');
   }
