@@ -33,7 +33,7 @@ const capture = button({ text: 'Hold to record instances' });
 capture.title = 'Capture instances to the training set';
 
 const store = dataStore('localStorage');
-const trainingSet = dataset('TrainingSet-dashboard', store);
+const trainingSet = dataset('training-set-mlp-vs-knn', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
