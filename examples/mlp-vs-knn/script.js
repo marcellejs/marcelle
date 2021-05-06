@@ -8,11 +8,11 @@ import {
   dataset,
   dataStore,
   mlpClassifier,
-  mobilenet,
-  parameters,
-  classificationPlot,
+  mobileNet,
+  modelParameters,
+  confidencePlot,
   trainingProgress,
-  textfield,
+  textField,
   toggle,
   trainingPlot,
   webcam,
@@ -25,9 +25,9 @@ import {
 // -----------------------------------------------------------
 
 const input = webcam();
-const featureExtractor = mobilenet();
+const featureExtractor = mobileNet();
 
-const label = textfield();
+const label = textField();
 label.title = 'Instance label';
 const capture = button({ text: 'Hold to record instances' });
 capture.title = 'Capture instances to the training set';
@@ -55,7 +55,7 @@ b.title = 'Training Launcher';
 
 // KNN
 const classifierKNN = knnClassifier({ k: 3, dataStore: store }).sync('mlp-vs-knn-knn');
-const paramsKNN = parameters(classifierKNN);
+const paramsKNN = modelParameters(classifierKNN);
 paramsKNN.title = 'KNN: Parameters';
 const progressKNN = trainingProgress(classifierKNN);
 progressKNN.title = 'KNN: Training Progress';
@@ -64,7 +64,7 @@ progressKNN.title = 'KNN: Training Progress';
 const classifierMLP = mlpClassifier({ layers: [128, 64], epochs: 30, dataStore: store }).sync(
   'mlp-vs-knn-mlp',
 );
-const paramsMLP = parameters(classifierMLP);
+const paramsMLP = modelParameters(classifierMLP);
 paramsMLP.title = 'MLP: Parameters';
 const progressMLP = trainingProgress(classifierMLP);
 progressMLP.title = 'MLP: Training Progress';
@@ -114,9 +114,9 @@ const predictionStreamKNN = rtFeatureStream
   .map(async (features) => classifierKNN.predict(features))
   .awaitPromises();
 
-const plotResultsMLP = classificationPlot(predictionStreamMLP);
+const plotResultsMLP = confidencePlot(predictionStreamMLP);
 plotResultsMLP.title = 'Predictions: MLP';
-const plotResultsKNN = classificationPlot(predictionStreamKNN);
+const plotResultsKNN = confidencePlot(predictionStreamKNN);
 plotResultsKNN.title = 'Predictions: KNN';
 
 // -----------------------------------------------------------

@@ -8,12 +8,12 @@ import {
   dataset,
   dataStore,
   mlpClassifier,
-  mobilenet,
-  parameters,
-  classificationPlot,
+  mobileNet,
+  modelParameters,
+  confidencePlot,
   trainingProgress,
   text,
-  textfield,
+  textField,
   toggle,
   trainingPlot,
   webcam,
@@ -25,9 +25,9 @@ import {
 // -----------------------------------------------------------
 
 const input = webcam();
-const featureExtractor = mobilenet();
+const featureExtractor = mobileNet();
 
-const labelInput = textfield();
+const labelInput = textField();
 labelInput.title = 'Instance label';
 const capture = button({ text: 'Hold to record instances' });
 capture.title = 'Capture instances to the training set';
@@ -55,7 +55,7 @@ const classifier = mlpClassifier({ layers: [64, 32], epochs: 20, dataStore: stor
 classifier.sync('wizard-classifier');
 b.$click.subscribe(() => classifier.train(trainingSet));
 
-const params = parameters(classifier);
+const params = modelParameters(classifier);
 const prog = trainingProgress(classifier);
 const plotTraining = trainingPlot(classifier);
 
@@ -83,7 +83,7 @@ const $predictions = input.$images
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
-const plotResults = classificationPlot($predictions);
+const plotResults = confidencePlot($predictions);
 
 // -----------------------------------------------------------
 // DASHBOARDS

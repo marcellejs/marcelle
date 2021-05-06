@@ -9,7 +9,7 @@ import {
   dataStore,
   fileUpload,
   imageUpload,
-  classificationPlot,
+  confidencePlot,
   text,
   onnxModel,
   toggle,
@@ -66,7 +66,7 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchTesting = batchPrediction({ name: 'mobilenet', dataStore: store });
+const batchTesting = batchPrediction({ name: 'mobileNet', dataStore: store });
 const predictButton = button({ text: 'Update predictions' });
 const predictionAccuracy = text({ text: 'Waiting for predictions...' });
 const confMat = confusionMatrix(batchTesting);
@@ -82,7 +82,7 @@ predictButton.$click.subscribe(async () => {
 // -----------------------------------------------------------
 
 const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
-const plotResults = classificationPlot(predictionStream);
+const plotResults = confidencePlot(predictionStream);
 
 const instanceViewer = imageDisplay(source.$images);
 

@@ -2,14 +2,14 @@ import { map, startWith } from '@most/core';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import { Prediction } from '../../core/types';
-import { chart, Chart } from '../chart';
+import { genericChart, GenericChart } from '../generic-chart';
 import { text, Text } from '../text';
 
-export class ClassificationPlot extends Module {
-  title = 'classification plot';
+export class ConfidencePlot extends Module {
+  title = 'confidence plot';
 
   $confidenceStream: Stream<{ x: string; y: number }[]>;
-  #plotConfidences: Chart;
+  #plotConfidences: GenericChart;
   #displayLabel: Text;
 
   constructor(predictionStream: Stream<Prediction>) {
@@ -21,7 +21,7 @@ export class ClassificationPlot extends Module {
         predictionStream,
       ),
     );
-    this.#plotConfidences = chart({
+    this.#plotConfidences = genericChart({
       preset: 'bar-fast',
       options: {
         aspectRatio: 2,

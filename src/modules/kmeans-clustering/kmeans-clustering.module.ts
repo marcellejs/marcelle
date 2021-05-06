@@ -1,12 +1,12 @@
 import type { TensorLike } from '@tensorflow/tfjs-core';
 import kmeans from 'ml-kmeans';
 import { Stream, Model, ClusteringResults, ModelOptions, StoredModel, ObjectId } from '../../core';
-import { Dataset } from '../dataset/dataset.module';
+import type { Dataset } from '../../dataset';
 import { Catch, throwError } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
 
-export interface KMeansOptions extends ModelOptions {
+export interface KMeansClusteringOptions extends ModelOptions {
   k: number;
 }
 
@@ -19,9 +19,9 @@ function euclideanDistance(a: number[], b: number[]): number {
   );
 }
 
-export class KMeans extends Model<number[], ClusteringResults> {
-  title = 'k-means';
-  serviceName = 'kmeans-models';
+export class KMeansClustering extends Model<number[], ClusteringResults> {
+  title = 'k-means clustering';
+  serviceName = 'kmeans-clusering-models';
 
   parameters: {
     k: Stream<number>;
@@ -32,7 +32,7 @@ export class KMeans extends Model<number[], ClusteringResults> {
   extremes: { min: number; max: number }[];
   dataset: number[][];
 
-  constructor({ k = 3, ...rest }: Partial<KMeansOptions> = {}) {
+  constructor({ k = 3, ...rest }: Partial<KMeansClusteringOptions> = {}) {
     super(rest);
     this.parameters = {
       k: new Stream(k, true),

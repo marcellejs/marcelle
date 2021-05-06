@@ -6,15 +6,15 @@ import {
   dashboard,
   dataset,
   dataStore,
-  mobilenet,
-  textfield,
+  mobileNet,
+  textField,
   toggle,
   webcam,
-  kmeans,
-  parameters,
+  kmeansClustering,
+  modelParameters,
   scatterPlot,
   throwError,
-  classificationPlot,
+  confidencePlot,
 } from '../../dist/marcelle.esm.js';
 
 // -----------------------------------------------------------
@@ -22,9 +22,9 @@ import {
 // -----------------------------------------------------------
 
 const input = webcam();
-const featureExtractor = mobilenet();
+const featureExtractor = mobileNet();
 
-const label = textfield();
+const label = textField();
 label.title = 'Instance label';
 const capture = button({ text: 'Hold to record instances' });
 capture.title = 'Capture instances to the training set';
@@ -53,8 +53,8 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 const b = button({ text: 'Train' });
 b.title = 'Training k-means';
 
-const clusteringKMeans = kmeans({ k: 3, dataStore: store });
-const params = parameters(clusteringKMeans);
+const clusteringKMeans = kmeansClustering({ k: 3, dataStore: store });
+const params = modelParameters(clusteringKMeans);
 
 b.$click.subscribe(() => {
   clusteringKMeans.train(trainingSet);
@@ -90,7 +90,7 @@ const predictionStream = input.$images
   .map(async (img) => clusteringKMeans.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
-const predPlot = classificationPlot(predictionStream);
+const predPlot = confidencePlot(predictionStream);
 
 // -----------------------------------------------------------
 // DASHBOARDS

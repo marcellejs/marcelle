@@ -8,11 +8,11 @@ import {
   dataset,
   dataStore,
   mlpClassifier,
-  mobilenet,
-  parameters,
-  classificationPlot,
+  mobileNet,
+  modelParameters,
+  confidencePlot,
   trainingProgress,
-  textfield,
+  textField,
   toggle,
   trainingPlot,
   webcam,
@@ -24,9 +24,9 @@ import {
 // -----------------------------------------------------------
 
 const input = webcam();
-const featureExtractor = mobilenet();
+const featureExtractor = mobileNet();
 
-const label = textfield();
+const label = textField();
 label.title = 'Instance label';
 const capture = button({ text: 'Hold to record instances' });
 capture.title = 'Capture instances to the training set';
@@ -58,7 +58,7 @@ b.$click.subscribe(() =>
   ),
 );
 
-const params = parameters(classifier);
+const params = modelParameters(classifier);
 const prog = trainingProgress(classifier);
 const plotTraining = trainingPlot(classifier);
 
@@ -102,7 +102,7 @@ const predictionStream = input.$images
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
-const plotResults = classificationPlot(predictionStream);
+const plotResults = confidencePlot(predictionStream);
 
 // -----------------------------------------------------------
 // DASHBOARDS

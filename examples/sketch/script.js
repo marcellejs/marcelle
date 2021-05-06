@@ -6,13 +6,13 @@ import {
   dataset,
   dataStore,
   mlpClassifier,
-  mobilenet,
-  parameters,
-  classificationPlot,
+  mobileNet,
+  modelParameters,
+  confidencePlot,
   notification,
   trainingProgress,
-  sketchpad,
-  textfield,
+  sketchPad,
+  textField,
   trainingPlot,
 } from '../../dist/marcelle.esm';
 
@@ -20,14 +20,14 @@ import {
 // INPUT PIPELINE & DATA CAPTURE
 // -----------------------------------------------------------
 
-const input = sketchpad();
-const featureExtractor = mobilenet();
+const input = sketchPad();
+const featureExtractor = mobileNet();
 
 const store = dataStore('localStorage');
 const trainingSet = dataset('TrainingSet-sketch', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
-const labelField = textfield();
+const labelField = textField();
 labelField.title = 'Correct the prediction if necessary';
 labelField.$text.set('...');
 const addToDataset = button({ text: 'Add to Dataset and Train' });
@@ -88,7 +88,7 @@ trainingSet.$changes.subscribe(async (changes) => {
   }
 });
 
-const params = parameters(classifier);
+const params = modelParameters(classifier);
 const prog = trainingProgress(classifier);
 const plotTraining = trainingPlot(classifier);
 
@@ -108,7 +108,7 @@ $predictions.subscribe(({ label }) => {
   labelField.$text.set(label);
 });
 
-const plotResults = classificationPlot($predictions);
+const plotResults = confidencePlot($predictions);
 
 // -----------------------------------------------------------
 // DASHBOARDS

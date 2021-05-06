@@ -1,15 +1,15 @@
 import { Module } from '../../core/module';
-import Component from './parameters.svelte';
-import { Parametrable } from '../../core/types';
+import { Stream } from '../../core/stream';
+import Component from './text-field.svelte';
 
-export class Parameters extends Module {
-  title = 'parameters';
+export class TextField extends Module {
+  title = 'textField';
 
-  #module: Parametrable;
+  $text: Stream<string> = new Stream('', true);
 
-  constructor(m: Parametrable) {
+  constructor() {
     super();
-    this.#module = m;
+    this.start();
   }
 
   mount(target?: HTMLElement): void {
@@ -20,7 +20,7 @@ export class Parameters extends Module {
       target: t,
       props: {
         title: this.title,
-        parameters: this.#module.parameters,
+        text: this.$text,
       },
     });
   }

@@ -8,12 +8,12 @@ import {
   dataset,
   dataStore,
   mlpClassifier,
-  mobilenet,
-  parameters,
-  classificationPlot,
+  mobileNet,
+  modelParameters,
+  confidencePlot,
   trainingProgress,
-  sketchpad,
-  textfield,
+  sketchPad,
+  textField,
   toggle,
   trainingPlot,
   throwError,
@@ -23,10 +23,10 @@ import {
 // INPUT PIPELINE & DATA CAPTURE
 // -----------------------------------------------------------
 
-const input = sketchpad();
-const featureExtractor = mobilenet();
+const input = sketchPad();
+const featureExtractor = mobileNet();
 
-const label = textfield();
+const label = textField();
 label.title = 'Instance label';
 const capture = button({ text: 'Capture this drawing' });
 capture.title = 'Capture instances to the training set';
@@ -56,7 +56,7 @@ classifier.sync('sketch-classifier');
 
 b.$click.subscribe(() => classifier.train(trainingSet));
 
-const params = parameters(classifier);
+const params = modelParameters(classifier);
 const prog = trainingProgress(classifier);
 const plotTraining = trainingPlot(classifier);
 
@@ -95,7 +95,7 @@ const $predictions = input.$images
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
-const plotResults = classificationPlot($predictions);
+const plotResults = confidencePlot($predictions);
 
 // -----------------------------------------------------------
 // DASHBOARDS

@@ -10,7 +10,7 @@ import {
   fileUpload,
   imageDisplay,
   imageUpload,
-  classificationPlot,
+  confidencePlot,
   text,
   tfjsModel,
   toggle,
@@ -62,7 +62,7 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchTesting = batchPrediction({ name: 'mobilenet', dataStore: store });
+const batchTesting = batchPrediction({ name: 'mobileNet', dataStore: store });
 const predictButton = button({ text: 'Update predictions' });
 const predictionAccuracy = text({ text: 'Waiting for predictions...' });
 const confMat = confusionMatrix(batchTesting);
@@ -96,7 +96,7 @@ const betterPredictions = predictionStream.map(({ label, confidences }) => {
   };
 });
 
-const plotResults = classificationPlot(betterPredictions);
+const plotResults = confidencePlot(betterPredictions);
 
 const instanceViewer = imageDisplay(source.$images);
 

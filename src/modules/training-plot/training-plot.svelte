@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onDestroy, onMount, tick } from 'svelte';
-  import type { Chart } from '../chart';
+  import type { GenericChart } from '../generic-chart';
 
-  export let charts: { [key: string]: Chart };
+  export let charts: { [key: string]: GenericChart };
 
   let container: HTMLElement;
 

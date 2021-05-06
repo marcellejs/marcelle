@@ -1,6 +1,6 @@
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
-import { chart, Chart } from '../chart';
+import { genericChart, GenericChart } from '../generic-chart';
 import Component from './training-plot.svelte';
 import { throwError } from '../../utils/error-handling';
 import { Model } from '../../core';
@@ -10,7 +10,7 @@ export type LogSpec = string | string[] | { [key: string]: string | string[] };
 export class TrainingPlot<T, U> extends Module {
   title = 'training plot';
 
-  charts: { [key: string]: Chart } = {};
+  charts: { [key: string]: GenericChart } = {};
 
   constructor(
     public model: Model<T, U>,
@@ -44,7 +44,7 @@ export class TrainingPlot<T, U> extends Module {
     } = {};
     for (const [key, val] of Object.entries(processedLogs)) {
       const x = Array.isArray(val) ? val : [val];
-      this.charts[key] = chart({
+      this.charts[key] = genericChart({
         preset: 'line-fast',
         options: {
           xlabel: 'Epoch',

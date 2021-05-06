@@ -3,7 +3,7 @@ import {
   cocoSsd,
   dashboard,
   imageUpload,
-  classificationPlot,
+  confidencePlot,
   toggle,
   visObjectDetection,
   webcam,
@@ -30,7 +30,7 @@ const cocoBetterPredictions = cocoPredictionStream.map(({ outputs }) => ({
 }));
 
 const objDetectionVis = visObjectDetection(source.$images, cocoPredictionStream);
-const cocoPlotResults = classificationPlot(cocoBetterPredictions);
+const cocoPlotResults = confidencePlot(cocoBetterPredictions);
 
 // -----------------------------------------------------------
 // REAL-TIME PREDICTION
@@ -51,7 +51,7 @@ const realtimePredictions = rtDetectStream.map(({ outputs }) => ({
 const imgStream = wc.$images.filter(() => tog.$checked.value);
 
 const rtObjDetectionVis = visObjectDetection(imgStream, rtDetectStream);
-const rtPlotResults = classificationPlot(realtimePredictions);
+const rtPlotResults = confidencePlot(realtimePredictions);
 
 // -----------------------------------------------------------
 // DASHBOARDS

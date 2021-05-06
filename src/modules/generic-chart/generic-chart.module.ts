@@ -2,7 +2,7 @@ import { ChartOptions as ChartJsOptions } from 'chart.js';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
 import { throwError } from '../../utils/error-handling';
-import Component from './chart.svelte';
+import Component from './generic-chart.svelte';
 
 // TODO: update view when series are added or removed
 // TODO: Automatic switch to fast mode when high number of points
@@ -96,26 +96,26 @@ const presets = {
   },
 };
 
-export interface ChartOptions {
+export interface GenericChartOptions {
   preset?: 'line' | 'line-fast' | 'bar' | 'bar-fast' | 'scatter';
   options?: ChartJsOptions & { xlabel?: string; ylabel?: string };
 }
 
-export interface ChartDataset {
+export interface GenericChartDataset {
   dataStream: Stream<number[]> | Stream<Array<{ x: unknown; y: unknown }>>;
   label: string;
   options: { type?: string; labels?: string[]; [key: string]: unknown };
 }
 
-export class Chart extends Module {
-  title = 'chart';
+export class GenericChart extends Module {
+  title = 'genericChart';
 
   #presetName: string;
   #preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };
-  #datasets: Array<ChartDataset> = [];
+  #datasets: Array<GenericChartDataset> = [];
   #options: ChartJsOptions & { xlabel?: string; ylabel?: string };
 
-  constructor({ preset = 'line', options = {} }: ChartOptions = {}) {
+  constructor({ preset = 'line', options = {} }: GenericChartOptions = {}) {
     super();
     if (!Object.keys(presets).includes(preset)) {
       throwError(new Error(`Preset ${preset} is not recognized`));

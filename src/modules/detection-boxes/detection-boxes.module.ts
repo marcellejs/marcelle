@@ -1,7 +1,7 @@
 import { Module, Stream, ObjectDetectorResults } from '../../core';
-import Component from './vis-object-detection.svelte';
+import Component from './detection-boxes.svelte';
 
-export class VisObjectDetection extends Module {
+export class DetectionBoxes extends Module {
   title = 'Visualize Object Detections';
 
   $objectDetectionResults: Stream<ObjectDetectorResults>;

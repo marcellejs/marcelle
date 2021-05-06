@@ -1,10 +1,10 @@
 import { never } from '@most/core';
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
-import Component from './sketchpad.svelte';
+import Component from './sketch-pad.svelte';
 
-export class Sketchpad extends Module {
-  title = 'sketchpad';
+export class SketchPad extends Module {
+  title = 'sketchPad';
 
   $images = new Stream<ImageData>(never());
   $thumbnails = new Stream<string>(never());
