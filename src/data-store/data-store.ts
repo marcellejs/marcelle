@@ -41,6 +41,7 @@ export class DataStore {
 
   $services: Stream<string[]> = new Stream([], true);
 
+  #initPromise: Promise<void>;
   #connectPromise: Promise<void>;
   #authenticationPromise: Promise<void>;
   #createService: (name: string) => void = noop;
@@ -55,11 +56,14 @@ export class DataStore {
         reconnectionAttempts: 3,
       });
       this.feathers.configure(socketio(socket, { timeout: 5000 }));
-      this.feathers.io.on('init', ({ auth }: { auth: boolean }) => {
-        this.requiresAuth = auth;
-        if (auth) {
-          this.feathers.configure(authentication());
-        }
+      this.#initPromise = new Promise((resolve) => {
+        this.feathers.io.on('init', ({ auth }: { auth: boolean }) => {
+          this.requiresAuth = auth;
+          if (auth) {
+            this.feathers.configure(authentication());
+          }
+          resolve();
+        });
       });
     } else if (location === 'localStorage') {
       this.backend = DataStoreBackend.LocalStorage;
@@ -101,6 +105,7 @@ export class DataStore {
     if (this.backend !== DataStoreBackend.Remote) {
       return { email: null };
     }
+
     if (!this.#connectPromise) {
       logger.log(`Connecting to backend ${this.location}...`);
       this.#connectPromise = new Promise<void>((resolve, reject) => {
@@ -117,6 +122,7 @@ export class DataStore {
         });
       });
     }
+    await this.#initPromise;
     await this.#connectPromise;
     if (this.requiresAuth) {
       await this.authenticate();
@@ -137,7 +143,7 @@ export class DataStore {
           })
           .catch(() => {
             const app = new Login({
-              target: document.querySelector('#app'),
+              target: document.body,
               props: { dataStore: this },
             });
             app.$on('terminate', (success) => {
