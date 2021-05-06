@@ -101,18 +101,18 @@ export interface GenericChartOptions {
   options?: ChartJsOptions & { xlabel?: string; ylabel?: string };
 }
 
-export interface GenericChartDataset {
+export interface ChartDataset {
   dataStream: Stream<number[]> | Stream<Array<{ x: unknown; y: unknown }>>;
   label: string;
   options: { type?: string; labels?: string[]; [key: string]: unknown };
 }
 
 export class GenericChart extends Module {
-  title = 'genericChart';
+  title = 'generic chart';
 
   #presetName: string;
   #preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };
-  #datasets: Array<GenericChartDataset> = [];
+  #datasets: Array<ChartDataset> = [];
   #options: ChartJsOptions & { xlabel?: string; ylabel?: string };
 
   constructor({ preset = 'line', options = {} }: GenericChartOptions = {}) {

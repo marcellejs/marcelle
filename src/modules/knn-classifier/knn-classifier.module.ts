@@ -20,12 +20,12 @@ export interface KNNClassifierOptions extends ModelOptions {
 }
 
 export class KNNClassifier extends Model<TensorLike, ClassifierResults> {
-  title = 'KNNClassifier';
+  title = 'KNN classifier';
 
   parameters: {
     k: Stream<number>;
   };
-  serviceName = 'knnClassifier-models';
+  serviceName = 'knn-classifier-models';
 
   classifier = new TfjsKNNClassifier();
   labels: string[];

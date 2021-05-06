@@ -28,12 +28,12 @@
   import { onDestroy } from 'svelte';
   import { mergeDeep } from '../../utils/object';
   import ModuleBase from '../../core/ModuleBase.svelte';
-  import type { GenericChartDataset } from './generic-chart.module';
+  import type { ChartDataset } from './generic-chart.module';
 
   export let title: string;
   export let preset: Record<string, { global: unknown; datasets: unknown }>;
   export let options: ChartJsOptions & { xlabel?: string; ylabel?: string };
-  export let datasets: Array<GenericChartDataset>;
+  export let datasets: Array<ChartDataset>;
 
   // Note: typings are very dirty here...
 
@@ -89,7 +89,7 @@
   }
 
   function transformDatasets(
-    ds: GenericChartDataset[],
+    ds: ChartDataset[],
     opts: Record<string, unknown>,
     globalOptions: Partial<ChartConfiguration>,
   ) {

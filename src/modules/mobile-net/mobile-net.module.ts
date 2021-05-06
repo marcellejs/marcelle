@@ -1,6 +1,6 @@
 import {
   load as loadMobilenet,
-  MobileNet as TfjsMobilleNet,
+  MobileNet as TfjsMobileNet,
   MobileNetVersion,
   MobileNetAlpha,
 } from '@tensorflow-models/mobilenet';
@@ -27,7 +27,7 @@ export class MobileNet extends Model<ImageData, ClassifierResults> {
   parameters = {};
   serviceName = 'undefined';
 
-  #mobilenet: (TfjsMobilleNet & { model?: GraphModel }) | undefined;
+  #mobilenet: (TfjsMobileNet & { model?: GraphModel }) | undefined;
   $loading = new Stream(true, true);
   readonly version: MobileNetVersion;
   readonly alpha: MobileNetAlpha;
@@ -50,7 +50,7 @@ export class MobileNet extends Model<ImageData, ClassifierResults> {
     const cachedMobilenet = Object.keys(cachedModels).filter((x) => x.includes('mobileNet'));
     try {
       this.#mobilenet = await loadMobilenet({
-        modelUrl: `indexeddb://mobileNet-v${this.version}-${this.alpha}`,
+        modelUrl: `indexeddb://mobilenet-v${this.version}-${this.alpha}`,
         version: this.version,
         alpha: this.alpha,
       });
@@ -62,9 +62,9 @@ export class MobileNet extends Model<ImageData, ClassifierResults> {
         version: this.version,
         alpha: this.alpha,
       });
-      await this.#mobilenet.model.save(`indexeddb://mobileNet-v${this.version}-${this.alpha}`);
+      await this.#mobilenet.model.save(`indexeddb://mobilenet-v${this.version}-${this.alpha}`);
     }
-    logger.info(`Mobilenet v${this.version} loaded with alpha = ${this.alpha}`);
+    logger.info(`MobileNet v${this.version} loaded with alpha = ${this.alpha}`);
     this.$loading.set(false);
     this.start();
     return this;
