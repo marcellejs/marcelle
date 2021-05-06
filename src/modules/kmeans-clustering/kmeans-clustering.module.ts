@@ -1,16 +1,29 @@
-import type { TensorLike } from '@tensorflow/tfjs-core';
 import kmeans from 'ml-kmeans';
-import { Stream, Model, ClusteringResults, ModelOptions, StoredModel, ObjectId } from '../../core';
-import type { Dataset } from '../../dataset';
+import {
+  Stream,
+  Model,
+  ClusteringResults,
+  ModelOptions,
+  StoredModel,
+  ObjectId,
+  Instance,
+} from '../../core';
+import { Dataset, isDataset } from '../../dataset';
 import { Catch, throwError } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
+import { ServiceIterable } from '../../data-store/service-iterable';
 
 export interface KMeansClusteringOptions extends ModelOptions {
   k: number;
 }
 
 function euclideanDistance(a: number[], b: number[]): number {
+  // let summ = 0;
+  // for (let k = 0; k < a.length; k++) {
+  //   summ += Math.abs(a[k] - b[k]) ** 2;
+  //   console.log(a[k], b[k], Math.abs(a[k] - b[k]) ** 2, summ);
+  // }
   return (
     a
       .map((x, i) => Math.abs(x - b[i]) ** 2) // square the difference
@@ -39,25 +52,27 @@ export class KMeansClustering extends Model<number[], ClusteringResults> {
     };
     this.$centers = new Stream([], false);
     this.$clusters = new Stream([], false);
+    this.dataset = [];
     this.start();
   }
 
   @Catch
-  async train(dataset: Dataset): Promise<void> {
-    this.$training.set({ status: 'start', epochs: 10 });
-
-    const allInstances = await dataset.getAllInstances(['features']);
-    this.dataset = allInstances.map((x) => x.features[0]);
-    const ans = kmeans(this.dataset, this.parameters.k.value, {
-      seed: 48,
-    });
+  async train(
+    dataset: Dataset<number[], undefined> | ServiceIterable<Instance<number[], undefined>>,
+  ): Promise<void> {
+    this.$training.set({ status: 'start', epochs: 1 });
+    const ds = isDataset(dataset) ? dataset.items() : dataset;
+    for await (const { x } of ds) {
+      this.dataset.push(x[0]);
+    }
+    const ans = kmeans(this.dataset, this.parameters.k.value);
     this.$centers.set(ans.centroids.map((x: { centroid: [] }) => x.centroid));
     this.$clusters.set(ans.clusters);
     this.$training.set({ status: 'success' });
   }
 
   @Catch
-  async predict(x: TensorLike): Promise<ClusteringResults> {
+  async predict(x: number[]): Promise<ClusteringResults> {
     let cluster = 0;
     let minDistance = 1000;
     const confidences: { [key: string]: number } = {};
@@ -71,6 +86,8 @@ export class KMeansClustering extends Model<number[], ClusteringResults> {
       confidences[`${i}`] = Math.exp(dist);
       distSum += Math.exp(dist);
     }
+    // console.log('confidences', confidences, distSum, minDistance);
+    // console.log('this.$centers.value', this.$centers.value);
     Object.entries(confidences).forEach(([key]) => {
       confidences[key] /= distSum;
     });
@@ -83,12 +100,16 @@ export class KMeansClustering extends Model<number[], ClusteringResults> {
   }
 
   @Catch
-  async batchPredict(dataset: Dataset): Promise<ClusteringResults[]> {
-    const allInstances = await dataset.getAllInstances(['features']);
-    const data = allInstances.map((x) => x.features[0]);
+  async batchPredict(dataset: Dataset<number[], undefined>): Promise<ClusteringResults[]> {
+    // const allInstances = await dataset.getAllInstances(['features']);
+    const data: number[][] = []; //allInstances.map((x) => x.features[0]);
+    const ds = isDataset(dataset) ? dataset.items() : dataset;
+    for await (const { x } of ds) {
+      data.push(x);
+    }
     const resPromises: ClusteringResults[] = [];
     for (let i = 0; i < data.length; i++) {
-      this.predict([data[i]]).then((result) => resPromises.push(result));
+      this.predict(data[i]).then((result) => resPromises.push(result));
     }
     if (this.$centers.value.length === 0) {
       const e = new Error('KMeans is not trained');
@@ -98,9 +119,14 @@ export class KMeansClustering extends Model<number[], ClusteringResults> {
     return resPromises;
   }
 
-  async save(update: boolean, metadata?: Record<string, unknown>) {
+  async save(
+    name: string,
+    metadata?: Record<string, unknown>,
+    id: ObjectId = null,
+  ): Promise<ObjectId> {
     const storedModel = await this.write(metadata);
-    return this.saveToDatastore(storedModel, update);
+    storedModel.name = name;
+    return this.saveToDatastore(storedModel, id);
   }
 
   async load(id?: ObjectId): Promise<StoredModel> {
@@ -133,7 +159,7 @@ export class KMeansClustering extends Model<number[], ClusteringResults> {
     const name = this.syncModelName || toKebabCase(this.title);
     return {
       name,
-      url: '',
+      files: [],
       metadata: {
         clusters: this.$clusters.value,
         centers: this.$centers.value,
