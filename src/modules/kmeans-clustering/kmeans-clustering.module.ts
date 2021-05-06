@@ -66,7 +66,7 @@ export class KMeansClustering extends Model<number[][], ClusteringResults> {
       this.dataset.push(x[0]);
     }
     const ans = kmeans(this.dataset, this.parameters.k.value);
-    this.$centers.set(ans.centroids.map((x: { centroid: [] }) => x.centroid));
+    this.$centers.set(ans.centroids.map((x) => x.centroid));
     this.$clusters.set(ans.clusters);
     this.$training.set({ status: 'success' });
   }
