@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 import authentication from '@feathersjs/authentication-client';
-import feathers, { Service } from '@feathersjs/feathers';
+import feathers, { Application, Service } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio-client';
 import memoryService from 'feathers-memory';
 import localStorageService from 'feathers-localstorage';
@@ -32,8 +32,7 @@ interface User {
 }
 
 export class DataStore {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  feathers: feathers.Application<any>;
+  feathers: Application;
   requiresAuth = false;
   user: User;
 
