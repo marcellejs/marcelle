@@ -1,3 +1,4 @@
+/* eslint-env node */
 /* eslint-disable import/no-extraneous-dependencies */
 import fs from 'fs';
 import svelte from 'rollup-plugin-svelte';
