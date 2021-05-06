@@ -2,18 +2,18 @@ import '../../dist/marcelle.css';
 import {
   datasetBrowser,
   button,
-  chart,
+  genericChart,
   dashboard,
   dataset,
   dataStore,
   faker,
   imageUpload,
   select,
-  sketchpad,
+  sketchPad,
   slider,
   Stream,
   text,
-  textfield,
+  textField,
   toggle,
   webcam,
 } from '../../dist/marcelle.esm';
@@ -31,7 +31,7 @@ capture.$click.subscribe((x) => console.log('button $click:', x));
 // TEXTFIELD
 // -----------------------------------------------------------
 
-const label = textfield();
+const label = textField();
 label.title = 'Instance label';
 
 label.$text.subscribe((x) => console.log('label $text:', x));
@@ -82,7 +82,7 @@ s.$values.subscribe((x) => console.log('slider $values:', x));
 
 const series1 = Stream.periodic(500).map(() => Array.from(Array(12), Math.random));
 const series2 = series1.map((x) => x.map((y) => 1 - y + 0.4 * Math.random()));
-const chartExample = chart({
+const chartExample = genericChart({
   options: {
     xlabel: 'x label',
     ylabel: 'y label',
@@ -109,9 +109,9 @@ imgDrop.$images.subscribe((x) => console.log('imageUpload $images:', x));
 // SKETCHPAD
 // -----------------------------------------------------------
 
-const sketch = sketchpad();
-sketch.$strokeStart.subscribe(() => console.log('sketchpad $strokeStart'));
-sketch.$strokeEnd.subscribe(() => console.log('sketchpad $strokeEnd'));
+const sketch = sketchPad();
+sketch.$strokeStart.subscribe(() => console.log('sketchPad $strokeStart'));
+sketch.$strokeEnd.subscribe(() => console.log('sketchPad $strokeEnd'));
 
 // -----------------------------------------------------------
 // WEBCAM

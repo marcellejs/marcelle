@@ -9,9 +9,9 @@ import {
   dataStore,
   fileUpload,
   imageUpload,
-  classificationPlot,
+  confidencePlot,
   text,
-  onnxImageClassifier,
+  onnxModel,
   toggle,
   imageDisplay,
 } from '../../dist/marcelle.esm';
@@ -24,7 +24,7 @@ const source = imageUpload({ width: 224, height: 224 });
 
 const up = fileUpload();
 up.title = 'Upload model files (.json and .bin)';
-const classifier = onnxImageClassifier({ applySoftmax: true, topK: 5 });
+const classifier = onnxModel({ applySoftmax: true, topK: 5 });
 
 fetch('./imagenet_class_index.json')
   .then((res) => res.json())
@@ -66,7 +66,7 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchTesting = batchPrediction({ name: 'mobilenet', dataStore: store });
+const batchTesting = batchPrediction({ name: 'mobileNet', dataStore: store });
 const predictButton = button({ text: 'Update predictions' });
 const predictionAccuracy = text({ text: 'Waiting for predictions...' });
 const confMat = confusionMatrix(batchTesting);
@@ -82,7 +82,7 @@ predictButton.$click.subscribe(async () => {
 // -----------------------------------------------------------
 
 const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
-const plotResults = classificationPlot(predictionStream);
+const plotResults = confidencePlot(predictionStream);
 
 const instanceViewer = imageDisplay(source.$images);
 

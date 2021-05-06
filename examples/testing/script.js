@@ -8,8 +8,8 @@ import {
   dataset,
   dataStore,
   imageUpload,
-  mobilenet,
-  classificationPlot,
+  mobileNet,
+  confidencePlot,
   text,
   toggle,
   imageDisplay,
@@ -20,7 +20,7 @@ import {
 // -----------------------------------------------------------
 
 const source = imageUpload();
-const classifier = mobilenet();
+const classifier = mobileNet();
 
 // -----------------------------------------------------------
 // CAPTURE TO DATASET
@@ -51,7 +51,7 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchTesting = batchPrediction({ name: 'mobilenet', dataStore: store });
+const batchTesting = batchPrediction({ name: 'mobileNet', dataStore: store });
 const predictButton = button({ text: 'Update predictions' });
 const predictionAccuracy = text({ text: 'Waiting for predictions...' });
 const confMat = confusionMatrix(batchTesting);
@@ -76,7 +76,7 @@ batchTesting.$predictions.subscribe(async () => {
 // -----------------------------------------------------------
 
 const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
-const plotResults = classificationPlot(predictionStream);
+const plotResults = confidencePlot(predictionStream);
 
 const instanceViewer = imageDisplay(source.$images);
 
@@ -116,7 +116,7 @@ const dash = dashboard({
 
 const help = text({
   text:
-    'In this example, you can test an existing trained model (mobilenet), by uploading your own images to assess the quality of the predictions.',
+    'In this example, you can test an existing trained model (mobileNet), by uploading your own images to assess the quality of the predictions.',
 });
 help.title = 'Test Mobilenet with your images!';
 

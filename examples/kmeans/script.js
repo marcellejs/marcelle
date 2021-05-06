@@ -6,15 +6,16 @@ import {
   dashboard,
   dataset,
   dataStore,
-  mobilenet,
-  textfield,
+  mobileNet,
+  textField,
   toggle,
   webcam,
-  kmeans,
-  parameters,
+  kmeansClustering,
+  modelParameters,
   scatterPlot,
   throwError,
-  classificationPlot,
+  confidencePlot,
+  Stream,
 } from '../../dist/marcelle.esm.js';
 
 // -----------------------------------------------------------
@@ -22,29 +23,26 @@ import {
 // -----------------------------------------------------------
 
 const input = webcam();
-const featureExtractor = mobilenet();
+const featureExtractor = mobileNet();
 
-const label = textfield();
+const label = textField();
 label.title = 'Instance label';
 const capture = button({ text: 'Hold to record instances' });
 capture.title = 'Capture instances to the training set';
 
-const instances = input.$images
+const store = dataStore('localStorage');
+const trainingSet = dataset('TrainingSet', store);
+const trainingSetBrowser = datasetBrowser(trainingSet);
+
+input.$images
   .filter(() => capture.$down.value)
   .map(async (img) => ({
-    type: 'image',
-    data: img,
-    label: label.$text.value,
+    x: await featureExtractor.process(img),
     thumbnail: input.$thumbnails.value,
-    features: await featureExtractor.process(img),
+    y: label.$text.value,
   }))
-  .awaitPromises();
-
-const store = dataStore({ location: 'localStorage' });
-const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
-trainingSet.capture(instances);
-
-const trainingSetBrowser = datasetBrowser(trainingSet);
+  .awaitPromises()
+  .subscribe(trainingSet.create.bind(trainingSet));
 
 // -----------------------------------------------------------
 // TRAINING
@@ -53,8 +51,8 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 const b = button({ text: 'Train' });
 b.title = 'Training k-means';
 
-const clusteringKMeans = kmeans({ k: 3, dataStore: store });
-const params = parameters(clusteringKMeans);
+const clusteringKMeans = kmeansClustering({ k: 3, dataStore: store });
+const params = modelParameters(clusteringKMeans);
 
 b.$click.subscribe(() => {
   clusteringKMeans.train(trainingSet);
@@ -64,10 +62,20 @@ b.$click.subscribe(() => {
 // PLOT CLUSTERS
 // -----------------------------------------------------------
 
-const featureStream = trainingSet.$instances
-  .map(() => trainingSet.getAllInstances(['features']))
-  .awaitPromises()
-  .map((c) => c.map((x) => [x.features[0][0], x.features[0][1]]));
+const featureStream = new Stream([]);
+trainingSet.$changes.subscribe(async (changes) => {
+  for (const { level, type, data } of changes) {
+    console.log('changing', level, type, data);
+    if (level === 'instance' && type === 'created') {
+      featureStream.set([data.x[0], data.x[1]]);
+    } else if (level === 'instance' && type === 'removed') {
+      featureStream.set([data.x[0], data.x[1]]);
+    } else {
+      const allInstances = await trainingSet.items().select(['x']).toArray();
+      featureStream.set(allInstances.map((x) => [x.x[0][0], x.x[0][1]]));
+    }
+  }
+});
 
 const clusteringScatterPlot = scatterPlot(featureStream, clusteringKMeans.$clusters);
 
@@ -90,7 +98,7 @@ const predictionStream = input.$images
   .map(async (img) => clusteringKMeans.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
-const predPlot = classificationPlot(predictionStream);
+const predPlot = confidencePlot(predictionStream);
 
 // -----------------------------------------------------------
 // DASHBOARDS
@@ -105,8 +113,8 @@ dash
   .page('Data Management')
   .useLeft(input, featureExtractor)
   .use([label, capture], trainingSetBrowser)
-  .use(b, params, clusteringScatterPlot)
-  .use(tog, predPlot);
+  .use(params, [b, tog])
+  .use([clusteringScatterPlot, predPlot]);
 dash.page('Training').useLeft(input, featureExtractor).use(b);
 dash.settings.dataStores(store).datasets(trainingSet);
 

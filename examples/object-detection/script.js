@@ -3,9 +3,9 @@ import {
   cocoSsd,
   dashboard,
   imageUpload,
-  classificationPlot,
+  confidencePlot,
   toggle,
-  visObjectDetection,
+  detectionBoxes,
   webcam,
 } from '../../dist/marcelle.esm';
 
@@ -29,8 +29,8 @@ const cocoBetterPredictions = cocoPredictionStream.map(({ outputs }) => ({
   confidences: outputs.reduce((x, y) => ({ ...x, [y.class]: y.confidence }), {}),
 }));
 
-const objDetectionVis = visObjectDetection(source.$images, cocoPredictionStream);
-const cocoPlotResults = classificationPlot(cocoBetterPredictions);
+const objDetectionVis = detectionBoxes(source.$images, cocoPredictionStream);
+const cocoPlotResults = confidencePlot(cocoBetterPredictions);
 
 // -----------------------------------------------------------
 // REAL-TIME PREDICTION
@@ -50,8 +50,8 @@ const realtimePredictions = rtDetectStream.map(({ outputs }) => ({
 
 const imgStream = wc.$images.filter(() => tog.$checked.value);
 
-const rtObjDetectionVis = visObjectDetection(imgStream, rtDetectStream);
-const rtPlotResults = classificationPlot(realtimePredictions);
+const rtObjDetectionVis = detectionBoxes(imgStream, rtDetectStream);
+const rtPlotResults = confidencePlot(realtimePredictions);
 
 // -----------------------------------------------------------
 // DASHBOARDS

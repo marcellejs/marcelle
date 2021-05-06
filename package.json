@@ -41,7 +41,7 @@
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "lint": "eslint src",
-    "clean": "rm -rf node_modules dist examples/dist"
+    "clean": "rm -rf node_modules dist types examples/dist"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.1.0",
@@ -78,7 +78,7 @@
     "svelte-range-slider-pips": "^1.5.0",
     "tailwindcss": "^2.0.3",
     "typescript": "^4.2.3",
-    "vite": "^2.1.5",
+    "vite": "^2.2.4",
     "vuepress": "^1.7.1"
   },
   "dependencies": {
@@ -103,9 +103,8 @@
     "dequal": "^2.0.2",
     "feathers-localstorage": "^5.2.0",
     "feathers-memory": "^4.1.0",
-    "ml-kmeans": "^5.0.0",
-    "ml-pca": "^4.0.1",
     "lodash": "^4.17.21",
+    "ml-kmeans": "^5.0.0",
     "onnxjs": "^0.1.8",
     "scatter-gl": "^0.0.7",
     "socket.io-client": "^2.3.1"

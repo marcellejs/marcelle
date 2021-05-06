@@ -10,9 +10,9 @@ import {
   fileUpload,
   imageDisplay,
   imageUpload,
-  classificationPlot,
+  confidencePlot,
   text,
-  tfGenericModel,
+  tfjsModel,
   toggle,
 } from '../../dist/marcelle.esm';
 
@@ -24,7 +24,7 @@ const source = imageUpload();
 
 const up = fileUpload();
 up.title = 'Upload model files (.json and .bin)';
-const classifier = tfGenericModel({
+const classifier = tfjsModel({
   inputType: 'image',
   taskType: 'classification',
   dataStore: dataStore('localStorage'),
@@ -62,7 +62,7 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchTesting = batchPrediction({ name: 'mobilenet', dataStore: store });
+const batchTesting = batchPrediction({ name: 'mobileNet', dataStore: store });
 const predictButton = button({ text: 'Update predictions' });
 const predictionAccuracy = text({ text: 'Waiting for predictions...' });
 const confMat = confusionMatrix(batchTesting);
@@ -96,7 +96,7 @@ const betterPredictions = predictionStream.map(({ label, confidences }) => {
   };
 });
 
-const plotResults = classificationPlot(betterPredictions);
+const plotResults = confidencePlot(betterPredictions);
 
 const instanceViewer = imageDisplay(source.$images);
 

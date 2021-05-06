@@ -7,12 +7,12 @@ import {
   dashboard,
   dataset,
   dataStore,
-  mlp,
-  mobilenet,
-  parameters,
-  classificationPlot,
+  mlpClassifier,
+  mobileNet,
+  modelParameters,
+  confidencePlot,
   trainingProgress,
-  textfield,
+  textField,
   toggle,
   trainingPlot,
   webcam,
@@ -24,15 +24,15 @@ import {
 // -----------------------------------------------------------
 
 const input = webcam();
-const featureExtractor = mobilenet();
+const featureExtractor = mobileNet();
 
-const label = textfield();
+const label = textField();
 label.title = 'Instance label';
 const capture = button({ text: 'Hold to record instances' });
 capture.title = 'Capture instances to the training set';
 
 const store = dataStore('localStorage');
-const trainingSet = dataset('TrainingSet-dashboard', store);
+const trainingSet = dataset('training-set-dashboard', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
@@ -46,7 +46,9 @@ input.$images
 
 const b = button({ text: 'Train' });
 b.title = 'Training Launcher';
-const classifier = mlp({ layers: [64, 32], epochs: 20, dataStore: store }).sync('mlp-dashboard');
+const classifier = mlpClassifier({ layers: [64, 32], epochs: 20, dataStore: store }).sync(
+  'mlp-dashboard',
+);
 
 b.$click.subscribe(() =>
   classifier.train(
@@ -56,7 +58,7 @@ b.$click.subscribe(() =>
   ),
 );
 
-const params = parameters(classifier);
+const params = modelParameters(classifier);
 const prog = trainingProgress(classifier);
 const plotTraining = trainingPlot(classifier);
 
@@ -100,7 +102,7 @@ const predictionStream = input.$images
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
-const plotResults = classificationPlot(predictionStream);
+const plotResults = confidencePlot(predictionStream);
 
 // -----------------------------------------------------------
 // DASHBOARDS
