@@ -11,7 +11,6 @@ export abstract class Module {
   $$: ModuleInternals = {
     streams: [],
     app: undefined,
-    moduleType: 'generic',
   };
 
   abstract mount(target?: HTMLElement): void;
@@ -31,9 +30,9 @@ export abstract class Module {
   }
 
   stop(): void {
-    this.$$.streams.forEach((s) => {
+    for (const s of this.$$.streams) {
       s.stop();
-    });
+    }
   }
 
   dispose(): void {

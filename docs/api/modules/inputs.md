@@ -4,40 +4,6 @@ sidebarDepth: 1
 
 # Inputs
 
-## Faker
-
-```tsx
-marcelle.faker({ size?: number, period?: number }): Faker;
-```
-
-A module producing a synthetic data stream composed of periodic events with random vectors.
-
-### Parameters
-
-| Option | Type   | Description          | Required | Default |
-| ------ | ------ | -------------------- | :------: | :-----: |
-| size   | number | Vector size          |          |   32    |
-| period | number | Sampling period (ms) |          |  1000   |
-
-### Streams
-
-| Name     | Type               | Description             | Hold |
-| -------- | ------------------ | ----------------------- | :--: |
-| \$frames | Stream\<number[]\> | Stream of random events |      |
-
-<!-- ## Screenshot
-
-<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
-  <img src="./images/faker.png" alt="Screenshot of the faker component">
-</div> -->
-
-### Example
-
-```js
-const faker = marcelle.faker({ size: 12, period: 500 });
-faker.$frames.subscribe((x) => console.log('faker $frames:', x));
-```
-
 ## ImageUpload
 
 ```tsx

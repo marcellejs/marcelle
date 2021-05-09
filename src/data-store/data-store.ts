@@ -1,14 +1,15 @@
 import io from 'socket.io-client';
 import authentication from '@feathersjs/authentication-client';
-import feathers, { Service } from '@feathersjs/feathers';
+import feathers, { Application, Service } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio-client';
 import memoryService from 'feathers-memory';
 import localStorageService from 'feathers-localstorage';
-import { addObjectId, renameIdField, createDate, updateDate } from './hooks';
+import { addObjectId, renameIdField, createDate, updateDate, findDistinct } from './hooks';
 import { logger } from '../core/logger';
 import Login from './Login.svelte';
 import { throwError } from '../utils/error-handling';
 import { Stream } from '../core/stream';
+import { noop } from '../utils/misc';
 
 function isValidUrl(str: string) {
   try {
@@ -30,29 +31,22 @@ interface User {
   email: string;
 }
 
-export interface DataStoreOptions {
-  location?: string;
-}
-
 export class DataStore {
-  readonly isDataStore = true;
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  feathers: feathers.Application<any>;
+  feathers: Application;
   requiresAuth = false;
   user: User;
-  location: string;
 
-  #connectPromise: Promise<void>;
-  #authenticationPromise: Promise<void>;
+  backend: DataStoreBackend;
+  location: string;
 
   $services: Stream<string[]> = new Stream([], true);
 
-  backend: DataStoreBackend;
+  #initPromise: Promise<void>;
+  #connectPromise: Promise<void>;
+  #authenticationPromise: Promise<void>;
+  #createService: (name: string) => void = noop;
 
-  #createService: (name: string) => void = () => {};
-
-  constructor({ location = 'memory' }: DataStoreOptions = {}) {
+  constructor(location = 'memory') {
     this.feathers = feathers();
     this.location = location;
     if (isValidUrl(location)) {
@@ -62,11 +56,14 @@ export class DataStore {
         reconnectionAttempts: 3,
       });
       this.feathers.configure(socketio(socket, { timeout: 5000 }));
-      this.feathers.io.on('init', ({ auth }: { auth: boolean }) => {
-        this.requiresAuth = auth;
-        if (auth) {
-          this.feathers.configure(authentication());
-        }
+      this.#initPromise = new Promise((resolve) => {
+        this.feathers.io.on('init', ({ auth }: { auth: boolean }) => {
+          this.requiresAuth = auth;
+          if (auth) {
+            this.feathers.configure(authentication());
+          }
+          resolve();
+        });
       });
     } else if (location === 'localStorage') {
       this.backend = DataStoreBackend.LocalStorage;
@@ -75,6 +72,7 @@ export class DataStore {
           storage: window.localStorage,
           name,
           id: '_id',
+          multi: true,
           paginate: {
             default: 100,
             max: 200,
@@ -107,6 +105,7 @@ export class DataStore {
     if (this.backend !== DataStoreBackend.Remote) {
       return { email: null };
     }
+
     if (!this.#connectPromise) {
       logger.log(`Connecting to backend ${this.location}...`);
       this.#connectPromise = new Promise<void>((resolve, reject) => {
@@ -123,6 +122,7 @@ export class DataStore {
         });
       });
     }
+    await this.#initPromise;
     await this.#connectPromise;
     if (this.requiresAuth) {
       await this.authenticate();
@@ -143,7 +143,7 @@ export class DataStore {
           })
           .catch(() => {
             const app = new Login({
-              target: document.querySelector('#app'),
+              target: document.body,
               props: { dataStore: this },
             });
             app.$on('terminate', (success) => {
@@ -193,10 +193,11 @@ export class DataStore {
 
   setupAppHooks(): void {
     const beforeCreate = this.backend !== DataStoreBackend.Remote ? [addObjectId] : [];
+    const findDistinctHook = this.backend !== DataStoreBackend.Remote ? [findDistinct] : [];
     this.feathers.hooks({
       before: {
-        find: [renameIdField],
-        create: beforeCreate.concat([createDate]),
+        find: [...findDistinctHook, renameIdField],
+        create: [...beforeCreate, createDate],
         update: [updateDate],
         patch: [updateDate],
       },

@@ -3,13 +3,14 @@
 <script lang="ts">
   import { onDestroy, onMount, tick } from 'svelte';
   import { ModuleBase, Stream } from '../../core';
+  import { noop } from '../../utils/misc';
 
   export let title: string;
   export let imageStream: Stream<ImageData> | Stream<ImageData[]>;
 
   let canvas: HTMLCanvasElement;
 
-  let unSub = () => {};
+  let unSub = noop;
   onMount(async () => {
     await tick();
     await tick();

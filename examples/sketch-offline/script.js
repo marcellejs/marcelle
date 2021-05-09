@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import '../../dist/marcelle.css';
 import {
   batchPrediction,
@@ -8,46 +7,43 @@ import {
   dashboard,
   dataset,
   dataStore,
-  mlp,
-  mobilenet,
-  parameters,
-  classificationPlot,
+  mlpClassifier,
+  mobileNet,
+  modelParameters,
+  confidencePlot,
   trainingProgress,
-  sketchpad,
-  textfield,
+  sketchPad,
+  textField,
   toggle,
   trainingPlot,
   throwError,
-} from '../../dist/marcelle.esm.js';
+} from '../../dist/marcelle.esm';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
 // -----------------------------------------------------------
 
-const input = sketchpad();
-const featureExtractor = mobilenet();
+const input = sketchPad();
+const featureExtractor = mobileNet();
 
-const label = textfield();
+const label = textField();
 label.title = 'Instance label';
 const capture = button({ text: 'Capture this drawing' });
 capture.title = 'Capture instances to the training set';
 
-const instances = capture.$click
+const store = dataStore('localStorage');
+const trainingSet = dataset('TrainingSet-sketch', store);
+const trainingSetBrowser = datasetBrowser(trainingSet);
+
+capture.$click
   .sample(input.$images)
   .map(async (img) => ({
-    type: 'sketch',
-    data: img,
-    label: label.$text.value,
+    x: await featureExtractor.process(img),
+    y: label.$text.value,
     thumbnail: input.$thumbnails.value,
-    features: await featureExtractor.process(img),
   }))
-  .awaitPromises();
-
-const store = dataStore({ location: 'localStorage' });
-const trainingSet = dataset({ name: 'TrainingSet-sketch', dataStore: store });
-trainingSet.capture(instances);
-
-const trainingSetBrowser = datasetBrowser(trainingSet);
+  .awaitPromises()
+  .subscribe(trainingSet.create.bind(trainingSet));
 
 // -----------------------------------------------------------
 // TRAINING
@@ -55,12 +51,12 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 
 const b = button({ text: 'Train' });
 
-const classifier = mlp({ layers: [64, 32], epochs: 20, dataStore: store });
+const classifier = mlpClassifier({ layers: [64, 32], epochs: 20, dataStore: store });
 classifier.sync('sketch-classifier');
 
 b.$click.subscribe(() => classifier.train(trainingSet));
 
-const params = parameters(classifier);
+const params = modelParameters(classifier);
 const prog = trainingProgress(classifier);
 const plotTraining = trainingPlot(classifier);
 
@@ -73,7 +69,6 @@ const confMat = confusionMatrix(batchMLP);
 
 const predictButton = button({ text: 'Update predictions' });
 predictButton.$click.subscribe(async () => {
-  console.log('classifier', classifier);
   if (!classifier.ready) {
     throwError(new Error('No classifier has been trained'));
   }
@@ -95,12 +90,12 @@ tog.$checked.subscribe((checked) => {
   }
 });
 
-const predictionStream = input.$images
+const $predictions = input.$images
   .filter(() => tog.$checked.value && classifier.ready)
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
-const plotResults = classificationPlot(predictionStream);
+const plotResults = confidencePlot($predictions);
 
 // -----------------------------------------------------------
 // DASHBOARDS

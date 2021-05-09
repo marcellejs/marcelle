@@ -1,23 +1,22 @@
-/* eslint-disable import/extensions, no-console */
+/* eslint-disable no-console */
 import '../../dist/marcelle.css';
 import {
   datasetBrowser,
   button,
-  chart,
+  genericChart,
   dashboard,
   dataset,
   dataStore,
-  faker,
   imageUpload,
   select,
-  sketchpad,
+  sketchPad,
   slider,
   Stream,
   text,
-  textfield,
+  textField,
   toggle,
   webcam,
-} from '../../dist/marcelle.esm.js';
+} from '../../dist/marcelle.esm';
 
 // -----------------------------------------------------------
 // BUTTON
@@ -32,7 +31,7 @@ capture.$click.subscribe((x) => console.log('button $click:', x));
 // TEXTFIELD
 // -----------------------------------------------------------
 
-const label = textfield();
+const label = textField();
 label.title = 'Instance label';
 
 label.$text.subscribe((x) => console.log('label $text:', x));
@@ -83,7 +82,7 @@ s.$values.subscribe((x) => console.log('slider $values:', x));
 
 const series1 = Stream.periodic(500).map(() => Array.from(Array(12), Math.random));
 const series2 = series1.map((x) => x.map((y) => 1 - y + 0.4 * Math.random()));
-const chartExample = chart({
+const chartExample = genericChart({
   options: {
     xlabel: 'x label',
     ylabel: 'y label',
@@ -91,13 +90,6 @@ const chartExample = chart({
 });
 chartExample.addSeries(series1, 'series 1');
 chartExample.addSeries(series2, 'series 2');
-
-// -----------------------------------------------------------
-// FAKER
-// -----------------------------------------------------------
-
-const f = faker({ size: 12, period: 500 });
-f.$frames.subscribe((x) => console.log('faker $frames:', x));
 
 // -----------------------------------------------------------
 // IMAGE UPLOAD
@@ -110,9 +102,9 @@ imgDrop.$images.subscribe((x) => console.log('imageUpload $images:', x));
 // SKETCHPAD
 // -----------------------------------------------------------
 
-const sketch = sketchpad();
-sketch.$strokeStart.subscribe(() => console.log('sketchpad $strokeStart'));
-sketch.$strokeEnd.subscribe(() => console.log('sketchpad $strokeEnd'));
+const sketch = sketchPad();
+sketch.$strokeStart.subscribe(() => console.log('sketchPad $strokeStart'));
+sketch.$strokeEnd.subscribe(() => console.log('sketchPad $strokeEnd'));
 
 // -----------------------------------------------------------
 // WEBCAM
@@ -135,8 +127,8 @@ const instances = w.$images
   }))
   .awaitPromises();
 
-const store = dataStore({ location: 'localStorage' });
-const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
+const store = dataStore('localStorage');
+const trainingSet = dataset('TrainingSet', store);
 trainingSet.capture(instances);
 
 const trainingSetBrowser = datasetBrowser(trainingSet);
@@ -151,7 +143,7 @@ const dash = dashboard({
 });
 
 dash.page('Widgets').use(capture, label, tog, sel, t, s, chartExample);
-dash.page('Sources').useLeft(f, imgDrop, sketch, w);
+dash.page('Sources').useLeft(imgDrop, sketch, w);
 dash.page('Data Management').useLeft(w).use([label, capture], trainingSetBrowser);
 dash.settings.dataStores(store).datasets(trainingSet);
 

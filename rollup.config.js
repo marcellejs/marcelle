@@ -1,3 +1,4 @@
+/* global process */
 import commonjs from '@rollup/plugin-commonjs';
 import filesize from 'rollup-plugin-filesize';
 import preprocess from 'svelte-preprocess';
@@ -29,7 +30,6 @@ const plugins = [
     }),
   }),
   postcss({
-    extract: true,
     extract: path.resolve('dist/marcelle.css'),
     sourceMap: true,
     minimize: production,

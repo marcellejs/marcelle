@@ -1,6 +1,6 @@
 import { Module } from '../../core/module';
 import { Stream } from '../../core/stream';
-import { chart, Chart } from '../chart';
+import { genericChart, GenericChart } from '../generic-chart';
 import Component from './training-plot.svelte';
 import { throwError } from '../../utils/error-handling';
 import { Model } from '../../core';
@@ -10,7 +10,7 @@ export type LogSpec = string | string[] | { [key: string]: string | string[] };
 export class TrainingPlot<T, U> extends Module {
   title = 'training plot';
 
-  charts: { [key: string]: Chart } = {};
+  charts: { [key: string]: GenericChart } = {};
 
   constructor(
     public model: Model<T, U>,
@@ -42,42 +42,43 @@ export class TrainingPlot<T, U> extends Module {
     const streams: {
       [key: string]: Stream<number[]>;
     } = {};
-    Object.entries(processedLogs).forEach(([key, val]) => {
+    for (const [key, val] of Object.entries(processedLogs)) {
       const x = Array.isArray(val) ? val : [val];
-      this.charts[key] = chart({
+      this.charts[key] = genericChart({
         preset: 'line-fast',
         options: {
           xlabel: 'Epoch',
           ylabel: key,
         },
       });
-      x.forEach((y) => {
+      for (const y of x) {
         if (!Object.keys(streams).includes(y)) {
           streams[y] = new Stream<number[]>([], true);
         }
         this.charts[key].addSeries(streams[y], y);
-      });
+      }
+
       this.charts[key].title = key;
-    });
+    }
 
     function resetCharts() {
-      Object.values(streams).forEach((stream) => {
+      for (const stream of Object.values(streams)) {
         stream.set([]);
-      });
+      }
     }
 
     model.$training.subscribe((x) => {
       if (x.status === 'start') {
         resetCharts();
       } else if (x.data) {
-        Object.entries(x.data).forEach(([key, val]) => {
+        for (const [key, val] of Object.entries(x.data)) {
           if (!Object.keys(streams).includes(key)) return;
           if (Array.isArray(val)) {
             streams[key].set(val as number[]);
           } else {
             streams[key].set(streams[key].value.concat([val as number]));
           }
-        });
+        }
       }
     });
     this.start();

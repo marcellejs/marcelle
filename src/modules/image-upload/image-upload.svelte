@@ -15,6 +15,10 @@
 
   let counter = 0;
   let draggedOver = false;
+  let objectURLs: string[] = [];
+
+  // use to check if a file is being dragged
+  const hasFiles = ({ dataTransfer: { types = [] } }: DragEvent) => types.indexOf('Files') > -1;
 
   function handleDragEnter(e: DragEvent) {
     e.preventDefault();
@@ -25,7 +29,7 @@
     draggedOver = true;
   }
 
-  function handleDragLeave(e: DragEvent) {
+  function handleDragLeave() {
     counter -= 1;
     if (counter < 1) {
       draggedOver = false;
@@ -36,12 +40,6 @@
     if (hasFiles(e)) {
       e.preventDefault();
     }
-  }
-
-  let objectURLs: string[] = [];
-  function handleDragDrop(e: DragEvent) {
-    e.preventDefault();
-    processFiles(e.dataTransfer.files);
   }
 
   async function processImageFile(file: File) {
@@ -61,15 +59,16 @@
       canvas: true,
       crossOrigin: 'Anonymous',
     });
-    const imgData = ((image as any) as HTMLCanvasElement)
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const img = (image as any) as HTMLCanvasElement;
+    const imgData = img
       .getContext('2d')
-      .getImageData(
-        0,
-        0,
-        width || ((image as any) as HTMLCanvasElement).width,
-        height || ((image as any) as HTMLCanvasElement).height,
-      );
-    const thumbData = ((thumbnail as any) as HTMLCanvasElement).toDataURL('image/jpeg');
+      .getImageData(0, 0, width || img.width, height || img.height);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const thumb = (thumbnail as any) as HTMLCanvasElement;
+    const thumbData = thumb.toDataURL('image/jpeg');
     thumbnails.set(thumbData);
     images.set(imgData);
   }
@@ -90,8 +89,10 @@
     await p;
   }
 
-  // use to check if a file is being dragged
-  const hasFiles = ({ dataTransfer: { types = [] } }: DragEvent) => types.indexOf('Files') > -1;
+  function handleDragDrop(e: DragEvent) {
+    e.preventDefault();
+    processFiles(e.dataTransfer.files);
+  }
 
   onMount(async () => {
     await tick();

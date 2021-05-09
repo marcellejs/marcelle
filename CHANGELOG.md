@@ -1,5 +1,16 @@
 # Marcelle changelog
 
+## Unpublished
+
+- lazy iterables have been added to process service data, in particular dataset data
+- The dataset interface has changed (see docs)
+- data stores now take a location as argument rather than a configuration object
+
+## v0.3.1
+
+- Fix concurrent state updates in datasets
+- Set webcam to face the environment by default on mobile devices
+
 ## v0.3.0
 
 ### Breaking changes

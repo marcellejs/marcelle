@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import '../../dist/marcelle.css';
 import {
   batchPrediction,
@@ -8,47 +7,44 @@ import {
   dashboard,
   dataset,
   dataStore,
-  mlp,
-  mobilenet,
-  parameters,
-  classificationPlot,
+  mlpClassifier,
+  mobileNet,
+  modelParameters,
+  confidencePlot,
   trainingProgress,
-  textfield,
+  textField,
   toggle,
   trainingPlot,
   webcam,
-  knn,
+  knnClassifier,
   text,
-} from '../../dist/marcelle.esm.js';
+} from '../../dist/marcelle.esm';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CAPTURE TO DATASET
 // -----------------------------------------------------------
 
 const input = webcam();
-const featureExtractor = mobilenet();
+const featureExtractor = mobileNet();
 
-const label = textfield();
+const label = textField();
 label.title = 'Instance label';
 const capture = button({ text: 'Hold to record instances' });
 capture.title = 'Capture instances to the training set';
 
-const instances = input.$images
+const store = dataStore('localStorage');
+const trainingSet = dataset('training-set-mlp-vs-knn', store);
+const trainingSetBrowser = datasetBrowser(trainingSet);
+
+input.$images
   .filter(() => capture.$down.value)
   .map(async (img) => ({
-    type: 'image',
-    data: img,
-    label: label.$text.value,
+    x: await featureExtractor.process(img),
     thumbnail: input.$thumbnails.value,
-    features: await featureExtractor.process(img),
+    y: label.$text.value,
   }))
-  .awaitPromises();
-
-const store = dataStore({ location: 'localStorage' });
-const trainingSet = dataset({ name: 'TrainingSet-dashboard', dataStore: store });
-trainingSet.capture(instances);
-
-const trainingSetBrowser = datasetBrowser(trainingSet);
+  .awaitPromises()
+  .subscribe(trainingSet.create.bind(trainingSet));
 
 // -----------------------------------------------------------
 // TRAINING
@@ -58,17 +54,17 @@ const b = button({ text: 'Train' });
 b.title = 'Training Launcher';
 
 // KNN
-const classifierKNN = knn({ k: 3, dataStore: store }).sync('mlp-vs-knn-knn');
-const paramsKNN = parameters(classifierKNN);
+const classifierKNN = knnClassifier({ k: 3, dataStore: store }).sync('mlp-vs-knn-knn');
+const paramsKNN = modelParameters(classifierKNN);
 paramsKNN.title = 'KNN: Parameters';
 const progressKNN = trainingProgress(classifierKNN);
 progressKNN.title = 'KNN: Training Progress';
 
 // MLP
-const classifierMLP = mlp({ layers: [128, 64], epochs: 30, dataStore: store }).sync(
+const classifierMLP = mlpClassifier({ layers: [128, 64], epochs: 30, dataStore: store }).sync(
   'mlp-vs-knn-mlp',
 );
-const paramsMLP = parameters(classifierMLP);
+const paramsMLP = modelParameters(classifierMLP);
 paramsMLP.title = 'MLP: Parameters';
 const progressMLP = trainingProgress(classifierMLP);
 progressMLP.title = 'MLP: Training Progress';
@@ -118,9 +114,9 @@ const predictionStreamKNN = rtFeatureStream
   .map(async (features) => classifierKNN.predict(features))
   .awaitPromises();
 
-const plotResultsMLP = classificationPlot(predictionStreamMLP);
+const plotResultsMLP = confidencePlot(predictionStreamMLP);
 plotResultsMLP.title = 'Predictions: MLP';
-const plotResultsKNN = classificationPlot(predictionStreamKNN);
+const plotResultsKNN = confidencePlot(predictionStreamKNN);
 plotResultsKNN.title = 'Predictions: KNN';
 
 // -----------------------------------------------------------
