@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte';
   import type { Stream } from '../core';
+  import Button from '../ui/components/Button.svelte';
   import WizardStepComponent from './WizardStep.svelte';
   import type { WizardStep } from './wizard_step';
 
@@ -54,12 +55,10 @@
   function onOutsideClick() {
     quit();
   }
+
 </script>
 
-<div
-  class="wizard absolute min-h-screen top-0 inset-x-0 p-4 pb-4 sm:flex sm:items-center
-    sm:justify-center z-20"
->
+<div class="marcelle wizard">
   <div class="absolute min-h-screen inset-0 transition-opacity">
     <div on:click={onOutsideClick} class="absolute inset-0 bg-gray-500 opacity-50" />
   </div>
@@ -74,43 +73,61 @@
       index={$current + 1}
     />
     <div class="bg-white border-t border-gray-300 px-4 py-2 grid grid-cols-3">
-      <div><button class="btn danger" on:click={quit}>Close</button></div>
+      <div><Button type="danger" on:click={quit}>Close</Button></div>
       <div class="text-center">
         {#each Array(steps.length) as _, i}
           <button on:click={() => stepTo(i)} class="step-button" class:current={$current === i} />
         {/each}
       </div>
       <div class="text-right">
-        <button
-          class="btn"
+        <Button
           disabled={$current <= 0}
           on:click={() => {
             stepTo($current - 1);
           }}
         >
           Previous
-        </button>
-        <button
-          class="btn"
-          disabled={$current >= steps.length - 1}
+        </Button>
+        <Button
+          variant="filled"
+          type={$current >= steps.length - 1 ? 'success' : 'default'}
           on:click={() => {
-            stepTo($current + 1);
+            if (current.value < steps.length - 1) {
+              stepTo($current + 1);
+            } else {
+              quit();
+            }
           }}
         >
-          Next
-        </button>
+          {$current >= steps.length - 1 ? 'Finish' : 'Next'}
+        </Button>
       </div>
     </div>
   </div>
 </div>
 
-<style type="text/postcss">
+<style lang="postcss">
+  .wizard {
+    @apply absolute min-h-screen top-0 inset-x-0 p-4 pb-4  z-20;
+  }
+
+  @screen sm {
+    .wizard {
+      @apply flex items-center justify-center;
+    }
+  }
+
+  .wizard :global(.card-title) {
+    display: none !important;
+  }
+
   .step-button {
-    @apply w-2 h-2 p-0 mx-1 border-none rounded-full bg-blue-300;
+    @apply w-2 h-2 p-0 mx-1 border-none rounded-full bg-blue-300 cursor-pointer;
   }
 
   .step-button.current,
   .step-button:hover {
     @apply bg-blue-500;
   }
+
 </style>

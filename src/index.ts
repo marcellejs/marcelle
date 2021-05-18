@@ -1,19 +1,12 @@
 import '@tensorflow/tfjs-backend-webgl';
-// import { memory } from '@tensorflow/tfjs-core';
 import './utils';
-import './ui/style/styles.css';
-
-// setInterval(() => {
-//   console.log('memory', memory());
-// }, 2000);
+import './ui/css/styles.css';
 
 // Core library
 export * from './core';
 export * from './data-store';
 export * from './dataset';
-export { throwError } from './utils/error-handling';
-export { notification } from './ui/util/notification';
-export { LazyIterable } from './utils/lazy-iterable';
+export * from './utils';
 
 // Dashboards & Wizards
 export { dashboard } from './dashboard';

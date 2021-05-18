@@ -1,5 +1,5 @@
 import { logger } from '../core/logger';
-import { notification } from '../ui/util/notification';
+import { notification } from './notification';
 
 export function Catch(
   target: unknown,

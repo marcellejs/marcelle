@@ -41,9 +41,10 @@
       }, duration);
     }
   }
+
 </script>
 
-<div class="notification-container">
+<div class="marcelle notification-container">
   {#each notifications as { title, message, type, id } (id)}
     <div
       transition:blur={{ amount: 10 }}
@@ -132,4 +133,5 @@
   .notification-svg.danger {
     @apply text-red-500;
   }
+
 </style>

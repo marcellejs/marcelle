@@ -2,18 +2,19 @@
   import { onMount, tick } from 'svelte';
 
   import { Model } from '../core';
+  import Button from '../ui/components/Button.svelte';
   import { throwError } from '../utils/error-handling';
 
-  export let model: Model;
+  export let model: Model<unknown, unknown>;
 
   let uploadInput: HTMLInputElement;
 
-  type SaveableModel = Model & {
+  type SaveableModel = Model<unknown, unknown> & {
     download(): void;
     upload(...files: File[]): Promise<void>;
   };
 
-  function isSaveable(m: Model): m is SaveableModel {
+  function isSaveable(m: Model<unknown, unknown>): m is SaveableModel {
     return 'download' in m;
   }
 
@@ -47,11 +48,13 @@
       }
     });
   });
+
 </script>
 
 <span class="card-title">{model.title}</span>
 <div class="flex">
-  <button class="btn" on:click={downloadModel}>Download Model</button>
+  <Button on:click={downloadModel}>Download Model</Button>
+  <span class="w-1" />
   <input bind:this={uploadInput} type="file" multiple class="hidden" />
-  <button class="btn" on:click={uploadModel}>Upload Model</button>
+  <Button on:click={uploadModel}>Upload Model</Button>
 </div>

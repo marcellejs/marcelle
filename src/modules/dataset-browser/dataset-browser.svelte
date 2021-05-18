@@ -3,7 +3,7 @@
 
   import type { Instance, ObjectId, Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
-  import PopMenu from '../../ui/widgets/PopMenu.svelte';
+  import PopMenu from '../../ui/components/PopMenu.svelte';
   import type { Dataset } from '../../dataset';
 
   export let title: string;
@@ -171,6 +171,7 @@
       }
     });
   });
+
 </script>
 
 <svelte:window on:keydown={handleKeydown} on:keyup={handleKeyup} />
@@ -229,16 +230,16 @@
 <style>
   .browser-class {
     @apply relative m-2 w-1/3 flex-grow;
-    @apply border-gray-600 border rounded-lg;
+    @apply border-gray-500 border border-solid rounded-lg;
     min-width: 300px;
   }
 
   .browser-class-header {
-    @apply flex flex-row justify-between w-full;
+    @apply flex flex-row justify-between items-center w-full;
   }
 
   .browser-class-title {
-    @apply text-sm px-2 py-1 bg-gray-600 text-white rounded-br-md rounded-tl-md;
+    @apply text-sm px-2 py-1 self-start font-semibold bg-gray-500 text-white rounded-tl-md rounded-br-md;
   }
 
   .browser-class-body {
@@ -255,4 +256,5 @@
   .browser-class-body img.selected {
     @apply border-teal-700;
   }
+
 </style>

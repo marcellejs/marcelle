@@ -2,6 +2,7 @@
   import { onMount, tick } from 'svelte';
 
   import type { BatchPrediction } from '../modules/batch-prediction';
+  import Button from '../ui/components/Button.svelte';
 
   export let prediction: BatchPrediction;
 
@@ -33,6 +34,7 @@
       prediction.upload(files);
     });
   });
+
 </script>
 
 <span class="card-title">{prediction.title}</span>
@@ -44,8 +46,12 @@
   {:else}This batch prediction module is empty{/if}
 </p>
 <div class="flex">
-  {#if $count}<button class="btn" on:click={downloadPredictions}>Download Predictions</button>{/if}
-  <button class="btn" on:click={uploadPredictions}>Upload Predictions</button>
+  {#if $count}
+    <Button on:click={downloadPredictions}>Download Predictions</Button>
+    <span class="w-1" />
+  {/if}
+  <Button on:click={uploadPredictions}>Upload Predictions</Button>
+  <span class="w-1" />
   <input bind:this={uploadInput} type="file" multiple class="hidden" />
-  <button class="btn danger" on:click={clearPredictions}>Clear Predictions</button>
+  <Button type="danger" on:click={clearPredictions}>Clear Predictions</Button>
 </div>

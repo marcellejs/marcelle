@@ -4,6 +4,7 @@
 
   import type { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
+  import Button from '../../ui/components/Button.svelte';
 
   export let title: string;
   export let images: Stream<ImageData>;
@@ -107,6 +108,7 @@
       uploadInput.click();
     }
   }
+
 </script>
 
 <ModuleBase {title}>
@@ -137,20 +139,13 @@
     class="image-upload"
   >
     <div
-      class="border-dashed border-2 border-gray-400 py-8 flex flex-col justify-center items-center"
+      class="border-dashed border-2 border-gray-300 py-8 flex flex-col justify-center items-center"
     >
       <p class="mb-3 font-semibold text-gray-900 flex flex-wrap justify-center">
         <span>Drag and drop an image or</span>
       </p>
       <input bind:this={uploadInput} type="file" multiple class="hidden" />
-      <button
-        id="button"
-        class="mt-2 rounded-sm px-3 py-1 bg-gray-200 hover:bg-gray-300 focus:ring
-        focus:outline-none"
-        on:click={clickUpload}
-      >
-        Upload a file
-      </button>
+      <Button on:click={clickUpload}>Upload a file</Button>
     </div>
 
     <div class="flex flex-wrap">
@@ -179,4 +174,5 @@
       justify-center rounded-md;
     background-color: rgba(255, 255, 255, 0.7);
   }
+
 </style>

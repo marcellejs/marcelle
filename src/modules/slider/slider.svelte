@@ -13,6 +13,7 @@
   export let pips;
   export let pipstep;
   export let formatter;
+
 </script>
 
 <ModuleBase {title}>
@@ -32,6 +33,16 @@
   />
 </ModuleBase>
 
-<style global lang="postcss">
-  /* Moved to styles.css */
+<style lang="postcss">
+  :global(.rangeSlider > .rangeBar),
+  :global(.rangeSlider > .rangeHandle > .rangeNub),
+  :global(.rangeSlider > .rangeHandle > .rangeFloat) {
+    @apply bg-teal-500;
+  }
+  :global(.rangeSlider.focus > .rangeBar),
+  :global(.rangeSlider > .rangeHandle.active > .rangeNub),
+  :global(.rangeSlider > .rangeHandle.active > .rangeFloat) {
+    @apply bg-teal-400;
+  }
+
 </style>
