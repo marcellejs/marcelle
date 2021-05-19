@@ -10,5 +10,5 @@
 </script>
 
 <ModuleBase {title}>
-  <Select {options} {value} />
+  <Select options={$options} bind:value={$value} />
 </ModuleBase>
