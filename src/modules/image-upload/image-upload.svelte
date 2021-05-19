@@ -62,13 +62,13 @@
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const img = (image as any) as HTMLCanvasElement;
+    const img = image as any as HTMLCanvasElement;
     const imgData = img
       .getContext('2d')
       .getImageData(0, 0, width || img.width, height || img.height);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const thumb = (thumbnail as any) as HTMLCanvasElement;
+    const thumb = thumbnail as any as HTMLCanvasElement;
     const thumbData = thumb.toDataURL('image/jpeg');
     thumbnails.set(thumbData);
     images.set(imgData);
