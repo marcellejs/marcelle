@@ -2,8 +2,8 @@
   import { onMount, onDestroy, tick } from 'svelte';
   import type { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
-  import Spinner from '../../ui/widgets/Spinner.svelte';
-  import Switch from '../../ui/widgets/Switch.svelte';
+  import Spinner from '../../ui/components/Spinner.svelte';
+  import Switch from '../../ui/components/Switch.svelte';
   import { noop } from '../../utils/misc';
 
   export let title: string;
@@ -30,6 +30,7 @@
   onDestroy(() => {
     unSub();
   });
+
 </script>
 
 <ModuleBase {title}>
@@ -78,4 +79,5 @@
   video {
     transform: scaleX(-1);
   }
+
 </style>

@@ -9,6 +9,7 @@
   function onOutsideClick() {
     quit();
   }
+
 </script>
 
 <div class="modal-container">
@@ -38,9 +39,11 @@
   .modal {
     @apply bg-white rounded-lg overflow-hidden shadow-xl transform transition-all;
   }
+
   @screen sm {
     .modal {
       @apply max-w-3xl w-full;
     }
   }
+
 </style>

@@ -20,7 +20,52 @@
       }
     });
   });
+
 </script>
+
+<ModuleBase {title}>
+  <div class="relative pt-6 w-full" style="min-width: 250px;">
+    <div class="flex mb-2 items-center justify-between">
+      <div>
+        <span
+          class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600
+          bg-blue-200"
+          class:gray={status === 'idle'}
+          class:green={status === 'success' || status === 'loaded'}
+          class:red={status === 'error'}
+        >
+          Status:
+          {status}
+        </span>
+      </div>
+      <div class="text-right">
+        <span
+          class="text-xs font-semibold inline-block text-blue-600"
+          class:tgray={status === 'idle'}
+          class:tgreen={status === 'success' || status === 'loaded'}
+          class:tred={status === 'error'}
+        >
+          {percent}%
+        </span>
+      </div>
+    </div>
+    <div
+      class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-200"
+      class:gray={status === 'idle'}
+      class:green={status === 'success' || status === 'loaded'}
+      class:red={status === 'error'}
+    >
+      <div
+        style="width:{percent}%"
+        class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center
+        bg-blue-500"
+        class:xgray={status === 'idle'}
+        class:xgreen={status === 'success' || status === 'loaded'}
+        class:xred={status === 'error'}
+      />
+    </div>
+  </div>
+</ModuleBase>
 
 <style>
   .gray {
@@ -50,44 +95,5 @@
   .xred {
     @apply bg-red-500;
   }
-</style>
 
-<ModuleBase {title}>
-  <div class="relative pt-6 w-full" style="min-width: 250px;">
-    <div class="flex mb-2 items-center justify-between">
-      <div>
-        <span
-          class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-teal-600
-          bg-teal-200"
-          class:gray={status === 'idle'}
-          class:green={status === 'success' || status === 'loaded'}
-          class:red={status === 'error'}>
-          Status:
-          {status}
-        </span>
-      </div>
-      <div class="text-right">
-        <span
-          class="text-xs font-semibold inline-block text-teal-600"
-          class:tgray={status === 'idle'}
-          class:tgreen={status === 'success' || status === 'loaded'}
-          class:tred={status === 'error'}>
-          {percent}%
-        </span>
-      </div>
-    </div>
-    <div
-      class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-teal-200"
-      class:gray={status === 'idle'}
-      class:green={status === 'success' || status === 'loaded'}
-      class:red={status === 'error'}>
-      <div
-        style="width:{percent}%"
-        class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center
-        bg-teal-500"
-        class:xgray={status === 'idle'}
-        class:xgreen={status === 'success' || status === 'loaded'}
-        class:xred={status === 'error'} />
-    </div>
-  </div>
-</ModuleBase>
+</style>

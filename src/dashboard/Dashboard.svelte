@@ -1,13 +1,14 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from 'svelte';
   import { blur } from 'svelte/transition';
-  import { getLogStream, LogLevel } from '../core/logger';
   import Routie from './routie';
   import DashboardPageComponent from './DashboardPage.svelte';
   import DashboardSettingsComponent from './DashboardSettings.svelte';
   import type { DashboardPage } from './dashboard_page';
   import type { Stream } from '../core';
   import type { DashboardSettings } from './dashboard_settings';
+  import DashboardHeader from './DashboardHeader.svelte';
+  import DashboardFooter from './DashboardFooter.svelte';
 
   const dispatch = createEventDispatcher();
 
@@ -17,8 +18,6 @@
   export let settings: DashboardSettings;
   export let page: Stream<string>;
   export let closable: boolean;
-
-  const logStream = getLogStream();
 
   let showApp = false;
 
@@ -59,21 +58,29 @@
   $: dashboardSlugs = [''].concat(dashboardNames.slice(1).map(string2slug));
 
   // Routing
-  const router = new Routie();
-  router.route('settings', () => {
-    showSettings = true;
-    if (currentDashboard) dashboards[currentDashboard].destroy();
-    page.set('settings');
+  onMount(() => {
+    try {
+      const router = new Routie();
+      router.route('settings', () => {
+        showSettings = true;
+        if (currentDashboard) dashboards[currentDashboard].destroy();
+        page.set('settings');
+      });
+      dashboardSlugs.forEach((slug, i) => {
+        router.route(slug, () => {
+          showSettings = false;
+          if (currentDashboard === dashboardNames[i]) return;
+          if (currentDashboard) dashboards[currentDashboard].destroy();
+          currentDashboard = dashboardNames[i];
+          page.set(slug === '' ? string2slug(dashboardNames[0]) : slug);
+        });
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('Could not enable router', error);
+    }
   });
-  $: dashboardSlugs.forEach((slug, i) => {
-    router.route(slug, () => {
-      showSettings = false;
-      if (currentDashboard === dashboardNames[i]) return;
-      if (currentDashboard) dashboards[currentDashboard].destroy();
-      currentDashboard = dashboardNames[i];
-      page.set(slug === '' ? string2slug(dashboardNames[0]) : slug);
-    });
-  });
+
 </script>
 
 <svelte:head>
@@ -81,76 +88,16 @@
 </svelte:head>
 
 {#if showApp}
-  <div style="position: fixed; height: 100vh; overflow: scroll; width: 100vw; top:0; left:0">
+  <div class="marcelle fixed h-screen w-screen overflow-scroll top-0 left-0">
     <div class="app-container" transition:blur={{ amount: 10, duration: closable ? 400 : 0 }}>
-      <header class="bg-white text-gray-700 body-font border-b">
-        <div class="mx-auto flex flex-wrap p-2 flex-col md:flex-row items-center w-full">
-          <a href="#/" class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              class="w-10 h-10 text-white p-2 bg-indigo-500 rounded-full"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-            </svg>
-            <span class="ml-3 text-xl">{title}</span>
-          </a>
-          <nav
-            class="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400 flex flex-wrap
-              items-center text-base justify-center"
-          >
-            {#each dashboardNames as dashboardName, index}
-              <a
-                href={`#${dashboardSlugs[index]}`}
-                class:active={!showSettings && currentDashboard === dashboardName}
-                class="mr-5 hover:text-gray-900 border-teal-500"
-              >
-                {dashboardName}
-              </a>
-            {/each}
-          </nav>
-          <a
-            href="#settings"
-            class="text-teal-500 bg-transparent font-bold uppercase text-xs px-2 py-2 rounded-full
-              outline-none mr-1 mb-1 hover:bg-teal-500 hover:text-white"
-          >
-            <svg
-              class="fill-current inline-block h-5 w-5"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-            >
-              <path
-                d="M17 16v4h-2v-4h-2v-3h6v3h-2zM1 9h6v3H1V9zm6-4h6v3H7V5zM3 0h2v8H3V0zm12
-                0h2v12h-2V0zM9 0h2v4H9V0zM3 12h2v8H3v-8zm6-4h2v12H9V8z"
-              />
-            </svg>
-          </a>
-          {#if closable}
-            <button
-              on:click={quit}
-              class="text-red-500 bg-transparent font-bold uppercase text-xs px-2 py-2 rounded-full
-              outline-none mr-1 mb-1 hover:bg-red-500 hover:text-white"
-            >
-              <svg
-                class="fill-current inline-block h-5 w-5"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M4.16 4.16l1.42 1.42A6.99 6.99 0 0 0 10 18a7 7 0 0 0 4.42-12.42l1.42-1.42a9 9 0 1
-                1-11.69 0zM9 0h2v8H9V0z"
-                />
-              </svg>
-            </button>
-          {/if}
-        </div>
-      </header>
+      <DashboardHeader
+        {title}
+        items={dashboardSlugs.reduce((o, x, i) => ({ ...o, [x]: dashboardNames[i] }), {})}
+        current={currentDashboard}
+        {showSettings}
+        {closable}
+        on:quit={quit}
+      />
 
       <main class="main-container">
         {#if showSettings}
@@ -160,26 +107,7 @@
         {/if}
       </main>
 
-      <footer>
-        <div class="footer-container">
-          <p
-            class="console"
-            class:error={$logStream && $logStream[0] === LogLevel.Error}
-            class:warning={$logStream && $logStream[0] === LogLevel.Warning}
-          >
-            {#if $logStream}
-              {#if $logStream[0] === LogLevel.Warning}
-                Warn:
-                {$logStream[1] || ''}
-              {:else if $logStream[0] === LogLevel.Error}
-                Err:
-                {$logStream[1] || ''}
-              {:else}{$logStream[1] || ''}{/if}
-            {:else}&nbsp;{/if}
-          </p>
-          <p class="credits">© 2020 {author}</p>
-        </div>
-      </footer>
+      <DashboardFooter {author} />
     </div>
   </div>
 {/if}
@@ -190,7 +118,8 @@
   }
 
   .main-container {
-    @apply max-w-none w-screen p-1 flex flex-col flex-nowrap flex-grow bg-gray-200;
+    @apply box-border w-full p-1 flex flex-col flex-nowrap flex-grow bg-gray-100;
+    background-color: rgb(237, 242, 247);
   }
 
   @screen lg {
@@ -199,49 +128,4 @@
     }
   }
 
-  .active {
-    @apply text-gray-900 border-b;
-  }
-
-  footer {
-    @apply bg-white text-gray-600 border-t;
-  }
-
-  .footer-container {
-    @apply px-5 py-2 flex items-center justify-between;
-  }
-
-  @screen sm {
-    .footer-container {
-      @apply flex-row;
-    }
-  }
-
-  .console {
-    @apply text-xs text-gray-600 relative pl-3;
-  }
-
-  .console.warning {
-    @apply text-yellow-600;
-  }
-
-  .console.error {
-    @apply text-red-700;
-  }
-
-  .console::before {
-    left: 0;
-    position: absolute;
-    content: '>';
-  }
-
-  .credits {
-    @apply text-sm text-gray-500  mt-4;
-  }
-
-  @screen sm {
-    .credits {
-      @apply ml-4 pl-4 border-gray-200 py-2 mt-0;
-    }
-  }
 </style>

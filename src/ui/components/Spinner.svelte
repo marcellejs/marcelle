@@ -1,3 +1,7 @@
+<span class="spinner-container">
+  <span class="spinner"> <span class="dot1" /> <span class="dot2" /> </span>
+</span>
+
 <style lang="postcss">
   .spinner-container {
     min-height: 40px;
@@ -16,7 +20,7 @@
 
   .dot1,
   .dot2 {
-    @apply bg-indigo-500;
+    @apply bg-blue-400;
     width: 60%;
     height: 60%;
     display: inline-block;
@@ -67,8 +71,5 @@
       -webkit-transform: scale(1);
     }
   }
-</style>
 
-<span class="spinner-container">
-  <span class="spinner"> <span class="dot1" /> <span class="dot2" /> </span>
-</span>
+</style>

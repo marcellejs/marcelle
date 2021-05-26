@@ -31,7 +31,7 @@
   import type { ChartDataset } from './generic-chart.module';
 
   export let title: string;
-  export let preset: Record<string, { global: unknown; datasets: unknown }>;
+  export let preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };
   export let options: ChartJsOptions & { xlabel?: string; ylabel?: string };
   export let datasets: Array<ChartDataset>;
 
@@ -74,6 +74,7 @@
   const defaultOptions = {
     data: {},
     options: {
+      maintainAspectRatio: false,
       animation: { duration: 200 },
       borderWidth: 4,
     },
@@ -178,8 +179,9 @@
     const ctx = canvasElement.getContext('2d');
     chart = new Chart(ctx, chartOptions as ChartConfiguration);
   }
+
 </script>
 
 <ModuleBase {title}>
-  <div class="w-full"><canvas use:setup /></div>
+  <div class="w-full h-96"><canvas use:setup /></div>
 </ModuleBase>

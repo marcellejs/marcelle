@@ -2,6 +2,7 @@
   import { onMount, createEventDispatcher, tick } from 'svelte';
   import { Stream } from '../../core';
   import ModuleBase from '../../core/ModuleBase.svelte';
+  import Button from '../../ui/components/Button.svelte';
 
   export let title: string;
   export let strokeStart: Stream<void>;
@@ -69,7 +70,7 @@
 <svelte:body on:mouseup={stopDrawing} />
 
 <ModuleBase {title}>
-  <div class="sketchpad">
+  <div class="w-full flex flex-col items-center box-border">
     <canvas
       id="fxid"
       class="sketchpad-container"
@@ -79,24 +80,16 @@
       on:mousemove={draw}
       on:mousedown={startDrawing}
     />
-    <div class="controls">
-      <button class="btn small danger" on:click={clearDrawing}> Clear </button>
+    <div class="m-1">
+      <Button size="small" type="danger" on:click={clearDrawing}>Clear</Button>
     </div>
   </div>
 </ModuleBase>
 
 <style lang="postcss">
-  .sketchpad {
-    @apply w-full flex flex-col box-border;
-  }
-
-  .sketchpad .sketchpad-container {
-    @apply overflow-hidden flex justify-center m-1 border-gray-600 border;
+  .sketchpad-container {
+    @apply overflow-hidden flex justify-center m-1 border border-solid border-gray-400 rounded-lg;
     width: 300px;
     height: 300px;
-  }
-
-  .sketchpad .controls {
-    @apply m-1;
   }
 </style>
