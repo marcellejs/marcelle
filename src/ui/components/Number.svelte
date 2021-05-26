@@ -1,7 +1,7 @@
 <svelte:options accessors />
 
 <script lang="ts">
-  import { Stream } from '../../core';
+  import type { Stream } from '../../core/stream';
 
   export let disabled = false;
   export let stream: Stream<number>;

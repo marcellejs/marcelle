@@ -25,7 +25,9 @@
       "import": "./dist/marcelle.esm.js",
       "default": "./dist/marcelle.esm.js"
     },
-    "./dist/marcelle.css": "./dist/marcelle.css"
+    "./dist/marcelle.css": "./dist/marcelle.css",
+    "./ui": "./dist/ui.js",
+    "./ui.css": "./dist/ui.css"
   },
   "files": [
     "dist",
@@ -34,16 +36,19 @@
   "scripts": {
     "dev": "rollup -c -w",
     "build": "rollup -c",
+    "build-all": "$npm_execpath run clean && $npm_execpath run build && $npm_execpath run ui:build && $npm_execpath run types:build",
     "examples:dev": "vite --config examples/vite.config.js",
     "examples:build": "vite build --config examples/vite.config.js",
     "types:dev": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir types --watch",
     "types:build": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir types",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
+    "ui:dev": "rollup -w -c rollup.config.ui.js",
+    "ui:build": "rollup -c rollup.config.ui.js",
+    "storybook:dev": "start-storybook -p 6006",
+    "storybook:build": "build-storybook",
     "lint": "eslint src",
-    "clean": "rm -rf node_modules dist types examples/dist",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "clean": "rm -rf dist types examples/dist"
   },
   "devDependencies": {
     "@babel/core": "^7.14.0",

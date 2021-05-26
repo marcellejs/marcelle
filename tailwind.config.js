@@ -1,14 +1,10 @@
 const colors = require('tailwindcss/colors');
-const defaultTheme = require('tailwindcss/defaultTheme');
 
 const production = !process.env.ROLLUP_WATCH;
+process.env.NODE_ENV = production ? JSON.stringify('production') : JSON.stringify('development');
 
 module.exports = {
   mode: 'jit',
-  // purge: {
-  //   enabled: production,
-  //   content: ['./src/**/*.svelte'],
-  // },
   purge: ['./src/**/*.{css,js,jsx,ts,tsx,svelte}'],
   theme: {
     colors: {
