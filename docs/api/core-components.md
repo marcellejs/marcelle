@@ -2,4 +2,4 @@
 sidebarDepth: 3
 ---
 
-# API Overview
+# Core Components

@@ -280,8 +280,6 @@ Retain only events for which a predicate is truthy.
 | --------- | ----------------- | ------- | ----------- |
 | p         | (a: T) => boolean |         | Predicate   |
 
-**Example**
-
 #### Example
 
 ```js
@@ -334,8 +332,6 @@ Apply a function to each event value.
 | --------- | ----------- | ------- | -------------- |
 | f         | (a: T) => U |         | Unary function |
 
-**Example**
-
 #### Example
 
 ```js
@@ -359,8 +355,6 @@ Create a new Stream containing events from two Streams.Merging creates a new Str
 | Parameter | Type        | Default | Description    |
 | --------- | ----------- | ------- | -------------- |
 | stream1   | Stream\<A\> |         | Event stream 1 |
-
-**Example**
 
 #### Example
 
@@ -435,8 +429,6 @@ Like `sample`, but the value stream and sampler streams are switched
 | --------- | ----------- | ------- | -------------- |
 | sampler   | Stream\<B\> |         | Sampler stream |
 
-**Example**
-
 #### Example
 
 ```js
@@ -460,8 +452,6 @@ For each event in the current Stream, replace the event value with the latest<br
 | Parameter | Type        | Default | Description  |
 | --------- | ----------- | ------- | ------------ |
 | values    | Stream\<A\> |         | value stream |
-
-**Example**
 
 #### Example
 
@@ -487,8 +477,6 @@ Incrementally accumulate results, starting with the provided initial value.
 | --------- | ----------------- | ------- | ---------------- |
 | f         | (b: B, a: T) => B |         | Scanning reducer |
 | initial   | B                 |         | Initial Value    |
-
-**Example**
 
 #### Example
 
@@ -697,8 +685,6 @@ Perform a side effect for each event in a Stream. For each event in stream,<br>`
 | Parameter | Type           | Default | Description  |
 | --------- | -------------- | ------- | ------------ |
 | f         | (a: T) => void |         | Tap function |
-
-**Example**
 
 #### Example
 
