@@ -20,9 +20,9 @@
 }
 
 .card {
-  @apply bg-white rounded-xl relative mx-1 my-2 p-2 flex flex-col shadow-sm;
+  @apply bg-white rounded-xl relative mx-1 my-2 p-3 flex flex-col shadow-sm;
 }
 
 .card-title {
-  @apply block text-gray-700 mb-2 text-xs font-semibold;
+  @apply block text-gray-700 mb-4 font-medium;
 }
