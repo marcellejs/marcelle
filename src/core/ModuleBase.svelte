@@ -1,8 +1,9 @@
 <script lang="ts">
-  import Spinner from '../ui/widgets/Spinner.svelte';
+  import Spinner from '../ui/components/Spinner.svelte';
 
   export let title: string;
   export let loading = false;
+
 </script>
 
 <div class="card-container">
@@ -18,7 +19,4 @@
     @apply flex flex-col justify-start flex-grow w-full;
   }
 
-  .card-title {
-    @apply block text-indigo-600 mb-2 text-xs;
-  }
 </style>

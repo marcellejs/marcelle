@@ -2,6 +2,7 @@
   import { onMount, tick } from 'svelte';
 
   import type { Dataset } from '../dataset';
+  import Button from '../ui/components/Button.svelte';
 
   export let dataset: Dataset<unknown, unknown>;
 
@@ -33,6 +34,7 @@
       dataset.upload(files);
     });
   });
+
 </script>
 
 <span class="card-title">{dataset.title}</span>
@@ -44,8 +46,12 @@
   {/if}
 </p>
 <div class="flex">
-  {#if $count}<button class="btn" on:click={downloadDataset}>Download Dataset</button>{/if}
-  <button class="btn" on:click={uploadDataset}>Upload Dataset</button>
+  {#if $count}
+    <Button on:click={downloadDataset}>Download Dataset</Button>
+    <span class="w-1" />
+  {/if}
+  <Button on:click={uploadDataset}>Upload Dataset</Button>
+  <span class="w-1" />
   <input bind:this={uploadInput} type="file" multiple class="hidden" />
-  <button class="btn danger" on:click={clearDataset}>Clear Dataset</button>
+  <Button type="danger" on:click={clearDataset}>Clear Dataset</Button>
 </div>

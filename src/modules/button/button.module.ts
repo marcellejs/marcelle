@@ -15,7 +15,7 @@ export class Button extends Module {
   $down = new Stream(false, true);
   $loading = new Stream(false, true);
   $disabled: Stream<boolean>;
-  $type = new Stream('deafult', true);
+  $type = new Stream<'default' | 'success' | 'warning' | 'danger'>('default', true);
 
   constructor({ text = 'click me' }: Partial<ButtonOptions> = {}) {
     super();

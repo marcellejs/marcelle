@@ -1,7 +1,8 @@
 <script lang="ts">
   import ModuleBase from '../core/ModuleBase.svelte';
   import type { DataStore } from '../data-store';
-  import Spinner from '../ui/widgets/Spinner.svelte';
+  import Button from '../ui/components/Button.svelte';
+  import Spinner from '../ui/components/Spinner.svelte';
 
   export let dataStore: DataStore;
 
@@ -10,10 +11,8 @@
   function logout() {
     dataStore.logout();
   }
-</script>
 
-<style>
-</style>
+</script>
 
 <ModuleBase title="data store ({dataStore.location})">
   {#if dataStore.requiresAuth}
@@ -21,7 +20,7 @@
       <Spinner />
     {:then user}
       <p class="pb-2">Hello, {user.email}</p>
-      <div class="flex"><button class="btn danger" on:click={logout}>Log out</button></div>
+      <div class="flex"><Button on:click={logout}>Log out</Button></div>
     {/await}
     <!-- {:else}
     <div>This dataStore does not require authentication</div> -->
@@ -30,3 +29,6 @@
     <div>This data store contains the following services: {$services.join(', ')}</div>
   {/if}
 </ModuleBase>
+
+<style>
+</style>

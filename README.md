@@ -1,7 +1,7 @@
 <h2 align="center">Marcelle</h2>
 
 <p align="center">An Interactive Machine Learning Toolkit</p>
-<p align="center"><a href="https://marcelle.netlify.app" target="_blank">https://marcelle.netlify.app</a></p>
+<p align="center"><a href="https://marcelle.dev" target="_blank">https://marcelle.dev</a></p>
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
@@ -32,13 +32,13 @@ Marcelle is a web-based reactive toolkit facilitating the design of custom ML pi
 Using NPM:
 
 ```bash
-npm install @marcellejs/core@next --save
+npm install @marcellejs/core --save
 ```
 
 Using Yarn:
 
 ```bash
-yarn add @marcellejs/core@next
+yarn add @marcellejs/core
 ```
 
 ## Usage

@@ -2,7 +2,17 @@
   export let text = '';
   export let checked = false;
   export let disabled = false;
+
 </script>
+
+<label class="marcelle">
+  <input type="checkbox" class="sr-only" {disabled} bind:checked />
+  <span class="switch">
+    <span class="track" />
+    <span class="thumb" />
+  </span>
+  <span class="ml-2 cursor-pointer">{text}</span>
+</label>
 
 <style type="text/postcss">
   .switch {
@@ -10,19 +20,22 @@
   }
 
   .track {
-    @apply relative inline-block w-10 h-5 bg-gray-600 rounded-full shadow-inner;
+    @apply relative inline-block w-8 h-4 bg-gray-300 rounded-full shadow-inner;
   }
 
   .thumb {
-    @apply inline-block transition-all duration-300 ease-in-out absolute top-0 left-0 w-5 h-5 bg-white border-2 border-gray-600 rounded-full;
+    @apply inline-block transition-all duration-300 ease-in-out absolute w-5 h-5 bg-white border-solid border border-gray-300 rounded-full;
+    top: -0.125rem;
+    left: -0.125rem;
   }
 
   input[type='checkbox']:checked ~ .switch .thumb {
-    @apply transform translate-x-full border-green-500;
+    @apply transform border-blue-500;
+    --tw-translate-x: calc(100% - 0.25rem);
   }
 
   input[type='checkbox']:checked ~ .switch .track {
-    @apply transform transition-colors bg-green-500;
+    @apply transform transition-colors bg-blue-500;
   }
 
   input[type='checkbox']:disabled ~ .switch .track {
@@ -40,10 +53,5 @@
   input[type='checkbox']:active + .switch .track {
     @apply ring;
   }
-</style>
 
-<label>
-  <input type="checkbox" class="sr-only" {disabled} bind:checked />
-  <span class="switch"> <span class="track" /> <span class="thumb" /> </span>
-  <span class="ml-2 cursor-pointer">{text}</span>
-</label>
+</style>

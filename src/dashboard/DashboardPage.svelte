@@ -7,6 +7,7 @@
   afterUpdate(() => {
     dashboard.mount();
   });
+
 </script>
 
 {#if dashboard}
@@ -56,4 +57,9 @@
   .fullw {
     max-width: 100%;
   }
+
+  h2 {
+    @apply font-medium text-gray-700 ml-2 text-2xl;
+  }
+
 </style>

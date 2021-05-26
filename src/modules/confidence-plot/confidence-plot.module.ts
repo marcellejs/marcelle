@@ -24,7 +24,6 @@ export class ConfidencePlot extends Module {
     this.#plotConfidences = genericChart({
       preset: 'bar-fast',
       options: {
-        aspectRatio: 2,
         xlabel: 'Label',
         ylabel: 'Confidence',
         scales: { y: { suggestedMax: 1 } },

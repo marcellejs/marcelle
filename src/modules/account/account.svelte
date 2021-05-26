@@ -1,7 +1,7 @@
 <script lang="ts">
   import ModuleBase from '../../core/ModuleBase.svelte';
   import type { DataStore } from '../../data-store';
-  import Spinner from '../../ui/widgets/Spinner.svelte';
+  import Spinner from '../../ui/components/Spinner.svelte';
 
   export let title: string;
   export let dataStore: DataStore;
@@ -9,10 +9,8 @@
   function logout() {
     dataStore.logout();
   }
-</script>
 
-<style>
-</style>
+</script>
 
 <ModuleBase {title}>
   {#if dataStore.requiresAuth}

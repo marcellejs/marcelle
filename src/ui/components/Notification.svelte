@@ -6,7 +6,7 @@
     id: number;
     title: string;
     message: string;
-    type: string;
+    type: 'default' | 'danger';
   }
 
   export let notifications: Notification[] = [];
@@ -24,7 +24,7 @@
   }: {
     title: string;
     message: string;
-    type: string;
+    type: 'default' | 'danger';
     duration: number;
   }): void {
     const n = {
@@ -41,10 +41,11 @@
       }, duration);
     }
   }
+
 </script>
 
-<div class="notification-container">
-  {#each notifications as { title, message, type, id } (id)}
+<div class="marcelle notification-container">
+  {#each notifications.slice(0, 10) as { title, message, type, id } (id)}
     <div
       transition:blur={{ amount: 10 }}
       animate:flip
@@ -53,10 +54,10 @@
       class:default={type === 'default'}
       class:danger={type === 'danger'}
     >
-      <div class="flex">
+      <div class="flex items-start">
         <div class="py-1">
           <svg
-            class="notification-svg"
+            class="notification-svg mr-4"
             class:default={type === 'default'}
             class:danger={type === 'danger'}
             xmlns="http://www.w3.org/2000/svg"
@@ -76,13 +77,13 @@
           </svg>
         </div>
         <div>
-          <p class="font-bold">{title}</p>
-          <p class="text-sm">{message}</p>
+          <p class="my-1 font-bold">{title}</p>
+          <p class="my-1 text-sm">{message}</p>
         </div>
         <!-- <span class="absolute top-0 bottom-0 right-0 px-4 py-3"> -->
         <div>
           <svg
-            class="notification-svg"
+            class="notification-svg ml-4 cursor-pointer"
             class:default={type === 'default'}
             class:danger={type === 'danger'}
             on:click={() => close(id)}
@@ -110,7 +111,7 @@
   }
 
   .notification-card {
-    @apply border-t-4 rounded-b px-4 py-3 shadow-md w-auto mt-2;
+    @apply border-t-4 rounded-lg px-4 py-3 shadow-md w-auto mt-2;
   }
 
   .notification-card.default {
@@ -122,7 +123,7 @@
   }
 
   .notification-svg {
-    @apply fill-current h-6 w-6 mr-4;
+    @apply fill-current h-6 w-6;
   }
 
   .notification-svg.default {
@@ -132,4 +133,5 @@
   .notification-svg.danger {
     @apply text-red-500;
   }
+
 </style>

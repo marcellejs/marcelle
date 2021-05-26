@@ -1,4 +1,4 @@
-/* global process */
+/* eslint-env node */
 import commonjs from '@rollup/plugin-commonjs';
 import filesize from 'rollup-plugin-filesize';
 import preprocess from 'svelte-preprocess';
