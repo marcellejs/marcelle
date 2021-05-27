@@ -53,7 +53,7 @@ module.exports = {
         //   ],
         // },
         'layouts',
-        'processors',
+        // 'processors',
         'utilities',
       ],
       '/': [

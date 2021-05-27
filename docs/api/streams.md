@@ -30,10 +30,6 @@ While _RxJS_ is certainly the most popular JavaScript reactive programing librar
 
 All _Most.js_ operators are documented online: [https://mostcore.readthedocs.io/en/latest/](https://mostcore.readthedocs.io/en/latest/)
 
-::: warning TODO
-Add resources about reactive programming (tutorials, etc)
-:::
-
 ## Stream
 
 Marcelle's main Stream class is a wrapper around [Most.js](https://github.com/mostjs/core) streams, designed to:
@@ -106,10 +102,6 @@ thru<B>(f: (s: Stream<T>) => MostStream<B>): Stream<B>
 ```
 
 Apply functions fluently to a Stream, wrapping the result in a new Stream. Use thru when you want to continue dot-chaining other Stream operations.
-
-::: warning TODO
-Complement API (most methods)
-:::
 
 ### .ap()
 
