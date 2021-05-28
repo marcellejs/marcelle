@@ -33,7 +33,16 @@ module.exports = {
       '/api/': [
         '',
         'streams',
-        'data-storage',
+        // 'data-storage',
+        {
+          title: 'Data Storage',
+          collapsable: false,
+          children: [
+            '/api/data-storage/',
+            '/api/data-storage/data-stores',
+            '/api/data-storage/server-side-storage',
+          ],
+        },
         'core-components',
         'interface-components',
         // {
