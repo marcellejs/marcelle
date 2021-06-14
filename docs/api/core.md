@@ -984,6 +984,12 @@ For this service we will also use NeDB which we can just confirm by pressing ent
 
 That's all. You now have a server ready for hosting the data capture in all datasets of your marcelle application. -->
 
+### Server-Side Storage
+
+::: warning TODO
+Needs Update
+:::
+
 ## Models
 
 Models are standard Marcelle modules with two additional characteristics. First, they have a property called `parameters`, which is a record of parameter values as streams. This structure is useful to provide interfaces that dynamically change the values of the model parameters. Second, they carry a set of methods for training and prediction. Some methods are standardized, such as `.train(dataset)` and `.predict(features)`, however models can expose additional specific methods.

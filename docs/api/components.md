@@ -132,7 +132,7 @@ imgUpload.$images.subscribe((x) => console.log('imageUpload $images:', x));
 marcelle.sketchpad(): Sketchpad;
 ```
 
-An input sketching component allowing the user to draw. The module generates a stream of images of the sketches, as well as stream for various user actions.
+An input sketching component allowing the user to draw. The generate generates a stream of images of the sketches, as well as stream for various user actions.
 
 #### Streams
 
@@ -261,7 +261,7 @@ dashboard.page('Data').use(instanceViewer);
 marcelle.dataset(name: string, store: DataStore): Dataset;
 ```
 
-A Dataset module allowing for capturing instances from a stream, storing them in a local or remote [data-store](/api/data-stores.html).
+A Dataset component allowing for capturing instances from a stream, storing them in a local or remote [data-store](/api/data-stores.html).
 
 #### Parameters
 
@@ -658,7 +658,7 @@ marcelle.mobileNet({
 }): MobileNet;
 ```
 
-The mobilenet module can be used both as a classification model and as a feature extractor. It is based on [Tensorflow.js's Mobilenet implementation](https://github.com/tensorflow/tfjs-models/tree/master/mobilenet). For feature extraction, the `.process()` method can be used to get the embeddings from an input image.
+The mobileNet component can be used both as a classification model and as a feature extractor. It is based on [Tensorflow.js's Mobilenet implementation](https://github.com/tensorflow/tfjs-models/tree/master/mobilenet). For feature extraction, the `.process()` method can be used to get the embeddings from an input image.
 
 #### Parameters
 
@@ -667,7 +667,7 @@ The mobilenet module can be used both as a classification model and as a feature
 | version | 1 \| 2                      | The MobileNet version number. Use 1 for [MobileNetV1](https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet_v1.md), and 2 for [MobileNetV2](https://github.com/tensorflow/models/tree/master/research/slim/nets/mobilenet). Defaults to 1. |          |
 | alpha   | 0.25 \| 0.50 \| 0.75 \| 1.0 | Controls the width of the network, trading accuracy for performance. A smaller alpha decreases accuracy and increases performance. 0.25 is only available for V1. Defaults to 1.0.                                                                                 |          |
 
-Since parameters are used to load a heavy model, they can only be used on when the module is created, and there are not reactive parameters.
+Since parameters are used to load a heavy model, they can only be used on when the component is created, and there are not reactive parameters.
 
 #### Methods
 
@@ -720,12 +720,12 @@ tfjsModel({
 }): TFJSGenericModel;
 ```
 
-This module allows to make predictions using pre-trained Tensorflow.js models, in either [LayersModel](https://js.tensorflow.org/api/latest/#class:LayersModel) or [GraphModel](https://js.tensorflow.org/api/latest/#class:GraphModel) format. This module supports:
+This component allows to make predictions using pre-trained Tensorflow.js models, in either [LayersModel](https://js.tensorflow.org/api/latest/#class:LayersModel) or [GraphModel](https://js.tensorflow.org/api/latest/#class:GraphModel) format. This component supports:
 
 - Models created with the tf.layers.\*, tf.sequential(), and tf.model() APIs of TensorFlow.js and later saved with the tf.LayersModel.save() method.
 - Models converted from Keras or TensorFlow using the tensorflowjs_converter.
 
-It supports several types of input (currently, images or arrays), as well as several types of task (classification, segmentation, generic prediction). Pre-trained models can be loaded either by URL, or through file upload, for instance using the [`fileUpload`](/api/modules/widgets.html#fileupload) module.
+It supports several types of input (currently, images or arrays), as well as several types of task (classification, segmentation, generic prediction). Pre-trained models can be loaded either by URL, or through file upload, for instance using the [`fileUpload`](/api/modules/widgets.html#fileupload) component.
 
 Such generic models cannot be trained.
 
@@ -892,13 +892,13 @@ const objDetectionVis = detectionBoxes(source.$images, cocoPredictionStream);
 marcelle.confusionMatrix(prediction: BatchPrediction): Confusion;
 ```
 
-Displays a confusion matrix from a [BatchPrediction](#batchprediction) module.
+Displays a confusion matrix from a [BatchPrediction](#batchprediction) component.
 
 #### Parameters
 
-| Option     | Type            | Description                                            | Required |
-| ---------- | --------------- | ------------------------------------------------------ | :------: |
-| prediction | BatchPrediction | A batch prediction module storing a set of predictions |    ✓     |
+| Option     | Type            | Description                                               | Required |
+| ---------- | --------------- | --------------------------------------------------------- | :------: |
+| prediction | BatchPrediction | A batch prediction component storing a set of predictions |    ✓     |
 
 #### Screenshot
 
