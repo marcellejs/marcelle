@@ -20,10 +20,6 @@ module.exports = {
         text: 'API Reference',
         link: '/api/',
       },
-      // {
-      //   text: 'Cookbook',
-      //   link: '/cookbook/',
-      // },
       {
         text: 'Examples',
         link: '/examples/',
@@ -32,20 +28,21 @@ module.exports = {
     sidebar: {
       '/api/': [
         '',
-        'streams',
+        'core',
+        'components',
         // 'data-storage',
-        {
-          title: 'Data Storage',
-          collapsable: false,
-          children: [
-            '/api/data-storage/',
-            '/api/data-storage/data-stores',
-            '/api/data-storage/server-side-storage',
-          ],
-        },
-        'core-components',
-        'models',
-        'interface-components',
+        // {
+        //   title: 'Data Storage',
+        //   collapsable: false,
+        //   children: [
+        //     '/api/data-storage/',
+        //     '/api/data-storage/data-stores',
+        //     '/api/data-storage/server-side-storage',
+        //   ],
+        // },
+        // 'core-components',
+        // 'models',
+        // 'interface-components',
         // {
         //   title: 'Components',
         //   collapsable: false,
