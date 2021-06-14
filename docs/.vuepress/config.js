@@ -35,6 +35,7 @@ module.exports = {
         'streams',
         'data-storage',
         'core-components',
+        'models',
         'interface-components',
         // {
         //   title: 'Components',
