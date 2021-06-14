@@ -1,10 +1,34 @@
 # Marcelle changelog
 
-## Unpublished
+## Unpublished (=> 0.4.0)
 
-- lazy iterables have been added to process service data, in particular dataset data
-- The dataset interface has changed (see docs)
+### Breaking Changes
+
+TODO: detail renaming
+
+- The dataset interface has changed (TODO: add link to documentation).
+- The interface for models' `.train()` method has changed. `train` now accepts either a Dataset or an iterable for training, where instances are objects with `x` and `y` properties for input and output, respectively.
+- `BatchPrediction.predict()` now accepts datasets or iterables.
 - data stores now take a location as argument rather than a configuration object
+
+### New Features
+
+- Lazy iterables have been added to process service data, in particular dataset data (TODO: add link to documentation)
+- Services now support a `$distinct` query parameter to get the list of distinct values for a particular field.
+- K-Means clustering
+- Styling no longer pollutes global CSS. Tailwind's Preflight was removed so that Marcelle does not interact with top-level styles when integrated in another application.
+
+### Internal Changes
+
+- The core UI components have been updated
+- Storybook has been added to support the development of core UI components
+- The performance of KNN and DatasetBrowser has been improved
+- [style] ESLint configuration has been improved
+- [style] For-of loops are used instead of forEach
+
+## v0.3.2
+
+- Typings have been fixed
 
 ## v0.3.1
 
