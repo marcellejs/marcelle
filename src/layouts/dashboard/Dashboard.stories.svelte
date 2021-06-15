@@ -1,6 +1,6 @@
 <script>
   import { Meta, Template, Story } from '@storybook/addon-svelte-csf';
-  import { Stream } from '../core';
+  import { Stream } from '../../core';
   import Dashboard from './Dashboard.svelte';
   import { DashboardPage } from './dashboard_page';
   import { DashboardSettings } from './dashboard_settings';

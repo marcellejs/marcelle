@@ -1,7 +1,7 @@
-import type { Model, Component } from '../core';
-import type { DataStore } from '../data-store';
-import type { Dataset } from '../dataset';
-import type { BatchPrediction } from '../components/batch-prediction';
+import type { BatchPrediction } from '../../components';
+import type { Model, Component } from '../../core';
+import type { DataStore } from '../../core/data-store';
+import type { Dataset } from '../../core/dataset';
 
 function isTitle(x: Component | Component[] | string): x is string {
   return typeof x === 'string';

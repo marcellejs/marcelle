@@ -5,11 +5,11 @@ import socketio from '@feathersjs/socketio-client';
 import memoryService from 'feathers-memory';
 import localStorageService from 'feathers-localstorage';
 import { addObjectId, renameIdField, createDate, updateDate, findDistinct } from './hooks';
-import { logger } from '../core/logger';
+import { logger } from '../logger';
 import Login from './Login.svelte';
-import { throwError } from '../utils/error-handling';
-import { Stream } from '../core/stream';
-import { noop } from '../utils/misc';
+import { throwError } from '../../utils/error-handling';
+import { Stream } from '../stream';
+import { noop } from '../../utils/misc';
 
 function isValidUrl(str: string) {
   try {
@@ -114,7 +114,8 @@ export class DataStore {
           resolve();
         });
         this.feathers.io.on('reconnect_failed', () => {
-          const e = new Error(`Cannot reach backend at location ${this.location}. Is the server running?
+          const e =
+            new Error(`Cannot reach backend at location ${this.location}. Is the server running?
           If using locally, run 'npm run backend'`);
           e.name = 'DataStore connection error';
           reject();

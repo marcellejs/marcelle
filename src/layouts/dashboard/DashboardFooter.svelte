@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getLogStream, LogLevel } from '../core/logger';
+  import { getLogStream, LogLevel } from '../../core/logger';
 
   export let author: string;
 

@@ -1,5 +1,5 @@
 import { Component } from '../../core/component';
-import type { Dataset } from '../../dataset';
+import type { Dataset } from '../../core/dataset';
 import type { ObjectId } from '../../core/types';
 import { Stream } from '../../core/stream';
 import View from './dataset-browser.view.svelte';

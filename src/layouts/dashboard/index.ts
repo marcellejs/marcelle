@@ -1,6 +1,6 @@
 import { DashboardPage } from './dashboard_page';
 import DashboardComponent from './Dashboard.svelte';
-import { Stream } from '../core';
+import { Stream } from '../../core';
 import { DashboardSettings } from './dashboard_settings';
 
 export interface DashboardOptions {

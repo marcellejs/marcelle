@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
 
-  import type { BatchPrediction } from '../components/batch-prediction';
-  import Button from '../ui/components/Button.svelte';
+  import type { BatchPrediction } from '../../components/batch-prediction';
+  import Button from '../../ui/components/Button.svelte';
 
   export let prediction: BatchPrediction;
 

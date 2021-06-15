@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { HookContext, Paginated } from '@feathersjs/feathers';
 import genId from './objectid';
-import { convertURIToImageData } from '../utils/image';
+import { convertURIToImageData } from '../../utils/image';
 
 export function addObjectId(context: HookContext): HookContext {
   const { data, service } = context;

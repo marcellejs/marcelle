@@ -9,11 +9,11 @@ import {
   ModelOptions,
   Instance,
 } from '../../core';
-import { Dataset, isDataset } from '../../dataset';
+import { Dataset, isDataset } from '../../core/dataset';
 import { Catch } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
-import { ServiceIterable } from '../../data-store/service-iterable';
+import { ServiceIterable } from '../../core/data-store/service-iterable';
 
 export interface KNNClassifierOptions extends ModelOptions {
   k: number;

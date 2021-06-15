@@ -5,7 +5,7 @@
   import DashboardPageComponent from './DashboardPage.svelte';
   import DashboardSettingsComponent from './DashboardSettings.svelte';
   import type { DashboardPage } from './dashboard_page';
-  import type { Stream } from '../core';
+  import type { Stream } from '../../core';
   import type { DashboardSettings } from './dashboard_settings';
   import DashboardHeader from './DashboardHeader.svelte';
   import DashboardFooter from './DashboardFooter.svelte';

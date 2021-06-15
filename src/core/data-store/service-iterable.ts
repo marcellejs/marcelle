@@ -1,6 +1,6 @@
 import type { Paginated, Params, Service } from '@feathersjs/feathers';
 import { cloneDeep } from 'lodash';
-import { LazyIterable } from '../utils/lazy-iterable/lazy-iterable';
+import { LazyIterable } from '../../utils/lazy-iterable/lazy-iterable';
 
 interface ServiceIterableParams {
   query: Params['query'];

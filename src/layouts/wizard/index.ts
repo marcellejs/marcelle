@@ -1,5 +1,5 @@
 import WizardComponent from './Wizard.svelte';
-import { Stream } from '../core/stream';
+import { Stream } from '../../core/stream';
 import { WizardPage } from './wizard_page';
 
 export class Wizard {

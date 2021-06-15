@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte';
   import type { Stream } from '../core';
-  import Button from '../ui/components/Button.svelte';
+  import Button from '../../ui/components/Button.svelte';
   import WizardPageComponent from './WizardPage.svelte';
   import type { WizardPage } from './wizard_page';
 

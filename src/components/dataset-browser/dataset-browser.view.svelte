@@ -4,7 +4,7 @@
   import type { Instance, ObjectId, Stream } from '../../core';
   import ViewContainer from '../../core/ViewContainer.svelte';
   import PopMenu from '../../ui/components/PopMenu.svelte';
-  import type { Dataset } from '../../dataset';
+  import type { Dataset } from '../../core/dataset';
 
   export let title: string;
   export let count: Stream<number>;

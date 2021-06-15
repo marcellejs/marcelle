@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Component } from '../core';
+  import type { Component } from '../../core';
 
   export let index: number;
   export let title: string;

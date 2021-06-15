@@ -1,12 +1,12 @@
 import type { Paginated, Service, Params as FeathersParams } from '@feathersjs/feathers';
-import type { Instance, ObjectId } from '../core';
-import { logger, Component, Stream } from '../core';
+import type { Instance, ObjectId } from '..';
+import { logger, Component, Stream } from '..';
 import { dataStore, DataStore } from '../data-store';
 import { addScope, limitToScope, dataURL2ImageData, imageData2DataURL } from '../data-store/hooks';
 import { iterableFromService, ServiceIterable } from '../data-store/service-iterable';
-import { throwError } from '../utils/error-handling';
-import { readJSONFile, saveBlob } from '../utils/file-io';
-import { toKebabCase } from '../utils/string';
+import { throwError } from '../../utils/error-handling';
+import { readJSONFile, saveBlob } from '../../utils/file-io';
+import { toKebabCase } from '../../utils/string';
 
 interface DatasetChange {
   level: 'instance' | 'dataset';

@@ -1,4 +1,4 @@
-import type { Dataset } from '../../dataset';
+import type { Dataset } from '../../core/dataset';
 import { DatasetBrowser } from './dataset-browser.component';
 
 export function datasetBrowser<InputType>(

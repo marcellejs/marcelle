@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import Button from '../ui/components/Button.svelte';
+  import Button from '../../ui/components/Button.svelte';
 
   export let title: string;
   export let items: { [slug: string]: string };

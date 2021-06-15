@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import Modal from '../ui/components/Modal.svelte';
+  import Modal from '../../ui/components/Modal.svelte';
   import type { DataStore } from './data-store';
 
   const dispatch = createEventDispatcher();

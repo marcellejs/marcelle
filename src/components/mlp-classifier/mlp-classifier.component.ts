@@ -14,8 +14,8 @@ import {
   TFJSBaseModel,
   Instance,
 } from '../../core';
-import type { ServiceIterable } from '../../data-store/service-iterable';
-import { Dataset, isDataset } from '../../dataset';
+import type { ServiceIterable } from '../../core/data-store/service-iterable';
+import { Dataset, isDataset } from '../../core/dataset';
 import { Catch, TrainingError } from '../../utils/error-handling';
 
 interface TrainingData {

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import ViewContainer from '../core/ViewContainer.svelte';
-  import type { DataStore } from '../data-store';
-  import Button from '../ui/components/Button.svelte';
-  import Spinner from '../ui/components/Spinner.svelte';
+  import ViewContainer from '../../core/ViewContainer.svelte';
+  import type { DataStore } from '../../data-store';
+  import Button from '../../ui/components/Button.svelte';
+  import Spinner from '../../ui/components/Spinner.svelte';
 
   export let dataStore: DataStore;
 

@@ -1,14 +1,14 @@
 /* eslint-disable no-underscore-dangle */
 import { Paginated, Service } from '@feathersjs/feathers';
-import type { Dataset } from '../../dataset';
+import type { Dataset } from '../dataset';
 import type { Instance, ObjectId, Parametrable, StoredModel, TrainingStatus } from '../types';
 import { Stream } from '../stream';
-import { DataStore } from '../../data-store';
+import { DataStore } from '../data-store';
 import { checkProperty } from '../../utils/error-handling';
 import { Component } from '../component';
 import { logger } from '../logger';
 import { toKebabCase } from '../../utils/string';
-import { ServiceIterable } from '../../data-store/service-iterable';
+import { ServiceIterable } from '../data-store/service-iterable';
 
 export interface ModelOptions {
   dataStore: DataStore;

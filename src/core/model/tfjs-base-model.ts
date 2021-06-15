@@ -1,7 +1,7 @@
 import { GraphModel, loadGraphModel } from '@tensorflow/tfjs-converter';
 import { io, Tensor, tidy, zeros } from '@tensorflow/tfjs-core';
 import { LayersModel, loadLayersModel } from '@tensorflow/tfjs-layers';
-import { DataStoreBackend } from '../../data-store/data-store';
+import { DataStoreBackend } from '../data-store/data-store';
 import { Catch, checkProperty } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';

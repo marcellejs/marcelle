@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
 
-  import type { Dataset } from '../dataset';
-  import Button from '../ui/components/Button.svelte';
+  import type { Dataset } from '../../dataset';
+  import Button from '../../ui/components/Button.svelte';
 
   export let dataset: Dataset<unknown, unknown>;
 
