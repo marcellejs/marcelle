@@ -13,13 +13,13 @@
 {#if dashboard}
   {#if dashboard.showSidebar}
     <div class="left">
-      {#each dashboard.modulesLeft as { id }}
+      {#each dashboard.componentsLeft as { id }}
         <div {id} class="card" />
       {/each}
     </div>
   {/if}
   <div class="right" class:fullw={!dashboard.showSidebar}>
-    {#each dashboard.modules as m}
+    {#each dashboard.components as m}
       {#if Array.isArray(m)}
         <div class="flex flex-row flex-wrap items-stretch">
           {#each m as { id }}

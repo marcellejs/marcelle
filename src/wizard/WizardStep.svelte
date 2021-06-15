@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { Module } from '../core';
+  import type { Component } from '../core';
 
   export let index: number;
   export let title: string;
   export let description: string;
-  export let modules: Array<Module[] | Module> = [];
+  export let components: Array<Component[] | Component> = [];
 
 </script>
 
@@ -19,9 +19,9 @@
         <p class="text-sm leading-5 text-gray-500">{description}</p>
       </div>
     </div>
-    <div class="modules">
+    <div class="components">
       <div class="text-center">
-        {#each modules as m}
+        {#each components as m}
           {#if Array.isArray(m)}
             <div class="flex flex-row flex-wrap items-stretch">
               {#each m as { id }}
@@ -38,7 +38,7 @@
 </div>
 
 <style type="text/postcss">
-  .modules {
+  .components {
     @apply flex-grow p-1;
   }
 

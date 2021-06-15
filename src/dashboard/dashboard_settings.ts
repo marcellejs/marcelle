@@ -1,18 +1,19 @@
-import type { Model, Module } from '../core';
+import type { Model, Component } from '../core';
 import type { DataStore } from '../data-store';
 import type { Dataset } from '../dataset';
-import type { BatchPrediction } from '../modules';
+import type { BatchPrediction } from '../components/batch-prediction';
 
-function isTitle(x: Module | Module[] | string): x is string {
+function isTitle(x: Component | Component[] | string): x is string {
   return typeof x === 'string';
 }
 
-function isModuleArray(x: Module | Module[] | string): x is Module[] {
+function isComponentArray(x: Component | Component[] | string): x is Component[] {
   return Array.isArray(x);
 }
+
 export class DashboardSettings {
   name = 'settings';
-  modules: Array<Module | Module[] | string> = [];
+  components: Array<Component | Component[] | string> = [];
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   xModels: Model<any, any>[] = [];
@@ -20,8 +21,8 @@ export class DashboardSettings {
   xPredictions: BatchPrediction[] = [];
   xDataStores: DataStore[] = [];
 
-  use(...modules: Array<Module | Module[] | string>): DashboardSettings {
-    this.modules = this.modules.concat(modules);
+  use(...components: Array<Component | Component[] | string>): DashboardSettings {
+    this.components = this.components.concat(components);
     return this;
   }
 
@@ -47,8 +48,8 @@ export class DashboardSettings {
   }
 
   mount(): void {
-    for (const m of this.modules) {
-      if (isModuleArray(m)) {
+    for (const m of this.components) {
+      if (isComponentArray(m)) {
         for (const n of m) {
           n.mount();
         }
@@ -59,8 +60,8 @@ export class DashboardSettings {
   }
 
   destroy(): void {
-    for (const m of this.modules) {
-      if (isModuleArray(m)) {
+    for (const m of this.components) {
+      if (isComponentArray(m)) {
         for (const n of m) {
           n.destroy();
         }

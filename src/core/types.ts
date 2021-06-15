@@ -1,7 +1,7 @@
 import type { SvelteComponent } from 'svelte';
 import type { Stream } from './stream';
 
-export interface ModuleInternals {
+export interface ComponentInternals {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   streams: Array<Stream<any>>;
   app?: SvelteComponent;

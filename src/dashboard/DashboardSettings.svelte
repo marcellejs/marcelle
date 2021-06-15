@@ -62,7 +62,7 @@
     {/each}
   </div>
   <div class="right">
-    {#each settings.modules as m}
+    {#each settings.components as m}
       {#if Array.isArray(m)}
         <div class="flex flex-row flex-wrap items-stretch">
           {#each m as { id }}

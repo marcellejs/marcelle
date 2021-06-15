@@ -1,5 +1,6 @@
 import type { Paginated, Service, Params as FeathersParams } from '@feathersjs/feathers';
-import { Instance, logger, Module, ObjectId, Stream } from '../core';
+import type { Instance, ObjectId } from '../core';
+import { logger, Component, Stream } from '../core';
 import { dataStore, DataStore } from '../data-store';
 import { addScope, limitToScope, dataURL2ImageData, imageData2DataURL } from '../data-store/hooks';
 import { iterableFromService, ServiceIterable } from '../data-store/service-iterable';
@@ -13,7 +14,7 @@ interface DatasetChange {
   data?: unknown;
 }
 
-export class Dataset<InputType, OutputType> extends Module {
+export class Dataset<InputType, OutputType> extends Component {
   title = 'dataset';
   name: string;
 
@@ -164,7 +165,7 @@ export class Dataset<InputType, OutputType> extends Module {
   }
 
   async distinct(field: string): Promise<OutputType[]> {
-    return (this.instanceService.find({ query: { $distinct: field } }) as Promise<[]>) as Promise<
+    return this.instanceService.find({ query: { $distinct: field } }) as Promise<[]> as Promise<
       OutputType[]
     >;
   }

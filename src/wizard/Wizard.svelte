@@ -10,7 +10,7 @@
 
   function stepTo(index: number) {
     if (index >= 0 && index <= steps.length - 1) {
-      for (const m of steps[current.value].modules) {
+      for (const m of steps[current.value].components) {
         if (Array.isArray(m)) {
           for (const n of m) {
             n.destroy();
@@ -24,7 +24,7 @@
   }
 
   afterUpdate(() => {
-    for (const m of steps[current.value].modules) {
+    for (const m of steps[current.value].components) {
       if (Array.isArray(m)) {
         for (const n of m) {
           n.mount();
@@ -36,7 +36,7 @@
   });
 
   onDestroy(() => {
-    for (const m of steps[current.value].modules) {
+    for (const m of steps[current.value].components) {
       if (Array.isArray(m)) {
         for (const n of m) {
           n.destroy();
@@ -69,7 +69,7 @@
     <WizardStepComponent
       title={steps[$current].attr.title}
       description={steps[$current].attr.description}
-      modules={steps[$current].modules}
+      components={steps[$current].components}
       index={$current + 1}
     />
     <div class="bg-white border-t border-gray-300 px-4 py-2 grid grid-cols-3">

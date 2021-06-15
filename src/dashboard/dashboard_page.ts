@@ -1,32 +1,32 @@
-import { Module } from '../core/module';
+import { Component } from '../core/component';
 
-function isTitle(x: Module | Module[] | string): x is string {
+function isTitle(x: Component | Component[] | string): x is string {
   return typeof x === 'string';
 }
 
-function isModuleArray(x: Module | Module[] | string): x is Module[] {
+function isComponentArray(x: Component | Component[] | string): x is Component[] {
   return Array.isArray(x);
 }
 
 export class DashboardPage {
-  modules: Array<Module | Module[] | string> = [];
-  modulesLeft: Module[] = [];
+  components: Array<Component | Component[] | string> = [];
+  componentsLeft: Component[] = [];
 
   constructor(public name: string, public showSidebar = true) {}
 
-  use(...modules: Array<Module | Module[] | string>): DashboardPage {
-    this.modules = this.modules.concat(modules);
+  use(...components: Array<Component | Component[] | string>): DashboardPage {
+    this.components = this.components.concat(components);
     return this;
   }
 
-  useLeft(...modules: Module[]): DashboardPage {
-    this.modulesLeft = this.modulesLeft.concat(modules);
+  useLeft(...components: Component[]): DashboardPage {
+    this.componentsLeft = this.componentsLeft.concat(components);
     return this;
   }
 
   mount(): void {
-    for (const m of this.modules) {
-      if (isModuleArray(m)) {
+    for (const m of this.components) {
+      if (isComponentArray(m)) {
         for (const n of m) {
           n.mount();
         }
@@ -34,14 +34,14 @@ export class DashboardPage {
         m.mount();
       }
     }
-    for (const m of this.modulesLeft) {
+    for (const m of this.componentsLeft) {
       m.mount();
     }
   }
 
   destroy(): void {
-    for (const m of this.modules) {
-      if (isModuleArray(m)) {
+    for (const m of this.components) {
+      if (isComponentArray(m)) {
         for (const n of m) {
           n.destroy();
         }
@@ -49,7 +49,7 @@ export class DashboardPage {
         m.destroy();
       }
     }
-    for (const m of this.modulesLeft) {
+    for (const m of this.componentsLeft) {
       m.destroy();
     }
   }

@@ -5,7 +5,7 @@ import type { Instance, ObjectId, Parametrable, StoredModel, TrainingStatus } fr
 import { Stream } from '../stream';
 import { DataStore } from '../../data-store';
 import { checkProperty } from '../../utils/error-handling';
-import { Module } from '../module';
+import { Component } from '../component';
 import { logger } from '../logger';
 import { toKebabCase } from '../../utils/string';
 import { ServiceIterable } from '../../data-store/service-iterable';
@@ -14,7 +14,7 @@ export interface ModelOptions {
   dataStore: DataStore;
 }
 
-export abstract class Model<InputType, OutputType> extends Module implements Parametrable {
+export abstract class Model<InputType, OutputType> extends Component implements Parametrable {
   abstract parameters: Parametrable['parameters'];
   abstract serviceName: string;
 

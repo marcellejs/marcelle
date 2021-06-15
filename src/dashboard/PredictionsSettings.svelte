@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
 
-  import type { BatchPrediction } from '../modules/batch-prediction';
+  import type { BatchPrediction } from '../components/batch-prediction';
   import Button from '../ui/components/Button.svelte';
 
   export let prediction: BatchPrediction;
@@ -40,10 +40,10 @@
 <span class="card-title">{prediction.title}</span>
 <p class="pb-2">
   {#if $count}
-    This batch prediction module contains
+    This batch prediction component contains
     {$count}
     prediction{$count ? 's' : ''}
-  {:else}This batch prediction module is empty{/if}
+  {:else}This batch prediction component is empty{/if}
 </p>
 <div class="flex">
   {#if $count}

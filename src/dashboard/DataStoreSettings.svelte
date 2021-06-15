@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ModuleBase from '../core/ModuleBase.svelte';
+  import ViewContainer from '../core/ViewContainer.svelte';
   import type { DataStore } from '../data-store';
   import Button from '../ui/components/Button.svelte';
   import Spinner from '../ui/components/Spinner.svelte';
@@ -14,7 +14,7 @@
 
 </script>
 
-<ModuleBase title="data store ({dataStore.location})">
+<ViewContainer title="data store ({dataStore.location})">
   {#if dataStore.requiresAuth}
     {#await dataStore.connect()}
       <Spinner />
@@ -28,7 +28,7 @@
   {#if $services}
     <div>This data store contains the following services: {$services.join(', ')}</div>
   {/if}
-</ModuleBase>
+</ViewContainer>
 
 <style>
 </style>
