@@ -20,10 +20,6 @@ module.exports = {
         text: 'API Reference',
         link: '/api/',
       },
-      // {
-      //   text: 'Cookbook',
-      //   link: '/cookbook/',
-      // },
       {
         text: 'Examples',
         link: '/examples/',
@@ -32,23 +28,40 @@ module.exports = {
     sidebar: {
       '/api/': [
         '',
-        {
-          title: 'Modules',
-          collapsable: false,
-          children: [
-            '/api/modules/',
-            '/api/modules/data',
-            '/api/modules/inputs',
-            '/api/modules/models',
-            '/api/modules/training',
-            '/api/modules/predictions',
-            '/api/modules/visualization',
-            '/api/modules/widgets',
-          ],
-        },
-        'streams',
-        'interfaces',
-        'data-stores',
+        'core',
+        'components',
+        // 'data-storage',
+        // {
+        //   title: 'Data Storage',
+        //   collapsable: false,
+        //   children: [
+        //     '/api/data-storage/',
+        //     '/api/data-storage/data-stores',
+        //     '/api/data-storage/server-side-storage',
+        //   ],
+        // },
+        // 'core-components',
+        // 'models',
+        // 'interface-components',
+        // {
+        //   title: 'Components',
+        //   collapsable: false,
+        //   children: [
+        //     '/api/components/',
+        //     '/api/components/core-components',
+        //     '/api/components/interface-components',
+        //     // '/api/components/data',
+        //     // '/api/components/inputs',
+        //     // '/api/components/models',
+        //     // '/api/components/training',
+        //     // '/api/components/predictions',
+        //     // '/api/components/visualization',
+        //     // '/api/components/widgets',
+        //   ],
+        // },
+        'layouts',
+        // 'processors',
+        'utilities',
       ],
       '/': [
         '/installation',

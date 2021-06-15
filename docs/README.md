@@ -2,7 +2,7 @@
 home: true
 heroImage: /banner.png
 heroText: Marcelle
-tagline: An Interactive Machine Learning Toolkit
+tagline: Composing Interactive Machine Learning Workflows and Interfaces
 actionText: Get Started →
 actionLink: /guide/
 features:

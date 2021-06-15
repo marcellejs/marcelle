@@ -90,7 +90,7 @@ const myDashboard = marcelle.dashboard({
 });
 ```
 
-Then to visualise the created dashobaord, we need to `start` it:
+Then to visualise the created dashboard, we need to `start` it:
 
 ```js
 myDashboard.start();
@@ -100,7 +100,7 @@ Now, you should see an empty dashboard in the browser.
 
 ![Screenshot of an empty marcelle dashboard](./images/empty-dashboard.png)
 
-To display a module on the dashboard, we first to create a page (see the [dashboard API](../api/interfaces.html#dashboards) for more details) and specificy all the modules disaplyed on this dashboard page with the `.useLeft()` and `.use()` functions. `.useLeft()` adds modules on the left column of the dashboard while the `.use()` function adds modules on the main central column. In this tutorial we will add the webcam on the left of a dashboard page called "Data Management". Above the `dashboard.start();` statement:
+To display a module on the dashboard, we first create a page (see the [dashboard API](../api/interfaces.html#dashboards) for more details) and specify all the modules displayed on this dashboard page with the `.useLeft()` and `.use()` functions. `.useLeft()` adds modules on the left column of the dashboard while the `.use()` function adds modules on the main central column. In this tutorial we will add a sketchpad on the left of a dashboard page called "Data Management". Above the `dashboard.start();` statement:
 
 ```js{6}
 const myDashboard = marcelle.dashboard({
@@ -129,7 +129,7 @@ const featureExtractor = marcelle.mobilenet();
 
 Marcelle heavily relies on a paradigm called reactive programming. Reactive programming means programming with asynchronous data streams, i.e. sequences of ongoing events ordered in time. Most Marcelle modules expose data streams that can be filtered, transformed, and consumed by other modules.
 
-For example, the `sketchpad` modules exposes a stream called `$images`, that emits events containing an image of the sketchpad content every time a stroke is drawn on the sketchpad. To react to these events, we can subscribe to the stream, for instance to log its events to the console:
+For example, the `sketchpad` module exposes a stream called `$images`, that emits events containing an image of the sketchpad content every time a stroke is drawn on the sketchpad. To react to these events, we can subscribe to the stream, for instance to log its events to the console:
 
 ```js
 input.$images.subscribe((img) => {
@@ -139,7 +139,7 @@ input.$images.subscribe((img) => {
 
 If you open your browser's developer tools, you should see messages printed every time you finish a stroke.
 
-And if we want to compute the features associated to each new images from the webcam input, we subscribe to the `images` stream and process the data:
+And if we want to compute the features associated to each new image from the sketchpad input, we write a function that subscribes to the `images` stream and processes the data:
 
 ```js
 input.$images.subscribe(async (img) => {
@@ -148,7 +148,7 @@ input.$images.subscribe(async (img) => {
 });
 ```
 
-In Marcelle, an instance of a dataset also comprises other fields. We can create a derived stream of instances from the webcam stream like this:
+We now create a derived stream of instances from the sketchpad stream like this:
 
 ```js
 const instances = input.$images
@@ -162,7 +162,7 @@ const instances = input.$images
   .awaitPromises();
 ```
 
-In this example, we see that the label is also specified by a string that we hard-coded to `test`. In an application, a label can be provided by the user through a [textfield](../api/modules/widgets.html#textfield) on the interface:
+Instances have few properties. In this example, we see that the label is specified by a string that we 'hard-coded' to `test`. In an application, a label can be provided by the user through a [textfield](../api/modules/widgets.html#textfield) on the interface:
 
 ```js
 const label = marcelle.textfield();
@@ -175,7 +175,7 @@ Let's add the text field to the dashboard page using the dashboard's `.use()` me
 myDashboard.page('Data Management').useLeft(input).use(label);
 ```
 
-The textfield module exposes a `$text` stream that emit values whenever the user input changes. Let's log it to the console:
+The textfield module exposes a `$text` stream that emits values whenever the user input changes. Let's log it to the console:
 
 ```js
 label.$text.subscribe((currentInput) => {
@@ -183,7 +183,7 @@ label.$text.subscribe((currentInput) => {
 });
 ```
 
-We can access the current value of a stream using its `.value` property. Let's use it to complement our instances:
+We can access the current value of a stream using its `.value` property. We use it to complement our stream of instances:
 
 ```js{5}
 const instances = input.$images
@@ -228,7 +228,7 @@ capture.name = 'Capture instances to the training set';
 myDashboard.page('Data Management').useLeft(input).use([label, capture], trainingSetBrowser);
 ```
 
-Using reactive programming, we can filter, transform and combine streams. In this case, we want to sample instances whenever the button is clicked. To do this, we can use a stream method called `sample`:
+Using reactive programming, we can filter, transform and combine streams. In this case, we want to sample instances whenever the button is clicked. To do this, we can use the `sample` method from the button's `$click` stream:
 
 ```js
 const instances = capture.$click
@@ -243,7 +243,7 @@ const instances = capture.$click
   .awaitPromises();
 ```
 
-If you refresh the page in the browser, you should have the following:
+If you refresh the page in the browser, you should have:
 
 ![Screenshot](./images/getting-started-trainingset-browser.png)
 
@@ -290,7 +290,7 @@ myDashboard
   .use(plotTraining);
 ```
 
-Thus, after addingin instances to the dataset (instances assoicated to more than one class), launching training is visualised as follows:
+Thus, after adding instances to the dataset, launching training is visualised as follows:
 
 ![Screenshot](./images/getting-started-training.png)
 

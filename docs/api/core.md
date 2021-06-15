@@ -1,8 +1,10 @@
 ---
-sidebarDepth: 2
+sidebarDepth: 3
 ---
 
-# Streams
+# Core API
+
+<!-- ## Streams
 
 In order to facilitate the conception of custom processing pipelines, modules rely on a reactive programming paradigm to generate or react to particular event streams. The reactive programming is well-suited for the development of such event-driven and interactive applications. It facilitates the management of asynchronous data streams, their transformation and the propagation of change to the relevant dependents.
 Each module exposes a set of data streams containing the various events produced by the module. These data streams can easily be manipulated (filtered, transformed, combined) and plugged into other modules to define pipelines.
@@ -28,7 +30,7 @@ A stream is sequence of ongoing events ordered in time. Streams can be finite or
 _Marcelle_ relies on a reactive programming library called [Most.js](https://github.com/mostjs/core).
 While _RxJS_ is certainly the most popular JavaScript reactive programing library, _Most.js_ offers high performance and explicit time representation.
 
-All _Most.js_ operators are documented online: [https://mostcore.readthedocs.io/en/latest/](https://mostcore.readthedocs.io/en/latest/)
+All _Most.js_ operators are documented online: [https://mostcore.readthedocs.io/en/latest/](https://mostcore.readthedocs.io/en/latest/) -->
 
 ## Stream
 
@@ -45,14 +47,14 @@ The following factory function creates and returns a Marcelle Stream from a Most
 createStream<T>(s: MostStream<T> | T, hold: boolean): Stream<T>
 ```
 
-#### Parameters
+### Parameters
 
 | Option | Type                 | Description                                                                                                                                                             | Required |
 | ------ | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
 | s      | MostStream\<T\> \| T | A stream from the most library, or a value                                                                                                                              |    ✓     |
 | hold   | boolean              | If true, the last event is stored and delivered to each new oserver. This uses [@most/hold](https://github.com/mostjs/hold), and is similar to RxJs's `BehaviorSubject` |          |
 
-#### Example
+### Example
 
 ```js
 const $timer = marcelle.createStream(mostCore.periodic(500));
@@ -63,7 +65,9 @@ const $rnd = $timer
 $rnd.subscribe(console.log);
 ```
 
-### .hold()
+### Methods
+
+#### .hold()
 
 ```tsx
 hold(): Stream<T>
@@ -71,7 +75,7 @@ hold(): Stream<T>
 
 Hold the stream values. When called, all new subscribers will receive the latest value at the time of subscription.
 
-### .start()
+#### .start()
 
 ```tsx
 start(): void
@@ -79,7 +83,7 @@ start(): void
 
 Start the stream processing, even if no subscriber has been registered. This method is called automatically on `subscribe`.
 
-### .stop()
+#### .stop()
 
 ```tsx
 stop(): void
@@ -87,7 +91,7 @@ stop(): void
 
 Imperatively stop the stream processing. Calling `stop` will result in an `end` event being emitted on the stream.
 
-### .subscribe()
+#### .subscribe()
 
 ```tsx
 subscribe(run: (value: T) => void = dummySubscriber, invalidate = () => {}): () => void
@@ -95,7 +99,7 @@ subscribe(run: (value: T) => void = dummySubscriber, invalidate = () => {}): () 
 
 The `subscribe` method must accept as its argument a subscription function. All of a streams's active subscription functions are synchronously called whenever a new event is emitted on the stream. If a stream is held, this subscription function must be immediately and synchronously called with the stream's current value upon calling `subscribe`.
 
-### .thru()
+#### .thru()
 
 ```tsx
 thru<B>(f: (s: Stream<T>) => MostStream<B>): Stream<B>
@@ -103,7 +107,7 @@ thru<B>(f: (s: Stream<T>) => MostStream<B>): Stream<B>
 
 Apply functions fluently to a Stream, wrapping the result in a new Stream. Use thru when you want to continue dot-chaining other Stream operations.
 
-### .ap()
+#### .ap()
 
 ```tsx
 ap<B>(fs: Stream<(a: T) => B>): Stream<B>
@@ -113,13 +117,13 @@ Apply the latest function in a Stream of functions to the latest value of<br>ano
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#ap)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type                  | Default | Description     |
 | --------- | --------------------- | ------- | --------------- |
 | fs        | Stream\<(a: T) => B\> |         | Function stream |
 
-### .awaitPromises()
+#### .awaitPromises()
 
 ```tsx
 awaitPromises<A>(): Stream<A>
@@ -129,7 +133,7 @@ Turn a Stream of promises into a Stream containing the promises’ values.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#awaitpromises)
 
-### .chain()
+#### .chain()
 
 ```tsx
 chain<B>(f: (value: T) => Stream<B>): Stream<B>
@@ -139,13 +143,13 @@ Transform each event in `stream` into a new Stream, and then merge each into<br>
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#chain)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type                      | Default | Description                 |
 | --------- | ------------------------- | ------- | --------------------------- |
 | f         | (value: T) => Stream\<B\> |         | function returning a stream |
 
-### .combine()
+#### .combine()
 
 ```tsx
 combine<A, R>(f: (a: A, b: T) => R, stream1: Stream<A>): Stream<R>
@@ -155,14 +159,14 @@ Apply a function to the most recent event from each Stream when a new event<br>a
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#combine)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type              | Default | Description         |
 | --------- | ----------------- | ------- | ------------------- |
 | f         | (a: A, b: T) => R |         | Combinator function |
 | stream1   | Stream\<A\>       |         | Event stream 1      |
 
-### .concatMap()
+#### .concatMap()
 
 ```tsx
 concatMap<B>(f: (a: T) => Stream<B>): Stream<B>
@@ -172,13 +176,13 @@ Transform each event in `stream` into a Stream, and then concatenate each<br>ont
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#concatmap)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type                  | Default | Description                 |
 | --------- | --------------------- | ------- | --------------------------- |
 | f         | (a: T) => Stream\<B\> |         | Function returning a stream |
 
-### .constant()
+#### .constant()
 
 ```tsx
 constant<B>(x: B): Stream<B>
@@ -188,13 +192,13 @@ Replace each event value with x.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#constant)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type | Default | Description |
 | --------- | ---- | ------- | ----------- |
 | x         | B    |         | event data  |
 
-### .continueWith()
+#### .continueWith()
 
 ```tsx
 continueWith<U>(f: () => Stream<U>): Stream<T | U>
@@ -204,13 +208,13 @@ Replace the end of a Stream with another Stream. When `stream` ends, `f`<br>will
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html?highlight=continuewith#continuewith)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type              | Default | Description                    |
 | --------- | ----------------- | ------- | ------------------------------ |
 | f         | () => Stream\<U\> |         | Function that returns a stream |
 
-### .debounce()
+#### .debounce()
 
 ```tsx
 debounce(period: number): Stream<T>
@@ -220,13 +224,13 @@ Wait for a burst of events to subside and keep only the last event in the<br>bur
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#debounce)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type   | Default | Description     |
 | --------- | ------ | ------- | --------------- |
 | period    | number |         | Debounce period |
 
-### .delay()
+#### .delay()
 
 ```tsx
 delay(delayTime: number): Stream<T>
@@ -236,13 +240,13 @@ Timeshift a Stream by the specified Delay.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#id57)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type   | Default | Description     |
 | --------- | ------ | ------- | --------------- |
 | delayTime | number |         | Delay time (ms) |
 
-### .during()
+#### .during()
 
 ```tsx
 during(timeWindow: Stream<Stream<unknown>>): Stream<T>
@@ -250,13 +254,13 @@ during(timeWindow: Stream<Stream<unknown>>): Stream<T>
 
 Keep events that occur during a time window defined by a higher-order Stream.
 
-#### Parameters
+##### Parameters
 
 | Parameter  | Type                        | Default | Description                                |
 | ---------- | --------------------------- | ------- | ------------------------------------------ |
 | timeWindow | Stream\<Stream\<unknown\>\> |         | Higher order stream defining a time window |
 
-### .filter()
+#### .filter()
 
 ```tsx
 filter(p: (a: T) => boolean): Stream<T>
@@ -266,13 +270,13 @@ Retain only events for which a predicate is truthy.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#filter)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type              | Default | Description |
 | --------- | ----------------- | ------- | ----------- |
 | p         | (a: T) => boolean |         | Predicate   |
 
-#### Example
+##### Example
 
 ```js
 a = periodic(200)
@@ -281,7 +285,7 @@ a = periodic(200)
   .tap(log);
 ```
 
-### .join()
+#### .join()
 
 ```tsx
 join<U>(): Stream<U>
@@ -291,7 +295,7 @@ Given a higher-order Stream, return a new Stream that merges all the inner<br>St
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#join)
 
-### .loop()
+#### .loop()
 
 ```tsx
 loop<B, S>(stepper: (seed: S, a: T) => SeedValue<S, B>, seed: S): Stream<B>
@@ -301,14 +305,14 @@ Accumulate results using a feedback loop that emits one value and feeds back<br>
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#loop)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type                                 | Default | Description      |
 | --------- | ------------------------------------ | ------- | ---------------- |
 | stepper   | (seed: S, a: T) => SeedValue\<S, B\> |         | Stepper function |
 | seed      | S                                    |         | Seed             |
 
-### .map()
+#### .map()
 
 ```tsx
 map<U>(f: (a: T) => U): Stream<U>
@@ -318,13 +322,13 @@ Apply a function to each event value.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#map)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type        | Default | Description    |
 | --------- | ----------- | ------- | -------------- |
 | f         | (a: T) => U |         | Unary function |
 
-#### Example
+##### Example
 
 ```js
 // Apply a function (in this example, double) to all events in a stream
@@ -332,7 +336,7 @@ f = (x) => 2 * x;
 a = periodic(500).constant(1).accum().map(f).tap(log);
 ```
 
-### .merge()
+#### .merge()
 
 ```tsx
 merge<A>(stream1: Stream<A>): Stream<A | T>
@@ -342,13 +346,13 @@ Create a new Stream containing events from two Streams.Merging creates a new Str
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#merge)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type        | Default | Description    |
 | --------- | ----------- | ------- | -------------- |
 | stream1   | Stream\<A\> |         | Event stream 1 |
 
-#### Example
+##### Example
 
 ```js
 a = periodic(500).take(3).constant('a');
@@ -356,7 +360,7 @@ b = periodic(100).take(3).constant(2);
 c = a.merge(b).tap(log);
 ```
 
-### .mergeConcurrently()
+#### .mergeConcurrently()
 
 ```tsx
 mergeConcurrently<U>(concurrency: number): Stream<U>
@@ -366,13 +370,13 @@ Given a higher-order Stream, return a new Stream that merges inner Streams<br>as
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#mergeconcurrently)
 
-#### Parameters
+##### Parameters
 
 | Parameter   | Type   | Default | Description       |
 | ----------- | ------ | ------- | ----------------- |
 | concurrency | number |         | concurrency level |
 
-### .mergeMapConcurrently()
+#### .mergeMapConcurrently()
 
 ```tsx
 mergeMapConcurrently<B>(f: (a: T) => Stream<B>, concurrency: number): Stream<B>
@@ -382,14 +386,14 @@ Lazily apply a function `f` to each event in a Stream, merging them into the<br>
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#mergemapconcurrently)
 
-#### Parameters
+##### Parameters
 
 | Parameter   | Type                  | Default | Description       |
 | ----------- | --------------------- | ------- | ----------------- |
 | f           | (a: T) => Stream\<B\> |         | Unary function    |
 | concurrency | number                |         | concurrency level |
 
-### .recoverWith()
+#### .recoverWith()
 
 ```tsx
 recoverWith<A, E extends Error>(f: (error: E) => Stream<A>): Stream<T | A>
@@ -399,13 +403,13 @@ Recover from a stream failure by calling a function to create a new Stream.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#recoverwith)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type                      | Default | Description                                   |
 | --------- | ------------------------- | ------- | --------------------------------------------- |
 | f         | (error: E) => Stream\<A\> |         | Function returning a new stream from an error |
 
-### .resample()
+#### .resample()
 
 ```tsx
 resample<B>(sampler: Stream<B>): Stream<T>
@@ -415,13 +419,13 @@ Like `sample`, but the value stream and sampler streams are switched
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#sample)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type        | Default | Description    |
 | --------- | ----------- | ------- | -------------- |
 | sampler   | Stream\<B\> |         | Sampler stream |
 
-#### Example
+##### Example
 
 ```js
 // Sample a noise signal from a stream of click events
@@ -429,7 +433,7 @@ noise = periodic(20).rand().plot({ legend: 'noise' });
 click = noise.resample(click(doc)).tap(log);
 ```
 
-### .sample()
+#### .sample()
 
 ```tsx
 sample<A>(values: Stream<A>): Stream<A>
@@ -439,13 +443,13 @@ For each event in the current Stream, replace the event value with the latest<br
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#sample)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type        | Default | Description  |
 | --------- | ----------- | ------- | ------------ |
 | values    | Stream\<A\> |         | value stream |
 
-#### Example
+##### Example
 
 ```js
 // Sample a noise signal from a stream of click events
@@ -453,7 +457,7 @@ noise = periodic(20).rand().plot({ legend: 'noise' });
 click = click(doc).sample(noise).tap(log);
 ```
 
-### .scan()
+#### .scan()
 
 ```tsx
 scan<B>(f: (b: B, a: T) => B, initial: B): Stream<B>
@@ -463,14 +467,14 @@ Incrementally accumulate results, starting with the provided initial value.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#scan)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type              | Default | Description      |
 | --------- | ----------------- | ------- | ---------------- |
 | f         | (b: B, a: T) => B |         | Scanning reducer |
 | initial   | B                 |         | Initial Value    |
 
-#### Example
+##### Example
 
 ```js
 // Accumulate the values of a constant stream
@@ -480,7 +484,7 @@ a = periodic(500)
   .tap(log);
 ```
 
-### .since()
+#### .since()
 
 ```tsx
 since(startSignal: Stream<unknown>): Stream<T>
@@ -490,13 +494,13 @@ Discard all events in one Stream until the first event occurs in another.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#since)
 
-#### Parameters
+##### Parameters
 
 | Parameter   | Type              | Default | Description  |
 | ----------- | ----------------- | ------- | ------------ |
 | startSignal | Stream\<unknown\> |         | Start signal |
 
-### .skip()
+#### .skip()
 
 ```tsx
 skip(n: number): Stream<T>
@@ -506,13 +510,13 @@ Discard the first n events from stream.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#skip)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type   | Default | Description      |
 | --------- | ------ | ------- | ---------------- |
 | n         | number |         | Number of events |
 
-### .skipAfter()
+#### .skipAfter()
 
 ```tsx
 skipAfter(p: (a: T) => boolean): Stream<T>
@@ -522,13 +526,13 @@ Discard all events after the first event for which predicate returns true.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#skipafter)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type              | Default | Description |
 | --------- | ----------------- | ------- | ----------- |
 | p         | (a: T) => boolean |         | Predicate   |
 
-### .skipRepeats()
+#### .skipRepeats()
 
 ```tsx
 skipRepeats(): Stream<T>
@@ -538,7 +542,7 @@ Remove adjacent repeated events.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#skiprepeats)
 
-### .skipRepeatsWith()
+#### .skipRepeatsWith()
 
 ```tsx
 skipRepeatsWith(equals: (a1: T, a2: T) => boolean): Stream<T>
@@ -548,13 +552,13 @@ Remove adjacent repeated events, using the provided equality function to<br>comp
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#skiprepeatswith)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type                      | Default | Description       |
 | --------- | ------------------------- | ------- | ----------------- |
 | equals    | (a1: T, a2: T) => boolean |         | Equality function |
 
-### .skipWhile()
+#### .skipWhile()
 
 ```tsx
 skipWhile(p: (a: T) => boolean): Stream<T>
@@ -564,13 +568,13 @@ Discard all events until predicate returns `false`, and keep the rest.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#skipwhile)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type              | Default | Description |
 | --------- | ----------------- | ------- | ----------- |
 | p         | (a: T) => boolean |         | Predicate   |
 
-### .slice()
+#### .slice()
 
 ```tsx
 slice(start: number, end: number): Stream<T>
@@ -580,14 +584,14 @@ Keep only events in a range, where start <= index < end, and index is the<br>ord
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#id48)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type   | Default | Description |
 | --------- | ------ | ------- | ----------- |
 | start     | number |         | start index |
 | end       | number |         | end index   |
 
-### .snapshot()
+#### .snapshot()
 
 ```tsx
 snapshot<A, C>(f: (a: A, b: T) => C, values: Stream<A>): Stream<C>
@@ -597,14 +601,14 @@ For each event in a sampler Stream, apply a function to combine its value<br>wit
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#snapshot)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type              | Default | Description       |
 | --------- | ----------------- | ------- | ----------------- |
 | f         | (a: A, b: T) => C |         | Snapshot function |
 | values    | Stream\<A\>       |         | Value stream      |
 
-### .startWith()
+#### .startWith()
 
 ```tsx
 startWith(x: T): Stream<T>
@@ -614,13 +618,13 @@ Prepend an event at time 0.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#startwith)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type | Default | Description |
 | --------- | ---- | ------- | ----------- |
 | x         | T    |         | Event data  |
 
-### .switchLatest()
+#### .switchLatest()
 
 ```tsx
 switchLatest<U>(): Stream<U>
@@ -630,7 +634,7 @@ Given a higher-order Stream, return a new Stream that adopts the behavior of<br>
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#switchlatest)
 
-### .take()
+#### .take()
 
 ```tsx
 take(n: number): Stream<T>
@@ -640,13 +644,13 @@ Keep at most the first n events from `stream`.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#take)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type   | Default | Description      |
 | --------- | ------ | ------- | ---------------- |
 | n         | number |         | Number of events |
 
-### .takeWhile()
+#### .takeWhile()
 
 ```tsx
 takeWhile(p: (a: T) => boolean): Stream<T>
@@ -656,13 +660,13 @@ Keep all events until predicate returns `false`, and discard the rest.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#takewhile)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type              | Default | Description |
 | --------- | ----------------- | ------- | ----------- |
 | p         | (a: T) => boolean |         | Predicate   |
 
-### .tap()
+#### .tap()
 
 ```tsx
 tap(f: (a: T) => void): Stream<T>
@@ -672,20 +676,20 @@ Perform a side effect for each event in a Stream. For each event in stream,<br>`
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#tap)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type           | Default | Description  |
 | --------- | -------------- | ------- | ------------ |
 | f         | (a: T) => void |         | Tap function |
 
-#### Example
+##### Example
 
 ```js
 // Apply a function with side effects, to log the values to the console
 a = periodic(500).rand().tap(log);
 ```
 
-### .throttle()
+#### .throttle()
 
 ```tsx
 throttle(period: number): Stream<T>
@@ -695,13 +699,13 @@ Limit the rate of events by suppressing events that occur too often
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#throttle)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type   | Default | Description     |
 | --------- | ------ | ------- | --------------- |
 | period    | number |         | Throttle period |
 
-### .until()
+#### .until()
 
 ```tsx
 until(endSignal: Stream<unknown>): Stream<T>
@@ -711,13 +715,13 @@ Keep all events in one Stream until the first event occurs in another.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#until)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type              | Default | Description |
 | --------- | ----------------- | ------- | ----------- |
 | endSignal | Stream\<unknown\> |         | End signal  |
 
-### .withItems()
+#### .withItems()
 
 ```tsx
 withItems<A>(items: A[]): Stream<A>
@@ -727,13 +731,13 @@ Replace each event value with the array item at the respective index. The<br>res
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#withitems)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type | Default | Description |
 | --------- | ---- | ------- | ----------- |
 | items     | A[]  |         | Items array |
 
-### .withLocalTime()
+#### .withLocalTime()
 
 ```tsx
 withLocalTime(origin: Time): Stream<T>
@@ -743,13 +747,13 @@ Create a Stream with localized Time values, whose origin (i.e., time 0) is<br>at
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#withlocaltime)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type | Default | Description       |
 | --------- | ---- | ------- | ----------------- |
 | origin    | Time |         | origin time value |
 
-### .zip()
+#### .zip()
 
 ```tsx
 zip<A, R>(f: (a: A, b: T) => R, stream1: Stream<A>): Stream<R>
@@ -759,14 +763,14 @@ Apply a function to corresponding pairs of events from the inputs Streams.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#zip)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type              | Default | Description         |
 | --------- | ----------------- | ------- | ------------------- |
 | f         | (a: A, b: T) => R |         | Combinator function |
 | stream1   | Stream\<A\>       |         | Event stream 1      |
 
-### .zipItems()
+#### .zipItems()
 
 ```tsx
 zipItems<A, C>(f: (a: A, b: T) => C, items: A[]): Stream<C>
@@ -776,16 +780,16 @@ Apply a function to the latest event and the array value at the respective<br>in
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#zipitems)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type              | Default | Description         |
 | --------- | ----------------- | ------- | ------------------- |
 | f         | (a: A, b: T) => C |         | Combinator function |
 | items     | A[]               |         | Items               |
 
-## Stream sources (static methods)
+### Stream sources (static methods)
 
-### empty()
+#### empty()
 
 ```tsx
 static empty(): Stream<never>
@@ -795,7 +799,7 @@ Create a Stream containing no events and ends immediately.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#empty)
 
-### never()
+#### never()
 
 ```tsx
 static never(): Stream<never>
@@ -805,7 +809,7 @@ Create a Stream containing no events and never ends.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#never)
 
-### now()
+#### now()
 
 ```tsx
 static now<A>(x: A): Stream<A>
@@ -815,13 +819,13 @@ Create a Stream containing a single event at time 0.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#now)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type | Default | Description |
 | --------- | ---- | ------- | ----------- |
 | x         | A    |         | event value |
 
-### at()
+#### at()
 
 ```tsx
 static at<A>(t: Time, x: A): Stream<A>
@@ -831,14 +835,14 @@ Create a Stream containing a single event at a specific time.
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#at)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type | Default | Description     |
 | --------- | ---- | ------- | --------------- |
 | t         | Time |         | event time (ms) |
 | x         | A    |         | event value     |
 
-### periodic()
+#### periodic()
 
 ```tsx
 static periodic(period: number): Stream<void>
@@ -848,13 +852,13 @@ Create an infinite Stream containing events that occur at a specified Period. Th
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#periodic)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type   | Default | Description        |
 | --------- | ------ | ------- | ------------------ |
 | period    | number |         | stream period (ms) |
 
-#### Example
+##### Example
 
 ```js
 const myPeriodicRandomStream = Stream.periodic(500)
@@ -862,7 +866,7 @@ const myPeriodicRandomStream = Stream.periodic(500)
   .subscribe(console.log);
 ```
 
-### throwError()
+#### throwError()
 
 ```tsx
 static throwError(e: Error): Stream<never>
@@ -872,8 +876,262 @@ Create a Stream that fails with the provided `Error` at time 0. This can be usef
 
 [See on Most Docs](https://mostcore.readthedocs.io/en/latest/api.html#throwerror)
 
-#### Parameters
+##### Parameters
 
 | Parameter | Type  | Default | Description |
 | --------- | ----- | ------- | ----------- |
 | e         | Error |         | error       |
+
+## Data Storage
+
+Marcelle provides a flexible interface for creating _data stores_ that provide a unified interface for storing data either on the client side (in memory or using web storage) or on a remote server.
+Some modules rely on the definition of a data store &ndash; for instance, the [Dataset](/api/modules/data.html#dataset) module that needs to store instances, &ndash; however data collections can be created on the fly to store custom information when relevant. This is particularly useful to store some of the state of the application (for instance the model's parameters), a history of changes to the application, or custom session logs recording some of the user's interactions.
+
+We use the [Feathers](https://feathersjs.com/) framework to facilitate the creation of collections of heterogeneous data. When data is stored on the client side, no configuration is necessary. For remote data persistence, a server application can be generated in minutes using Feather’s command-line interface, with a large range of database systems available. The flexible selection of the data store's location is advantageous for rapid prototyping, where data is stored on the client side or using a local server during development.
+
+### DataStore
+
+The following factory function creates and returns a Marcelle data store:
+
+```tsx
+dataStore(location: string): DataStore
+```
+
+The `location` argument can either be:
+
+- `'memory'` (default): in this case the data is stored in memory, and does not persist after page refresh
+- `'localStorage'`: in this case the data is stored using the browser's web storage. It will persist after page refresh, but there is a limitation on the quantity of data that can be stored.
+- a URL indicating the location of the server. The server needs to be programmed with Feathers, as described [below](#generating-a-server-application).
+
+#### .connect()
+
+```tsx
+async connect(): Promise<User>
+```
+
+Connect to the data store backend. If using a remote backend, the server must be running, otherwise an exception will be thrown. If the backend is configured with user authentication, this method will require the user to log in.
+
+This method is automatically called by dependent modules such as datasets and models.
+
+#### .login()
+
+```tsx
+async login(email: string, password: string): Promise<User>;
+```
+
+#### .logout()
+
+```tsx
+async logout(): Promise<void>
+```
+
+#### .service()
+
+```tsx
+service(name: string): Service<unknown>
+```
+
+Get the Feathers service instance with the given `name`. If the service does not exist yet, it will be automatically created. Note that the name of the service determines the name of the collection in the data store. It is important to choose name to avoid potential conflicts between collections.
+
+The method returnsa Feathers Service instance, which API is documented on [Feathers' wesite](https://docs.feathersjs.com/api/services.html#service-methods). The interface exposes `find`, `get`, `create`, `update`, `patch` and `remove` methods for manipulating the data.
+
+#### .signup()
+
+```tsx
+async signup(email: string, password: string): Promise<User>
+```
+
+<!--
+### Generating a Server Application
+
+::: warning TODO
+Needs Update
+:::
+
+[Feather's CLI](https://docs.feathersjs.com/guides/basics/generator.html#generating-the-application) can be used to generate a Feathers server to serve as backend for your Marcelle application. For simple applications that do not require, e.g. file upload, an application can be generated without additional configuration required.
+
+#### App Generation
+
+Let's create a new directory for our app and in it, generate a new application:
+
+```bash
+mkdir marcelle-server
+cd marcelle-server
+feathers generate app
+```
+
+First, choose if you want to use JavaScript or TypeScript. When presented with the project name, just hit enter, or enter a name (no spaces). Next, write a short description of your application. All other questions should be confirmed with the default selection by hitting Enter.
+
+Once you confirm the last prompt, the final selection should look like this:
+
+![Screenshot of Feather's CLI options for app generation](./images/feathers_cli_app.png)
+
+#### Generating services
+
+In our newly generated application, we can create database backed services with the following command:
+
+```bash
+feathers generate service
+```
+
+For instance, Datasets require a service named `instances`.
+
+Feathers offers many [database adapters](https://docs.feathersjs.com/api/databases/adapters.html) including in memory, NeDB, Localstorage, MongoDB, MySQL, PostgreSQL, MariaDB, SQLite, or Elasticsearch.
+
+For this service we will also use NeDB which we can just confirm by pressing enter. We will use `instances` as the service name and can confirm all other prompts with the defaults by pressing enter:
+
+![Screenshot of Feather's CLI options for service generation](./images/feathers_cli_service.png)
+
+That's all. You now have a server ready for hosting the data capture in all datasets of your marcelle application. -->
+
+### Server-Side Storage
+
+::: warning TODO
+Needs Update
+:::
+
+## Models
+
+Models are standard Marcelle modules with two additional characteristics. First, they have a property called `parameters`, which is a record of parameter values as streams. This structure is useful to provide interfaces that dynamically change the values of the model parameters. Second, they carry a set of methods for training and prediction. Some methods are standardized, such as `.train(dataset)` and `.predict(features)`, however models can expose additional specific methods.
+
+### Interface
+
+Models implement the following interface:
+
+```ts
+interface Model<InputType, OutputType> {
+  parameters: {
+    [name: string]: Stream<any>;
+  };
+
+  $training: Stream<TrainingStatus>;
+
+  train(dataset: Dataset): void;
+  predict(x: InputType): Promise<OutputType>;
+
+  save(update: boolean, metadata?: Record<string, unknown>): Promise<ObjectId | null>;
+  load(id?: ObjectId): Promise<StoredModel>;
+  download(metadata?: Record<string, unknown>): Promise<void>;
+  upload(...files: File[]): Promise<StoredModel>;
+  sync(name: string): void;
+}
+```
+
+Models expose a `$training` stream that monitors the training process. Each `TrainingStatus` event has the following interface:
+
+```ts
+interface TrainingStatus {
+  status: 'idle' | 'start' | 'epoch' | 'success' | 'error' | 'loaded' | 'loading';
+  epoch?: number;
+  epochs?: number;
+  data?: Record<string, unknown>;
+}
+```
+
+Where the `data` field varies across models to include additional information, such as the training and validation loss/accuracy in the case of neural networks.
+
+### Common Methods
+
+#### .train()
+
+```tsx
+train(dataset: Dataset): void;
+```
+
+Train the model from a given dataset.
+
+#### .predict()
+
+```tsx
+async predict(x: InputType): Promise<OutputType>;
+```
+
+Make a prediction from a single input frame. Input and output formats vary across models, refer to each model's specific documentation below.
+
+#### .save()
+
+```tsx
+save(update?: boolean, metadata?: Record<string, unknown>): Promise<ObjectId | null>;
+```
+
+Save the model to its associated datastore. The datastore can either be passed in the constructor's options (`dataStore` field), or by modifying the `dataStore` property of the model.
+
+##### Parameters
+
+| Option   | Type    | Description                                                                                                                      | Required | Default |
+| -------- | ------- | -------------------------------------------------------------------------------------------------------------------------------- | :------: | ------- |
+| update   | boolean | If true, the model will try to update the dataStore's object to which it is associated, otherwise it will create a new document. |          | false'  |
+| metadata | object  | A JSON-serializable object containing arbitrary model metadata                                                                   |          | {}      |
+
+##### Returns
+
+A promise that resolves with the ObjectId of the document in the data store, or null is the saving failed.
+
+#### .load()
+
+```tsx
+load(id?: ObjectId): Promise<StoredModel>;
+```
+
+Load a model from its associated datastore. The datastore can either be passed in the constructor's options (`dataStore` field), or by modifying the `dataStore` property of the model.
+
+##### Parameters
+
+| Option | Type     | Description                                       | Required | Default |
+| ------ | -------- | ------------------------------------------------- | :------: | ------- |
+| id     | ObjectId | The ID of the model's document in the data store. |          |         |
+
+##### Returns
+
+A promise that resolves with the the `StoredModel` document from the data store, which has the following interface:
+
+```ts
+interface StoredModel {
+  id?: ObjectId;
+  name: string;
+  url: string;
+  metadata?: Record<string, unknown>;
+}
+```
+
+#### .download()
+
+```tsx
+download(metadata?: Record<string, unknown>): Promise<void>;
+```
+
+Download a model as files, with optional custom metadata.
+
+##### Parameters
+
+| Option   | Type   | Description                                                    | Required | Default |
+| -------- | ------ | -------------------------------------------------------------- | :------: | ------- |
+| metadata | object | A JSON-serializable object containing arbitrary model metadata |          | {}      |
+
+#### .upload()
+
+```tsx
+upload(...files: File[]): Promise<StoredModel>;
+```
+
+Upload a model from a set of files. Files should be exported from Marcelle by the same model class.
+
+##### Parameters
+
+| Option | Type   | Description                                                                                                             | Required | Default |
+| ------ | ------ | ----------------------------------------------------------------------------------------------------------------------- | :------: | ------- |
+| files  | File[] | A list of files constituting the model (for instance, a `model.json` and a set of `.bin` weight files for a TFJS model) |          | {}      |
+
+#### .sync()
+
+```tsx
+sync(name: string): void;
+```
+
+Synchronize a model with a data store, given a model name. The model will be automatically updated in the store whenever its training ends, or it is loaded from files. The model will be automatically restored on startup, from the latest version available in the store.
+
+#### Parameters
+
+| Option | Type   | Description                                                              | Required | Default |
+| ------ | ------ | ------------------------------------------------------------------------ | :------: | ------- |
+| name   | string | A unique name for the model so that it can be retrieved in the datastore |   yes    |         |
