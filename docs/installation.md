@@ -13,11 +13,10 @@ Marcelle is still experimental and is currently under active development. Breaki
 ## Direct Download / CDN
 
 ```html
-<script src="https://unpkg.com/@marcellejs/core@next"></script>
+<script src="https://unpkg.com/@marcellejs/core"></script>
 ```
 
-marcelle relies on a number of packages that are not included in the build.
-The following codes HTML template includes all the necessary dependencies to run a marcelle application.
+The following HTML and JS snippets provide a template marcelle application.
 
 ```html
 <!DOCTYPE html>
@@ -27,15 +26,8 @@ The following codes HTML template includes all the necessary dependencies to run
     <title>Marcelle Example</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <link rel="stylesheet" href="../../dist/bundle.css" />
-    <script src="https://unpkg.com/@tensorflow/tfjs@2.7.0/dist/tf.min.js"></script>
-    <script src="https://unpkg.com/@most/prelude@1.8.0/dist/index.js"></script>
-    <script src="https://unpkg.com/@most/disposable@1.3.0/dist/index.js"></script>
-    <script src="https://unpkg.com/@most/scheduler@1.3.0/dist/index.js"></script>
-    <script src="https://unpkg.com/@most/core@1.6.1/dist/index.js"></script>
-    <script src="https://unpkg.com/chart.js@3.0.0-beta.6/dist/chart.min.js"></script>
-    <script src="https://unpkg.com/@marcellejs/core@next"></script>
-    <script defer src="script.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@marcellejs/core@0.3.2/dist/marcelle.css" />
+    <script defer type="module" src="script.js"></script>
   </head>
   <body>
     <noscript>
@@ -44,9 +36,26 @@ The following codes HTML template includes all the necessary dependencies to run
         enable it to continue.
       </strong>
     </noscript>
-    <div id="app"></div>
   </body>
 </html>
+```
+
+```js
+import {
+  dashboard,
+  webcam,
+} from 'https://unpkg.com/@marcellejs/core@0.3.2/dist/marcelle.bundle.esm.js';
+
+const w = webcam();
+
+const dash = dashboard({
+  title: 'Hello Marcelle',
+  author: 'Jane Doe',
+});
+
+dash.page('Main').sidebar(w);
+
+dash.show();
 ```
 
 ## Using a package manager
@@ -54,13 +63,13 @@ The following codes HTML template includes all the necessary dependencies to run
 Using npm:
 
 ```bash
-npm install @marcellejs/core@next --save
+npm install @marcellejs/core --save
 ```
 
 or yarn:
 
 ```bash
-yarn add @marcellejs/core@next
+yarn add @marcellejs/core
 ```
 
 ## Using Marcelle CLI
