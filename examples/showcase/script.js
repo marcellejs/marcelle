@@ -58,8 +58,7 @@ sel.$value.subscribe((x) => console.log('sel $value:', x));
 // -----------------------------------------------------------
 
 const t = text({
-  text:
-    'Just some <strong>HTML</strong> text content... Accepts HTML: <button class="btn">button</button>',
+  text: 'Just some <strong>HTML</strong> text content... Accepts HTML: <button class="btn">button</button>',
 });
 
 // -----------------------------------------------------------
@@ -118,7 +117,7 @@ w.$images.subscribe((x) => console.log('webcam $images:', x));
 // -----------------------------------------------------------
 
 const instances = w.$images
-  .filter(() => capture.$down.value)
+  .filter(() => capture.$pressed.value)
   .map(async (img) => ({
     type: 'image',
     data: img,

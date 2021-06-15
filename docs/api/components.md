@@ -931,11 +931,11 @@ A generic GUI button component.
 
 #### Streams
 
-| Name    | Type      | Description                                                 | Hold |
-| ------- | --------- | ----------------------------------------------------------- | :--: |
-| \$click | undefined | Stream of click events                                      |      |
-| \$down  | boolean   | Stream of binary events indicating is the button is pressed |      |
-| \$text  | boolean   | Stream defining the button text                             |      |
+| Name      | Type      | Description                                                 | Hold |
+| --------- | --------- | ----------------------------------------------------------- | :--: |
+| \$click   | undefined | Stream of click events                                      |      |
+| \$pressed | boolean   | Stream of binary events indicating is the button is pressed |      |
+| \$text    | boolean   | Stream defining the button text                             |      |
 
 #### Screenshot
 

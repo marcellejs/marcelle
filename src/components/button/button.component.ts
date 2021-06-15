@@ -12,7 +12,7 @@ export class Button extends Component {
 
   $text: Stream<string>;
   $click = new Stream<CustomEvent<unknown>>(never());
-  $down = new Stream(false, true);
+  $pressed = new Stream(false, true);
   $loading = new Stream(false, true);
   $disabled: Stream<boolean>;
   $type = new Stream<'default' | 'success' | 'warning' | 'danger'>('default', true);
@@ -33,7 +33,7 @@ export class Button extends Component {
       props: {
         title: this.title,
         text: this.$text,
-        down: this.$down,
+        pressed: this.$pressed,
         loading: this.$loading,
         disabled: this.$disabled,
         type: this.$type,

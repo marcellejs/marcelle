@@ -5,7 +5,7 @@
 
   export let title: string;
   export let text: Stream<string>;
-  export let down: Stream<boolean>;
+  export let pressed: Stream<boolean>;
   export let loading: Stream<boolean>;
   export let disabled: Stream<boolean>;
   export let type: Stream<'default' | 'success' | 'warning' | 'danger'>;
@@ -13,6 +13,6 @@
 
 <ViewContainer {title} loading={$loading}>
   <div>
-    <Button disabled={$disabled} type={$type} bind:pressed={$down} on:click>{$text}</Button>
+    <Button disabled={$disabled} type={$type} bind:pressed={$pressed} on:click>{$text}</Button>
   </div>
 </ViewContainer>

@@ -37,7 +37,7 @@ const trainingSet = dataset('training-set-mlp-vs-knn', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
-  .filter(() => capture.$down.value)
+  .filter(() => capture.$pressed.value)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
     thumbnail: input.$thumbnails.value,

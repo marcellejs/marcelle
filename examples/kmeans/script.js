@@ -35,7 +35,7 @@ const trainingSet = dataset('TrainingSet', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
-  .filter(() => capture.$down.value)
+  .filter(() => capture.$pressed.value)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
     thumbnail: input.$thumbnails.value,

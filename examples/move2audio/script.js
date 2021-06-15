@@ -38,7 +38,7 @@ const trainingSet = dataset('TrainingSet-move2audio', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
-  .filter(() => capture.$down.value)
+  .filter(() => capture.$pressed.value)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
     y: labelInput.$text.value,
@@ -111,8 +111,8 @@ dash.settings.dataStores(store).datasets(trainingSet).models(classifier);
 
 const wizardButton = button({ text: 'Record Examples (class a)' });
 const wizardText = text({ text: 'Waiting for examples...' });
-wizardButton.$down.subscribe((x) => {
-  capture.$down.set(x);
+wizardButton.$pressed.subscribe((x) => {
+  capture.$pressed.set(x);
 });
 
 let countPerClass = { A: 0, B: 0, C: 0 };
