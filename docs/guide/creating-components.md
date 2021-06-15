@@ -1,12 +1,12 @@
-# Creating Modules
+# Creating Components
 
-Marcelle can be extended using custom modules, that can be created locally in an application.
+Marcelle can be extended using custom components, that can be created locally in an application.
 
 In this tutorial, we will create a custom module for the visualization of datasets using Uniform Manifold Approximation and Projection (UMAP). UMAP is a dimension reduction technique that can be used for visualisation similarly to t-SNE, but also for general non-linear dimension reduction.
 
 Here is what the final application looks like (try it on [demos.marcelle.dev](https://demos.marcelle.dev/umap/)):
 
-![Screenshot of the final application](./images/modules-umap-final.png)
+![Screenshot of the final application](./images/components-umap-final.png)
 
 The details for the underlying mathematics can be found in the [following paper on ArXiv](https://arxiv.org/abs/1802.03426):
 
@@ -86,10 +86,10 @@ const dash = dashboard({
   author: 'Marcelle Pirates Crew',
 });
 
-dash.page('Data Management').useLeft(input, label, featureExtractor).use(trainingSetBrowser);
+dash.page('Data Management').sidebar(input, label, featureExtractor).use(trainingSetBrowser);
 dash.settings.datasets(trainingSet);
 
-dash.start();
+dash.show();
 :::
 
 The application's input is an image upload component, and images are preprocessed using the pretrained neural network Mobilenet. Training data can be captured to a dataset called `TrainingSet`.
@@ -99,11 +99,11 @@ You can download the data [here](/cats-dogs.zip). Unzip the folder, then in the 
 
 You should obtain the following application:
 
-![Skeleton Application](./images/modules-umap-skeleton.png)
+![Skeleton Application](./images/components-umap-skeleton.png)
 
 ## Generating a Module
 
-Modules are essentially JavaScript objects exposing a set of streams for communicating with other Marcelle modules, and optionally providing a view. The easiest way to generate a new module is using the CLI:
+Components are essentially JavaScript objects exposing a set of streams for communicating with other Marcelle components, and optionally providing a view. The easiest way to generate a new module is using the CLI:
 
 ```bash
 marcelle generate module
@@ -111,11 +111,11 @@ marcelle generate module
 
 Choosing the name `umap`, the CLI will generate the following files:
 
-![Module generation with Marcelle CLI](./images/modules-umap-cli.png)
+![Module generation with Marcelle CLI](./images/components-umap-cli.png)
 
-- `src/modules/umap/umap.module.js` contains the main module class definition
-- `src/modules/umap/umap.svelte` is a [Svelte](https://svelte.dev/) component defining our module's view
-- `src/modules/umap/index.js` is used to export a constructor function for the module
+- `src/components/umap/umap.module.js` contains the main module class definition
+- `src/components/umap/umap.svelte` is a [Svelte](https://svelte.dev/) component defining our module's view
+- `src/components/umap/index.js` is used to export a constructor function for the module
 
 The generated module is already functional. Let's start by displaying it in our application. Edit `src/index.js` to import the module, create a new instance, and display it in the dashboard:
 
@@ -124,7 +124,7 @@ import '@marcellejs/core/dist/bundle.css';
 import {
   ...
 } from '@marcellejs/core';
-import { umap } from './modules';
+import { umap } from './components';
 
 // ...
 
@@ -136,26 +136,26 @@ const trainingSetUmap = umap();
 
 dash
   .page('Data Management')
-  .useLeft(input, featureExtractor)
+  .sidebar(input, featureExtractor)
   .use([label, capture], trainingSetBrowser, trainingSetUmap);
 dash.settings.use(trainingSet);
 
-dash.start();
+dash.show();
 ```
 
 You should see the custom module appear in the dashboard:
 
 <div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
-  <img src="./images/modules-umap-default.png" alt="Screenshot of the default custom module">
+  <img src="./images/components-umap-default.png" alt="Screenshot of the default custom module">
 </div>
 
 ## Anatomy of a module
 
 Let's inspect what constitutes a module. A module is composed of three files
 
-- `src/modules/umap/umap.module.js` contains the main module class definition
-- `src/modules/umap/umap.svelte` is a [Svelte](https://svelte.dev/) component defining our module's view
-- `src/modules/umap/index.js` is used to export a constructor function for the module
+- `src/components/umap/umap.module.js` contains the main module class definition
+- `src/components/umap/umap.svelte` is a [Svelte](https://svelte.dev/) component defining our module's view
+- `src/components/umap/index.js` is used to export a constructor function for the module
 
 The main module definition is a class in `umap.module.js`:
 
@@ -264,7 +264,7 @@ updateUMap.$click.subscribe(() => {
 
 dash
   .page('Data Management')
-  .useLeft(input, featureExtractor)
+  .sidebar(input, featureExtractor)
   .use([label, capture], trainingSetBrowser, updateUMap, trainingSetUmap);
 ```
 
@@ -309,7 +309,7 @@ The application should now log the UMAP fitting process in the console when clic
 
 ## Exposing the results as a stream
 
-For now, the results of the UMAP computation are limited to our module. In Marcelle, we use reactive streams to expose data to the outside world. Modules can expose streams that can be used by other modules in a pipeline. We will create a stream called `$embedding` that produce events along the fitting process. Such a stream could be used by other modules for further processing, but it will also help updating the visualization in the module's view in real-time.
+For now, the results of the UMAP computation are limited to our module. In Marcelle, we use reactive streams to expose data to the outside world. Components can expose streams that can be used by other components in a pipeline. We will create a stream called `$embedding` that produce events along the fitting process. Such a stream could be used by other components for further processing, but it will also help updating the visualization in the module's view in real-time.
 
 First, we initialize the stream in the constructor, and call the module's `start()` method to start stream processing. Then, we will imperatively push values into the stream at each iteration of the UMAP fitting process.
 
@@ -448,7 +448,7 @@ This code requires basic svelte knowledge. The main elements are:
 
 We obtain the following visualization:
 
-![UMAP Animation](./images/modules-umap-anim.gif)
+![UMAP Animation](./images/components-umap-anim.gif)
 
 ## Further Improvements
 
@@ -559,7 +559,7 @@ export class Umap extends Module {
 
 :::
 
-![UMAP with colors animation](./images/modules-umap-anim-colors.gif)
+![UMAP with colors animation](./images/components-umap-anim-colors.gif)
 
 ### Option for 2D/3D visualization
 

@@ -6,7 +6,7 @@ sidebarDepth: 3
 
 ## Dashboards
 
-Dashboards provide a way to create applications with multiple pages displaying collections of modules. This is particularly useful in the development stage to allow developers to customize the user interface to their needs. Dashboards provide an interface similar to [Tensorboard](https://www.tensorflow.org/tensorboard), Tensorflow's visualization toolkit. Programming a dashboard only requires specifying pages with the list of module instances to display on each page.
+Dashboards provide a way to create applications with multiple pages displaying collections of components. This is particularly useful in the development stage to allow developers to customize the user interface to their needs. Dashboards provide an interface similar to [Tensorboard](https://www.tensorflow.org/tensorboard), Tensorflow's visualization toolkit. Programming a dashboard only requires specifying pages with the list of module instances to display on each page.
 
 In Marcelle, dashboards are applications that can be displayed on demand on top of any existing web application.
 
@@ -47,20 +47,20 @@ const dash = dashboard({
 
 dash
   .page('Data Management')
-  .useLeft(input, featureExtractor)
+  .sidebar(input, featureExtractor)
   .use([label, capture], trainingSetBrowser);
 dash.page('Training').use(params, b, prog, plotTraining);
 dash.page('Batch Prediction').use(predictButton, confusionMatrix);
 dash.settings.dataStores(store).datasets(trainingSet).models(classifier).predictions(batchMLP);
 ```
 
-#### .destroy()
+#### .hide()
 
 ```tsx
-Dashboard.destroy(): void
+Dashboard.hide(): void
 ```
 
-Destroys the dashboard application. This destroys the current view, if it exists, but preserves the configuration, meaning that the dashboard can still be re-started.
+Hide the dashboard application. This destroys the current view, if it exists, but preserves the configuration, meaning that the dashboard can still be re-started.
 
 #### .page()
 
@@ -78,40 +78,40 @@ Dashboard.settings: DashboardSettings
 
 The dashboard's settings. See [`DashboardSettings`](#dashboardsettings).
 
-#### .start()
+#### .show()
 
 ```tsx
-Dashboard.start(): void
+Dashboard.show(): void
 ```
 
-Starts the dashboard application. The application, a Svelte component instance, is mounted on the document's body, creating an overlay on the current web page without destroying any content.
+Show the dashboard application. The application, a Svelte component instance, is mounted on the document's body, creating an overlay on the current web page without destroying any content.
 
 ### DashboardPage
 
-Dashboard pages are simply modules containers. They are created using the [`page`](#page) method of a Dashboard.
+Dashboard pages are simply components containers. They are created using the [`page`](#page) method of a Dashboard.
 
 #### .use()
 
 ```tsx
-use(...modules: Array<Module | Module[] | string>): DashboardPage
+use(...components: Array<Module | Module[] | string>): DashboardPage
 ```
 
-The `use` method takes an arbitrary number of arguments specifying the modules to display on the page. By default, modules are stacked vertically in the right column of the page. Each argument can either be:
+The `use` method takes an arbitrary number of arguments specifying the components to display on the page. By default, components are stacked vertically in the right column of the page. Each argument can either be:
 
-- A module ([`Module`](/api/modules/)), displayed full-width on the right column
+- A module ([`Module`](/api/components/)), displayed full-width on the right column
 - An array of module, which are then distributed horizontally
 - A string, which defines a section title
 
-#### .useLeft()
+#### .sidebar()
 
 ```tsx
-useLeft(...modules: Module[]): DashboardPage {
-  this.modulesLeft = this.modulesLeft.concat(modules);
+sidebar(...components: Module[]): DashboardPage {
+  this.modulesLeft = this.modulesLeft.concat(components);
   return this;
 }
 ```
 
-The `useLeft` method is similar to use except that modules are placed on the left column of the dashboard page. The method only accept modules as argument.
+The `sidebar` method is similar to use except that components are placed on the left column of the dashboard page. The method only accept components as argument.
 
 ### DashboardSettings
 
@@ -147,23 +147,23 @@ Specify the models that can be managed in the settings panel.
 predictions(...predictions: BatchPrediction[]): DashboardSettings
 ```
 
-Specify the batch prediction modules that can be managed in the settings panel.
+Specify the batch prediction components that can be managed in the settings panel.
 
 #### .use()
 
 ```tsx
-use(...modules: Array<Module | Module[] | string>): DashboardSettings
+use(...components: Array<Module | Module[] | string>): DashboardSettings
 ```
 
-The `use` method takes an arbitrary number of arguments specifying the modules to display on the page. By default, modules are stacked vertically in the right column of the page. Each argument can either be:
+The `use` method takes an arbitrary number of arguments specifying the components to display on the page. By default, components are stacked vertically in the right column of the page. Each argument can either be:
 
-- A module ([`Module`](/api/modules/)), displayed full-width on the right column
+- A module ([`Module`](/api/components/)), displayed full-width on the right column
 - An array of module, which are then distributed horizontally
 - A string, which defines a section title
 
 ## Wizards
 
-Wizards are dedicated to the creation of step-by-step guides for beginners or end-users. Wizards are inspired by Teachable machine's [_training wizard_ demo](https://glitch.com/~tm-wizard) that walks users through training their machine learning model. Marcelle wizards are more flexible and allow developers to specify what modules should be displayed at every step. Therefore, wizards can be used to assist the training but could also guide users in the analysis of the model's result.
+Wizards are dedicated to the creation of step-by-step guides for beginners or end-users. Wizards are inspired by Teachable machine's [_training wizard_ demo](https://glitch.com/~tm-wizard) that walks users through training their machine learning model. Marcelle wizards are more flexible and allow developers to specify what components should be displayed at every step. Therefore, wizards can be used to assist the training but could also guide users in the analysis of the model's result.
 
 ### Wizard
 
@@ -177,7 +177,7 @@ wizard(): Wizard
 
 | Name      | Type             | Description                              | Hold |
 | --------- | ---------------- | ---------------------------------------- | :--: |
-| \$current | Stream\<number\> | Stream specifying the current step index |  ✓   |
+| \$current | Stream\<number\> | Stream specifying the current page index |  ✓   |
 
 #### Example
 
@@ -185,72 +185,72 @@ wizard(): Wizard
 const wizard = marcelle.wizard();
 
 wizard
-  .step()
+  .page()
   .title('Record examples for class A')
   .description('Hold on the record button to capture training examples for class A')
   .use(input, wizardButton, wizardText)
-  .step()
+  .page()
   .title('Record examples for class B')
   .description('Hold on the record button to capture training examples for class B')
   .use(input, wizardButton, wizardText)
-  .step()
+  .page()
   .title('Train the model')
   .description('Now that we have collected images, we can train the model from these examples.')
   .use(b, prog)
-  .step()
+  .page()
   .title('Test the classifier')
   .description('Reproduce your gestures to test if the classifier works as expected')
   .use([input, plotResults]);
 ```
 
-#### .destroy()
+#### .hide()
 
 ```tsx
-destroy(): void
+hide(): void
 ```
 
-Destroys the dashboard application. This destroys the current view, if it exists, but preserves the configuration, meaning that the dashboard can still be re-started.
+Hide the dashboard application. This destroys the current view, if it exists, but preserves the configuration, meaning that the dashboard can still be re-started.
 
-#### .start()
+#### .show()
 
 ```tsx
-start(): void
+show(): void
 ```
 
-Starts the dashboard application. The application, a Svelte component instance, is mounted on the document's body, creating an overlay on the current web page without destroying any content.
+Show the dashboard application. The application, a Svelte component instance, is mounted on the document's body, creating an overlay on the current web page without destroying any content.
 
-#### .step()
+#### .page()
 
 ```tsx
-step(): Step
+page(): WizardPage
 ```
 
-Add a new step to the wizard, and returns the corresponding `WizardStep` instance.
+Add a new page to the wizard, and returns the corresponding `WizardPage` instance.
 
-### WizardStep
+### WizardPage
 
-They are created using the [`step`](#step) method of a Dashboard.
+They are created using the [`page`](#page) method of a Dashboard.
 
 #### .description()
 
 ```tsx
-description(desc: string): WizardStep
+description(desc: string): WizardPage
 ```
 
 Specifies the description, or help, of the current step.
 
-#### .step()
+#### .page()
 
 ```tsx
-step(): WizardStep
+page(): WizardPage
 ```
 
-Add a step to the parent wizard.
+Add a page to the parent wizard.
 
 #### .title()
 
 ```tsx
-title(title: string): WizardStep
+title(title: string): WizardPage
 ```
 
 Define the title of the step.
@@ -258,11 +258,11 @@ Define the title of the step.
 #### .use()
 
 ```tsx
-use(...modules: Array<Module | Module[] | string>): WizardStep
+use(...components: Array<Module | Module[] | string>): WizardPage
 ```
 
-Add a set of modules to the step. The syntax is similar to the one for Dashoards. By default, modules are stacked vertically in the right column of the page. Each argument can either be:
+Add a set of components to the step. The syntax is similar to the one for Dashoards. By default, components are stacked vertically in the right column of the page. Each argument can either be:
 
-- A module ([`Module`](/api/modules/)), displayed full-width on the right column
+- A module ([`Module`](/api/components/)), displayed full-width on the right column
 - An array of module, which are then distributed horizontally
 - A string, which defines a section title

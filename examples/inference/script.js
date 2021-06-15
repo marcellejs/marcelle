@@ -110,19 +110,18 @@ const dash = dashboard({
 });
 
 const help = text({
-  text:
-    'In this example, you can upload a pre-trained classification model (converted from a Keras model, see examples here: https://keras.io/api/applications/) and perform inference with input images of your choice.',
+  text: 'In this example, you can upload a pre-trained classification model (converted from a Keras model, see examples here: https://keras.io/api/applications/) and perform inference with input images of your choice.',
 });
 help.title = 'Test generic DNN classifier';
 
 dash
   .page('Real-time Testing')
-  .useLeft(up, classifier)
+  .sidebar(up, classifier)
   .use([source, help], [instanceViewer, plotResults]);
 dash
   .page('Batch Testing')
-  .useLeft(source, classifier)
+  .sidebar(source, classifier)
   .use(tog, trainingSetBrowser, predictButton, predictionAccuracy, confMat);
 dash.settings.dataStores(store).datasets(trainingSet).models(classifier);
 
-dash.start();
+dash.show();

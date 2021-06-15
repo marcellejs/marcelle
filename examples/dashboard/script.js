@@ -115,11 +115,11 @@ const dash = dashboard({
 
 dash
   .page('Data Management')
-  .useLeft(input, featureExtractor)
+  .sidebar(input, featureExtractor)
   .use([label, capture], trainingSetBrowser);
 dash.page('Training').use(params, b, prog, plotTraining);
 dash.page('Batch Prediction').use(predictButton, confMat);
-dash.page('Real-time Prediction').useLeft(input).use(tog, plotResults);
+dash.page('Real-time Prediction').sidebar(input).use(tog, plotResults);
 dash.settings.dataStores(store).datasets(trainingSet).models(classifier).predictions(batchMLP);
 
-dash.start();
+dash.show();

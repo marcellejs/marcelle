@@ -98,11 +98,11 @@ const dash = dashboard({
 
 dash
   .page('Data Management')
-  .useLeft(input, featureExtractor)
+  .sidebar(input, featureExtractor)
   .use([labelInput, capture], trainingSetBrowser);
 dash.page('Training').use(params, b, prog, plotTraining);
 dash.page('Batch Prediction').use(predictButton, confMat);
-dash.page('Real-time Prediction').useLeft(input).use(tog, plotResults);
+dash.page('Real-time Prediction').sidebar(input).use(tog, plotResults);
 dash.settings.dataStores(store).datasets(trainingSet).models(classifier);
 
 // -----------------------------------------------------------
@@ -139,23 +139,23 @@ trainingSet.$changes.subscribe(async (changes) => {
 const wiz = wizard();
 
 wiz
-  .step()
+  .page()
   .title('Record examples for class A')
   .description('Hold on the record button to capture training examples for class A')
   .use(input, wizardButton, wizardText)
-  .step()
+  .page()
   .title('Record examples for class B')
   .description('Hold on the record button to capture training examples for class B')
   .use(input, wizardButton, wizardText)
-  .step()
+  .page()
   .title('Record examples for class C')
   .description('Hold on the record button to capture training examples for class C')
   .use(input, wizardButton, wizardText)
-  .step()
+  .page()
   .title('Train the model')
   .description('Now that we have collected images, we can train the model from these examples.')
   .use(b, prog)
-  .step()
+  .page()
   .title('Test the classifier')
   .description('Reproduce your gestures to test if the classifier works as expected')
   .use([input, plotResults]);
@@ -168,15 +168,15 @@ labelInput.$text.subscribe((label) => {
   );
 });
 
-wiz.$current.subscribe((stepIndex) => {
-  if (stepIndex === 0) {
+wiz.$current.subscribe((pageIndex) => {
+  if (pageIndex === 0) {
     labelInput.$text.set('A');
-  } else if (stepIndex === 1) {
+  } else if (pageIndex === 1) {
     labelInput.$text.set('B');
-  } else if (stepIndex === 2) {
+  } else if (pageIndex === 2) {
     labelInput.$text.set('C');
   }
-  if (stepIndex === 4) {
+  if (pageIndex === 4) {
     tog.$checked.set(true);
   } else {
     tog.$checked.set(false);
@@ -238,8 +238,8 @@ $predictions.subscribe(async ({ label, confidences }) => {
 });
 
 document.querySelector('#open-wizard').addEventListener('click', () => {
-  wiz.start();
+  wiz.show();
 });
 document.querySelector('#open-dashboard').addEventListener('click', () => {
-  dash.start();
+  dash.show();
 });

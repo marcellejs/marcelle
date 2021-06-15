@@ -1,9 +1,9 @@
 import WizardComponent from './Wizard.svelte';
 import { Stream } from '../core/stream';
-import { WizardStep } from './wizard_step';
+import { WizardPage } from './wizard_page';
 
 export class Wizard {
-  steps: WizardStep[] = [];
+  pages: WizardPage[] = [];
   app: WizardComponent | undefined = undefined;
 
   $current = new Stream(0, true);
@@ -12,17 +12,17 @@ export class Wizard {
     this.$current.start();
   }
 
-  step(): WizardStep {
-    const s = new WizardStep(this.step.bind(this));
-    this.steps.push(s);
+  page(): WizardPage {
+    const s = new WizardPage(this.page.bind(this));
+    this.pages.push(s);
     return s;
   }
 
-  start(): void {
+  show(): void {
     this.app = new WizardComponent({
       target: document.body,
       props: {
-        steps: this.steps,
+        pages: this.pages,
         current: this.$current,
       },
     });
@@ -32,7 +32,7 @@ export class Wizard {
     });
   }
 
-  destroy(): void {
+  hide(): void {
     this.app?.quit();
   }
 }

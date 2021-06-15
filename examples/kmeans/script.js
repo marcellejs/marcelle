@@ -111,11 +111,11 @@ const dash = dashboard({
 
 dash
   .page('Data Management')
-  .useLeft(input, featureExtractor)
+  .sidebar(input, featureExtractor)
   .use([label, capture], trainingSetBrowser)
   .use(params, [b, tog])
   .use([clusteringScatterPlot, predPlot]);
-dash.page('Training').useLeft(input, featureExtractor).use(b);
+dash.page('Training').sidebar(input, featureExtractor).use(b);
 dash.settings.dataStores(store).datasets(trainingSet);
 
-dash.start();
+dash.show();

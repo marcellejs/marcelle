@@ -19,7 +19,7 @@ export class DashboardPage {
     return this;
   }
 
-  useLeft(...components: Component[]): DashboardPage {
+  sidebar(...components: Component[]): DashboardPage {
     this.componentsLeft = this.componentsLeft.concat(components);
     return this;
   }

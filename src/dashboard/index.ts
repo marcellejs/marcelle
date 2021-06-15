@@ -38,7 +38,7 @@ export class Dashboard {
     return this.panels[name];
   }
 
-  start(): void {
+  show(): void {
     this.app = new DashboardComponent({
       target: document.body,
       props: {
@@ -61,7 +61,7 @@ export class Dashboard {
     });
   }
 
-  destroy(): void {
+  hide(): void {
     this.app?.quit();
   }
 }

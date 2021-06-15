@@ -115,14 +115,13 @@ const dash = dashboard({
 });
 
 const help = text({
-  text:
-    'In this example, you can test an existing trained model (mobileNet), by uploading your own images to assess the quality of the predictions.',
+  text: 'In this example, you can test an existing trained model (mobileNet), by uploading your own images to assess the quality of the predictions.',
 });
 help.title = 'Test Mobilenet with your images!';
 
 dash
   .page('Real-time Testing')
-  .useLeft(source, classifier)
+  .sidebar(source, classifier)
   .use(
     help,
     [instanceViewer, plotResults],
@@ -132,8 +131,8 @@ dash
   );
 dash
   .page('Batch Testing')
-  .useLeft(source, classifier)
+  .sidebar(source, classifier)
   .use(tog, trainingSetBrowser, predictButton, predictionAccuracy, confMat);
 dash.settings.dataStores(store).datasets(trainingSet).models(classifier);
 
-dash.start();
+dash.show();

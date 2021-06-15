@@ -6,8 +6,8 @@ sidebarDepth: 3
 
 <!-- ## Streams
 
-In order to facilitate the conception of custom processing pipelines, modules rely on a reactive programming paradigm to generate or react to particular event streams. The reactive programming is well-suited for the development of such event-driven and interactive applications. It facilitates the management of asynchronous data streams, their transformation and the propagation of change to the relevant dependents.
-Each module exposes a set of data streams containing the various events produced by the module. These data streams can easily be manipulated (filtered, transformed, combined) and plugged into other modules to define pipelines.
+In order to facilitate the conception of custom processing pipelines, components rely on a reactive programming paradigm to generate or react to particular event streams. The reactive programming is well-suited for the development of such event-driven and interactive applications. It facilitates the management of asynchronous data streams, their transformation and the propagation of change to the relevant dependents.
+Each module exposes a set of data streams containing the various events produced by the module. These data streams can easily be manipulated (filtered, transformed, combined) and plugged into other components to define pipelines.
 
 ## Elements of reactive programming
 
@@ -885,7 +885,7 @@ Create a Stream that fails with the provided `Error` at time 0. This can be usef
 ## Data Storage
 
 Marcelle provides a flexible interface for creating _data stores_ that provide a unified interface for storing data either on the client side (in memory or using web storage) or on a remote server.
-Some modules rely on the definition of a data store &ndash; for instance, the [Dataset](/api/modules/data.html#dataset) module that needs to store instances, &ndash; however data collections can be created on the fly to store custom information when relevant. This is particularly useful to store some of the state of the application (for instance the model's parameters), a history of changes to the application, or custom session logs recording some of the user's interactions.
+Some components rely on the definition of a data store &ndash; for instance, the [Dataset](/api/components/data.html#dataset) module that needs to store instances, &ndash; however data collections can be created on the fly to store custom information when relevant. This is particularly useful to store some of the state of the application (for instance the model's parameters), a history of changes to the application, or custom session logs recording some of the user's interactions.
 
 We use the [Feathers](https://feathersjs.com/) framework to facilitate the creation of collections of heterogeneous data. When data is stored on the client side, no configuration is necessary. For remote data persistence, a server application can be generated in minutes using Feather’s command-line interface, with a large range of database systems available. The flexible selection of the data store's location is advantageous for rapid prototyping, where data is stored on the client side or using a local server during development.
 
@@ -911,7 +911,7 @@ async connect(): Promise<User>
 
 Connect to the data store backend. If using a remote backend, the server must be running, otherwise an exception will be thrown. If the backend is configured with user authentication, this method will require the user to log in.
 
-This method is automatically called by dependent modules such as datasets and models.
+This method is automatically called by dependent components such as datasets and models.
 
 #### .login()
 
@@ -992,7 +992,7 @@ Needs Update
 
 ## Models
 
-Models are standard Marcelle modules with two additional characteristics. First, they have a property called `parameters`, which is a record of parameter values as streams. This structure is useful to provide interfaces that dynamically change the values of the model parameters. Second, they carry a set of methods for training and prediction. Some methods are standardized, such as `.train(dataset)` and `.predict(features)`, however models can expose additional specific methods.
+Models are standard Marcelle components with two additional characteristics. First, they have a property called `parameters`, which is a record of parameter values as streams. This structure is useful to provide interfaces that dynamically change the values of the model parameters. Second, they carry a set of methods for training and prediction. Some methods are standardized, such as `.train(dataset)` and `.predict(features)`, however models can expose additional specific methods.
 
 ### Interface
 

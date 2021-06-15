@@ -121,12 +121,12 @@ const dash = dashboard({
 
 dash
   .page('Online Learning')
-  .useLeft(input, featureExtractor)
+  .sidebar(input, featureExtractor)
   .use(plotResults, [labelField, addToDataset], prog, trainingSetBrowser);
-dash.page('Offline Training').useLeft(trainingSetBrowser).use(params, b, prog, plotTraining);
+dash.page('Offline Training').sidebar(trainingSetBrowser).use(params, b, prog, plotTraining);
 dash.settings.dataStores(store).datasets(trainingSet).models(classifier, featureExtractor);
 
-dash.start();
+dash.show();
 
 // -----------------------------------------------------------
 // HELP MESSAGES

@@ -26,7 +26,7 @@ async connect(): Promise<User>
 
 Connect to the data store backend. If using a remote backend, the server must be running, otherwise an exception will be thrown. If the backend is configured with user authentication, this method will require the user to log in.
 
-This method is automatically called by dependent modules such as datasets and models.
+This method is automatically called by dependent components such as datasets and models.
 
 ### .login()
 

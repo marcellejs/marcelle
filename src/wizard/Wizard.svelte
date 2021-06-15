@@ -2,15 +2,15 @@
   import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte';
   import type { Stream } from '../core';
   import Button from '../ui/components/Button.svelte';
-  import WizardStepComponent from './WizardStep.svelte';
-  import type { WizardStep } from './wizard_step';
+  import WizardPageComponent from './WizardPage.svelte';
+  import type { WizardPage } from './wizard_page';
 
-  export let steps: WizardStep[];
+  export let pages: WizardPage[];
   export let current: Stream<number>;
 
-  function stepTo(index: number) {
-    if (index >= 0 && index <= steps.length - 1) {
-      for (const m of steps[current.value].components) {
+  function goToPage(index: number) {
+    if (index >= 0 && index <= pages.length - 1) {
+      for (const m of pages[current.value].components) {
         if (Array.isArray(m)) {
           for (const n of m) {
             n.destroy();
@@ -24,7 +24,7 @@
   }
 
   afterUpdate(() => {
-    for (const m of steps[current.value].components) {
+    for (const m of pages[current.value].components) {
       if (Array.isArray(m)) {
         for (const n of m) {
           n.mount();
@@ -36,7 +36,7 @@
   });
 
   onDestroy(() => {
-    for (const m of steps[current.value].components) {
+    for (const m of pages[current.value].components) {
       if (Array.isArray(m)) {
         for (const n of m) {
           n.destroy();
@@ -66,40 +66,40 @@
     class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-3xl
       sm:w-full"
   >
-    <WizardStepComponent
-      title={steps[$current].attr.title}
-      description={steps[$current].attr.description}
-      components={steps[$current].components}
+    <WizardPageComponent
+      title={pages[$current].attr.title}
+      description={pages[$current].attr.description}
+      components={pages[$current].components}
       index={$current + 1}
     />
     <div class="bg-white border-t border-gray-300 px-4 py-2 grid grid-cols-3">
       <div><Button type="danger" on:click={quit}>Close</Button></div>
       <div class="text-center">
-        {#each Array(steps.length) as _, i}
-          <button on:click={() => stepTo(i)} class="step-button" class:current={$current === i} />
+        {#each Array(pages.length) as _, i}
+          <button on:click={() => goToPage(i)} class="page-button" class:current={$current === i} />
         {/each}
       </div>
       <div class="text-right">
         <Button
           disabled={$current <= 0}
           on:click={() => {
-            stepTo($current - 1);
+            goToPage($current - 1);
           }}
         >
           Previous
         </Button>
         <Button
           variant="filled"
-          type={$current >= steps.length - 1 ? 'success' : 'default'}
+          type={$current >= pages.length - 1 ? 'success' : 'default'}
           on:click={() => {
-            if (current.value < steps.length - 1) {
-              stepTo($current + 1);
+            if (current.value < pages.length - 1) {
+              goToPage($current + 1);
             } else {
               quit();
             }
           }}
         >
-          {$current >= steps.length - 1 ? 'Finish' : 'Next'}
+          {$current >= pages.length - 1 ? 'Finish' : 'Next'}
         </Button>
       </div>
     </div>
@@ -121,12 +121,12 @@
     display: none !important;
   }
 
-  .step-button {
+  .page-button {
     @apply w-2 h-2 p-0 mx-1 border-none rounded-full bg-blue-300 cursor-pointer;
   }
 
-  .step-button.current,
-  .step-button:hover {
+  .page-button.current,
+  .page-button:hover {
     @apply bg-blue-500;
   }
 

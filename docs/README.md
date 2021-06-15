@@ -11,7 +11,7 @@ features:
   - title: Reactive
     details: Marcelle relies on reactive programming to facilitate the design of event-driven ML applications and provide users with instant feedback.
   - title: Visual
-    details: Marcelle modules come with UI components that can be arranged in a graphical interface according to the requirements of the task.
+    details: Marcelle components come with UI components that can be arranged in a graphical interface according to the requirements of the task.
 footer: MIT Licensed | Copyright © 2020-present Anonymized for Review
 ---
 

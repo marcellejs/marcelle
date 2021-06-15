@@ -96,19 +96,18 @@ const dash = dashboard({
 });
 
 const help = text({
-  text:
-    "In this example, you can upload a pre-trained image classification model in ONNX format and perform inference with input images of your choice. Models are available on ONNX's model zoo: https://github.com/onnx/models#image_classification.",
+  text: "In this example, you can upload a pre-trained image classification model in ONNX format and perform inference with input images of your choice. Models are available on ONNX's model zoo: https://github.com/onnx/models#image_classification.",
 });
 help.title = 'Test generic DNN classifier';
 
 dash
   .page('Real-time Testing')
-  .useLeft(up, classifier)
+  .sidebar(up, classifier)
   .use(help, source, [instanceViewer, plotResults]);
 dash
   .page('Batch Testing')
-  .useLeft(source, classifier)
+  .sidebar(source, classifier)
   .use(tog, trainingSetBrowser, predictButton, predictionAccuracy, confMat);
 dash.settings.dataStores(store).datasets(trainingSet).models(classifier);
 
-dash.start();
+dash.show();

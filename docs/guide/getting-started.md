@@ -37,7 +37,7 @@ This will scaffold a new Marcelle project with the following structure (it might
 ├── package.json
 ├── src
 │   ├── index.js   # Main application script
-│   └── modules    # Directory containing local modules bundled with your application
+│   └── components    # Directory containing local components bundled with your application
 │       └── index.js
 └── vite.config.js # Build tool configuration file
 ```
@@ -71,7 +71,7 @@ import * as marcelle from '@marcellejs/core';
 
 ## Setting up a sketchpad
 
-In our app, we want to capture drawings in order to interactively build a classifier. Drawings will be captured as images from a sketchpad. Marcelle is built around _modules_, that can be instanciated using construction functions. To create a new [sketchpad module](../api/modules.html#sketchpad), add the following line to the script:
+In our app, we want to capture drawings in order to interactively build a classifier. Drawings will be captured as images from a sketchpad. Marcelle is built around _components_, that can be instanciated using construction functions. To create a new [sketchpad module](../api/components.html#sketchpad), add the following line to the script:
 
 ```js
 const input = marcelle.sketchpad();
@@ -93,14 +93,14 @@ const myDashboard = marcelle.dashboard({
 Then to visualise the created dashboard, we need to `start` it:
 
 ```js
-myDashboard.start();
+myDashboard.show();
 ```
 
 Now, you should see an empty dashboard in the browser.
 
 ![Screenshot of an empty marcelle dashboard](./images/empty-dashboard.png)
 
-To display a module on the dashboard, we first create a page (see the [dashboard API](../api/interfaces.html#dashboards) for more details) and specify all the modules displayed on this dashboard page with the `.useLeft()` and `.use()` functions. `.useLeft()` adds modules on the left column of the dashboard while the `.use()` function adds modules on the main central column. In this tutorial we will add a sketchpad on the left of a dashboard page called "Data Management". Above the `dashboard.start();` statement:
+To display a module on the dashboard, we first create a page (see the [dashboard API](../api/interfaces.html#dashboards) for more details) and specify all the components displayed on this dashboard page with the `.sidebar()` and `.use()` functions. `.sidebar()` adds components on the left column of the dashboard while the `.use()` function adds components on the main central column. In this tutorial we will add a sketchpad on the left of a dashboard page called "Data Management". Above the `dashboard.show();` statement:
 
 ```js{6}
 const myDashboard = marcelle.dashboard({
@@ -108,9 +108,9 @@ const myDashboard = marcelle.dashboard({
   author: 'Myself',
 });
 
-myDashboard.page('Data Management').useLeft(input);
+myDashboard.page('Data Management').sidebar(input);
 
-myDashboard.start();
+myDashboard.show();
 ```
 
 Which should look like this:
@@ -127,7 +127,7 @@ If we want to build a classifier that takes images as inputs and that can be tra
 const featureExtractor = marcelle.mobilenet();
 ```
 
-Marcelle heavily relies on a paradigm called reactive programming. Reactive programming means programming with asynchronous data streams, i.e. sequences of ongoing events ordered in time. Most Marcelle modules expose data streams that can be filtered, transformed, and consumed by other modules.
+Marcelle heavily relies on a paradigm called reactive programming. Reactive programming means programming with asynchronous data streams, i.e. sequences of ongoing events ordered in time. Most Marcelle components expose data streams that can be filtered, transformed, and consumed by other components.
 
 For example, the `sketchpad` module exposes a stream called `$images`, that emits events containing an image of the sketchpad content every time a stroke is drawn on the sketchpad. To react to these events, we can subscribe to the stream, for instance to log its events to the console:
 
@@ -162,7 +162,7 @@ const instances = input.$images
   .awaitPromises();
 ```
 
-Instances have few properties. In this example, we see that the label is specified by a string that we 'hard-coded' to `test`. In an application, a label can be provided by the user through a [textfield](../api/modules/widgets.html#textfield) on the interface:
+Instances have few properties. In this example, we see that the label is specified by a string that we 'hard-coded' to `test`. In an application, a label can be provided by the user through a [textfield](../api/components/widgets.html#textfield) on the interface:
 
 ```js
 const label = marcelle.textfield();
@@ -172,7 +172,7 @@ label.name = 'Instance label';
 Let's add the text field to the dashboard page using the dashboard's `.use()` method:
 
 ```js
-myDashboard.page('Data Management').useLeft(input).use(label);
+myDashboard.page('Data Management').sidebar(input).use(label);
 ```
 
 The textfield module exposes a `$text` stream that emits values whenever the user input changes. Let's log it to the console:
@@ -199,7 +199,7 @@ const instances = input.$images
 
 We now create a dataset that can be used to train a classifier. A dataset requires a [DataStore](../api/data-stores.html#datastore) to store the captured data. A datastore can be created in the `localStorage` of your browser, but also on a server using a specified database.
 
-Once the datastore has been instanciated, we declare a marcelle [dataset](../api/modules/data.html#dataset) with a given name and a given datastore. The dataset has a `capture` method to store an incoming stream of instances. In Marcelle, these three steps can be done as such:
+Once the datastore has been instanciated, we declare a marcelle [dataset](../api/components/data.html#dataset) with a given name and a given datastore. The dataset has a `capture` method to store an incoming stream of instances. In Marcelle, these three steps can be done as such:
 
 ```js
 const store = marcelle.dataStore('localStorage');
@@ -207,17 +207,17 @@ const trainingSet = marcelle.dataset('TrainingSet', store);
 trainingSet.capture(instances);
 ```
 
-To visualize our training dataset, we can use a module called [datasetBrowser](../api/modules/data.html#datasetBrowser) that provides an interface to visualize the dataset content.
+To visualize our training dataset, we can use a module called [datasetBrowser](../api/components/data.html#datasetBrowser) that provides an interface to visualize the dataset content.
 
 ```js
 const trainingSetBrowser = marcelle.datasetBrowser(trainingSet);
 
 // ...
 
-myDashboard.page('Data Management').useLeft(input).use(label, trainingSetBrowser);
+myDashboard.page('Data Management').sidebar(input).use(label, trainingSetBrowser);
 ```
 
-If you draw on the sketchpad, you will notice that an instance is recorded at every stroke, because the dataset is capturing all instances coming from the sketchpad. To give the user more control over what is captured as training data, we can create a [button](../api/modules/widgets.html#button) to capture particular drawings.
+If you draw on the sketchpad, you will notice that an instance is recorded at every stroke, because the dataset is capturing all instances coming from the sketchpad. To give the user more control over what is captured as training data, we can create a [button](../api/components/widgets.html#button) to capture particular drawings.
 
 ```js
 const capture = marcelle.button({ text: 'Hold to record instances' });
@@ -225,7 +225,7 @@ capture.name = 'Capture instances to the training set';
 
 // ...
 
-myDashboard.page('Data Management').useLeft(input).use([label, capture], trainingSetBrowser);
+myDashboard.page('Data Management').sidebar(input).use([label, capture], trainingSetBrowser);
 ```
 
 Using reactive programming, we can filter, transform and combine streams. In this case, we want to sample instances whenever the button is clicked. To do this, we can use the `sample` method from the button's `$click` stream:
@@ -264,7 +264,7 @@ const trainingButton = marcelle.button({ text: 'Train' });
 
 myDashboard
   .page('Data Management')
-  .useLeft(input)
+  .sidebar(input)
   .use([label, capture], trainingSetBrowser, trainingButton);
 ```
 
@@ -285,7 +285,7 @@ const plotTraining = marcelle.trainingPlot(classifier);
 
 myDashboard
   .page('Data Management')
-  .useLeft(input)
+  .sidebar(input)
   .use([label, capture], trainingSetBrowser, trainingButton)
   .use(plotTraining);
 ```
@@ -318,7 +318,7 @@ To visualize the predictions, we can use a module called `classificationPlot`. L
 ```js
 const predViz = marcelle.classificationPlot(predictions);
 
-myDashboard.page('Direct Evaluation').useLeft(input).use(predViz);
+myDashboard.page('Direct Evaluation').sidebar(input).use(predViz);
 ```
 
 To give it a try, first train the model, then switch to the second page for testing!
@@ -382,13 +382,13 @@ const myDashboard = marcelle.dashboard({
 
 myDashboard
   .page('Data Management')
-  .useLeft(input)
+  .sidebar(input)
   .use([label, capture], trainingSetBrowser, trainingButton)
   .use(plotTraining);
 
-myDashboard.page('Direct Evaluation').useLeft(input).use(predViz);
+myDashboard.page('Direct Evaluation').sidebar(input).use(predViz);
 
-myDashboard.start();
+myDashboard.show();
 ```
 
 :::

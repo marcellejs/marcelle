@@ -71,7 +71,7 @@ module.exports = {
           children: [
             '/guide/',
             '/guide/getting-started',
-            '/guide/creating-modules',
+            '/guide/creating-components',
             // '/guide/adding-a-backend',
           ],
         },

@@ -64,13 +64,13 @@ const dash = dashboard({
 
 dash
   .page('Image-based Detection')
-  .useLeft(source, cocoClassifier)
+  .sidebar(source, cocoClassifier)
   .use([objDetectionVis, cocoPlotResults]);
 
 dash
   .page('Video-based Detection')
-  .useLeft(wc, cocoClassifier)
+  .sidebar(wc, cocoClassifier)
   .use(tog)
   .use([rtObjDetectionVis, rtPlotResults]);
 
-dash.start();
+dash.show();

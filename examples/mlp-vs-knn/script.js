@@ -130,7 +130,7 @@ const dash = dashboard({
 
 dash
   .page('Data Management')
-  .useLeft(input, featureExtractor)
+  .sidebar(input, featureExtractor)
   .use([label, capture], trainingSetBrowser);
 dash
   .page('Training')
@@ -145,7 +145,7 @@ dash
     plotTrainingMLP,
   );
 dash.page('Batch Prediction').use(predictButton, predictionAccuracy, [confusionMLP, confusionKNN]);
-dash.page('Real-time prediction').useLeft(input).use(tog, [plotResultsMLP, plotResultsKNN]);
+dash.page('Real-time prediction').sidebar(input).use(tog, [plotResultsMLP, plotResultsKNN]);
 dash.settings.dataStores(store).datasets(trainingSet).models(classifierKNN, classifierMLP);
 
-dash.start();
+dash.show();

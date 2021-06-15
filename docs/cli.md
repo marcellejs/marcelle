@@ -4,7 +4,7 @@ sidebarDepth: 2
 
 # CLI
 
-Marcelle provides a command line interface, for generating applications, modules and backends. The source code is available on [Github](https://github.com/marcellejs/cli).
+Marcelle provides a command line interface, for generating applications, components and backends. The source code is available on [Github](https://github.com/marcellejs/cli).
 
 ## Installation
 
@@ -45,7 +45,7 @@ This will scaffold a new Marcelle project with the following structure (it might
 ├── package.json
 ├── src
 │   ├── index.js   # Main application script
-│   └── modules    # Directory containing local modules bundled with your application
+│   └── components    # Directory containing local components bundled with your application
 │       └── index.js
 └── vite.config.js # Build tool configuration file
 ```
@@ -58,7 +58,7 @@ npm run dev # or yarn dev
 
 ### Generating a Module
 
-It is possible to use the generator to create new custom modules for an application or a marcelle package.
+It is possible to use the generator to create new custom components for an application or a marcelle package.
 
 ```bash
 marcelle generate module
@@ -67,17 +67,17 @@ marcelle generate module
 Just enter your module's name (e.g. `my-module`) and the generator will create a template module that you can your in your script:
 
 ```js
-import { myModule } from './modules';
+import { myModule } from './components';
 
 const m = myModule(opts);
 ```
 
-Modules are stored in the `src/modules` directory and provide a [Svelte](https://svelte.dev) view by default:
+Components are stored in the `src/components` directory and provide a [Svelte](https://svelte.dev) view by default:
 
 ```bash
 .
 ├── src
-│   └── modules
+│   └── components
 │       ├── my-module
 │       │   ├── my-module.module.js # Module definition file
 │       │   ├── my-module.svelte    # Svelte component defining the module's view
