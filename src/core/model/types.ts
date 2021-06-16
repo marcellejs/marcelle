@@ -10,3 +10,8 @@ export interface ObjectDetectorResults {
     confidence: number;
   }[];
 }
+
+export interface ClusteringResults {
+  cluster: number;
+  confidences: { [key: number]: number };
+}

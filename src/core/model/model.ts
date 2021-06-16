@@ -1,29 +1,28 @@
 /* eslint-disable no-underscore-dangle */
 import { Paginated, Service } from '@feathersjs/feathers';
-import type { Dataset } from '../../modules/dataset';
-import type { ObjectId, Parametrable, StoredModel, TrainingStatus } from '../types';
+import type { Dataset } from '../dataset';
+import type { Instance, ObjectId, Parametrable, StoredModel, TrainingStatus } from '../types';
 import { Stream } from '../stream';
-import { DataStore } from '../../data-store';
+import { DataStore } from '../data-store';
 import { checkProperty } from '../../utils/error-handling';
-import { Module } from '../module';
+import { Component } from '../component';
 import { logger } from '../logger';
 import { toKebabCase } from '../../utils/string';
+import { ServiceIterable } from '../data-store/service-iterable';
 
 export interface ModelOptions {
   dataStore: DataStore;
 }
 
-export abstract class Model<InputType, OutputType> extends Module implements Parametrable {
+export abstract class Model<InputType, OutputType> extends Component implements Parametrable {
   abstract parameters: Parametrable['parameters'];
   abstract serviceName: string;
 
-  $training = new Stream<TrainingStatus>({ status: 'idle' }, true);
-
   dataStore?: DataStore;
-
   protected syncModelName: string;
+  ready = false;
 
-  ready: boolean = false;
+  $training = new Stream<TrainingStatus>({ status: 'idle' }, true);
 
   constructor({ dataStore }: Partial<ModelOptions> = {}) {
     super();
@@ -36,7 +35,9 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
     });
   }
 
-  abstract train(dataset: Dataset): void;
+  abstract train(
+    dataset: Dataset<InputType, unknown> | ServiceIterable<Instance<InputType, unknown>>,
+  ): void;
   abstract predict(x: InputType): Promise<OutputType>;
 
   abstract save(
@@ -53,7 +54,7 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
   }
 
   @checkProperty('dataStore')
-  sync(name: string) {
+  sync(name: string): this {
     this.syncModelName = name;
     this.dataStore.connect().then(() => {
       this.setupSync();
@@ -61,7 +62,7 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
     return this;
   }
 
-  protected async setupSync() {
+  protected async setupSync(): Promise<void> {
     if (!this.service) return;
     const { data } = (await this.service.find({
       query: {
@@ -146,6 +147,7 @@ export abstract class Model<InputType, OutputType> extends Module implements Par
     return model;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  mount(): void {}
+  mount(): void {
+    // Nothing to show
+  }
 }

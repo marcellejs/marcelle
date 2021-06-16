@@ -4,8 +4,8 @@ sidebarDepth: 2
 
 # Streams
 
-In order to facilitate the conception of custom processing pipelines, modules rely on a reactive programming paradigm to generate or react to particular event streams. The reactive programming is well-suited for the development of such event-driven and interactive applications. It facilitates the management of asynchronous data streams, their transformation and the propagation of change to the relevant dependents.
-Each module exposes a set of data streams containing the various events produced by the module. These data streams can easily be manipulated (filtered, transformed, combined) and plugged into other modules to define pipelines.
+In order to facilitate the conception of custom processing pipelines, components rely on a reactive programming paradigm to generate or react to particular event streams. The reactive programming is well-suited for the development of such event-driven and interactive applications. It facilitates the management of asynchronous data streams, their transformation and the propagation of change to the relevant dependents.
+Each component exposes a set of data streams containing the various events produced by the component. These data streams can easily be manipulated (filtered, transformed, combined) and plugged into other components to define pipelines.
 
 ## Elements of reactive programming
 
@@ -29,10 +29,6 @@ _Marcelle_ relies on a reactive programming library called [Most.js](https://git
 While _RxJS_ is certainly the most popular JavaScript reactive programing library, _Most.js_ offers high performance and explicit time representation.
 
 All _Most.js_ operators are documented online: [https://mostcore.readthedocs.io/en/latest/](https://mostcore.readthedocs.io/en/latest/)
-
-::: warning TODO
-Add resources about reactive programming (tutorials, etc)
-:::
 
 ## Stream
 
@@ -106,10 +102,6 @@ thru<B>(f: (s: Stream<T>) => MostStream<B>): Stream<B>
 ```
 
 Apply functions fluently to a Stream, wrapping the result in a new Stream. Use thru when you want to continue dot-chaining other Stream operations.
-
-::: warning TODO
-Complement API (most methods)
-:::
 
 ### .ap()
 
@@ -280,8 +272,6 @@ Retain only events for which a predicate is truthy.
 | --------- | ----------------- | ------- | ----------- |
 | p         | (a: T) => boolean |         | Predicate   |
 
-**Example**
-
 #### Example
 
 ```js
@@ -334,8 +324,6 @@ Apply a function to each event value.
 | --------- | ----------- | ------- | -------------- |
 | f         | (a: T) => U |         | Unary function |
 
-**Example**
-
 #### Example
 
 ```js
@@ -359,8 +347,6 @@ Create a new Stream containing events from two Streams.Merging creates a new Str
 | Parameter | Type        | Default | Description    |
 | --------- | ----------- | ------- | -------------- |
 | stream1   | Stream\<A\> |         | Event stream 1 |
-
-**Example**
 
 #### Example
 
@@ -435,8 +421,6 @@ Like `sample`, but the value stream and sampler streams are switched
 | --------- | ----------- | ------- | -------------- |
 | sampler   | Stream\<B\> |         | Sampler stream |
 
-**Example**
-
 #### Example
 
 ```js
@@ -460,8 +444,6 @@ For each event in the current Stream, replace the event value with the latest<br
 | Parameter | Type        | Default | Description  |
 | --------- | ----------- | ------- | ------------ |
 | values    | Stream\<A\> |         | value stream |
-
-**Example**
 
 #### Example
 
@@ -487,8 +469,6 @@ Incrementally accumulate results, starting with the provided initial value.
 | --------- | ----------------- | ------- | ---------------- |
 | f         | (b: B, a: T) => B |         | Scanning reducer |
 | initial   | B                 |         | Initial Value    |
-
-**Example**
 
 #### Example
 
@@ -697,8 +677,6 @@ Perform a side effect for each event in a Stream. For each event in stream,<br>`
 | Parameter | Type           | Default | Description  |
 | --------- | -------------- | ------- | ------------ |
 | f         | (a: T) => void |         | Tap function |
-
-**Example**
 
 #### Example
 

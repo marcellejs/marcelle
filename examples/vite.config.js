@@ -1,6 +1,6 @@
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-env node */
 import fs from 'fs';
-import svelte from 'rollup-plugin-svelte';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { join, resolve } from 'path';
 import { render } from 'ejs';
 import exampleMeta from './meta.json';

@@ -20,10 +20,6 @@ module.exports = {
         text: 'API Reference',
         link: '/api/',
       },
-      // {
-      //   text: 'Cookbook',
-      //   link: '/cookbook/',
-      // },
       {
         text: 'Examples',
         link: '/examples/',
@@ -31,24 +27,31 @@ module.exports = {
     ],
     sidebar: {
       '/api/': [
-        '',
         {
-          title: 'Modules',
+          title: 'Core',
+          collapsable: false,
+          children: ['component', 'streams', 'data-storage', 'models', 'utilities'],
+        },
+        // 'components',
+        {
+          title: 'Components',
           collapsable: false,
           children: [
-            '/api/modules/',
-            '/api/modules/data',
-            '/api/modules/inputs',
-            '/api/modules/models',
-            '/api/modules/training',
-            '/api/modules/predictions',
-            '/api/modules/visualization',
-            '/api/modules/widgets',
+            'components/charts',
+            'components/data-sources',
+            'components/data-displays',
+            'components/model-interfaces',
+            'components/models',
+            'components/prediction-displays',
+            'components/widgets',
           ],
         },
-        'streams',
-        'interfaces',
-        'data-stores',
+        {
+          title: 'Layouts',
+          collapsable: false,
+          children: ['dashboard', 'wizard'],
+        },
+        'python',
       ],
       '/': [
         '/installation',
@@ -58,7 +61,7 @@ module.exports = {
           children: [
             '/guide/',
             '/guide/getting-started',
-            '/guide/creating-modules',
+            '/guide/creating-components',
             // '/guide/adding-a-backend',
           ],
         },

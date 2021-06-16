@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import '../../dist/marcelle.css';
 import {
   batchPrediction,
@@ -9,19 +8,19 @@ import {
   dataset,
   dataStore,
   imageUpload,
-  mobilenet,
-  classificationPlot,
+  mobileNet,
+  confidencePlot,
   text,
   toggle,
   imageDisplay,
-} from '../../dist/marcelle.esm.js';
+} from '../../dist/marcelle.esm';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CLASSIFICATION
 // -----------------------------------------------------------
 
 const source = imageUpload();
-const classifier = mobilenet();
+const classifier = mobileNet();
 
 // -----------------------------------------------------------
 // CAPTURE TO DATASET
@@ -34,8 +33,8 @@ const instances = source.$thumbnails.map((thumbnail) => ({
   thumbnail,
 }));
 
-const store = dataStore({ location: 'memory' });
-const trainingSet = dataset({ name: 'TrainingSet', dataStore: store });
+const store = dataStore('memory');
+const trainingSet = dataset('TrainingSet', store);
 
 const tog = toggle({ text: 'Capture to dataset' });
 tog.$checked.skipRepeats().subscribe((x) => {
@@ -52,7 +51,7 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchTesting = batchPrediction({ name: 'mobilenet', dataStore: store });
+const batchTesting = batchPrediction({ name: 'mobileNet', dataStore: store });
 const predictButton = button({ text: 'Update predictions' });
 const predictionAccuracy = text({ text: 'Waiting for predictions...' });
 const confMat = confusionMatrix(batchTesting);
@@ -77,7 +76,7 @@ batchTesting.$predictions.subscribe(async () => {
 // -----------------------------------------------------------
 
 const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
-const plotResults = classificationPlot(predictionStream);
+const plotResults = confidencePlot(predictionStream);
 
 const instanceViewer = imageDisplay(source.$images);
 
@@ -116,14 +115,13 @@ const dash = dashboard({
 });
 
 const help = text({
-  text:
-    'In this example, you can test an existing trained model (mobilenet), by uploading your own images to assess the quality of the predictions.',
+  text: 'In this example, you can test an existing trained model (mobileNet), by uploading your own images to assess the quality of the predictions.',
 });
 help.title = 'Test Mobilenet with your images!';
 
 dash
   .page('Real-time Testing')
-  .useLeft(source, classifier)
+  .sidebar(source, classifier)
   .use(
     help,
     [instanceViewer, plotResults],
@@ -133,8 +131,8 @@ dash
   );
 dash
   .page('Batch Testing')
-  .useLeft(source, classifier)
+  .sidebar(source, classifier)
   .use(tog, trainingSetBrowser, predictButton, predictionAccuracy, confMat);
 dash.settings.dataStores(store).datasets(trainingSet).models(classifier);
 
-dash.start();
+dash.show();

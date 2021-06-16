@@ -1,7 +1,8 @@
-// Core library
 export * from './stream';
-export * from './module';
-export { default as ModuleBase } from './ModuleBase.svelte';
-export * from './types';
+export * from './component';
+export * from './data-store';
+export * from './dataset';
 export * from './logger';
 export * from './model';
+export * from './types';
+export { default as ViewContainer } from './ViewContainer.svelte';

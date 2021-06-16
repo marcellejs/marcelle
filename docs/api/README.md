@@ -2,36 +2,38 @@
 sidebarDepth: 3
 ---
 
-# Core Concepts
+# API
 
-## Overview
+This section describes all the individual APIs of Marcelle. There are three main sections of the API:
 
-_Marcelle_ presents itself as a collection of reactive **modules** embedding the state and logic for particular tasks. Modules are the building blocks of a _Marcelle_ application and handle various tasks such as capturing images from a webcam, defining a new dataset, instancing a Deep Neural Network (DNN), displaying a confusion matrix, or monitoring the confidence of a model prediction, to name a few. _Marcelle_ provides two mechanisms to build user interfaces with modules: **dashboards** and **wizards**. Dashboards are applications containing multiple pages where developers can display the views of various modules. Wizards can be programmed to guide end-users or novices through a series of steps.
+- **Core:** The Marcelle core definitions and functionality
+- **Components:** The collection of built-in Marcelle components
+- **Layouts:** The interface composition mechanisms: dashboards and wizards
 
-![Marcelle: Principle](./images/toolkit.png)
+## Core
 
-## Modules
+Marcelle core functionality
 
-Modules are the building blocks of a Marcelle application and handle various tasks such as capturing images from a webcam, defining a new dataset, instancing a Deep Neural Network (DNN), displaying a confusion matrix, or monitoring the confidence of a model prediction, to name a few. Because Marcelle emphasizes instant feedback and user interaction, modules often provide a graphical user interface that can be displayed on demand in a web application.
+- [Marcelle Components](component.md) - Marcelle's component API
+- [Streams](streams.md) - Reactive streams API
+- [Data Storage](data-storage.md) - Data stores and services API, including server-side storage
+- [Models](models.md) - Marcelle's machine learning model API
 
-> Go to [Modules documentation](/api/modules/)
+## Components
 
-## Streams
+Marcelle's built-in components, grouped by categories:
 
-In order to facilitate the conception of custom processing pipelines, modules rely on a reactive programming paradigm to generate or react to particular event streams. The reactive programming is well-suited for the development of such event-driven and interactive applications. It facilitates the management of asynchronous data streams, their transformation and the propagation of change to the relevant dependents.
-Each module exposes a set of data streams containing the various events produced by the module. These data streams can easily be manipulated (filtered, transformed, combined) and plugged into other modules to define pipelines.
+- [Charts](components/charts.md) - General charting components
+- [Data Sources](components/data-sources.md) - Components generating data streams, e.g. from a webcam
+- [Data Displays](components/data-displays.md) - Visualization components
+- [Model Interfaces](components/model-interfaces.md) - Visualization tools for machine learning models
+- [Models](components/models.md) - Built-in machine learning models
+- [Prediction Displays](components/prediction-displays.md) - Visualization tools for model predictions
+- [Widgets](components/widgets.md) - Simple GUI widgets
 
-> Go to [Streams documentation](/api/streams.html)
+## Layouts
 
-## Interfaces
+Interface composition mechanisms
 
-Most modules provide a view that can be mounted on demand in an application. Marcelle provides two mechanisms to build user interfaces with modules: **dashboards** and **wizards**. Dashboards are applications containing multiple pages where developers can display the views of various modules. Wizards can be programmed to guide end-users or novices through a series of steps.
-
-> Go to [Interfaces documentation](/api/interfaces.html)
-
-## Data Stores
-
-Marcelle provides a flexible interface for creating _data stores_ that provide a unified interface for storing data either on the client side (in memory or using web storage) or on a remote server.
-Some modules rely on the definition of a data stores &ndash; for instance, the [Dataset](/modules/data#dataset) module that needs to store instances, &ndash; however data collections can be created on the fly to store custom information when relevant. This is particularly useful to store some of the state of the application (for instance the model's parameters), a history of changes to the application, or custom session logs recording some of the user's interactions.
-
-> Go to [Data Stores documentation](/api/data-stores.html)
+- [Dashboard](dashboard.md) - Dashboards provide a way to create applications with multiple pages displaying collections of components
+- [Wizard](wizard.md) - Wizards are dedicated to the creation of step-by-step guides for beginners or end-users
