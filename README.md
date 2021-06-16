@@ -74,8 +74,8 @@ To generate the typescript declaration files (useful for the rollup example), ru
 
 ## ✍️ Authors
 
-- [@JulesFrancoise](https://github.com/JulesFrancoise/)
-- [@bcaramiaux](https://github.com/bcaramiaux/)
+- Jules Françoise ([@JulesFrancoise](https://github.com/JulesFrancoise/)), LISN, Université Paris-Saclay, CNRS.
+- Baptiste Caramiaux ([@bcaramiaux](https://github.com/bcaramiaux/)), ISIR, Sorbonne Université, CNRS.
 
 ## 🔨 Built Using
 

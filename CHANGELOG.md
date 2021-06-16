@@ -1,15 +1,38 @@
 # Marcelle changelog
 
-## Unpublished (=> 0.4.0)
+## 0.4.0
 
-### Breaking Changes
+### Breaking Changes ⚠️
 
-TODO: detail renaming
-
-- The dataset interface has changed (TODO: add link to documentation).
+- The dataset interface has changed significantly. Refer to the documentation for upgrading:
 - The interface for models' `.train()` method has changed. `train` now accepts either a Dataset or an iterable for training, where instances are objects with `x` and `y` properties for input and output, respectively.
 - `BatchPrediction.predict()` now accepts datasets or iterables.
 - data stores now take a location as argument rather than a configuration object
+
+Many components and methods have been renamed for consistency. Any application built with a previous version of Marcelle is expected to break. The online documentation is up to date with the current naming. The list of name changes is as follows:
+
+| Previous name           | New Name                |
+| ----------------------- | ----------------------- |
+| Module                  | Component               |
+| ModuleBase              | ViewContainer           |
+| Dashboard.start()       | Dashboard.show()        |
+| Dashboard.destroy()     | Dashboard.hide()        |
+| DashboardPage.useLeft() | DashboardPage.sidebar() |
+| Wizard.start()          | Wizard.show()           |
+| Wizard.destroy()        | Wizard.hide()           |
+| Wizard.step()           | Wizard.page()           |
+| Button.$down            | Button.$pressed         |
+| textfield               | textField               |
+| chart                   | genericChart            |
+| sketchpad               | sketchPad               |
+| mlp                     | mlpClassifier           |
+| knn                     | knnClassifier           |
+| onnx                    | onnxModel               |
+| tfGenericModel          | tfjsModel               |
+| mobilenet               | mobileNet               |
+| parameters              | modelParameters         |
+| classificationPlot      | confidencePlot          |
+| visObjectDetection      | detectionBoxes          |
 
 ### New Features
 
