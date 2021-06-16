@@ -56,20 +56,20 @@ To run the application in development mode (with HMR), run:
 npm run dev # or yarn dev
 ```
 
-### Generating a Module
+### Generating a Component
 
 It is possible to use the generator to create new custom components for an application or a marcelle package.
 
 ```bash
-marcelle generate module
+marcelle generate component
 ```
 
-Just enter your module's name (e.g. `my-module`) and the generator will create a template module that you can your in your script:
+Just enter your component's name (e.g. `my-component`) and the generator will create a template component that you can your in your script:
 
 ```js
-import { myModule } from './components';
+import { myComponent } from './components';
 
-const m = myModule(opts);
+const m = myComponent(opts);
 ```
 
 Components are stored in the `src/components` directory and provide a [Svelte](https://svelte.dev) view by default:
@@ -78,9 +78,9 @@ Components are stored in the `src/components` directory and provide a [Svelte](h
 .
 ├── src
 │   └── components
-│       ├── my-module
-│       │   ├── my-module.module.js # Module definition file
-│       │   ├── my-module.svelte    # Svelte component defining the module's view
+│       ├── my-component
+│       │   ├── my-component.component.js # Component definition file
+│       │   ├── my-component.view.svelte    # Svelte component defining the component's view
 │       │   └── index.js            # function wrapper
 │       └── index.js
 ```

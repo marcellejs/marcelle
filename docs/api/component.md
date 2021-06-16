@@ -36,7 +36,7 @@ mlp.$training;
 ## Views
 
 ```tsx
-Module.mount(target?: HTMLElement): void;
+Component.mount(target?: HTMLElement): void;
 ```
 
 Components should implement a `mount` method that displays the view assotiated with the component instance. The method takes as optional argument the target HTML element where the view should be mounted. If no target is passed, the component will attempt mounting the component on the DOM element which id is the `id` of the component.

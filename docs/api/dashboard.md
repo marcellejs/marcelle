@@ -4,7 +4,7 @@ sidebarDepth: 3
 
 # Dashboards
 
-Dashboards provide a way to create applications with multiple pages displaying collections of components. This is particularly useful in the development stage to allow developers to customize the user interface to their needs. Dashboards provide an interface similar to [Tensorboard](https://www.tensorflow.org/tensorboard), Tensorflow's visualization toolkit. Programming a dashboard only requires specifying pages with the list of module instances to display on each page.
+Dashboards provide a way to create applications with multiple pages displaying collections of components. This is particularly useful in the development stage to allow developers to customize the user interface to their needs. Dashboards provide an interface similar to [Tensorboard](https://www.tensorflow.org/tensorboard), Tensorflow's visualization toolkit. Programming a dashboard only requires specifying pages with the list of component instances to display on each page.
 
 In Marcelle, dashboards are applications that can be displayed on demand on top of any existing web application.
 
@@ -91,20 +91,20 @@ Dashboard pages are simply components containers. They are created using the [`p
 ### .use()
 
 ```tsx
-use(...components: Array<Module | Module[] | string>): DashboardPage
+use(...components: Array<Component | Component[] | string>): DashboardPage
 ```
 
 The `use` method takes an arbitrary number of arguments specifying the components to display on the page. By default, components are stacked vertically in the right column of the page. Each argument can either be:
 
-- A module ([`Module`](/api/components/)), displayed full-width on the right column
-- An array of module, which are then distributed horizontally
+- A component ([`Component`](/api/components/)), displayed full-width on the right column
+- An array of component, which are then distributed horizontally
 - A string, which defines a section title
 
 ### .sidebar()
 
 ```tsx
-sidebar(...components: Module[]): DashboardPage {
-  this.modulesLeft = this.modulesLeft.concat(components);
+sidebar(...components: Component[]): DashboardPage {
+  this.componentsLeft = this.componentsLeft.concat(components);
   return this;
 }
 ```
@@ -150,11 +150,11 @@ Specify the batch prediction components that can be managed in the settings pane
 ### .use()
 
 ```tsx
-use(...components: Array<Module | Module[] | string>): DashboardSettings
+use(...components: Array<Component | Component[] | string>): DashboardSettings
 ```
 
 The `use` method takes an arbitrary number of arguments specifying the components to display on the page. By default, components are stacked vertically in the right column of the page. Each argument can either be:
 
-- A module ([`Module`](/api/components/)), displayed full-width on the right column
-- An array of module, which are then distributed horizontally
+- A component ([`Component`](/api/components/)), displayed full-width on the right column
+- An array of component, which are then distributed horizontally
 - A string, which defines a section title

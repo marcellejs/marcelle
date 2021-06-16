@@ -59,7 +59,7 @@ To see the application running, type the command:
 npm run dev
 ```
 
-Your app should be running at `http://localhost:3000/` (port may vary). If everything went well you should have a dashboard with a single text module.
+Your app should be running at `http://localhost:3000/` (port may vary). If everything went well you should have a dashboard with a single text component.
 
 Let's now inspect what's your app is made of. Open the file `src/script.js` (or `src/script.ts`), that contains the most minimal skeleton of a marcelle application. Let's start from scratch!
 Replace the contents of the file by the following two lines, that import the marcelle library:
@@ -71,7 +71,7 @@ import * as marcelle from '@marcellejs/core';
 
 ## Setting up a sketchpad
 
-In our app, we want to capture drawings in order to interactively build a classifier. Drawings will be captured as images from a sketchpad. Marcelle is built around _components_, that can be instanciated using construction functions. To create a new [sketchPad module](../components/data-sources.html#sketchpad), add the following line to the script:
+In our app, we want to capture drawings in order to interactively build a classifier. Drawings will be captured as images from a sketchpad. Marcelle is built around _components_, that can be instanciated using construction functions. To create a new [sketchPad component](../components/data-sources.html#sketchpad), add the following line to the script:
 
 ```js
 const input = marcelle.sketchPad();
@@ -100,7 +100,7 @@ Now, you should see an empty dashboard in the browser.
 
 ![Screenshot of an empty marcelle dashboard](./images/empty-dashboard.png)
 
-To display a module on the dashboard, we first create a page (see the [dashboard API](../api/dashboard.html) for more details) and specify all the components displayed on this dashboard page with the `.sidebar()` and `.use()` functions. `.sidebar()` adds components on the left column of the dashboard while the `.use()` function adds components on the main central column. In this tutorial we will add a sketchpad on the left of a dashboard page called "Data Management". Above the `dashboard.show();` statement:
+To display a component on the dashboard, we first create a page (see the [dashboard API](../api/dashboard.html) for more details) and specify all the components displayed on this dashboard page with the `.sidebar()` and `.use()` functions. `.sidebar()` adds components on the left column of the dashboard while the `.use()` function adds components on the main central column. In this tutorial we will add a sketchpad on the left of a dashboard page called "Data Management". Above the `dashboard.show();` statement:
 
 ```js{6}
 const myDashboard = marcelle.dashboard({
@@ -129,7 +129,7 @@ const featureExtractor = marcelle.mobileNet();
 
 Marcelle heavily relies on a paradigm called reactive programming. Reactive programming means programming with asynchronous data streams, i.e. sequences of ongoing events ordered in time. Most Marcelle components expose data streams that can be filtered, transformed, and consumed by other components.
 
-For example, the `sketchpad` module exposes a stream called `$images`, that emits events containing an image of the sketchpad content every time a stroke is drawn on the sketchpad. To react to these events, we can subscribe to the stream, for instance to log its events to the console:
+For example, the `sketchpad` component exposes a stream called `$images`, that emits events containing an image of the sketchpad content every time a stroke is drawn on the sketchpad. To react to these events, we can subscribe to the stream, for instance to log its events to the console:
 
 ```js
 input.$images.subscribe((img) => {
@@ -173,7 +173,7 @@ Let's add the text field to the dashboard page using the dashboard's `.use()` me
 myDashboard.page('Data Management').sidebar(input, featureExtractor).use(label);
 ```
 
-The textfield module exposes a `$text` stream that emits values whenever the user input changes. Let's log it to the console:
+The textfield component exposes a `$text` stream that emits values whenever the user input changes. Let's log it to the console:
 
 ```js
 label.$text.subscribe((currentInput) => {
@@ -204,7 +204,7 @@ const trainingSet = marcelle.dataset('TrainingSet', store);
 $instances.subscribe(trainingSet.create.bind(trainingSet));
 ```
 
-To visualize our training dataset, we can use a module called [datasetBrowser](../api/components/data-displays.html#datasetbrowser) that provides an interface to visualize the dataset content.
+To visualize our training dataset, we can use a component called [datasetBrowser](../api/components/data-displays.html#datasetbrowser) that provides an interface to visualize the dataset content.
 
 ```js
 const trainingSetBrowser = marcelle.datasetBrowser(trainingSet);
@@ -274,7 +274,7 @@ trainingButton.$click.subscribe(() => {
 });
 ```
 
-When training Deep Neural Networks, it is usually important to monitor the training, which typically means to inspect the losses and the accuracies. In Marcelle, the `trainingPlot` module can be used to do so and then added to the dashboard.
+When training Deep Neural Networks, it is usually important to monitor the training, which typically means to inspect the losses and the accuracies. In Marcelle, the `trainingPlot` component can be used to do so and then added to the dashboard.
 
 ```js{9}
 const plotTraining = marcelle.trainingPlot(classifier);
@@ -311,7 +311,7 @@ $predictions.subscribe(console.log);
 
 Note that in Marcelle, prediction functions are asynchronous. This means that they return promises. In order to create a stream containing the resulting values, we need to call `awaitPromises()` on the resulting stream.
 
-To visualize the predictions, we can use a module called `classificationPlot`. Let's add the sketchpad and this visualization module to a new page so that we can test our classifier:
+To visualize the predictions, we can use a component called `classificationPlot`. Let's add the sketchpad and this visualization component to a new page so that we can test our classifier:
 
 ```js
 const predViz = marcelle.confidencePlot($predictions);

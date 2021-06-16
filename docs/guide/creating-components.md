@@ -2,7 +2,7 @@
 
 Marcelle can be extended using custom components, that can be created locally in an application.
 
-In this tutorial, we will create a custom module for the visualization of datasets using Uniform Manifold Approximation and Projection (UMAP). UMAP is a dimension reduction technique that can be used for visualisation similarly to t-SNE, but also for general non-linear dimension reduction.
+In this tutorial, we will create a custom component for the visualization of datasets using Uniform Manifold Approximation and Projection (UMAP). UMAP is a dimension reduction technique that can be used for visualisation similarly to t-SNE, but also for general non-linear dimension reduction.
 
 Here is what the final application looks like (try it on [demos.marcelle.dev](https://demos.marcelle.dev/umap/)):
 
@@ -103,7 +103,7 @@ You should obtain the following application:
 
 ## Generating a Component
 
-Components are essentially JavaScript objects exposing a set of streams for communicating with other Marcelle components, and optionally providing a view. The easiest way to generate a new module is using the CLI:
+Components are essentially JavaScript objects exposing a set of streams for communicating with other Marcelle components, and optionally providing a view. The easiest way to generate a new component is using the CLI:
 
 ```bash
 marcelle generate component
