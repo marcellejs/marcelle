@@ -28,7 +28,7 @@ Select the default options of the CLI. Then, make sure the application works by 
 npm run dev
 ```
 
-And open [http://localhost:8080](http://localhost:8080) in your browser.
+And open [http://localhost:3000](http://localhost:3000) in your browser.
 
 Then, update the main application entry point (`src/index.js`) with the application skeleton:
 
@@ -38,42 +38,42 @@ Then, update the main application entry point (`src/index.js`) with the applicat
 import '@marcellejs/core/dist/marcelle.css';
 import {
   datasetBrowser,
-  mobilenet,
+  mobileNet,
   dataset,
   button,
   dataStore,
   dashboard,
   text,
+  textField,
   imageUpload,
-  textfield,
 } from '@marcellejs/core';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
 // -----------------------------------------------------------
 
-const input = imageUpload({ width: 224, height: 224 });
-const featureExtractor = mobilenet();
+const input = imageUpload();
+const featureExtractor = mobileNet();
 
-const label = textfield({ text: 'cat' });
+const label = textField({ text: 'cat' });
 label.title = 'Label (to record in the dataset)';
 
-const instances = input.$images
+const $instances = input.$images
   .zip(
     async (thumbnail, img) => ({
       type: 'image',
-      data: img,
-      label: label.$text.value,
+      x: await featureExtractor.process(img),
+      y: label.$text.value,
       thumbnail,
-      features: await featureExtractor.process(img),
     }),
     input.$thumbnails,
   )
   .awaitPromises();
 
-const store = dataStore('localStorage' );
+const store = dataStore('localStorage');
 const trainingSet = dataset('TrainingSet', store);
-trainingSet.capture(instances);
+
+$instances.subscribe(trainingSet.create.bind(trainingSet));
 
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
@@ -101,23 +101,23 @@ You should obtain the following application:
 
 ![Skeleton Application](./images/components-umap-skeleton.png)
 
-## Generating a Module
+## Generating a Component
 
 Components are essentially JavaScript objects exposing a set of streams for communicating with other Marcelle components, and optionally providing a view. The easiest way to generate a new module is using the CLI:
 
 ```bash
-marcelle generate module
+marcelle generate component
 ````
 
 Choosing the name `umap`, the CLI will generate the following files:
 
-![Module generation with Marcelle CLI](./images/components-umap-cli.png)
+![Component generation with Marcelle CLI](./images/components-umap-cli.png)
 
-- `src/components/umap/umap.module.js` contains the main module class definition
-- `src/components/umap/umap.svelte` is a [Svelte](https://svelte.dev/) component defining our module's view
-- `src/components/umap/index.js` is used to export a constructor function for the module
+- `src/components/umap/umap.component.js` contains the main component class definition
+- `src/components/umap/umap.view.svelte` is a [Svelte](https://svelte.dev/) component defining our component's view
+- `src/components/umap/index.js` is used to export a constructor function for the component
 
-The generated module is already functional. Let's start by displaying it in our application. Edit `src/index.js` to import the module, create a new instance, and display it in the dashboard:
+The generated component is already functional. Let's start by displaying it in our application. Edit `src/index.js` to import the component, create a new instance, and display it in the dashboard:
 
 ```js{5,11,18}
 import '@marcellejs/core/dist/bundle.css';
@@ -136,51 +136,51 @@ const trainingSetUmap = umap();
 
 dash
   .page('Data Management')
-  .sidebar(input, featureExtractor)
-  .use([label, capture], trainingSetBrowser, trainingSetUmap);
+  .sidebar(input, label, featureExtractor)
+  .use(trainingSetBrowser, trainingSetUmap);
 dash.settings.use(trainingSet);
 
 dash.show();
 ```
 
-You should see the custom module appear in the dashboard:
+You should see the custom component appear in the dashboard:
 
 <div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
-  <img src="./images/components-umap-default.png" alt="Screenshot of the default custom module">
+  <img src="./images/components-umap-default.png" alt="Screenshot of the default custom component">
 </div>
 
-## Anatomy of a module
+## Anatomy of a component
 
-Let's inspect what constitutes a module. A module is composed of three files
+Let's inspect what constitutes a component. A component is composed of three files
 
-- `src/components/umap/umap.module.js` contains the main module class definition
-- `src/components/umap/umap.svelte` is a [Svelte](https://svelte.dev/) component defining our module's view
-- `src/components/umap/index.js` is used to export a constructor function for the module
+- `src/components/umap/umap.component.js` contains the main component class definition
+- `src/components/umap/umap.view.svelte` is a [Svelte](https://svelte.dev/) component defining our component's view
+- `src/components/umap/index.js` is used to export a constructor function for the component
 
-The main module definition is a class in `umap.module.js`:
+The main component definition is a class in `umap.component.js`:
 
 ```js
-// Our custom UMAP module extends the base class "Module"
-export class Umap extends Module {
+// Our custom UMAP component extends the base class "Component"
+export class Umap extends Component {
   constructor(options) {
     super();
     this.title = 'umap [custom module 🤖]';
     this.options = options;
   }
 
-  // Module methods
+  // Component methods
 }
 ```
 
-The constructor specifies the module's `title`, which is displayed when a module is added to the dashboard. Additionally, we can pass parameters to the module's constructor. In this case, the module accepts an arbitrary object of options.
+The constructor specifies the component's `title`, which is displayed when a component is added to the dashboard. Additionally, we can pass parameters to the component's constructor. In this case, the component accepts an arbitrary object of options.
 
-Let's try passing options to the module. In the main script, update the instanciation of the module:
+Let's try passing options to the component. In the main script, update the instanciation of the component:
 
 ```js
 const trainingSetUmap = umap({ someParam: 'Yes', other: 33 });
 ```
 
-The list of parameters should be displayed in the module view on the dashboard. Module views are created using the module's `.mount()` method. This method can either be called manually by the user, or automatically if the module is added to a dashboard's page. The `mount` method optionally takes a HTML element where the module should be displayed. If no target element is specified, the module will be mounted on the element with `id` corresponding to the module's unique id (automatically generated).
+The list of parameters should be displayed in the component view on the dashboard. Component views are created using the component's `.mount()` method. This method can either be called manually by the user, or automatically if the component is added to a dashboard's page. The `mount` method optionally takes a HTML element where the component should be displayed. If no target element is specified, the component will be mounted on the element with `id` corresponding to the component's unique id (automatically generated).
 
 Marcelle does not enforce the use of a particular framework to build the view of a modular. While the core library uses the [Svelte](https://svelte.dev/) framework, it is possible to use any frontend framework such as Vue or React, or even to program the view using vanilla JavaScript.
 
@@ -201,7 +201,7 @@ When using svelte, the mount method has the following form:
   }
 ```
 
-Where the actual view is defined in the svelte _component_ `umap.svelte`. A Svelte component is composed of:
+Where the actual view is defined in the svelte _component_ `umap.view.svelte`. A Svelte component is composed of:
 
 - a `<script>` part defining the component's data and logic in JavaScript
 - a `<style>` part defining CSS classes
@@ -211,46 +211,46 @@ In our example, we define "props" in the script part by using the keyword `expor
 
 ```html
 <script>
-  import { ModuleBase } from '@marcellejs/core';
+  import { ViewContainer } from '@marcellejs/core';
 
   export let title;
   export let options;
 </script>
+
+<ViewContainer {title}>
+  <div>This is a <span class="my-color">custom</span> module with the following options:</div>
+  <p>{JSON.stringify(options)}</p>
+</ViewContainer>
 
 <style>
   .my-color {
     color: seagreen;
   }
 </style>
-
-<ModuleBase {title}>
-  <div>This is a <span class="my-color">custom</span> module with the following options:</div>
-  <p>{JSON.stringify(options)}</p>
-</ModuleBase>
 ```
 
 This tutorial won't extensively cover Svelte. For details, please refer to Svelte online documentation: [https://svelte.dev/](https://svelte.dev/)
 
 ## Connecting to the dataset
 
-Our UMAP module will apply to any dataset to visualize its instances on a 2D map. We start by specifying a dataset as the main parameter in our constructor. We then define a method `update` that will fetch all instances in the dataset and log them to the console.
+Our UMAP component will apply to any dataset to visualize its instances on a 2D map. We start by specifying a dataset as the main parameter in our constructor. We then define a method `update` that will fetch all instances in the dataset and log them to the console.
 
 ```js{2,5,8-11}
-export class Umap extends Module {
+export class Umap extends Component {
   constructor(dataset) {
     super();
-    this.title = 'umap [custom module 🤖]';
+    this.title = 'umap [custom component 🤖]';
     this.dataset = dataset;
   }
 
   async update() {
-    const instances = await this.dataset.getAllInstances();
+    const instances = await this.dataset.items().toArray();
     console.log('instances', instances);
   }
 }
 ```
 
-Let's add a button to our dashboard to trigger an update of our module. When implementing UMAP, this will allow us to trigger the computation of UMAP. We start by passing our `trainingSet` to `umap`. Then, we create a new button module, which triggers an update when clicked. Finally, we add the button to the dashboard.
+Let's add a button to our dashboard to trigger an update of our component. When implementing UMAP, this will allow us to trigger the computation of UMAP. We start by passing our `trainingSet` to `umap`. Then, we create a new button component, which triggers an update when clicked. Finally, we add the button to the dashboard.
 
 ```js{1,3-6,13}
 const trainingSetUmap = umap(trainingSet);
@@ -264,8 +264,8 @@ updateUMap.$click.subscribe(() => {
 
 dash
   .page('Data Management')
-  .sidebar(input, featureExtractor)
-  .use([label, capture], trainingSetBrowser, updateUMap, trainingSetUmap);
+  .sidebar(input, label, featureExtractor)
+  .use(trainingSetBrowser, updateUMap, trainingSetUmap);
 ```
 
 When clicking the 'Update Visualization' button, an array containing the data of all instances should be displayed in the console.
@@ -281,17 +281,17 @@ npm install umap-js
 We can then import the library and compute UMAP asynchronously, following the library's [documentation](https://github.com/PAIR-code/umap-js#asynchronous-fitting). We use the `fitAsync` method, that takes as input a 2D data array. We can convert the instances fetched from the dataset as such an array, by concatenating all feature vectors.
 
 ```js{2,11-16}
-import { Module } from '@marcellejs/core';
+import { Component } from '@marcellejs/core';
 import { UMAP } from 'umap-js';
-import Component from './umap.svelte';
+import Component from './umap.view.svelte';
 
-export class Umap extends Module {
+export class Umap extends Component {
   // ...
 
   async update() {
-    const instances = await this.dataset.getAllInstances();
+    const instances = await this.dataset.items().toArray();
     // Concatenate all instance features in a 2D array:
-    const umapData = instances.reduce((data, { features }) => data.concat(features), []);
+    const umapData = instances.reduce((data, { x }) => data.concat(x), []);
     const umap = new UMAP();
     const finalEmbedding = await umap.fitAsync(umapData, (epochNumber) => {
       console.log('Epoch', epochNumber, umap.getEmbedding());
@@ -309,19 +309,19 @@ The application should now log the UMAP fitting process in the console when clic
 
 ## Exposing the results as a stream
 
-For now, the results of the UMAP computation are limited to our module. In Marcelle, we use reactive streams to expose data to the outside world. Components can expose streams that can be used by other components in a pipeline. We will create a stream called `$embedding` that produce events along the fitting process. Such a stream could be used by other components for further processing, but it will also help updating the visualization in the module's view in real-time.
+For now, the results of the UMAP computation are limited to our component. In Marcelle, we use reactive streams to expose data to the outside world. Components can expose streams that can be used by other components in a pipeline. We will create a stream called `$embedding` that produce events along the fitting process. Such a stream could be used by other components for further processing, but it will also help updating the visualization in the component's view in real-time.
 
-First, we initialize the stream in the constructor, and call the module's `start()` method to start stream processing. Then, we will imperatively push values into the stream at each iteration of the UMAP fitting process.
+First, we initialize the stream in the constructor, and call the component's `start()` method to start stream processing. Then, we will imperatively push values into the stream at each iteration of the UMAP fitting process.
 
 ```js{1,10-11,20,22}
-import { Module, Stream } from '@marcellejs/core';
+import { Component, Stream } from '@marcellejs/core';
 import { UMAP } from 'umap-js';
-import Component from './umap.svelte';
+import Component from './umap.view.svelte';
 
-export class Umap extends Module {
+export class Umap extends Component {
   constructor(dataset) {
     super();
-    this.title = 'umap [custom module 🤖]';
+    this.title = 'umap [custom component 🤖]';
     this.dataset = dataset;
     this.$embedding = new Stream([], true);
     this.start();
@@ -352,27 +352,27 @@ trainingSetUmap.$embedding.subscribe(console.log);
 
 We are now ready to visualize the resulting embedding using a scatterplot. The view will be created using [Svelte](https://svelte.dev/), a compile-time frontend framework that plays well with reactive programming. We will use the [scatter-gl](https://github.com/PAIR-code/scatter-gl/) library from the Google PAIR team, that provides webgl-accelerated scatterplot renderring.
 
-Let's edit `umap.svelte` to pass our stream of embeddings to the component:
+Let's edit `umap.view.svelte` to pass our stream of embeddings to the component:
 
 ```html
 <script>
-  import { ModuleBase } from '@marcellejs/core';
+  import { ViewContainer } from '@marcellejs/core';
 
   export let title;
   export let embedding;
 </script>
 
-<ModuleBase {title}>
+<ViewContainer {title}>
   <div>{$embedding}</div>
-</ModuleBase>
+</ViewContainer>
 ```
 
 `export let embedding;` defines a 'prop', that will be accessible when the component instanciation. `{$embedding}` means that we consider that `embedding` is a data stream (a 'store' in svelte's terminology), and that the DOM will be updated reactively.
 
-Let's correct our view's instanciation in the module definition (`umap.module.js`), to pass our stream `this.$embedding` to the component's `embedding` prop:
+Let's correct our view's instanciation in the component definition (`umap.component.js`), to pass our stream `this.$embedding` to the component's `embedding` prop:
 
 ```js{12}
-export class Umap extends Module {
+export class Umap extends Component {
   // ...
 
   mount(targetSelector) {
@@ -404,7 +404,7 @@ We then integrate scatter-gl in the Svelte component:
 <script>
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
-  import { ModuleBase } from '@marcellejs/core';
+  import { ViewContainer } from '@marcellejs/core';
 
   export let title;
   export let embedding;
@@ -427,9 +427,9 @@ We then integrate scatter-gl in the Svelte component:
   });
 </script>
 
-<ModuleBase {title}>
+<ViewContainer {title}>
   <div id="scatter-container" bind:this="{scatterContainer}" />
-</ModuleBase>
+</ViewContainer>
 
 <style>
   #scatter-container {
@@ -462,14 +462,14 @@ We can further improve the component, for instance by using the instances' label
 
 ::: details See Solution
 
-`umap.module.js`:
+`umap.component.js`:
 
 ```js{11,19-20,37}
-import { Module, Stream } from '@marcellejs/core';
+import { Component, Stream } from '@marcellejs/core';
 import { UMAP } from 'umap-js';
-import Component from './umap.svelte';
+import View from './umap.view.svelte';
 
-export class Umap extends Module {
+export class Umap extends Component {
   constructor(dataset) {
     super();
     this.title = 'umap [custom module 🤖]';
@@ -480,13 +480,13 @@ export class Umap extends Module {
   }
 
   async update() {
-    const instances = await this.dataset.getAllInstances();
+    const instances = await this.dataset.items().toArray();
     // Concatenate all instance features in a 2D array:
-    const umapData = instances.reduce((data, { features }) => data.concat(features), []);
-    const labels = instances.map(({ label }) => label);
+    const umapData = instances.reduce((data, { x }) => data.concat(x), []);
+    const labels = instances.map(({ y }) => y);
     this.$labels.set(labels);
     const umap = new UMAP();
-    const finalEmbedding = await umap.fitAsync(umapData, () => {
+    const finalEmbedding = await umap.fitAsync(umapData, (epochNumber) => {
       this.$embedding.set(umap.getEmbedding());
     });
     this.$embedding.set(finalEmbedding);
@@ -496,7 +496,7 @@ export class Umap extends Module {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new Component({
+    this.$$.app = new View({
       target: t,
       props: {
         title: this.title,
@@ -508,13 +508,13 @@ export class Umap extends Module {
 }
 ```
 
-`umap.svelte`:
+`umap.view.svelte`:
 
 ```html{8,27-32}
 <script>
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
-  import { ModuleBase } from '@marcellejs/core';
+  import { ViewContainer } from '@marcellejs/core';
 
   export let title;
   export let embedding;
@@ -522,7 +522,6 @@ export class Umap extends Module {
 
   let scatterContainer;
   let scatterGL;
-
   onMount(() => {
     scatterGL = new ScatterGL(scatterContainer, {
       styles: {
@@ -544,16 +543,18 @@ export class Umap extends Module {
       scatterGL.setPointColorer((i) => colors[uniqueLabels.indexOf(labs[i])]);
     });
   });
+
 </script>
 
-<ModuleBase {title}>
+<ViewContainer {title}>
   <div id="scatter-container" bind:this={scatterContainer} />
-</ModuleBase>
+</ViewContainer>
 
 <style>
   #scatter-container {
     height: 400px;
   }
+
 </style>
 ```
 
