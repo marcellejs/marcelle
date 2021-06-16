@@ -19,12 +19,12 @@ marcelle --version
 Then, create a folder for the app and generate an application with the CLI:
 
 ```bash
-$ mkdir marcelle-tutorial
-$ cd marcelle-tutorial
-$ marcelle generate app
+mkdir marcelle-tutorial
+cd marcelle-tutorial
+marcelle generate app
 ```
 
-Several options are available to customize the project. If you don't know what to choise, just hit enter to select the defaults.
+Several options are available to customize the project. If you don't know what to choose, just hit enter to select the defaults.
 
 ![Screenshot of the CLI's options](../images/cli_app.png)
 
@@ -56,7 +56,7 @@ Marcelle is a client-side JavaScript framework. All Marcelle applications run in
 To see the application running, type the command:
 
 ```bash
-$ npm run dev
+npm run dev
 ```
 
 Your app should be running at `http://localhost:3000/` (port may vary). If everything went well you should have a dashboard with a single text module.
@@ -71,17 +71,17 @@ import * as marcelle from '@marcellejs/core';
 
 ## Setting up a sketchpad
 
-In our app, we want to capture drawings in order to interactively build a classifier. Drawings will be captured as images from a sketchpad. Marcelle is built around _components_, that can be instanciated using construction functions. To create a new [sketchpad module](../api/components.html#sketchpad), add the following line to the script:
+In our app, we want to capture drawings in order to interactively build a classifier. Drawings will be captured as images from a sketchpad. Marcelle is built around _components_, that can be instanciated using construction functions. To create a new [sketchPad module](../components/data-sources.html#sketchpad), add the following line to the script:
 
 ```js
-const input = marcelle.sketchpad();
+const input = marcelle.sketchPad();
 ```
 
 Note that if you look at the app in your browser, you will still see a blank page. In fact, Marcelle allows you to build you ML pipelines and choose which elements to display on an interface.
 
 ## Showing the interface
 
-Two types of interfaces are currently available: [Dashboards](../api/interfaces.html#dashboards) or Wizard [Wizards](../api/interfaces.html#wizards). In this tutorial we will create a dashboard where we will add elements from the pipeline that we would like to display. To create a dashboard, the API provides a `dashboard()` function:
+Two types of interface composition mechanisms (or layouts) are currently available: [Dashboards](../api/dashboard.html) or Wizard [Wizards](../api/wizard.html). In this tutorial we will create a dashboard where we will add elements from the pipeline that we would like to display. To create a dashboard, the API provides a `dashboard()` function:
 
 ```js
 const myDashboard = marcelle.dashboard({
@@ -100,7 +100,7 @@ Now, you should see an empty dashboard in the browser.
 
 ![Screenshot of an empty marcelle dashboard](./images/empty-dashboard.png)
 
-To display a module on the dashboard, we first create a page (see the [dashboard API](../api/interfaces.html#dashboards) for more details) and specify all the components displayed on this dashboard page with the `.sidebar()` and `.use()` functions. `.sidebar()` adds components on the left column of the dashboard while the `.use()` function adds components on the main central column. In this tutorial we will add a sketchpad on the left of a dashboard page called "Data Management". Above the `dashboard.show();` statement:
+To display a module on the dashboard, we first create a page (see the [dashboard API](../api/dashboard.html) for more details) and specify all the components displayed on this dashboard page with the `.sidebar()` and `.use()` functions. `.sidebar()` adds components on the left column of the dashboard while the `.use()` function adds components on the main central column. In this tutorial we will add a sketchpad on the left of a dashboard page called "Data Management". Above the `dashboard.show();` statement:
 
 ```js{6}
 const myDashboard = marcelle.dashboard({
@@ -124,7 +124,7 @@ Which should look like this:
 If we want to build a classifier that takes images as inputs and that can be trained efficiently with few samples, we usually don't use the raw image data. We need to extract features that are well suited for the task. To do so, we could use a pre-trained model called `Mobilenet` that takes an image as input (whose size is 224 x 224 x 3 so 150528 dimensions) and outputs a vector of lower dimension. To declare a mobilenet feature extractor in Marcelle, we do:
 
 ```js
-const featureExtractor = marcelle.mobilenet();
+const featureExtractor = marcelle.mobileNet();
 ```
 
 Marcelle heavily relies on a paradigm called reactive programming. Reactive programming means programming with asynchronous data streams, i.e. sequences of ongoing events ordered in time. Most Marcelle components expose data streams that can be filtered, transformed, and consumed by other components.
@@ -151,13 +151,11 @@ input.$images.subscribe(async (img) => {
 We now create a derived stream of instances from the sketchpad stream like this:
 
 ```js
-const instances = input.$images
+const $instances = input.$images
   .map(async (img) => ({
-    type: 'image',
-    data: img,
-    label: 'test',
+    x: await featureExtractor.process(img),
+    y: 'test',
     thumbnail: input.$thumbnails.value,
-    features: await featureExtractor.process(img),
   }))
   .awaitPromises();
 ```
@@ -165,14 +163,14 @@ const instances = input.$images
 Instances have few properties. In this example, we see that the label is specified by a string that we 'hard-coded' to `test`. In an application, a label can be provided by the user through a [textfield](../api/components/widgets.html#textfield) on the interface:
 
 ```js
-const label = marcelle.textfield();
-label.name = 'Instance label';
+const label = marcelle.textField();
+label.title = 'Instance label';
 ```
 
 Let's add the text field to the dashboard page using the dashboard's `.use()` method:
 
 ```js
-myDashboard.page('Data Management').sidebar(input).use(label);
+myDashboard.page('Data Management').sidebar(input, featureExtractor).use(label);
 ```
 
 The textfield module exposes a `$text` stream that emits values whenever the user input changes. Let's log it to the console:
@@ -185,60 +183,60 @@ label.$text.subscribe((currentInput) => {
 
 We can access the current value of a stream using its `.value` property. We use it to complement our stream of instances:
 
-```js{5}
-const instances = input.$images
+```js{4}
+const $instances = input.$images
   .map(async (img) => ({
-    type: 'image',
-    data: img,
-    label: label.$text.value,
+    x: await featureExtractor.process(img),
+    y: label.$text.value,
     thumbnail: input.$thumbnails.value,
-    features: await featureExtractor.process(img),
   }))
   .awaitPromises();
 ```
 
-We now create a dataset that can be used to train a classifier. A dataset requires a [DataStore](../api/data-stores.html#datastore) to store the captured data. A datastore can be created in the `localStorage` of your browser, but also on a server using a specified database.
+We now create a dataset that can be used to train a classifier. A dataset requires a [DataStore](../api/data-storage.html#datastore) to store the captured data. A datastore can be created in the `localStorage` of your browser, but also on a server using a specified database.
 
-Once the datastore has been instanciated, we declare a marcelle [dataset](../api/components/data.html#dataset) with a given name and a given datastore. The dataset has a `capture` method to store an incoming stream of instances. In Marcelle, these three steps can be done as such:
+Once the datastore has been instanciated, we declare a marcelle [dataset](../api/data-storage.html#dataset) with a given name and a given datastore. The dataset has a `capture` method to store an incoming stream of instances. In Marcelle, these three steps can be done as such:
 
 ```js
 const store = marcelle.dataStore('localStorage');
 const trainingSet = marcelle.dataset('TrainingSet', store);
-trainingSet.capture(instances);
+
+$instances.subscribe(trainingSet.create.bind(trainingSet));
 ```
 
-To visualize our training dataset, we can use a module called [datasetBrowser](../api/components/data.html#datasetBrowser) that provides an interface to visualize the dataset content.
+To visualize our training dataset, we can use a module called [datasetBrowser](../api/components/data-displays.html#datasetbrowser) that provides an interface to visualize the dataset content.
 
 ```js
 const trainingSetBrowser = marcelle.datasetBrowser(trainingSet);
 
 // ...
 
-myDashboard.page('Data Management').sidebar(input).use(label, trainingSetBrowser);
+myDashboard.page('Data Management').sidebar(input, featureExtractor).use(label, trainingSetBrowser);
 ```
 
 If you draw on the sketchpad, you will notice that an instance is recorded at every stroke, because the dataset is capturing all instances coming from the sketchpad. To give the user more control over what is captured as training data, we can create a [button](../api/components/widgets.html#button) to capture particular drawings.
 
 ```js
-const capture = marcelle.button({ text: 'Hold to record instances' });
-capture.name = 'Capture instances to the training set';
+const capture = marcelle.button({ text: 'Click to record an instance' });
+capture.title = 'Capture instances to the training set';
 
 // ...
 
-myDashboard.page('Data Management').sidebar(input).use([label, capture], trainingSetBrowser);
+myDashboard
+  .page('Data Management')
+  .sidebar(input, featureExtractor)
+  .use([label, capture], trainingSetBrowser);
 ```
 
 Using reactive programming, we can filter, transform and combine streams. In this case, we want to sample instances whenever the button is clicked. To do this, we can use the `sample` method from the button's `$click` stream:
 
 ```js
-const instances = capture.$click
+const $instances = capture.$click
   .sample(input.$images)
   .map(async (img) => ({
-    type: 'image',
-    data: img,
-    label: label.$text.value,
+    x: await featureExtractor.process(img),
+    y: label.$text.value,
     thumbnail: input.$thumbnails.value,
-    features: await featureExtractor.process(img),
   }))
   .awaitPromises();
 ```
@@ -252,19 +250,19 @@ If you refresh the page in the browser, you should have:
 Next, we have to declare a classifier that will learn to recognize drawings from the training dataset. In this tutorial we use a Multilayer Perceptron (MLP), that can be declared by:
 
 ```js
-const classifier = marcelle.mlp({ layers: [32, 32], epochs: 20 });
+const classifier = marcelle.mlpClassifier({ layers: [32, 32], epochs: 20 });
 ```
 
 To start training, a button is added on the interface:
 
-```js{6}
+```js{8}
 const trainingButton = marcelle.button({ text: 'Train' });
 
 // ...
 
 myDashboard
   .page('Data Management')
-  .sidebar(input)
+  .sidebar(input, featureExtractor)
   .use([label, capture], trainingSetBrowser, trainingButton);
 ```
 
@@ -285,7 +283,7 @@ const plotTraining = marcelle.trainingPlot(classifier);
 
 myDashboard
   .page('Data Management')
-  .sidebar(input)
+  .sidebar(input, featureExtractor)
   .use([label, capture], trainingSetBrowser, trainingButton)
   .use(plotTraining);
 ```
@@ -301,14 +299,14 @@ Now that our model is trained, we can create another pipeline for prediction. Wi
 To create a stream of predictions, we need to pass images through the feature extractor (mobilenet), and then through the `.predict()` method of our classifier. To do this, we use the `.map()` method of streams, that transforms a stream by applying a function to each of its elements:
 
 ```js
-const predictions = input.$images
+const $predictions = input.$images
   .map(async (img) => {
     const features = await featureExtractor.process(img);
     return classifier.predict(features);
   })
   .awaitPromises();
 
-predictions.subscribe(console.log);
+$predictions.subscribe(console.log);
 ```
 
 Note that in Marcelle, prediction functions are asynchronous. This means that they return promises. In order to create a stream containing the resulting values, we need to call `awaitPromises()` on the resulting stream.
@@ -316,7 +314,7 @@ Note that in Marcelle, prediction functions are asynchronous. This means that th
 To visualize the predictions, we can use a module called `classificationPlot`. Let's add the sketchpad and this visualization module to a new page so that we can test our classifier:
 
 ```js
-const predViz = marcelle.classificationPlot(predictions);
+const predViz = marcelle.confidencePlot($predictions);
 
 myDashboard.page('Direct Evaluation').sidebar(input).use(predViz);
 ```
@@ -331,33 +329,32 @@ To give it a try, first train the model, then switch to the second page for test
 import '@marcellejs/core/dist/marcelle.css';
 import * as marcelle from '@marcellejs/core';
 
-const input = marcelle.sketchpad();
-const featureExtractor = marcelle.mobilenet();
+const input = marcelle.sketchPad();
+const featureExtractor = marcelle.mobileNet();
 
-const label = marcelle.textfield();
-label.name = 'Instance label';
+const label = marcelle.textField();
+label.title = 'Instance label';
 
-const capture = marcelle.button({ text: 'Hold to record instances' });
-capture.name = 'Capture instances to the training set';
+const capture = marcelle.button({ text: 'Click to record an instance' });
+capture.title = 'Capture instances to the training set';
 
-const instances = capture.$click
+const $instances = capture.$click
   .sample(input.$images)
   .map(async (img) => ({
-    type: 'image',
-    data: img,
-    label: label.$text.value,
+    x: await featureExtractor.process(img),
+    y: label.$text.value,
     thumbnail: input.$thumbnails.value,
-    features: await featureExtractor.process(img),
   }))
   .awaitPromises();
 
 const store = marcelle.dataStore('localStorage');
 const trainingSet = marcelle.dataset('TrainingSet', store);
-trainingSet.capture(instances);
+
+$instances.subscribe(trainingSet.create.bind(trainingSet));
 
 const trainingSetBrowser = marcelle.datasetBrowser(trainingSet);
 
-const classifier = marcelle.mlp({ layers: [32, 32], epochs: 20 });
+const classifier = marcelle.mlpClassifier({ layers: [32, 32], epochs: 20 });
 const trainingButton = marcelle.button({ text: 'Train' });
 
 trainingButton.$click.subscribe(() => {
@@ -366,14 +363,14 @@ trainingButton.$click.subscribe(() => {
 
 const plotTraining = marcelle.trainingPlot(classifier);
 
-const predictions = input.$images
+const $predictions = input.$images
   .map(async (img) => {
     const features = await featureExtractor.process(img);
     return classifier.predict(features);
   })
   .awaitPromises();
 
-const predViz = marcelle.classificationPlot(predictions);
+const predViz = marcelle.confidencePlot($predictions);
 
 const myDashboard = marcelle.dashboard({
   title: 'My First Tutorial',
@@ -382,7 +379,7 @@ const myDashboard = marcelle.dashboard({
 
 myDashboard
   .page('Data Management')
-  .sidebar(input)
+  .sidebar(input, featureExtractor)
   .use([label, capture], trainingSetBrowser, trainingButton)
   .use(plotTraining);
 

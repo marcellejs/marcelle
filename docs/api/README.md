@@ -23,7 +23,13 @@ Marcelle core functionality
 
 Marcelle's built-in components, grouped by categories:
 
-- [Usage](client.md) - Feathers client usage in Node, React Native and the browser (also with Webpack and Browserify)
+- [Charts](components/charts.md) - General charting components
+- [Data Sources](components/data-sources.md) - Components generating data streams, e.g. from a webcam
+- [Data Displays](components/data-displays.md) - Visualization components
+- [Model Interfaces](components/model-interfaces.md) - Visualization tools for machine learning models
+- [Models](components/models.md) - Built-in machine learning models
+- [Prediction Displays](components/prediction-displays.md) - Visualization tools for model predictions
+- [Widgets](components/widgets.md) - Simple GUI widgets
 
 ## Layouts
 

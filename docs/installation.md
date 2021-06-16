@@ -10,6 +10,36 @@ There are several ways to start using Marcelle:
 Marcelle is still experimental and is currently under active development. Breaking changes are expected.
 :::
 
+## Using Marcelle CLI
+
+Install the CLI globally:
+
+```bash
+npm install -g @marcellejs/cli
+```
+
+Generate a Marcelle application (if unsure about the options, just select the defaults):
+
+```bash
+marcelle generate app
+```
+
+See the [CLI's documentation](/cli.html)
+
+## Using a package manager
+
+Using npm:
+
+```bash
+npm install @marcellejs/core --save
+```
+
+or yarn:
+
+```bash
+yarn add @marcellejs/core
+```
+
 ## Direct Download / CDN
 
 ```html
@@ -57,33 +87,3 @@ dash.page('Main').sidebar(w);
 
 dash.show();
 ```
-
-## Using a package manager
-
-Using npm:
-
-```bash
-npm install @marcellejs/core --save
-```
-
-or yarn:
-
-```bash
-yarn add @marcellejs/core
-```
-
-## Using Marcelle CLI
-
-Install the CLI globally:
-
-```bash
-npm install -g @marcellejs/cli
-```
-
-Generate a Marcelle application (if unsure about the options, just select the defaults):
-
-```bash
-marcelle generate app
-```
-
-See the [CLI's documentation](/cli.html)
