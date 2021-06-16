@@ -307,6 +307,56 @@ Upload a dataset from files.
 
 ## Server-Side Storage
 
-::: warning TODO
-Needs Update
+Marcelle provides a dedicated package for server-side data storage: [`@marcellejs/backend`](https://www.npmjs.com/package/@marcellejs/backend). It can easily be integrated into existing Marcelle applications using the CLI, and only require minimal configuration for local use.
+
+Marcelle backends are [FeathersJS](https://docs.feathersjs.com/) applications, that provide persistent data storage with either NeDb or MongoDb.
+
+::: warning Disclaimer
+The backend package is under active development and is not yet stable. It is not production-ready.
 :::
+
+### Adding a backend to an existing application
+
+If you generated a Marcelle application using the CLI, adding a backend only requires one additional command:
+
+```sh
+marcelle generate backend
+```
+
+Two database systems are currently available for storing data:
+
+- [NeDb](https://github.com/louischatriot/nedb) - an embedded datastore with a MongoDB like API. NeDB can store data in-memory or on the filesystem which makes it useful as a persistent storage without a separate database server.
+- [MongoDb](https://www.mongodb.com/)
+
+The CLI will install `@marcellejs/core` and store configuration files in `backend/config`.
+
+To run the backend locally:
+
+```sh
+npm run backend
+```
+
+The backend API will be available on [http://localhost:3030](http://localhost:3030). From a Marcelle application, interacting with this backend can be done through data stores, by instanciating them with the server URL as `location` parameter:
+
+```js
+const store = dataStore('http://localhost:3030');
+```
+
+### Configuration
+
+Backends can be configured through two JSON files located in the `backend/config` directory, for development of production. Please refer to [Feather's documentation](https://docs.feathersjs.com/api/configuration.html) for general information about Feathers configuration. In this section, we detail Marcelle-specific configuration only.
+
+| name                   | type             | default                                      | description                                                                                                                                  |
+| ---------------------- | ---------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| host                   | string           | localhost                                    | Host Name for development.                                                                                                                   |
+| port                   | number           | 3030                                         | Port                                                                                                                                         |
+| database               | nedb \| mongodb  | nedb                                         | The type of database to use. This is pre-configured when generated with the CLI.                                                             |
+| nedb                   | path             | "../data"                                    | The local path to the folder where NeDb data should be stored                                                                                |
+| uploads                | path             | "../uploads"                                 | The local path to the folder where file uploads should be stored                                                                             |
+| mongodb                | url              | "mongodb://localhost:27017/marcelle_backend" | The URL of the MongoDB database used for development                                                                                         |
+| gridfs                 | boolean          | true                                         | Whether or not to upload files and assets to GridFS instead of the file system                                                               |
+| whitelist.services     | string[] \| "\*" | "\*"                                         | The list of services that are allowed on the backend. "\*" acts as a wildcard, allowing any service to be created from Marcelle applications |
+| whitelist.assets       | string[] \| "\*" | ["jpg", "jpeg", "png", "wav"]                | The types of assets (file extensions) allowed for file upload on the server                                                                  |
+| paginate.default       | number           | 100                                          | The default number of items per page for all requests                                                                                        |
+| paginate.max           | number           | 1000                                         | The maximum number of items per page for all requests                                                                                        |
+| authentication.enabled | boolean          | false                                        | Whether or not to enable authentication                                                                                                      |
