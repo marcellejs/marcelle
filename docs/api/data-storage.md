@@ -205,6 +205,18 @@ async download(): Promise<void>
 
 Download the dataset as a unique json file.
 
+### .find()
+
+```tsx
+async find(params?: FeathersParams): Promise<Paginated<Instance<InputType, OutputType>>>
+```
+
+Get instances from the dataset, optionally passing Feathers parameters. Results are paginated, using the same format as services.
+
+| Option | Type           | Description                                                                                              | Required |
+| ------ | -------------- | -------------------------------------------------------------------------------------------------------- | :------: |
+| params | FeathersParams | Feathers Query parameters. See [Feathers docs](https://docs.feathersjs.com/api/databases/querying.html). |          |
+
 ### .get()
 
 ```tsx

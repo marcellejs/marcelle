@@ -51,6 +51,7 @@ module.exports = {
           collapsable: false,
           children: ['dashboard', 'wizard'],
         },
+        'python',
       ],
       '/': [
         '/installation',
