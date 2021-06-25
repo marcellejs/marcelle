@@ -107,6 +107,7 @@ export class Dataset<InputType, OutputType> extends Component {
     this.instanceService.on('patched', cb);
 
     this.instanceService.on('removed', (x: Instance<InputType, OutputType>) => {
+      this.$count.set(this.$count.value - 1);
       const instance = {
         ...x,
         id: x.id || x._id,
