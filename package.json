@@ -116,6 +116,7 @@
     "blueimp-load-image": "^5.14.0",
     "chart.js": "^3.3.0",
     "chartjs-chart-matrix": "^1.0.0",
+    "date-fns": "^2.22.1",
     "dequal": "^2.0.2",
     "feathers-localstorage": "^5.2.0",
     "feathers-memory": "^4.1.0",

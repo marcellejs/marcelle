@@ -17,6 +17,8 @@ import {
   trainingPlot,
   webcam,
   throwError,
+  trainingHistory,
+  datasetTable,
 } from '../../dist/marcelle.esm';
 
 // -----------------------------------------------------------
@@ -34,6 +36,8 @@ capture.title = 'Capture instances to the training set';
 const store = dataStore('localStorage');
 const trainingSet = dataset('training-set-dashboard', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
+const trainingSetTable = datasetTable(trainingSet);
+trainingSetTable.$selected.subscribe(console.log);
 
 input.$images
   .filter(() => capture.$pressed.value)
@@ -49,6 +53,8 @@ b.title = 'Training Launcher';
 const classifier = mlpClassifier({ layers: [64, 32], epochs: 20, dataStore: store }).sync(
   'mlp-dashboard',
 );
+
+const hist = trainingHistory(store, classifier);
 
 b.$click.subscribe(() =>
   classifier.train(
@@ -113,11 +119,11 @@ const dash = dashboard({
   author: 'Marcelle Pirates Crew',
 });
 
-dash
-  .page('Data Management')
-  .sidebar(input, featureExtractor)
-  .use([label, capture], trainingSetBrowser);
-dash.page('Training').use(params, b, prog, plotTraining);
+dash.page('Data Management').sidebar(input, featureExtractor).use(
+  [label, capture], //trainingSetBrowser,
+  trainingSetTable,
+);
+dash.page('Training').use(params, b, hist, prog, plotTraining);
 dash.page('Batch Prediction').use(predictButton, confMat);
 dash.page('Real-time Prediction').sidebar(input).use(tog, plotResults);
 dash.settings.dataStores(store).datasets(trainingSet).models(classifier).predictions(batchMLP);

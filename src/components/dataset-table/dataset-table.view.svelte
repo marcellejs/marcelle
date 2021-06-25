@@ -1,0 +1,85 @@
+<script lang="ts">
+  import { onMount, tick } from 'svelte';
+  import { Dataset, Instance, Stream, ViewContainer } from '../../core';
+  import { TableServiceProvider } from '../../ui/components/table-service-provider';
+  import { Column } from '../../ui/components/table-types';
+  import Spinner from '../../ui/components/Spinner.svelte';
+  import Table from '../../ui/components/Table.svelte';
+
+  export let title: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export let dataset: Dataset<any, any>;
+  export let colNames: Stream<string[]>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export let selected: Stream<Instance<any, any>[]>;
+
+  let columns: Column[] = [
+    { name: 'x' },
+    { name: 'y', sortable: true },
+    { name: 'thumbnail', type: 'image' },
+    { name: 'updatedAt', sortable: true },
+  ];
+
+  function getType(x: unknown): Column['type'] {
+    if (typeof x === 'string' && x.includes('data:image/')) {
+      return 'image';
+    }
+    if (typeof x === 'string' && !isNaN(Date.parse(x))) {
+      return 'date';
+    }
+    return 'generic';
+  }
+
+  function isSortable(x: unknown): boolean {
+    if (getType(x) !== 'image') {
+      return true;
+    }
+    return false;
+  }
+
+  let provider: TableServiceProvider;
+  onMount(async () => {
+    await tick();
+    await dataset.ready;
+    provider = new TableServiceProvider({ service: dataset.instanceService, columns });
+    colNames.subscribe(async (cols) => {
+      columns = cols.map((name) => ({ name }));
+      if (dataset.$count.value > 0) {
+        const [firstInstance] = await dataset.items().take(1).toArray();
+        columns = columns.map(({ name }) => ({
+          name,
+          type: getType(firstInstance[name]),
+          sortable: isSortable(firstInstance[name]),
+        }));
+      }
+      provider.query.$select = columns.map((x) => x.name).concat(['id']);
+      provider.update();
+    });
+    const unSub = dataset.$count.subscribe(async (c) => {
+      if (c > 0) {
+        const [firstInstance] = await dataset.items().take(1).toArray();
+        columns = columns.map(({ name }) => ({
+          name,
+          type: getType(firstInstance[name]),
+          sortable: isSortable(firstInstance[name]),
+        }));
+        unSub();
+      }
+    });
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function updateSelection({ detail }: { detail: Instance<any, any>[] }) {
+    selected.set(detail);
+  }
+</script>
+
+<ViewContainer {title}>
+  {#await dataset.ready}
+    <Spinner />
+  {:then _}
+    {#if provider}
+      <Table {columns} {provider} on:selected={updateSelection} actions={['delete']} />
+    {/if}
+  {/await}
+</ViewContainer>
