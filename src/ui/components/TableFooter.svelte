@@ -1,6 +1,5 @@
 <script lang="ts">
   import { get } from 'svelte/store';
-
   import Button from './Button.svelte';
   import Select from './Select.svelte';
   import { TableDataProvider } from './table-abstract-provider';
@@ -29,25 +28,30 @@
   <div class="actions">
     {#if actions.length > 0 && selected.length > 0}
       <TableActions {provider} {actions} bind:selected on:selected />
-    {:else}
-      <Select
-        options={['10', '20', '50', 'all']}
-        value={itemsPerPage.toString()}
-        on:change={({ detail }) => {
-          const n = detail === 'all' ? get(total) : parseInt(detail);
-          provider.paginate(n);
-          itemsPerPage = n;
-        }}
-      />
     {/if}
   </div>
-  <div class="count">
-    Showing {start} to {end} of {$total} results
-  </div>
 
-  <div class="right">
+  <div class="flex items-center">
+    <div class="flex items-center mx-4">
+      Items per page:
+      <div class="w-12 ml-2">
+        <Select
+          size="small"
+          options={['10', '20', '50', 'all']}
+          value={itemsPerPage.toString()}
+          on:change={({ detail }) => {
+            const n = detail === 'all' ? get(total) : parseInt(detail);
+            provider.paginate(n);
+            itemsPerPage = n;
+          }}
+        />
+      </div>
+    </div>
+    <div class="mx-3">
+      {start}-{end} of {$total}
+    </div>
     <Button
-      size="small"
+      round
       disabled={page === 1}
       on:click={() => {
         gotoPage(page - 1);
@@ -63,19 +67,18 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
     </Button>
-    {#each Array.from(Array(numPages), (_, j) => j + 1) as i}
-      <Button
-        variant={i === page ? 'filled' : 'outline'}
-        size="small"
-        on:click={() => {
-          gotoPage(i);
-        }}
-      >
-        {i}
-      </Button>
-    {/each}
+    <input
+      class="marcelle w-8 rounded mr-1 mb-1 bg-white text-gray-600 border border-solid border-gray-300 text-center focus:outline-none focus:ring-blue-400 focus:ring-2 focus:ring-opacity-50 active:ring-blue-400 active:ring-4 active:ring-opacity-50"
+      value={page.toString()}
+      on:blur={(e) => {
+        let i = parseInt(e.currentTarget.value);
+        if (isNaN(i)) return;
+        gotoPage(Math.max(1, Math.min(numPages, i)));
+      }}
+    />
+
     <Button
-      size="small"
+      round
       disabled={page === numPages}
       on:click={() => {
         gotoPage(page + 1);

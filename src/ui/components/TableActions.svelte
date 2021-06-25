@@ -64,16 +64,3 @@
     </div>
   </Modal>
 {/if}
-
-<style>
-  .table-actions {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-    border-top: 1px solid rgb(229, 231, 235);
-  }
-</style>
