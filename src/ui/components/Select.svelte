@@ -1,13 +1,22 @@
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte';
+
   export let options: string[];
-  export let value: string;
+  export let value = '';
+  export let placeholder = 'Select an Option';
+
+  const dispatch = createEventDispatcher();
 
 </script>
 
 <div class="select-container">
-  <select bind:value>
+  <!-- svelte-ignore a11y-no-onchange -->
+  <select bind:value on:change={(e) => dispatch('change', e.target.value)}>
+    {#if placeholder}
+      <option value="">{placeholder}</option>
+    {/if}
     {#each options as option}
-      <option>{option}</option>
+      <option value={option}>{option}</option>
     {/each}
   </select>
   <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
