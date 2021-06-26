@@ -1,7 +1,9 @@
 import '../../dist/marcelle.css';
 import {
+  batchPrediction,
   button,
   confidencePlot,
+  confusionMatrix,
   dashboard,
   dataset,
   datasetTable,
@@ -18,14 +20,12 @@ import irisData from './iris.csv?raw';
 
 const store = dataStore('localStorage');
 const ts = dataset('iris-training-set', store);
-const tst = datasetTable(ts);
-tst.$columns.set([
+const tst = datasetTable(ts, [
   'variety',
   'sepal.length',
   'sepal.width',
   'petal.length',
   'petal.width',
-  'updatedAt',
 ]);
 
 async function loadData() {
@@ -48,8 +48,8 @@ ts.$count.subscribe(async (c) => {
 const classifier = mlpClassifier({ dataStore: store }).sync('iris-classifier');
 const params = modelParameters(classifier);
 
-async function train() {
-  const ds = ts.items().map((instance) => ({
+function processDataset() {
+  return ts.items().map((instance) => ({
     x: [
       [
         instance['sepal.length'],
@@ -60,11 +60,13 @@ async function train() {
     ],
     y: instance.variety,
   }));
-  classifier.train(ds);
 }
 
 const trainBtn = button({ text: 'Train the classifier' });
-trainBtn.$click.subscribe(train);
+trainBtn.$click.subscribe(() => {
+  const ds = processDataset();
+  classifier.train(ds);
+});
 
 const prog = trainingProgress(classifier);
 const graphs = trainingPlot(classifier);
@@ -81,6 +83,15 @@ petalLength.$values.set([1.4]);
 const petalWidth = slider({ min: 0, max: 10, pips: true, step: 0.1, pipstep: 100 });
 petalWidth.title = 'Petal Width';
 petalWidth.$values.set([0.2]);
+
+tst.$selection
+  .filter((x) => x.length === 1)
+  .subscribe(([x]) => {
+    sepalLength.$values.set([x['sepal.length']]);
+    sepalWidth.$values.set([x['sepal.width']]);
+    petalLength.$values.set([x['petal.length']]);
+    petalWidth.$values.set([x['petal.width']]);
+  });
 
 const $predictions = sepalLength.$values
   .merge(sepalWidth.$values)
@@ -100,13 +111,26 @@ const $predictions = sepalLength.$values
 
 const predViz = confidencePlot($predictions);
 
+const bp = batchPrediction({ name: 'iris-predictions' });
+const batchButton = button({ text: 'Update Predictions' });
+batchButton.title = 'Batch prediction';
+batchButton.$click.subscribe(() => {
+  bp.predict(classifier, processDataset());
+});
+const conf = confusionMatrix(bp);
+
 const dash = dashboard({
   title: 'Iris Classification',
   author: 'Marcelle Doe',
 });
 
 dash.page('Training').sidebar(info, loadDataBtn).use(tst, params, trainBtn, prog, graphs);
-dash.page('Testing').use([sepalLength, sepalWidth, petalLength, petalWidth], predViz);
+dash.page('Testing').use([sepalLength, sepalWidth, petalLength, petalWidth], predViz, tst);
+dash.page('Batch prediction').use(batchButton, conf);
 dash.settings.datasets(ts).models(classifier).dataStores(store);
+
+dash.$page.subscribe((p) => {
+  tst.singleSelection = p === 'testing';
+});
 
 dash.show();
