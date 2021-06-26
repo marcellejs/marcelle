@@ -8,13 +8,17 @@ export class DatasetTable<InputType, OutputType> extends Component {
   $columns: Stream<string[]>;
   $selection: Stream<Instance<InputType, OutputType>[]> = new Stream([], true);
 
+  singleSelection = false;
+
   constructor(
     dataset: Dataset<InputType, OutputType>,
     columns: string[] = ['x', 'y', 'thumbnail', 'updatedAt'],
+    singleSelection = false,
   ) {
     super();
     this.#dataset = dataset;
     this.$columns = new Stream(columns, true);
+    this.singleSelection = singleSelection;
     this.start();
   }
 
@@ -28,6 +32,7 @@ export class DatasetTable<InputType, OutputType> extends Component {
         title: this.title,
         dataset: this.#dataset,
         colNames: this.$columns,
+        singleSelection: this.singleSelection,
         selected: this.$selection,
       },
     });

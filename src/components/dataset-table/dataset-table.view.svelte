@@ -1,8 +1,9 @@
 <script lang="ts">
+  import type { Dataset, Instance, Stream } from '../../core';
+  import type { Column } from '../../ui/components/table-types';
   import { onMount, tick } from 'svelte';
-  import { Dataset, Instance, Stream, ViewContainer } from '../../core';
+  import { ViewContainer } from '../../core';
   import { TableServiceProvider } from '../../ui/components/table-service-provider';
-  import { Column } from '../../ui/components/table-types';
   import Spinner from '../../ui/components/Spinner.svelte';
   import Table from '../../ui/components/Table.svelte';
 
@@ -10,6 +11,7 @@
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let dataset: Dataset<any, any>;
   export let colNames: Stream<string[]>;
+  export let singleSelection = false;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let selected: Stream<Instance<any, any>[]>;
 
@@ -79,7 +81,13 @@
     <Spinner />
   {:then _}
     {#if provider}
-      <Table {columns} {provider} on:selected={updateSelection} actions={['delete']} />
+      <Table
+        {provider}
+        {columns}
+        {singleSelection}
+        on:selected={updateSelection}
+        actions={['delete']}
+      />
     {/if}
   {/await}
 </ViewContainer>

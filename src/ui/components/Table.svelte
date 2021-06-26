@@ -10,6 +10,7 @@
   export let columns: Array<Column>;
   export let provider: TableDataProvider;
   export let actions: string[] = [];
+  export let singleSelection = false;
 
   $: data = provider.data;
   $: error = provider.error;
@@ -23,8 +24,8 @@
   }
 
   let selected: number[] = [];
-  function dispatchSelection() {
-    dispatch('selected', selected.map(provider.get.bind(provider)));
+  async function dispatchSelection() {
+    dispatch('selected', await Promise.all(selected.map(provider.get.bind(provider))));
   }
 
   function selectAll() {
@@ -42,14 +43,19 @@
       currentTarget: EventTarget & HTMLInputElement;
     },
   ) {
-    if (e.currentTarget.checked) {
-      if (!selected.includes(index)) {
-        selected = selected.concat([index]);
+    if (singleSelection) {
+      selected = e.currentTarget.checked ? [index] : [];
+      dispatchSelection();
+    } else {
+      if (e.currentTarget.checked) {
+        if (!selected.includes(index)) {
+          selected = selected.concat([index]);
+          dispatchSelection();
+        }
+      } else {
+        selected = selected.filter((x) => x !== index);
         dispatchSelection();
       }
-    } else {
-      selected = selected.filter((x) => x !== index);
-      dispatchSelection();
     }
   }
 </script>
@@ -68,7 +74,9 @@
     <thead>
       <tr>
         <th>
-          <input type="checkbox" on:click={selectAll} />
+          {#if !singleSelection}
+            <input type="checkbox" on:click={selectAll} />
+          {/if}
         </th>
         {#each columns as { name, sortable }}
           <TableHeaderCell {name} {sortable} {sorting} on:sort={sort} />
@@ -103,7 +111,7 @@
     font-size: 0.8rem;
     border: 1px solid rgb(229, 231, 235);
     border-radius: 0.5rem;
-    overflow: hidden;
+    overflow: scroll;
   }
 
   table {
