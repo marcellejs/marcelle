@@ -1,13 +1,26 @@
 <script lang="ts">
-  export let options: string[];
-  export let value: string;
+  import { createEventDispatcher } from 'svelte';
 
+  export let options: string[];
+  export let value = '';
+  export let placeholder = 'Select an Option';
+  export let size: 'normal' | 'small' = 'normal';
+
+  const dispatch = createEventDispatcher();
 </script>
 
 <div class="select-container">
-  <select bind:value>
+  <!-- svelte-ignore a11y-no-onchange -->
+  <select
+    class:small={size === 'small'}
+    bind:value
+    on:change={(e) => dispatch('change', e.target.value)}
+  >
+    {#if placeholder}
+      <option value="">{placeholder}</option>
+    {/if}
     {#each options as option}
-      <option>{option}</option>
+      <option value={option}>{option}</option>
     {/each}
   </select>
   <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -31,6 +44,10 @@
     transition: all 0.15s ease;
   }
 
+  select.small {
+    @apply py-1;
+  }
+
   select:hover {
     @apply border-gray-400;
   }
@@ -46,5 +63,4 @@
   option {
     background-color: white;
   }
-
 </style>

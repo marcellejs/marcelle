@@ -1,6 +1,8 @@
 import type { Paginated, Service, Params as FeathersParams } from '@feathersjs/feathers';
-import type { Instance, ObjectId } from '..';
-import { logger, Component, Stream } from '..';
+import type { Instance, ObjectId } from '../types';
+import { Stream } from '../stream';
+import { logger } from '../logger';
+import { Component } from '../component';
 import { dataStore, DataStore } from '../data-store';
 import { addScope, limitToScope, dataURL2ImageData, imageData2DataURL } from '../data-store/hooks';
 import { iterableFromService, ServiceIterable } from '../data-store/service-iterable';
@@ -107,6 +109,7 @@ export class Dataset<InputType, OutputType> extends Component {
     this.instanceService.on('patched', cb);
 
     this.instanceService.on('removed', (x: Instance<InputType, OutputType>) => {
+      this.$count.set(this.$count.value - 1);
       const instance = {
         ...x,
         id: x.id || x._id,
