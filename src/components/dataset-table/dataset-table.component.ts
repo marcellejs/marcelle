@@ -33,7 +33,7 @@ export class DatasetTable<InputType, OutputType> extends Component {
         dataset: this.#dataset,
         colNames: this.$columns,
         singleSelection: this.singleSelection,
-        selected: this.$selection,
+        selection: this.$selection,
       },
     });
   }

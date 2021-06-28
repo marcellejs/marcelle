@@ -1,12 +1,12 @@
 <script lang="ts">
+  import type { Action } from './table-types';
+  import type { TableDataProvider } from './table-abstract-provider';
   import { createEventDispatcher } from 'svelte';
-
   import Button from './Button.svelte';
   import Modal from './Modal.svelte';
-  import { TableDataProvider } from './table-abstract-provider';
 
   export let provider: TableDataProvider;
-  export let actions: string[];
+  export let actions: Action[];
   export let selected: number[];
 
   const dispatch = createEventDispatcher();
@@ -14,34 +14,38 @@
   let selectedAction = '';
   let confirmActionPending = false;
 
-  function handleAction(action: string) {
-    selectedAction = action;
-    if (selectedAction && selected.length > 0) {
-      confirmActionPending = true;
-    }
-  }
-
   async function confirmAction() {
     if (selectedAction === 'delete') {
       for (const i of selected) {
         await provider.delete(i);
       }
     } else {
-      dispatch(selectedAction, selected);
+      dispatch('action', [selectedAction, selected]);
     }
     confirmActionPending = false;
     selected = [];
     dispatch('selected', selected);
   }
+
+  function handleAction(action: string, confirm: boolean) {
+    selectedAction = action;
+    if (!selectedAction || selected.length === 0) return;
+    if (confirm) {
+      confirmActionPending = true;
+    } else {
+      confirmAction();
+    }
+  }
 </script>
 
 <!-- <div class="table-actions"> -->
 <div class="actions">
-  {#each actions as action}
+  {#each actions as { name, multiple, confirm }}
     <Button
       size="small"
-      type={action === 'delete' ? 'danger' : 'default'}
-      on:click={() => handleAction(action)}>{action}</Button
+      disabled={multiple === false && selected.length > 1}
+      type={name === 'delete' ? 'danger' : 'default'}
+      on:click={() => handleAction(name, confirm)}>{name}</Button
     >
   {/each}
 </div>

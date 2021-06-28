@@ -12,6 +12,8 @@ export interface ServiceProviderItem {
 export interface TableServiceProviderOptions<T> extends TableProviderOptions {
   service: Service<T>;
   columns?: Column[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  transform?: Record<string, (...args: any[]) => any>;
 }
 
 export class TableServiceProvider<
@@ -19,10 +21,12 @@ export class TableServiceProvider<
 > extends TableDataProvider<T> {
   service: Service<T>;
   query: Query;
+  transform: TableServiceProviderOptions<T>['transform'];
 
-  constructor({ service, columns, ...options }: TableServiceProviderOptions<T>) {
+  constructor({ service, columns, transform, ...options }: TableServiceProviderOptions<T>) {
     super(options);
     this.service = service;
+    this.transform = transform || {};
     this.query = {
       $sort: {
         updatedAt: -1,
@@ -48,7 +52,13 @@ export class TableServiceProvider<
   async update(): Promise<void> {
     try {
       const res = (await this.service.find({ query: this.query })) as Paginated<T>;
-      this.data.set(res.data);
+      const data = res.data.map((x) => {
+        const z = Object.entries(this.transform)
+          .map(([target, f]) => ({ [target]: f(x) }))
+          .reduce((o, y) => ({ ...o, ...y }), {});
+        return { ...x, ...z };
+      });
+      this.data.set(data);
       this.total.set(res.total);
       this.error.set(null);
     } catch (error) {
@@ -77,7 +87,6 @@ export class TableServiceProvider<
 
   async delete(i: number): Promise<T> {
     const removed = get(this.data)[i];
-    console.log('removed', removed);
     await this.service.remove(removed.id);
     this.update();
     return removed;

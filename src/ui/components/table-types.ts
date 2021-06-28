@@ -1,5 +1,11 @@
 export interface Column {
   name: string;
-  type?: 'image' | 'date' | 'link' | 'slot' | 'array' | 'generic';
+  type?: 'image' | 'action' | 'date' | 'link' | 'slot' | 'array' | 'generic';
   sortable?: boolean;
+}
+
+export interface Action {
+  name: string;
+  multiple?: boolean;
+  confirm?: boolean;
 }

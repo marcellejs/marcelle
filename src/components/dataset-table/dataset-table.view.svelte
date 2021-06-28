@@ -13,7 +13,7 @@
   export let colNames: Stream<string[]>;
   export let singleSelection = false;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export let selected: Stream<Instance<any, any>[]>;
+  export let selection: Stream<Instance<any, any>[]>;
 
   let columns: Column[] = [
     { name: 'x' },
@@ -69,11 +69,6 @@
       }
     });
   });
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function updateSelection({ detail }: { detail: Instance<any, any>[] }) {
-    selected.set(detail);
-  }
 </script>
 
 <ViewContainer {title}>
@@ -85,8 +80,10 @@
         {provider}
         {columns}
         {singleSelection}
-        on:selected={updateSelection}
-        actions={['delete']}
+        on:selection={({ detail }) => {
+          selection.set(detail);
+        }}
+        actions={[{ name: 'delete' }]}
       />
     {/if}
   {/await}

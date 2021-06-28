@@ -1,10 +1,14 @@
 <script lang="ts">
   import { formatDistanceToNow } from 'date-fns';
+  import { createEventDispatcher } from 'svelte';
+  import Button from './Button.svelte';
   import type { Column } from './table-types';
 
   export let type: Column['type'] = 'generic';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let value: any = null;
+
+  const dispatch = createEventDispatcher();
 
   function getArrayShape(arr: unknown[]): number[] {
     if (!Array.isArray(arr)) return [];
@@ -13,7 +17,6 @@
     }
     return [arr.length];
   }
-
 </script>
 
 <td>
@@ -28,6 +31,8 @@
         console.log('GOTO:', value.href);
       }}>{value.text}</sl-button
     >
+  {:else if type === 'action'}
+    <Button size="small" on:click={() => dispatch('action', value)}>{value}</Button>
   {:else if type === 'slot'}
     <slot />
   {:else if type === 'date'}
@@ -55,5 +60,4 @@
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
   }
-
 </style>

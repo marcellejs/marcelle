@@ -1,19 +1,27 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import TableContentCell from './TableContentCell.svelte';
   import TableHeaderCell from './TableHeaderCell.svelte';
   import TableFooter from './TableFooter.svelte';
-  import type { Column } from './table-types';
+  import type { Action, Column } from './table-types';
   import { TableDataProvider } from './table-abstract-provider';
   import { get } from 'svelte/store';
 
   export let columns: Array<Column>;
   export let provider: TableDataProvider;
-  export let actions: string[] = [];
+  export let actions: Action[] = [];
+  export let selectable = true;
   export let singleSelection = false;
+  export let selection: Array<Record<string, unknown>> = [];
+
+  let selected: number[] = [];
 
   $: data = provider.data;
   $: error = provider.error;
+
+  onMount(() => {
+    selected = selection.map((x) => get(data).indexOf(x));
+  });
 
   const dispatch = createEventDispatcher();
 
@@ -23,9 +31,9 @@
     provider.sort(detail);
   }
 
-  let selected: number[] = [];
   async function dispatchSelection() {
-    dispatch('selected', await Promise.all(selected.map(provider.get.bind(provider))));
+    selection = await Promise.all(selected.map(provider.get.bind(provider)));
+    dispatch('selection', selection);
   }
 
   function selectAll() {
@@ -58,6 +66,11 @@
       }
     }
   }
+
+  async function propagateAction([actionName, sel]: [string, number[]]) {
+    const s = await Promise.all(sel.map(provider.get.bind(provider)));
+    dispatch(actionName, s);
+  }
 </script>
 
 {#if $error}
@@ -73,11 +86,13 @@
   <table>
     <thead>
       <tr>
-        <th>
-          {#if !singleSelection}
-            <input type="checkbox" on:click={selectAll} />
-          {/if}
-        </th>
+        {#if selectable}
+          <th>
+            {#if !singleSelection}
+              <input type="checkbox" on:click={selectAll} />
+            {/if}
+          </th>
+        {/if}
         {#each columns as { name, sortable }}
           <TableHeaderCell {name} {sortable} {sorting} on:sort={sort} />
         {/each}
@@ -86,21 +101,34 @@
     <tbody>
       {#each $data as item, i}
         <tr>
-          <TableContentCell type="slot">
-            <input
-              type="checkbox"
-              checked={selected.includes(i)}
-              on:click={(e) => selectOne(i, e)}
-            />
-          </TableContentCell>
+          {#if selectable}
+            <TableContentCell type="slot">
+              <input
+                type="checkbox"
+                checked={selected.includes(i)}
+                on:click={(e) => selectOne(i, e)}
+              />
+            </TableContentCell>
+          {/if}
           {#each columns as { type, name }}
-            <TableContentCell {type} value={item[name]} />
+            <TableContentCell
+              {type}
+              value={item[name]}
+              on:action={({ detail }) => {
+                propagateAction([detail, [i]]);
+              }}
+            />
           {/each}
         </tr>
       {/each}
     </tbody>
   </table>
-  <TableFooter {provider} {actions} bind:selected />
+  <TableFooter
+    {provider}
+    {actions}
+    bind:selected
+    on:action={({ detail }) => propagateAction(detail)}
+  />
 </div>
 
 <style>

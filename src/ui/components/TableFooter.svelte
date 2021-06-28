@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Action } from './table-types';
   import { get } from 'svelte/store';
   import Button from './Button.svelte';
   import Select from './Select.svelte';
@@ -6,7 +7,7 @@
   import TableActions from './TableActions.svelte';
 
   export let provider: TableDataProvider;
-  export let actions: string[];
+  export let actions: Action[];
   export let selected: number[];
 
   $: total = provider.total;
@@ -27,7 +28,7 @@
 <div class="table-footer">
   <div class="actions">
     {#if actions.length > 0 && selected.length > 0}
-      <TableActions {provider} {actions} bind:selected on:selected />
+      <TableActions {provider} {actions} bind:selected on:selected on:action />
     {/if}
   </div>
 
