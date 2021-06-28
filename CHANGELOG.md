@@ -1,5 +1,11 @@
 # Marcelle changelog
 
+## 0.4.1
+
+- new component: `datasetTable` to display the contents of a dataset as a table
+- new example : `iris` classification from CSV data
+- Fixed: dataset count was not updated on instance deletion
+
 ## 0.4.0
 
 ### Breaking Changes ⚠️
