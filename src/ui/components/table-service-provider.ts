@@ -64,7 +64,7 @@ export class TableServiceProvider<
     } catch (error) {
       this.data.set([]);
       this.total.set(0);
-      this.error.set(error);
+      this.error.set(error as Error);
     }
   }
 
