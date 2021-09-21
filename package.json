@@ -109,6 +109,7 @@
     "@tensorflow-models/coco-ssd": "^2.2.2",
     "@tensorflow-models/knn-classifier": "^1.2.2",
     "@tensorflow-models/mobilenet": "^2.1.0",
+    "@tensorflow/tfjs-backend-cpu": "^3.7.0",
     "@tensorflow/tfjs-backend-webgl": "^3.7.0",
     "@tensorflow/tfjs-converter": "^3.7.0",
     "@tensorflow/tfjs-core": "^3.7.0",
