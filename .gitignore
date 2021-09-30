@@ -4,3 +4,4 @@ dist
 types
 *.onnx
 examples/dist
+.netlify
