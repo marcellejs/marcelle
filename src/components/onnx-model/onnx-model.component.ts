@@ -1,5 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 import { tidy, browser, reshape, tensor1d } from '@tensorflow/tfjs-core';
+import '@tensorflow/tfjs-core/dist/public/chained_ops/expand_dims';
+import '@tensorflow/tfjs-core/dist/public/chained_ops/transpose';
+import '@tensorflow/tfjs-core/dist/public/chained_ops/sub';
+import '@tensorflow/tfjs-core/dist/public/chained_ops/div';
+import '@tensorflow/tfjs-core/dist/public/chained_ops/softmax';
 import { Tensor as OnnxTensor, InferenceSession } from 'onnxjs';
 import { ClassifierResults, Model, Stream, logger } from '../../core';
 import { Catch, TrainingError } from '../../utils/error-handling';

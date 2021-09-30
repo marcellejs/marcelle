@@ -43,7 +43,8 @@ export class ServiceIterable<T> extends LazyIterable<T> {
               return;
             }
           }
-        } catch (e) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (e: any) {
           // Modify the error message but leave the stack trace intact
           e.message = `Error thrown while iterating through a service: ${e.message}`;
           throw e;

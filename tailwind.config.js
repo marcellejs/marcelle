@@ -13,7 +13,7 @@ module.exports = {
       black: colors.black,
       white: colors.white,
       gray: colors.coolGray,
-      blue: colors.lightBlue,
+      blue: colors.sky,
       green: colors.emerald,
       indigo: colors.indigo,
       teal: colors.teal,
