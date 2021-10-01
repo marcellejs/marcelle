@@ -1,5 +1,9 @@
 # Marcelle changelog
 
+## Unreleased
+
+- Removed onnxModel from release due to limited operator support
+
 ## 0.4.1
 
 - new component: `datasetTable` to display the contents of a dataset as a table

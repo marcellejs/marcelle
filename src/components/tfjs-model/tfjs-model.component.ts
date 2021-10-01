@@ -10,6 +10,7 @@ import {
   tidy,
 } from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/mul';
+import '@tensorflow/tfjs-core/dist/public/chained_ops/expand_dims';
 import { loadGraphModel } from '@tensorflow/tfjs-converter';
 import { loadLayersModel } from '@tensorflow/tfjs-layers';
 import { ClassifierResults, TFJSBaseModel, TFJSBaseModelOptions } from '../../core';

@@ -16,7 +16,6 @@ export * from './knn-classifier';
 export * from './mlp-classifier';
 export * from './mobile-net';
 export * from './model-parameters';
-export * from './onnx-model';
 export * from './scatter-plot';
 export * from './select';
 export * from './sketch-pad';
