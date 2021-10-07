@@ -51,6 +51,7 @@ export abstract class TFJSBaseModel<InputType, OutputType> extends Model<InputTy
     const storedModel = {
       name,
       files,
+      format: 'tfjs',
       metadata: {
         tfjsModelFormat: this.model instanceof LayersModel ? 'layers-model' : 'graph-model',
         ...(this.labels && { labels: this.labels }),
@@ -179,7 +180,7 @@ export abstract class TFJSBaseModel<InputType, OutputType> extends Model<InputTy
             source: 'file',
           },
         });
-        return { name: meta.name, files: [], metadata: meta };
+        return { name: meta.name, format: 'tfjs', files: [], metadata: meta };
       }
 
       const e = new Error('The provided files are not compatible with this model');

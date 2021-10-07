@@ -123,6 +123,7 @@ export class KNNClassifier extends Model<TensorLike, ClassifierResults> {
     return {
       name,
       files: [],
+      format: 'knn-classifier',
       metadata: {
         labels: this.labels,
         data: datasetObj,

@@ -103,10 +103,12 @@
           if (typeof dataStream.value[0] === 'number') {
             data.labels = Array.from(Array(dataStream.value.length), (_, j) => j.toString());
           } else {
-            data.labels = (dataStream.value as Array<{
-              x: unknown;
-              y: unknown;
-            }>).map((o: { x: unknown }) => o.x.toString());
+            data.labels = (
+              dataStream.value as Array<{
+                x: unknown;
+                y: unknown;
+              }>
+            ).map((o: { x: unknown }) => o.x.toString());
           }
         }
       }
@@ -163,13 +165,16 @@
             if (typeof values[0] === 'number') {
               chartOptions.data.labels = Array.from(Array(values.length), (_, j) => j.toString());
             } else {
-              chartOptions.data.labels = (values as Array<{
-                x: unknown;
-                y: unknown;
-              }>).map((o: { x: unknown }) => o.x.toString());
+              chartOptions.data.labels = (
+                values as Array<{
+                  x: unknown;
+                  y: unknown;
+                }>
+              ).map((o: { x: unknown }) => o.x.toString());
             }
           }
-          chartOptions.data.datasets[i].data = values;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          chartOptions.data.datasets[i].data = values as any;
           chart.update();
         }
       }),
@@ -178,7 +183,6 @@
     const ctx = canvasElement.getContext('2d');
     chart = new Chart(ctx, chartOptions as ChartConfiguration);
   }
-
 </script>
 
 <ViewContainer {title}>

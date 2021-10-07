@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- Removed onnxModel from release due to limited operator support
+- Added `trainingHistory` component to track and monitor training runs.
+- Removed `onnxModel` from release due to limited operator support.
 
 ## 0.4.1
 

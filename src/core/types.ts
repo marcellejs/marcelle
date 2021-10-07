@@ -36,7 +36,34 @@ export interface StoredModel {
   id?: ObjectId;
   name: string;
   files: Array<[string, string]>;
+  format: string;
   metadata?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+export interface ModelCheckpoint {
+  id: ObjectId;
+  name: string;
+  service: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface TrainingRun {
+  id?: ObjectId;
+  name: string;
+  basename: string;
+  start: string;
+  status: TrainingStatus['status'];
+  epoch?: number;
+  epochs?: number;
+  params?: Record<string, unknown>;
+  logs?: TrainingStatus['data'];
+  checkpoints?: Array<ModelCheckpoint>;
+  model?: {
+    summary?: string;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
 }
 
 export interface Prediction {

@@ -24,6 +24,7 @@ export * from './text';
 export * from './text-field';
 export * from './tfjs-model';
 export * from './toggle';
+export * from './training-history';
 export * from './training-plot';
 export * from './training-progress';
 export * from './webcam';
