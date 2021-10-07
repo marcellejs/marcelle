@@ -37,10 +37,10 @@
   }
 
   function selectAll() {
-    if (selected.length === get(provider.data).length) {
+    if (selected.length === get(data).length) {
       selected = [];
     } else {
-      selected = get(provider.data).map((x, i) => i);
+      selected = get(data).map((x, i) => i);
     }
     dispatchSelection();
   }
@@ -67,8 +67,10 @@
     }
   }
 
-  async function propagateAction([actionName, sel]: [string, number[]]) {
-    const s = await Promise.all(sel.map(provider.get.bind(provider)));
+  async function propagateAction([actionName, sel]: [string, number | number[]]) {
+    const s = Array.isArray(sel)
+      ? await Promise.all(sel.map(provider.get.bind(provider)))
+      : await provider.get(sel);
     dispatch(actionName, s);
   }
 </script>
@@ -89,7 +91,11 @@
         {#if selectable}
           <th>
             {#if !singleSelection}
-              <input type="checkbox" on:click={selectAll} />
+              <input
+                type="checkbox"
+                checked={selected.length === $data.length}
+                on:click={selectAll}
+              />
             {/if}
           </th>
         {/if}
@@ -115,7 +121,7 @@
               {type}
               value={item[name]}
               on:action={({ detail }) => {
-                propagateAction([detail, [i]]);
+                propagateAction([detail, i]);
               }}
             />
           {/each}

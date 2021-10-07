@@ -20,6 +20,7 @@ export abstract class TableDataProvider<
 
   paginate(n: number): void {
     this.options.itemsPerPage = n;
+    this.update();
   }
 
   async get(i: number): Promise<T> {

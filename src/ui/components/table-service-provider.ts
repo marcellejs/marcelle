@@ -52,9 +52,15 @@ export class TableServiceProvider<
   async update(): Promise<void> {
     try {
       const res = (await this.service.find({ query: this.query })) as Paginated<T>;
-      const data = res.data.map((x) => {
+      const data = res.data.map((x, i) => {
         const z = Object.entries(this.transform)
-          .map(([target, f]) => ({ [target]: f(x) }))
+          .map(([target, f]) => {
+            try {
+              return { [target]: f(x, i) };
+            } catch (error) {
+              return { [target]: 'transform error' };
+            }
+          })
           .reduce((o, y) => ({ ...o, ...y }), {});
         return { ...x, ...z };
       });

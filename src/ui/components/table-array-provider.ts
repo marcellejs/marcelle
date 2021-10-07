@@ -11,7 +11,9 @@ export class TableArrayProvider<T extends Record<string, unknown>> extends Table
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async update(): Promise<void> {}
+  async update(): Promise<void> {
+    this.page(this.currentPage);
+  }
 
   async page(i: number): Promise<void> {
     this.data.set(

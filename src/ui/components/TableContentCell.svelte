@@ -49,6 +49,8 @@
     {formatDate(value)}
   {:else if type === 'array'}
     Array({getArrayShape(value).join(', ')})
+  {:else if typeof value === 'number'}
+    {value.toPrecision(2)}
   {:else}
     {value}
   {/if}
