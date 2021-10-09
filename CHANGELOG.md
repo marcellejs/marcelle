@@ -1,9 +1,11 @@
 # Marcelle changelog
 
-## Unreleased
+## 0.4.2
 
-- Added `trainingHistory` component to track and monitor training runs.
+- New `trainingHistory` component to track and monitor training runs.
+- `datasetTable` now automatically extracts columns from service data
 - Removed `onnxModel` from release due to limited operator support.
+- Improved documentation website
 
 ## 0.4.1
 
