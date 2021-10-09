@@ -17,6 +17,16 @@
     }
     return [arr.length];
   }
+
+  function formatDate(v: string) {
+    try {
+      return formatDistanceToNow(Date.parse(v), { includeSeconds: true, addSuffix: true });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('Date Parsing Error', v, error);
+      return v;
+    }
+  }
 </script>
 
 <td>
@@ -36,17 +46,11 @@
   {:else if type === 'slot'}
     <slot />
   {:else if type === 'date'}
-    {formatDistanceToNow(Date.parse(value), { includeSeconds: true, addSuffix: true })}
-    <!-- <sl-format-date date={value} /> at
-    <sl-format-date
-      hour="numeric"
-      minute="numeric"
-      second="numeric"
-      hour-format="24"
-      date={value}
-    /> -->
+    {formatDate(value)}
   {:else if type === 'array'}
     Array({getArrayShape(value).join(', ')})
+  {:else if typeof value === 'number'}
+    {value.toPrecision(2)}
   {:else}
     {value}
   {/if}

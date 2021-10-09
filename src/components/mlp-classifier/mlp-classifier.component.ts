@@ -1,4 +1,7 @@
 import { tensor2d, train, Tensor2D, TensorLike, tensor, tidy, keep } from '@tensorflow/tfjs-core';
+import '@tensorflow/tfjs-core/dist/public/chained_ops/concat';
+import '@tensorflow/tfjs-core/dist/public/chained_ops/gather';
+import '@tensorflow/tfjs-core/dist/public/chained_ops/arg_max';
 import type { TensorLike2D } from '@tensorflow/tfjs-core/dist/types';
 import {
   loadLayersModel,

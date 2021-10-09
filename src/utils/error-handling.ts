@@ -12,7 +12,8 @@ export function Catch(
   descriptor.value = function safeMethod(...args: unknown[]): unknown {
     try {
       return originalMethod.apply(this, args);
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       logger.error(error);
       notification({
         title: error.name,

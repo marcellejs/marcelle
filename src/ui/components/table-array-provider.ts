@@ -2,6 +2,7 @@ import { TableDataProvider, TableProviderOptions } from './table-abstract-provid
 
 export class TableArrayProvider<T extends Record<string, unknown>> extends TableDataProvider<T> {
   rawData: Array<T>;
+  private currentPage = 1;
 
   constructor({ data, ...options }: TableProviderOptions & { data: Array<T> }) {
     super(options);
@@ -10,7 +11,9 @@ export class TableArrayProvider<T extends Record<string, unknown>> extends Table
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async update(): Promise<void> {}
+  async update(): Promise<void> {
+    this.page(this.currentPage);
+  }
 
   async page(i: number): Promise<void> {
     this.data.set(
@@ -19,14 +22,21 @@ export class TableArrayProvider<T extends Record<string, unknown>> extends Table
         Math.min(i * this.options.itemsPerPage, this.rawData.length),
       ),
     );
+    this.currentPage = i;
   }
 
   async sort(sorting: { col: string; ascending: boolean }): Promise<void> {
-    console.log('[provider] sort with', sorting);
+    this.rawData.sort((x, y) => {
+      if (x[sorting.col] > y[sorting.col]) return sorting.ascending ? 1 : -1;
+      if (x[sorting.col] < y[sorting.col]) return sorting.ascending ? -1 : 1;
+      return 0;
+    });
+    this.page(this.currentPage);
   }
 
   async delete(i: number): Promise<T> {
-    console.log('[provider] delete item', i);
+    this.rawData.splice(i, 1);
+    this.page(this.currentPage);
     return null;
   }
 }

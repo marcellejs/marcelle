@@ -12,13 +12,25 @@ export class DatasetTable<InputType, OutputType> extends Component {
 
   constructor(
     dataset: Dataset<InputType, OutputType>,
-    columns: string[] = ['x', 'y', 'thumbnail', 'updatedAt'],
+    columns?: string[],
     singleSelection = false,
   ) {
     super();
     this.#dataset = dataset;
-    this.$columns = new Stream(columns, true);
     this.singleSelection = singleSelection;
+    this.$columns = new Stream(columns || ['x', 'y', 'thumbnail', 'updatedAt'], true);
+    if (!columns) {
+      this.#dataset.ready
+        .then(() => this.#dataset.items().take(1).toArray())
+        .then(([firstInstance]) => {
+          const cols = Object.keys(firstInstance);
+          this.$columns.set(cols);
+        })
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.log('An error occured while fetching the first instance.', error);
+        });
+    }
     this.start();
   }
 

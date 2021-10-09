@@ -24,6 +24,10 @@ module.exports = {
         text: 'Examples',
         link: '/examples/',
       },
+      {
+        text: 'Credits',
+        link: '/credits/',
+      },
     ],
     sidebar: {
       '/api/': [

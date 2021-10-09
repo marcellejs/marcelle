@@ -415,13 +415,14 @@ class KerasCallback(tf.keras.callbacks.Callback)
 ### \_\_init\_\_
 
 ```python
- | __init__(backend_root="http://localhost:3030", disk_save_format="h5", remote_save_format="tfjs", model_checkpoint_freq=None, base_log_dir="marcelle-logs", run_params={})
+ | __init__(name, backend_root="http://localhost:3030", disk_save_format="h5", remote_save_format="tfjs", model_checkpoint_freq=None, base_log_dir="marcelle-logs", run_params={})
 ```
 
 A Keras Callback to store training information in a Marcelle backend and locally.
 
 **Arguments**:
 
+- `name` _str_ - The base name for the run.
 - `backend_root` _str, optional_ - The backend's root URL.
   Defaults to "http://localhost:3030".
 - `disk_save_format` _str, optional_ - Format used to store the models locally.
@@ -485,13 +486,14 @@ class Writer()
 ### \_\_init\_\_
 
 ```python
- | __init__(backend_root="http://localhost:3030", disk_save_format="h5", remote_save_format="tfjs", base_log_dir="marcelle-logs", source="keras")
+ | __init__(name, backend_root="http://localhost:3030", disk_save_format="h5", remote_save_format="tfjs", base_log_dir="marcelle-logs", source="keras")
 ```
 
 The Writer class allows to save training information locally and to a backend
 
 **Arguments**:
 
+- `name` _str_ - The base name for the run.
 - `backend_root` _str, optional_ - The backend's root URL.
   Defaults to "http://localhost:3030".
 - `disk_save_format` _str, optional_ - Format used to store the models locally.

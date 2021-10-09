@@ -30,7 +30,14 @@ const tst = datasetTable(ts, [
 
 async function loadData() {
   await ts.clear();
-  const { data: iris } = parse(irisData, { header: true, dynamicTyping: true });
+  const { data: iris, errors } = parse(irisData, { header: true, dynamicTyping: true });
+  if (errors.length > 0) {
+    for (const err of errors) {
+      if (err.code === 'TooFewFields') {
+        iris.splice(err.row, 1);
+      }
+    }
+  }
   for (const instance of iris) {
     await ts.create(instance);
   }

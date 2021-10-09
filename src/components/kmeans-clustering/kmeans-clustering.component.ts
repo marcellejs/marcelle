@@ -160,6 +160,7 @@ export class KMeansClustering extends Model<number[][], ClusteringResults> {
     return {
       name,
       files: [],
+      format: 'ml-kmeans',
       metadata: {
         clusters: this.$clusters.value,
         centers: this.$centers.value,
