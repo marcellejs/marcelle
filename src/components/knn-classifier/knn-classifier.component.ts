@@ -1,4 +1,10 @@
 import { tensor, tensor2d, Tensor2D, TensorLike } from '@tensorflow/tfjs-core';
+import '@tensorflow/tfjs-core/dist/public/chained_ops/flatten';
+import '@tensorflow/tfjs-core/dist/public/chained_ops/norm';
+import '@tensorflow/tfjs-core/dist/public/chained_ops/mat_mul';
+import '@tensorflow/tfjs-core/dist/public/chained_ops/as1d';
+import '@tensorflow/tfjs-core/dist/public/chained_ops/as2d';
+import '@tensorflow/tfjs-core/dist/public/chained_ops/as_type';
 import { KNNClassifier as TfjsKNNClassifier } from '@tensorflow-models/knn-classifier';
 import {
   Stream,
