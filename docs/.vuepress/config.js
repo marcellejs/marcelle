@@ -22,7 +22,7 @@ module.exports = {
       },
       {
         text: 'Examples',
-        link: '/examples/',
+        link: 'https://demos.marcelle.dev/',
       },
       {
         text: 'Credits',
