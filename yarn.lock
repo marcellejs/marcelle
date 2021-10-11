@@ -14436,10 +14436,10 @@ svelte-range-slider-pips@^1.7.0:
   resolved "https://registry.yarnpkg.com/svelte-range-slider-pips/-/svelte-range-slider-pips-1.8.0.tgz#cea0f95979e73918a21a4376b1d1a0cbcea2740e"
   integrity sha512-7tlTd5bXrGUbJBqL+6YJ8taN1opB2CcUSlBBh7mbpla/T6WH/CxblqnNcQX5Gwghhkol4/u4QjKLe65crLsbDg==
 
-svelte@^3.38.2:
-  version "3.43.1"
-  resolved "https://registry.yarnpkg.com/svelte/-/svelte-3.43.1.tgz#8370c08a970bcc1c118baaa86a38fae82e0a8396"
-  integrity sha512-nvPIaKx4HLzYlSdquISZpgG1Kqr2VAWQjZOt3Iwm3UhbqmA0LnSx4k1YpRMEhjQYW3ZCqQoK8Egto9tv4YewMA==
+svelte@3.39.0:
+  version "3.39.0"
+  resolved "https://registry.yarnpkg.com/svelte/-/svelte-3.39.0.tgz#35d1f18ea9be9109ff7cb54c29a913eddd151453"
+  integrity sha512-dcJCongL0cRkZWe9q+fde0T4HX8PksBywz2+EGDVIrdYdJaxTzrJu0RVeuDtL8Mx2hs4yn3W8zKPScuzG63hTg==
 
 sveltedoc-parser@^4.1.0:
   version "4.1.0"
