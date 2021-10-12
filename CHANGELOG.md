@@ -1,5 +1,10 @@
 # Marcelle changelog
 
+## 0.4.3
+
+- Fixed svelte component compilation (reverted to svelte v3.39)
+- Fixed KNN Classifier
+
 ## 0.4.2
 
 - New `trainingHistory` component to track and monitor training runs.
