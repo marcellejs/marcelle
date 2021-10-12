@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { createEventDispatcher } from 'svelte';
   import TableContentCell from './TableContentCell.svelte';
   import TableHeaderCell from './TableHeaderCell.svelte';
   import TableFooter from './TableFooter.svelte';
@@ -18,10 +18,7 @@
 
   $: data = provider.data;
   $: error = provider.error;
-
-  onMount(() => {
-    selected = selection.map((x) => get(data).indexOf(x));
-  });
+  $: selected = selection.map((x) => get(data).indexOf(x));
 
   const dispatch = createEventDispatcher();
 
@@ -93,7 +90,7 @@
             {#if !singleSelection}
               <input
                 type="checkbox"
-                checked={selected.length === $data.length}
+                checked={selected.length > 0 && selected.length === $data.length}
                 on:click={selectAll}
               />
             {/if}

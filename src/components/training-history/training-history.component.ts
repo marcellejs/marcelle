@@ -1,6 +1,7 @@
 import { Paginated, Service } from '@feathersjs/feathers';
 import { logger, Model, Component, Stream, TrainingRun, TrainingStatus } from '../../core';
 import { DataStore } from '../../core/data-store';
+import { preventConcurrentCalls } from '../../utils/asynchronicity';
 import { noop } from '../../utils/misc';
 import View from './training-history.view.svelte';
 
@@ -38,6 +39,8 @@ export class TrainingHistory<InputType, OutputType> extends Component {
   protected modelName: string;
   protected nextIndex: number;
 
+  private lock = Promise.resolve();
+
   constructor(public dataStore: DataStore, options: TrainingHistoryOptions = {}) {
     super();
     this.options = { ...defaultOptions, ...options };
@@ -71,7 +74,7 @@ export class TrainingHistory<InputType, OutputType> extends Component {
       })
       .then(({ data: foundRuns }) => {
         if (foundRuns.length > 0) {
-          return parseInt(foundRuns[0].name.split(`${name}-`)[1]) + 1;
+          return parseInt(foundRuns[0].name.split(`${basename}-`)[1]) + 1;
         }
         return 1;
       })
@@ -85,6 +88,7 @@ export class TrainingHistory<InputType, OutputType> extends Component {
     return this;
   }
 
+  @preventConcurrentCalls('lock')
   protected async trackTrainingStream(x: TrainingStatus): Promise<void> {
     if (x.status === 'start') {
       this.crtRun = await this.runService.create({
@@ -118,6 +122,10 @@ export class TrainingHistory<InputType, OutputType> extends Component {
             service: this.model.serviceName,
           },
         ]),
+      });
+    } else if (x.status === 'error') {
+      this.runService.patch(this.crtRun.id, {
+        status: x.status,
       });
     }
   }
