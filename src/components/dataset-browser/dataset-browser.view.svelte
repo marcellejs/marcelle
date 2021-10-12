@@ -171,7 +171,6 @@
       }
     });
   });
-
 </script>
 
 <svelte:window on:keydown={handleKeydown} on:keyup={handleKeyup} />
@@ -250,11 +249,10 @@
   .browser-class-body img {
     width: 60px;
     box-sizing: content-box;
-    @apply border-2 border-transparent rounded-md;
+    @apply border-solid border-2 border-transparent rounded-md;
   }
 
   .browser-class-body img.selected {
-    @apply border-teal-700;
+    @apply border-gray-600;
   }
-
 </style>
