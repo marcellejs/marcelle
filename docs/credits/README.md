@@ -14,6 +14,12 @@ This research was supported by the [ELEMENT project](https://element-project.irc
 - [Baptiste Caramiaux](https://baptistecaramiaux.com/) (CNRS researcher at [ISIR](https://hci.isir.upmc.fr/)).
 - [Téo Sanchez](https://teo-sanchez.github.io/) (PhD Student at [LISN](https://www.lisn.upsaclay.fr/))
 
+## Citing this work
+
+Please cite the following publication when refering to Marcelle in academic publications:
+
+> Jules Françoise, Baptiste Caramiaux, Téo Sanchez. **Marcelle: Composing Interactive Machine Learning Workflows and Interfaces.** Annual ACM Symposium on User Interface Software and Technology (UIST ’21), Oct 2021, Virtual. DOI: [10.1145/3472749.3474734](https://doi.org/10.1145/3472749.3474734).<br> > [PDF](https://hal.archives-ouvertes.fr/hal-03335115/document)
+
 ## Supporting institutions
 
 - [CNRS](https://www.cnrs.fr)
@@ -21,9 +27,4 @@ This research was supported by the [ELEMENT project](https://element-project.irc
 - [Sorbonne Université](https://www.sorbonne-universite.fr/)
 - [Inria](https://www.inria.fr/)
 
-## Citing this work
-
-Please cite the following publication when refering to Marcelle in academic publications:
-
-> Jules Françoise, Baptiste Caramiaux, Téo Sanchez. **Marcelle: Composing Interactive Machine Learning Workflows and Interfaces.** Annual ACM Symposium on User Interface Software and Technology (UIST ’21), Oct 2021, Virtual. DOI: [10.1145/3472749.3474734](https://doi.org/10.1145/3472749.3474734).<br>
-> [PDF](https://hal.archives-ouvertes.fr/hal-03335115/document)
+![Logos of supported institutions and projects](./logos.png)
