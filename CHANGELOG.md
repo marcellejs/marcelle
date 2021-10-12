@@ -1,5 +1,9 @@
 # Marcelle changelog
 
+## 0.4.4
+
+- Various minor bugfixes
+
 ## 0.4.3
 
 - Fixed svelte component compilation (reverted to svelte v3.39)
