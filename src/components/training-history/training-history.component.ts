@@ -44,6 +44,7 @@ export class TrainingHistory<InputType, OutputType> extends Component {
   constructor(public dataStore: DataStore, options: TrainingHistoryOptions = {}) {
     super();
     this.options = { ...defaultOptions, ...options };
+    this.lock = this.lock.then(noop);
     this.start();
     this.ready = this.ready
       .then(() => this.dataStore.connect())
