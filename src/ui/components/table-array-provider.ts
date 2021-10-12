@@ -7,6 +7,7 @@ export class TableArrayProvider<T extends Record<string, unknown>> extends Table
   constructor({ data, ...options }: TableProviderOptions & { data: Array<T> }) {
     super(options);
     this.rawData = data;
+    this.total.set(data.length);
     this.data.set(this.rawData.slice(0, this.options.itemsPerPage));
   }
 

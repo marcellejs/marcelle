@@ -1,23 +1,48 @@
 <script lang="ts">
   import type { Action } from './table-types';
-  import { get } from 'svelte/store';
   import Button from './Button.svelte';
   import Select from './Select.svelte';
   import { TableDataProvider } from './table-abstract-provider';
   import TableActions from './TableActions.svelte';
+  import { noop } from '../../utils/misc';
 
   export let provider: TableDataProvider;
   export let actions: Action[];
   export let selected: number[];
 
-  $: total = provider.total;
+  // $: total = provider.total;
   $: itemsPerPage = provider.options.itemsPerPage;
 
   let page = 1;
+  let numPages = 1;
+  let start = 0;
+  let end = 0;
+  let total = 0;
+  let unsub = noop;
 
-  $: numPages = Math.ceil($total / itemsPerPage);
-  $: start = (page - 1) * itemsPerPage + 1;
-  $: end = Math.min($total, page * itemsPerPage);
+  $: {
+    unsub();
+    unsub = provider.total.subscribe((t) => {
+      if (t === undefined || t === 0) {
+        numPages = 1;
+        start = 0;
+        end = 0;
+        total = 0;
+      } else {
+        numPages = Math.ceil(total / itemsPerPage);
+        start = (page - 1) * itemsPerPage + 1;
+        end = Math.min(total || 0, page * itemsPerPage);
+        total = t;
+      }
+    });
+  }
+
+  // $: console.log('provider', provider);
+  // $: console.log('total', total);
+  // $: console.log('$total', $total);
+  // $: numPages = $total ? Math.ceil($total / itemsPerPage) : 1;
+  // $: start = $total ? (page - 1) * itemsPerPage + 1 : 0;
+  // $: end = Math.min($total || 0, page * itemsPerPage);
 
   function gotoPage(i: number): void {
     page = i;
@@ -41,7 +66,7 @@
           options={['10', '20', '50', 'all']}
           value={itemsPerPage.toString()}
           on:change={({ detail }) => {
-            const n = detail === 'all' ? get(total) : parseInt(detail);
+            const n = detail === 'all' ? total : parseInt(detail);
             provider.paginate(n);
             itemsPerPage = n;
           }}
@@ -49,7 +74,7 @@
       </div>
     </div>
     <div class="mx-3">
-      {start}-{end} of {$total}
+      {start}-{end} of {total}
     </div>
     <Button
       round

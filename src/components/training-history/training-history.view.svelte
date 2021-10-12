@@ -47,6 +47,10 @@
     },
   });
 
+  provider.data.subscribe(() => {
+    selection.set([]);
+  });
+
   const columns: Column[] = [
     { name: 'name', sortable: true },
     { name: 'start', sortable: true, type: 'date' },
@@ -82,7 +86,7 @@
     {provider}
     actions={[
       ...actions.map((name) => (typeof name === 'string' ? { name } : name)),
-      { name: 'remove', confirm: true },
+      { name: 'delete', confirm: true },
     ]}
     bind:selection={$selection}
     bind:this={mainTable}

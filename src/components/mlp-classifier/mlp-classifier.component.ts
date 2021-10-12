@@ -20,6 +20,7 @@ import {
 import type { ServiceIterable } from '../../core/data-store/service-iterable';
 import { Dataset, isDataset } from '../../core/dataset';
 import { Catch, TrainingError } from '../../utils/error-handling';
+import { throwError } from '../../utils/error-handling';
 
 interface TrainingData {
   training_x: Tensor2D;
@@ -130,6 +131,13 @@ export class MLPClassifier extends TFJSBaseModel<TensorLike, ClassifierResults> 
       : (this.labels = Array.from(new Set(await dataset.map(({ y }) => y).toArray())));
     const ds = isDataset(dataset) ? dataset.items() : dataset;
     this.$training.set({ status: 'start', epochs: this.parameters.epochs.value });
+    if (this.labels.length === 0) {
+      throwError(new TrainingError('This dataset is empty or is missing labels'));
+      this.$training.set({
+        status: 'error',
+      });
+      return;
+    }
     setTimeout(async () => {
       const data = await dataSplit(ds, 0.75, this.labels);
       this.buildModel(data.training_x.shape[1], data.training_y.shape[1]);
