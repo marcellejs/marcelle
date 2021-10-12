@@ -17,7 +17,7 @@
     on:change={(e) => dispatch('change', e.target.value)}
   >
     {#if placeholder}
-      <option value="">{placeholder}</option>
+      <option value="" disabled>{placeholder}</option>
     {/if}
     {#each options as option}
       <option value={option}>{option}</option>
