@@ -14431,10 +14431,10 @@ svelte-preprocess@^4.7.3:
     sorcery "^0.10.0"
     strip-indent "^3.0.0"
 
-svelte-range-slider-pips@^1.7.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/svelte-range-slider-pips/-/svelte-range-slider-pips-1.8.0.tgz#cea0f95979e73918a21a4376b1d1a0cbcea2740e"
-  integrity sha512-7tlTd5bXrGUbJBqL+6YJ8taN1opB2CcUSlBBh7mbpla/T6WH/CxblqnNcQX5Gwghhkol4/u4QjKLe65crLsbDg==
+svelte-range-slider-pips@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/svelte-range-slider-pips/-/svelte-range-slider-pips-2.0.0.tgz#12316f9745a1df78394fef89168adabe73bc4979"
+  integrity sha512-Gsjznv437zHD3HJtwJ4xODoFssLWiQZ0jGuNI6n3dw2rfiRPddW+0fT8ue0FKSwqCG4QTLKcXFsS01lhYjGOQw==
 
 svelte@3.39.0:
   version "3.39.0"

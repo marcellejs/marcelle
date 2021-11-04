@@ -167,6 +167,7 @@ slider({
   pips: boolean,
   pipstep: number,
   formatter: (x: unknown) => unknown,
+  continuous: boolean,
 }): Slider;
 ```
 
@@ -174,18 +175,19 @@ A generic slider widget, allowing multiple thumbs.
 
 ### Parameters
 
-| Option    | Type                      | Description                                                                                                                                                                                                                     | Required |  Default  |
-| --------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: | :-------: |
-| values    | number[]                  | The default values                                                                                                                                                                                                              |          |   [0.2]   |
-| min       | number                    | minimum value                                                                                                                                                                                                                   |          |     0     |
-| max       | number                    | maximum value                                                                                                                                                                                                                   |          |     1     |
-| step      | number                    | step size                                                                                                                                                                                                                       |          |   0.01    |
-| range     | boolean \| 'min' \| 'max' | Specifies the slider bar display. If false, no bar is displayed. If true, the bar is displayed as a range between several values. If 'min' (resp. 'max'), the slider bar is displayed from the minimum (resp. 'maximum') value. |          |   'min'   |
-| float     | boolean                   | specifies if the value should be displayed in a floating indicator on hover                                                                                                                                                     |          |   true    |
-| vertical  | boolean                   | display the slider vertically                                                                                                                                                                                                   |          |   false   |
-| pips      | boolean                   | display pips (ticks)                                                                                                                                                                                                            |          |   false   |
-| pipstep   | number                    | Pip step size                                                                                                                                                                                                                   |          | undefined |
-| formatter | (x: unknown) => unknown   | The function used for formatting the pips and floating indicator                                                                                                                                                                |          | (x) => x  |
+| Option     | Type                      | Description                                                                                                                                                                                                                     | Required |  Default  |
+| ---------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: | :-------: |
+| values     | number[]                  | The default values                                                                                                                                                                                                              |          |   [0.2]   |
+| min        | number                    | minimum value                                                                                                                                                                                                                   |          |     0     |
+| max        | number                    | maximum value                                                                                                                                                                                                                   |          |     1     |
+| step       | number                    | step size                                                                                                                                                                                                                       |          |   0.01    |
+| range      | boolean \| 'min' \| 'max' | Specifies the slider bar display. If false, no bar is displayed. If true, the bar is displayed as a range between several values. If 'min' (resp. 'max'), the slider bar is displayed from the minimum (resp. 'maximum') value. |          |   'min'   |
+| float      | boolean                   | specifies if the value should be displayed in a floating indicator on hover                                                                                                                                                     |          |   true    |
+| vertical   | boolean                   | display the slider vertically                                                                                                                                                                                                   |          |   false   |
+| pips       | boolean                   | display pips (ticks)                                                                                                                                                                                                            |          |   false   |
+| pipstep    | number                    | Pip step size                                                                                                                                                                                                                   |          | undefined |
+| formatter  | (x: unknown) => unknown   | The function used for formatting the pips and floating indicator                                                                                                                                                                |          | (x) => x  |
+| continuous | boolean                   | Specify if values should be update continuously or on mouse release.                                                                                                                                                            |          |   true    |
 
 ### Streams
 
