@@ -7,24 +7,28 @@ sidebarDepth: 3
 ## button
 
 ```tsx
-button({ text: string }): Button;
+button(text?: string): Button;
 ```
 
 A generic GUI button component.
 
 ### Parameters
 
-| Option | Type            | Description            | Required |
-| ------ | --------------- | ---------------------- | :------: |
-| text   | string/function | The text of the button |          |
+| Option | Type   | Description            | Required |
+| ------ | ------ | ---------------------- | :------: |
+| text   | string | The text of the button |          |
 
 ### Streams
 
-| Name      | Type      | Description                                                 | Hold |
-| --------- | --------- | ----------------------------------------------------------- | :--: |
-| \$click   | undefined | Stream of click events                                      |      |
-| \$pressed | boolean   | Stream of binary events indicating is the button is pressed |      |
-| \$text    | boolean   | Stream defining the button text                             |      |
+| Name       | Type                                            | Description                                                         | Hold |
+| ---------- | ----------------------------------------------- | ------------------------------------------------------------------- | :--: |
+| \$text     | string                                          | Stream defining the button text                                     |  ✓   |
+| \$type     | 'default' \| 'success' \| 'warning' \| 'danger' | Stream defining the button type                                     |  ✓   |
+| \$click    | undefined                                       | Stream of click events                                              |      |
+| \$pressed  | boolean                                         | Stream of binary events indicating if the button is pressed         |  ✓   |
+| \$loading  | boolean                                         | Stream of binary events indicating if the button is in loading mode |  ✓   |
+| \$loading  | boolean                                         | Stream of binary events indicating if the button is in loading mode |  ✓   |
+| \$disabled | boolean                                         | Stream defining if the input is disabled.                           |  ✓   |
 
 ### Screenshot
 
@@ -35,7 +39,7 @@ A generic GUI button component.
 ### Example
 
 ```js
-const capture = button({ text: 'Hold to record instances' });
+const capture = button('Hold to record instances');
 capture.title = 'Capture instances to the training set';
 
 capture.$click.subscribe((x) => console.log('button $click:', x));

@@ -27,7 +27,7 @@ const featureExtractor = mobileNet();
 
 const label = textInput();
 label.title = 'Instance label';
-const capture = button({ text: 'Hold to record instances' });
+const capture = button('Hold to record instances');
 capture.title = 'Capture instances to the training set';
 
 const store = dataStore('localStorage');
@@ -48,7 +48,7 @@ input.$images
 // TRAINING
 // -----------------------------------------------------------
 
-const b = button({ text: 'Train' });
+const b = button('Train');
 b.title = 'Training k-means';
 
 const clusteringKMeans = kmeansClustering({ k: 3, dataStore: store });

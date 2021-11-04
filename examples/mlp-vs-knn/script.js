@@ -29,7 +29,7 @@ const featureExtractor = mobileNet();
 
 const label = textInput();
 label.title = 'Instance label';
-const capture = button({ text: 'Hold to record instances' });
+const capture = button('Hold to record instances');
 capture.title = 'Capture instances to the training set';
 
 const store = dataStore('localStorage');
@@ -50,7 +50,7 @@ input.$images
 // TRAINING
 // -----------------------------------------------------------
 
-const b = button({ text: 'Train' });
+const b = button('Train');
 b.title = 'Training Launcher';
 
 // KNN
@@ -82,8 +82,8 @@ b.$click.subscribe(() => {
 
 const batchMLP = batchPrediction({ name: 'mlp', dataStore: store });
 const batchKNN = batchPrediction({ name: 'knn', dataStore: store });
-const predictButton = button({ text: 'Update predictions' });
-const predictionAccuracy = text({ text: 'Waiting for predictions...' });
+const predictButton = button('Update predictions');
+const predictionAccuracy = text('Waiting for predictions...');
 const confusionMLP = confusionMatrix(batchMLP);
 confusionMLP.title = 'MLP: Confusion Matrix';
 const confusionKNN = confusionMatrix(batchKNN);

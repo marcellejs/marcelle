@@ -3,10 +3,6 @@ import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
 import View from './button.view.svelte';
 
-export interface ButtonOptions {
-  text: string;
-}
-
 export class Button extends Component {
   title = 'button';
 
@@ -14,14 +10,16 @@ export class Button extends Component {
   $click = new Stream<CustomEvent<unknown>>(never());
   $pressed = new Stream(false, true);
   $loading = new Stream(false, true);
-  $disabled: Stream<boolean>;
+  $disabled: Stream<boolean> = new Stream<boolean>(false, true);
   $type = new Stream<'default' | 'success' | 'warning' | 'danger'>('default', true);
 
-  constructor({ text = 'click me' }: Partial<ButtonOptions> = {}) {
+  constructor(text = 'click me') {
     super();
     this.$text = new Stream(text, true);
-    this.$disabled = new Stream(this.$loading, true);
     this.start();
+    this.$loading.skip(1).subscribe((loading) => {
+      this.$disabled.set(loading);
+    });
   }
 
   mount(target?: HTMLElement): void {

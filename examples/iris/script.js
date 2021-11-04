@@ -43,7 +43,7 @@ async function loadData() {
   }
 }
 
-const loadDataBtn = button({ text: 'Load Data' });
+const loadDataBtn = button('Load Data');
 loadDataBtn.$click.subscribe(loadData);
 
 const info = text({ text: 'The dataset is empty' });
@@ -69,7 +69,7 @@ function processDataset() {
   }));
 }
 
-const trainBtn = button({ text: 'Train the classifier' });
+const trainBtn = button('Train the classifier');
 trainBtn.$click.subscribe(() => {
   const ds = processDataset();
   classifier.train(ds);
@@ -119,7 +119,7 @@ const $predictions = sepalLength.$values
 const predViz = confidencePlot($predictions);
 
 const bp = batchPrediction({ name: 'iris-predictions' });
-const batchButton = button({ text: 'Update Predictions' });
+const batchButton = button('Update Predictions');
 batchButton.title = 'Batch prediction';
 batchButton.$click.subscribe(() => {
   bp.predict(classifier, processDataset());

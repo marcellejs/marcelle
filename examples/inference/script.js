@@ -63,7 +63,7 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 // -----------------------------------------------------------
 
 const batchTesting = batchPrediction({ name: 'mobileNet', dataStore: store });
-const predictButton = button({ text: 'Update predictions' });
+const predictButton = button('Update predictions');
 const predictionAccuracy = text({ text: 'Waiting for predictions...' });
 const confMat = confusionMatrix(batchTesting);
 confMat.title = 'Mobilenet: Confusion Matrix';

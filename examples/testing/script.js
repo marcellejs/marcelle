@@ -36,7 +36,7 @@ const instances = source.$thumbnails.map((thumbnail) => ({
 const store = dataStore('memory');
 const trainingSet = dataset('TrainingSet', store);
 
-const tog = toggle({ text: 'Capture to dataset' });
+const tog = toggle('Capture to dataset');
 tog.$checked.skipRepeats().subscribe((x) => {
   if (x) {
     trainingSet.capture(instances);
@@ -52,8 +52,8 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 // -----------------------------------------------------------
 
 const batchTesting = batchPrediction({ name: 'mobileNet', dataStore: store });
-const predictButton = button({ text: 'Update predictions' });
-const predictionAccuracy = text({ text: 'Waiting for predictions...' });
+const predictButton = button('Update predictions');
+const predictionAccuracy = text('Waiting for predictions...');
 const confMat = confusionMatrix(batchTesting);
 confMat.title = 'Mobilenet: Confusion Matrix';
 
@@ -80,14 +80,14 @@ const plotResults = confidencePlot(predictionStream);
 
 const instanceViewer = imageDisplay(source.$images);
 
-const buttonCorrect = button({ text: 'Yes! 😛' });
+const buttonCorrect = button('Yes! 😛');
 buttonCorrect.title = '';
-const buttonIncorrect = button({ text: 'No... 🤔' });
+const buttonIncorrect = button('No... 🤔');
 buttonIncorrect.title = '';
 
 let numCorrect = 0;
 let numIncorrect = 0;
-const quality = text({ text: 'Waiting for predictions...' });
+const quality = text('Waiting for predictions...');
 function updateQuality() {
   const percent = (100 * numCorrect) / (numCorrect + numIncorrect);
   quality.$text.set(

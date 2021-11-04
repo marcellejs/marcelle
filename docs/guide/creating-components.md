@@ -255,7 +255,7 @@ Let's add a button to our dashboard to trigger an update of our component. When 
 ```js{1,3-6,13}
 const trainingSetUmap = umap(trainingSet);
 
-const updateUMap = button({ text: 'Update Visualization' });
+const updateUMap = button('Update Visualization');
 updateUMap.$click.subscribe(() => {
   trainingSetUmap.update();
 });

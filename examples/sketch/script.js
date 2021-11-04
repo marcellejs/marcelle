@@ -30,7 +30,7 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 const labelField = textInput();
 labelField.title = 'Correct the prediction if necessary';
 labelField.$text.set('...');
-const addToDataset = button({ text: 'Add to Dataset and Train' });
+const addToDataset = button('Add to Dataset and Train');
 addToDataset.title = 'Improve the classifier';
 
 const $instances = input.$images
@@ -50,7 +50,7 @@ addToDataset.$click
 // TRAINING
 // -----------------------------------------------------------
 
-const b = button({ text: 'Train' });
+const b = button('Train');
 const classifier = mlpClassifier({ layers: [64, 32], epochs: 20, dataStore: store });
 classifier.sync('sketch-classifier');
 

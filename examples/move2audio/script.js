@@ -30,7 +30,7 @@ const featureExtractor = mobileNet();
 
 const labelInput = textInput();
 labelInput.title = 'Instance label';
-const capture = button({ text: 'Hold to record instances' });
+const capture = button('Hold to record instances');
 capture.title = 'Capture instances to the training set';
 
 const store = dataStore('localStorage');
@@ -51,7 +51,7 @@ input.$images
 // TRAINING
 // -----------------------------------------------------------
 
-const b = button({ text: 'Train' });
+const b = button('Train');
 const classifier = mlpClassifier({ layers: [64, 32], epochs: 20, dataStore: store });
 classifier.sync('move2audio-classifier');
 b.$click.subscribe(() => classifier.train(trainingSet));
@@ -67,7 +67,7 @@ const plotTraining = trainingPlot(classifier);
 const batchMLP = batchPrediction({ name: 'mlp', dataStore: store });
 const confMat = confusionMatrix(batchMLP);
 
-const predictButton = button({ text: 'Update predictions' });
+const predictButton = button('Update predictions');
 predictButton.$click.subscribe(async () => {
   await batchMLP.clear();
   await batchMLP.predict(classifier, trainingSet);
@@ -109,7 +109,7 @@ dash.settings.dataStores(store).datasets(trainingSet).models(classifier);
 // WIZARD
 // -----------------------------------------------------------
 
-const wizardButton = button({ text: 'Record Examples (class a)' });
+const wizardButton = button('Record Examples (class a)');
 const wizardText = text({ text: 'Waiting for examples...' });
 wizardButton.$pressed.subscribe((x) => {
   capture.$pressed.set(x);

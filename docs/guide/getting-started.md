@@ -217,7 +217,7 @@ myDashboard.page('Data Management').sidebar(input, featureExtractor).use(label, 
 If you draw on the sketchpad, you will notice that an instance is recorded at every stroke, because the dataset is capturing all instances coming from the sketchpad. To give the user more control over what is captured as training data, we can create a [button](../api/components/widgets.html#button) to capture particular drawings.
 
 ```js
-const capture = marcelle.button({ text: 'Click to record an instance' });
+const capture = marcelle.button('Click to record an instance');
 capture.title = 'Capture instances to the training set';
 
 // ...
@@ -256,7 +256,7 @@ const classifier = marcelle.mlpClassifier({ layers: [32, 32], epochs: 20 });
 To start training, a button is added on the interface:
 
 ```js{8}
-const trainingButton = marcelle.button({ text: 'Train' });
+const trainingButton = marcelle.button('Train');
 
 // ...
 
@@ -335,7 +335,7 @@ const featureExtractor = marcelle.mobileNet();
 const label = marcelle.textInput();
 label.title = 'Instance label';
 
-const capture = marcelle.button({ text: 'Click to record an instance' });
+const capture = marcelle.button('Click to record an instance');
 capture.title = 'Capture instances to the training set';
 
 const $instances = capture.$click
@@ -355,7 +355,7 @@ $instances.subscribe(trainingSet.create.bind(trainingSet));
 const trainingSetBrowser = marcelle.datasetBrowser(trainingSet);
 
 const classifier = marcelle.mlpClassifier({ layers: [32, 32], epochs: 20 });
-const trainingButton = marcelle.button({ text: 'Train' });
+const trainingButton = marcelle.button('Train');
 
 trainingButton.$click.subscribe(() => {
   classifier.train(trainingSet);
