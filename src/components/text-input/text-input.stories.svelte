@@ -1,19 +1,18 @@
 <script>
   import { Meta, Template, Story } from '@storybook/addon-svelte-csf';
-  import { textField } from './';
+  import { textInput } from '.';
   import { onMount } from 'svelte';
 
-  const t = textField();
-  t.title = "The textField's title";
+  const t = textInput();
+  t.title = "The textInput's title";
 
   onMount(() => {
     t.mount();
   });
-
 </script>
 
 <Meta
-  title="Components/TextField"
+  title="Components/TextInput"
   parameters={{ backgrounds: { default: 'dashboard' } }}
   argTypes={{
     width: {

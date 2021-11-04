@@ -40,4 +40,10 @@
   input:invalid:focus {
     @apply ring-red-300;
   }
+
+  input:disabled,
+  input[disabled],
+  input:hover[disabled] {
+    @apply bg-white text-gray-300 border-gray-300 cursor-not-allowed ring-0;
+  }
 </style>

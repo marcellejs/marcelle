@@ -4,13 +4,14 @@
   import Input from '../../ui/components/Input.svelte';
 
   export let title: string;
-  export let text: Stream<string>;
+  export let value: Stream<string>;
+  export let disabled: Stream<boolean>;
 </script>
 
 <ViewContainer {title}>
   <div class="w-full max-w-sm">
     <div class="md:flex md:items-center mb-2">
-      <Input type="text" placeholder="Enter a label.." bind:value={$text} />
+      <Input type="text" placeholder="Enter a label.." bind:value={$value} disabled={$disabled} />
     </div>
   </div>
 </ViewContainer>

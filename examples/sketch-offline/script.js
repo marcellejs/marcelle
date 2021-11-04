@@ -13,7 +13,7 @@ import {
   confidencePlot,
   trainingProgress,
   sketchPad,
-  textField,
+  textInput,
   toggle,
   trainingPlot,
   throwError,
@@ -26,7 +26,7 @@ import {
 const input = sketchPad();
 const featureExtractor = mobileNet();
 
-const label = textField();
+const label = textInput();
 label.title = 'Instance label';
 const capture = button({ text: 'Capture this drawing' });
 capture.title = 'Capture instances to the training set';

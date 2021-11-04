@@ -160,10 +160,10 @@ const $instances = input.$images
   .awaitPromises();
 ```
 
-Instances have few properties. In this example, we see that the label is specified by a string that we 'hard-coded' to `test`. In an application, a label can be provided by the user through a [textfield](../api/components/widgets.html#textfield) on the interface:
+Instances have few properties. In this example, we see that the label is specified by a string that we 'hard-coded' to `test`. In an application, a label can be provided by the user through a [textInput](../api/components/widgets.html#textinput) on the interface:
 
 ```js
-const label = marcelle.textField();
+const label = marcelle.textInput();
 label.title = 'Instance label';
 ```
 
@@ -173,7 +173,7 @@ Let's add the text field to the dashboard page using the dashboard's `.use()` me
 myDashboard.page('Data Management').sidebar(input, featureExtractor).use(label);
 ```
 
-The textfield component exposes a `$text` stream that emits values whenever the user input changes. Let's log it to the console:
+The textInput component exposes a `$text` stream that emits values whenever the user input changes. Let's log it to the console:
 
 ```js
 label.$text.subscribe((currentInput) => {
@@ -332,7 +332,7 @@ import * as marcelle from '@marcellejs/core';
 const input = marcelle.sketchPad();
 const featureExtractor = marcelle.mobileNet();
 
-const label = marcelle.textField();
+const label = marcelle.textInput();
 label.title = 'Instance label';
 
 const capture = marcelle.button({ text: 'Click to record an instance' });

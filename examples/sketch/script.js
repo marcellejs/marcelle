@@ -12,7 +12,7 @@ import {
   notification,
   trainingProgress,
   sketchPad,
-  textField,
+  textInput,
   trainingPlot,
 } from '../../dist/marcelle.esm';
 
@@ -27,7 +27,7 @@ const store = dataStore('localStorage');
 const trainingSet = dataset('TrainingSet-sketch', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
-const labelField = textField();
+const labelField = textInput();
 labelField.title = 'Correct the prediction if necessary';
 labelField.$text.set('...');
 const addToDataset = button({ text: 'Add to Dataset and Train' });

@@ -249,21 +249,28 @@ const t = text({
 ## textInput
 
 ```tsx
-textInput(): Textfield;
+textInput(defaultValue?: string): TextInput;
 ```
 
-A generic GUI text field (input) component.
+A generic GUI text input component.
+
+### Parameters
+
+| Option       | Type   | Description   | Required |
+| ------------ | ------ | ------------- | :------: |
+| defaultValue | string | Initial value |          |
 
 ### Streams
 
-| Name   | Type    | Description                       | Hold |
-| ------ | ------- | --------------------------------- | :--: |
-| \$text | boolean | Stream defining the input's value |      |
+| Name       | Type    | Description                               | Hold |
+| ---------- | ------- | ----------------------------------------- | :--: |
+| \$value    | string  | Stream defining the input's value         |  ✓   |
+| \$disabled | boolean | Stream defining if the toggle is disabled |  ✓   |
 
 ### Screenshot
 
 <div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
-  <img src="./images/textfield.png" alt="Screenshot of the textfield component">
+  <img src="./images/text-input.png" alt="Screenshot of the text-input component">
 </div>
 
 ### Example

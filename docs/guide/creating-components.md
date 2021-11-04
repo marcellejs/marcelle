@@ -44,7 +44,7 @@ import {
   dataStore,
   dashboard,
   text,
-  textField,
+  textInput,
   imageUpload,
 } from '@marcellejs/core';
 
@@ -55,7 +55,7 @@ import {
 const input = imageUpload();
 const featureExtractor = mobileNet();
 
-const label = textField({ text: 'cat' });
+const label = textInput('cat');
 label.title = 'Label (to record in the dataset)';
 
 const $instances = input.$images

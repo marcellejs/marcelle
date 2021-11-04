@@ -14,7 +14,7 @@ import {
   confidencePlot,
   trainingProgress,
   text,
-  textField,
+  textInput,
   toggle,
   trainingPlot,
   webcam,
@@ -28,7 +28,7 @@ import {
 const input = webcam();
 const featureExtractor = mobileNet();
 
-const labelInput = textField();
+const labelInput = textInput();
 labelInput.title = 'Instance label';
 const capture = button({ text: 'Hold to record instances' });
 capture.title = 'Capture instances to the training set';

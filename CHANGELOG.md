@@ -2,7 +2,9 @@
 
 ## Next
 
-- Improved `modelParameters` to support other types
+- `modelParameters` was improved to support other types
+- New widgets (components): `number` and `numberArray`
+- `textField` was updated to `textInput` and its API was updated (`$value` stream instead of `$text`)
 
 ## 0.4.4
 

@@ -23,7 +23,7 @@ export * from './select';
 export * from './sketch-pad';
 export * from './slider';
 export * from './text';
-export * from './text-field';
+export * from './text-input';
 export * from './tfjs-model';
 export * from './toggle';
 export * from './training-history';
