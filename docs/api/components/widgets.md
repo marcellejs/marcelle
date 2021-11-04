@@ -121,7 +121,7 @@ neuronsPerLayer.$value.subscribe(console.log);
 ## select
 
 ```tsx
-select({ options: string[], value?: string }): Select;
+select(options: string[], value?: string): Select;
 ```
 
 A generic GUI Select component.
@@ -131,7 +131,7 @@ A generic GUI Select component.
 | Option  | Type     | Description                                      | Required |
 | ------- | -------- | ------------------------------------------------ | :------: |
 | options | string[] | The select menu options                          |    ✓     |
-| value   | string   | The default value (by default, the first option) |    ✓     |
+| value   | string   | The default value (by default, the first option) |          |
 
 ### Streams
 
@@ -149,7 +149,7 @@ A generic GUI Select component.
 ### Example
 
 ```js
-const sel = select({ options: ['one', 'two', 'three'], value: 'two' });
+const sel = select(['one', 'two', 'three'], 'two');
 sel.$value.subscribe((x) => console.log('sel $value:', x));
 ```
 

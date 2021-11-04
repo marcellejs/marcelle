@@ -3,13 +3,12 @@
   import { select } from './';
   import { onMount } from 'svelte';
 
-  const s = select({ options: ['circle', 'square', 'triangle'] });
+  const s = select(['circle', 'square', 'triangle']);
   s.title = "The select's title";
 
   onMount(() => {
     s.mount();
   });
-
 </script>
 
 <Meta

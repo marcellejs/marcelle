@@ -1,7 +1,7 @@
-import { Select, SelectOptions } from './select.component';
+import { Select } from './select.component';
 
-export function select(options: Partial<SelectOptions>): Select {
-  return new Select(options);
+export function select(...args: ConstructorParameters<typeof Select>): Select {
+  return new Select(...args);
 }
 
-export type { Select, SelectOptions };
+export type { Select };
