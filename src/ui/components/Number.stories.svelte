@@ -1,8 +1,6 @@
 <script>
   import { Meta, Template, Story } from '@storybook/addon-svelte-csf';
-  import { Stream } from '../../core';
   import Number from './Number.svelte';
-
 </script>
 
 <Meta
@@ -20,6 +18,13 @@
 <Story
   name="Default"
   args={{
-    stream: new Stream(12),
+    value: 12,
+  }}
+/>
+
+<Story
+  name="Float"
+  args={{
+    value: 12.345,
   }}
 />

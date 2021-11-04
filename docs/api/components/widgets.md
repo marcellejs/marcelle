@@ -7,7 +7,7 @@ sidebarDepth: 3
 ## button
 
 ```tsx
-marcelle.button({ text: string }): Button;
+button({ text: string }): Button;
 ```
 
 A generic GUI button component.
@@ -35,16 +35,89 @@ A generic GUI button component.
 ### Example
 
 ```js
-const capture = marcelle.button({ text: 'Hold to record instances' });
-capture.name = 'Capture instances to the training set';
+const capture = button({ text: 'Hold to record instances' });
+capture.title = 'Capture instances to the training set';
 
 capture.$click.subscribe((x) => console.log('button $click:', x));
+capture.$pressed.subscribe((x) => console.log('button $pressed:', x));
+```
+
+## number
+
+```tsx
+number(defaultValue?: number): Number;
+```
+
+A generic GUI number input component.
+
+### Parameters
+
+| Option       | Type   | Description                   | required |
+| ------------ | ------ | ----------------------------- | :------: |
+| defaultValue | number | Initial value. Defaults to 0. |          |
+
+### Streams
+
+| Name       | Type    | Description                               | Hold |
+| ---------- | ------- | ----------------------------------------- | :--: |
+| \$value    | number  | Stream defining the input's value         |  ✓   |
+| \$disabled | boolean | Stream defining if the input is disabled. |  ✓   |
+
+### Screenshot
+
+<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
+  <img src="./images/number.png" alt="Screenshot of the number component">
+</div>
+
+### Example
+
+```js
+const epochs = number(30);
+epochs.title = 'Number of Epochs';
+
+epochs.$value.subscribe(console.log);
+```
+
+## numberArray
+
+```tsx
+numberArray(defaultValue?: number[]): NumberArray;
+```
+
+A generic GUI number array input component.
+
+### Parameters
+
+| Option       | Type     | Description                    | required |
+| ------------ | -------- | ------------------------------ | :------: |
+| defaultValue | number[] | Initial value. Defaults to []. |          |
+
+### Streams
+
+| Name       | Type     | Description                               | Hold |
+| ---------- | -------- | ----------------------------------------- | :--: |
+| \$value    | number[] | Stream defining the input's value         |  ✓   |
+| \$disabled | boolean  | Stream defining if the input is disabled. |  ✓   |
+
+### Screenshot
+
+<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
+  <img src="./images/number-array.png" alt="Screenshot of the number-array component">
+</div>
+
+### Example
+
+```js
+const neuronsPerLayer = numberArray([64, 32, 16]);
+neuronsPerLayer.title = 'Number of Neurons per Layer';
+
+neuronsPerLayer.$value.subscribe(console.log);
 ```
 
 ## select
 
 ```tsx
-marcelle.select({ options: string[], value?: string }): Select;
+select({ options: string[], value?: string }): Select;
 ```
 
 A generic GUI Select component.
@@ -72,7 +145,7 @@ A generic GUI Select component.
 ### Example
 
 ```js
-const sel = marcelle.select({ options: ['one', 'two', 'three'], value: 'two' });
+const sel = select({ options: ['one', 'two', 'three'], value: 'two' });
 sel.$value.subscribe((x) => console.log('sel $value:', x));
 ```
 
@@ -128,7 +201,7 @@ A generic slider widget, allowing multiple thumbs.
 ### Example
 
 ```js
-const slider = marcelle.slider({
+const slider = slider({
   values: [2, 8],
   min: 0,
   max: 10,
@@ -142,7 +215,7 @@ slider.$values.subscribe((x) => console.log('slider $values:', x));
 ## text
 
 ```tsx
-marcelle.text({ text: string }): Text;
+text({ text: string }): Text;
 ```
 
 A generic GUI text display component accepting HTL strings.
@@ -168,7 +241,7 @@ A generic GUI text display component accepting HTL strings.
 ### Example
 
 ```js
-const t = marcelle.text({
+const t = text({
   text: 'Just some <strong>HTML</strong> text content... Accepts HTML: <button class="btn">button</button>',
 });
 ```
@@ -176,7 +249,7 @@ const t = marcelle.text({
 ## textInput
 
 ```tsx
-marcelle.textInput(): Textfield;
+textInput(): Textfield;
 ```
 
 A generic GUI text field (input) component.
@@ -196,8 +269,8 @@ A generic GUI text field (input) component.
 ### Example
 
 ```js
-const label = marcelle.textInput();
-label.name = 'Instance label';
+const label = textInput();
+label.title = 'Instance label';
 
 label.$text.subscribe(console.log);
 label.$text.set('myLabel');
@@ -206,7 +279,7 @@ label.$text.set('myLabel');
 ## toggle
 
 ```tsx
-marcelle.toggle({ text: string }): Toggle;
+toggle({ text: string }): Toggle;
 ```
 
 A generic GUI toggle (switch) component.
@@ -234,6 +307,6 @@ A generic GUI toggle (switch) component.
 ### Example
 
 ```js
-const tog = marcelle.toggle({ text: 'Toggle Real-Time Prediction' });
+const tog = toggle({ text: 'Toggle Real-Time Prediction' });
 tog.$checked.subscribe((x) => console.log('toggle $checked:', x));
 ```

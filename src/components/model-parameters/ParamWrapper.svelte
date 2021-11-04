@@ -17,9 +17,9 @@
   {:else if spec.type === 'boolean' || (spec.type === 'auto' && typeof stream.value === 'boolean')}
     <Switch bind:checked={$stream} />
   {:else if spec.type === 'number' || (spec.type === 'auto' && typeof stream.value === 'number')}
-    <Number {stream} />
+    <Number bind:value={$stream} />
   {:else if spec.type === 'number array' || (spec.type === 'auto' && Array.isArray(stream.value) && stream.value.length && typeof stream.value[0] === 'number')}
-    <NumberArray {stream} />
+    <NumberArray bind:value={$stream} />
   {:else}
     <Input type="text" bind:value={$stream} />
   {/if}

@@ -1,18 +1,14 @@
-<svelte:options accessors />
-
 <script lang="ts">
-  import type { Stream } from '../../core/stream';
-
   export let disabled = false;
-  export let stream: Stream<number>;
+  export let value: number;
 
   function changeValue(e: Event) {
     const target = e.target as HTMLInputElement;
     const x = parseFloat(target.value);
     if (!Number.isNaN(x)) {
-      stream.set(x);
+      value = x;
     } else {
-      target.value = stream.value.toString();
+      target.value = value.toString();
     }
   }
 </script>
@@ -20,7 +16,7 @@
 <div class="flex">
   <button
     on:click={() => {
-      stream.set(stream.value - 1);
+      value -= 1;
     }}
     {disabled}
     class="left"
@@ -28,16 +24,16 @@
     -
   </button>
   <input
-    type="text"
+    type="number"
     inputmode="decimal"
-    value={$stream}
+    {value}
     {disabled}
     on:change={changeValue}
     style="width: 80px"
   />
   <button
     on:click={() => {
-      stream.set(stream.value + 1);
+      value += 1;
     }}
     {disabled}
     class="right"
@@ -72,6 +68,18 @@
   input[disabled],
   input:hover[disabled] {
     @apply bg-white text-gray-300 border-gray-300 cursor-not-allowed ring-0;
+  }
+
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type='number'] {
+    -moz-appearance: textfield;
   }
 
   button {

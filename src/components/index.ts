@@ -16,6 +16,8 @@ export * from './knn-classifier';
 export * from './mlp-classifier';
 export * from './mobile-net';
 export * from './model-parameters';
+export * from './number';
+export * from './number-array';
 export * from './scatter-plot';
 export * from './select';
 export * from './sketch-pad';

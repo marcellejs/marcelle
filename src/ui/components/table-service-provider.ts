@@ -66,7 +66,6 @@ export class TableServiceProvider<
       });
       this.data.set(data);
       this.total.set(res.total);
-      console.log('res.total', res.total);
       this.error.set(null);
     } catch (error) {
       this.data.set([]);
