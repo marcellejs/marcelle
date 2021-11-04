@@ -1,5 +1,7 @@
-import { Toggle, ToggleOptions } from './toggle.component';
+import { Toggle } from './toggle.component';
 
-export function toggle(options: Partial<ToggleOptions>): Toggle {
-  return new Toggle(options);
+export function toggle(text?: string): Toggle {
+  return new Toggle(text);
 }
+
+export type { Toggle };

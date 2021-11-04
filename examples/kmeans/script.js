@@ -83,7 +83,7 @@ const clusteringScatterPlot = scatterPlot(featureStream, clusteringKMeans.$clust
 // REALTIME CLUSTER PREDICTION
 // -----------------------------------------------------------
 
-const tog = toggle({ text: 'toggle prediction' });
+const tog = toggle('toggle prediction');
 tog.$checked.subscribe((checked) => {
   if (checked && !clusteringKMeans.ready) {
     throwError(new Error('No classifier has been trained'));

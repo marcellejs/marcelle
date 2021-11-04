@@ -290,24 +290,24 @@ label.$value.subscribe(console.log);
 ## toggle
 
 ```tsx
-toggle({ text: string }): Toggle;
+toggle(text?: string): Toggle;
 ```
 
 A generic GUI toggle (switch) component.
 
 ### Parameters
 
-| Option | Type            | Description             | Required |
-| ------ | --------------- | ----------------------- | :------: |
-| text   | string/function | The text of the togggle |          |
+| Option | Type   | Description             | Required |
+| ------ | ------ | ----------------------- | :------: |
+| text   | string | The text of the togggle |          |
 
 ### Streams
 
 | Name       | Type    | Description                               | Hold |
 | ---------- | ------- | ----------------------------------------- | :--: |
-| \$text     | boolean | Stream defining the toggle text           |      |
-| \$checked  | boolean | Stream defining if the toggle is checked  |      |
-| \$disabled | boolean | Stream defining if the toggle is disabled |      |
+| \$text     | boolean | Stream defining the toggle text           |  ✓   |
+| \$checked  | boolean | Stream defining if the toggle is checked  |  ✓   |
+| \$disabled | boolean | Stream defining if the toggle is disabled |  ✓   |
 
 ### Screenshot
 
@@ -318,6 +318,6 @@ A generic GUI toggle (switch) component.
 ### Example
 
 ```js
-const tog = toggle({ text: 'Toggle Real-Time Prediction' });
+const tog = toggle('Toggle Real-Time Prediction');
 tog.$checked.subscribe((x) => console.log('toggle $checked:', x));
 ```

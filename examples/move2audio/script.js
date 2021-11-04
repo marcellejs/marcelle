@@ -77,7 +77,7 @@ predictButton.$click.subscribe(async () => {
 // REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
-const tog = toggle({ text: 'toggle prediction' });
+const tog = toggle('toggle prediction');
 
 const $predictions = input.$images
   .filter(() => tog.$checked.value)

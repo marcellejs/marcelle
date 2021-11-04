@@ -100,7 +100,7 @@ predictButton.$click.subscribe(async () => {
 // PREDICTION
 // -----------------------------------------------------------
 
-const tog = toggle({ text: 'toggle prediction' });
+const tog = toggle('toggle prediction');
 
 const rtFeatureStream = input.$images
   .filter(() => tog.$checked.value)

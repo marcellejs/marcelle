@@ -47,7 +47,7 @@ const instances = source.$thumbnails.map((thumbnail) => ({
 const store = dataStore('memory');
 const trainingSet = dataset('TrainingSet-inference', store);
 
-const tog = toggle({ text: 'Capture to dataset' });
+const tog = toggle('Capture to dataset');
 tog.$checked.skipRepeats().subscribe((x) => {
   if (x) {
     trainingSet.capture(instances);

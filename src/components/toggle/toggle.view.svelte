@@ -7,9 +7,8 @@
   export let text: Stream<string>;
   export let checked: Stream<boolean>;
   export let disabled: Stream<boolean>;
-
 </script>
 
 <ViewContainer {title}>
-  <Switch bind:checked={$checked} bind:disabled={$disabled} bind:text={$text} />
+  <Switch bind:checked={$checked} disabled={$disabled} text={$text} />
 </ViewContainer>

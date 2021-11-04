@@ -5,7 +5,7 @@
 - `modelParameters` was improved to support other types
 - New widgets (components): `number` and `numberArray`
 - `textField` was updated to `textInput` and its API was updated (`$value` stream instead of `$text`)
-- `button`, `text`: minor API changes (simplified constructors)
+- `button`, `text`, `toggle`: minor API changes (simplified constructors)
 
 ## 0.4.4
 

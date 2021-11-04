@@ -3,13 +3,12 @@
   import { toggle } from './';
   import { onMount } from 'svelte';
 
-  const t = toggle();
+  const t = toggle('Hello');
   t.title = "The toggle's title";
 
   onMount(() => {
     t.mount();
   });
-
 </script>
 
 <Meta

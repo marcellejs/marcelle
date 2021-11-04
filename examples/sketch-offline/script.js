@@ -80,7 +80,7 @@ predictButton.$click.subscribe(async () => {
 // REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
-const tog = toggle({ text: 'toggle prediction' });
+const tog = toggle('toggle prediction');
 tog.$checked.subscribe((checked) => {
   if (checked && !classifier.ready) {
     throwError(new Error('No classifier has been trained'));
