@@ -2,7 +2,6 @@
   export let text = '';
   export let checked = false;
   export let disabled = false;
-
 </script>
 
 <label class="marcelle">
@@ -53,5 +52,4 @@
   input[type='checkbox']:active + .switch .track {
     @apply ring;
   }
-
 </style>

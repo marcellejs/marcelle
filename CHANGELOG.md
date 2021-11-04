@@ -1,5 +1,9 @@
 # Marcelle changelog
 
+## Next
+
+- Improved `modelParameters` to support other types
+
 ## 0.4.4
 
 - Various minor bugfixes

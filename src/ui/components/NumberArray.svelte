@@ -6,7 +6,7 @@
 
   function changeValue(e: Event, i: number) {
     const target = e.target as HTMLInputElement;
-    const x = parseInt(target.value, 10);
+    const x = parseFloat(target.value);
     if (!Number.isNaN(x)) {
       const v = stream.value.slice();
       v[i] = x;
@@ -37,7 +37,6 @@
   function reduce() {
     stream.set(stream.value.slice(0, stream.value.length - 1));
   }
-
 </script>
 
 {#if $stream}
@@ -47,6 +46,7 @@
         <button {disabled} on:click={() => decrement(i)} class="left"> - </button>
         <input
           type="text"
+          inputmode="decimal"
           value={$stream[i]}
           on:change={(e) => changeValue(e, i)}
           {disabled}
@@ -118,5 +118,4 @@
   button:hover[disabled] {
     @apply bg-white text-gray-300 border-gray-300 cursor-not-allowed ring-0;
   }
-
 </style>

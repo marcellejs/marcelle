@@ -1,13 +1,12 @@
 <script lang="ts">
   export let placeholder = '';
   export let disabled = false;
-  export let type: 'text' | 'email' | 'passowrd' = 'text';
+  export let type: 'text' | 'email' | 'password' = 'text';
   export let value: string = null;
 
   function handleInput(e: Event & { currentTarget: EventTarget & HTMLInputElement }) {
     value = e.currentTarget.value;
   }
-
 </script>
 
 <input class="marcelle" {disabled} {type} {placeholder} {value} on:input={handleInput} />
@@ -41,5 +40,4 @@
   input:invalid:focus {
     @apply ring-red-300;
   }
-
 </style>

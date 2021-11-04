@@ -8,14 +8,13 @@
 
   function changeValue(e: Event) {
     const target = e.target as HTMLInputElement;
-    const x = parseInt(target.value, 10);
+    const x = parseFloat(target.value);
     if (!Number.isNaN(x)) {
       stream.set(x);
     } else {
       target.value = stream.value.toString();
     }
   }
-
 </script>
 
 <div class="flex">
@@ -28,7 +27,14 @@
   >
     -
   </button>
-  <input type="text" value={$stream} {disabled} on:change={changeValue} style="width: 80px" />
+  <input
+    type="text"
+    inputmode="decimal"
+    value={$stream}
+    {disabled}
+    on:change={changeValue}
+    style="width: 80px"
+  />
   <button
     on:click={() => {
       stream.set(stream.value + 1);
@@ -96,5 +102,4 @@
   button:hover[disabled] {
     @apply bg-white text-gray-300 border-gray-300 cursor-not-allowed ring-0;
   }
-
 </style>
