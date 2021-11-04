@@ -39,7 +39,7 @@ input.$images
   .map(async (img) => ({
     x: await featureExtractor.process(img),
     thumbnail: input.$thumbnails.value,
-    y: label.$text.value,
+    y: label.$value.value,
   }))
   .awaitPromises()
   .subscribe(trainingSet.create.bind(trainingSet));

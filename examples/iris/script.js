@@ -46,10 +46,10 @@ async function loadData() {
 const loadDataBtn = button('Load Data');
 loadDataBtn.$click.subscribe(loadData);
 
-const info = text({ text: 'The dataset is empty' });
+const info = text('The dataset is empty');
 info.title = 'Dataset Count';
 ts.$count.subscribe(async (c) => {
-  info.$text.set(`The dataset contains ${c} instances`);
+  info.$value.set(`The dataset contains ${c} instances`);
 });
 
 const classifier = mlpClassifier({ dataStore: store }).sync('iris-classifier');

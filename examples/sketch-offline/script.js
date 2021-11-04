@@ -39,7 +39,7 @@ capture.$click
   .sample(input.$images)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: label.$text.value,
+    y: label.$value.value,
     thumbnail: input.$thumbnails.value,
   }))
   .awaitPromises()

@@ -64,7 +64,7 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 
 const batchTesting = batchPrediction({ name: 'mobileNet', dataStore: store });
 const predictButton = button('Update predictions');
-const predictionAccuracy = text({ text: 'Waiting for predictions...' });
+const predictionAccuracy = text('Waiting for predictions...');
 const confMat = confusionMatrix(batchTesting);
 confMat.title = 'Mobilenet: Confusion Matrix';
 
@@ -109,9 +109,9 @@ const dash = dashboard({
   author: 'Marcelle Pirates Crew',
 });
 
-const help = text({
-  text: 'In this example, you can upload a pre-trained classification model (converted from a Keras model, see examples here: https://keras.io/api/applications/) and perform inference with input images of your choice.',
-});
+const help = text(
+  `In this example, you can upload a pre-trained classification model (converted from a Keras model, see examples here: https://keras.io/api/applications/) and perform inference with input images of your choice.`,
+);
 help.title = 'Test generic DNN classifier';
 
 dash

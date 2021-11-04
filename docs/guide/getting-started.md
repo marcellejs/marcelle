@@ -176,7 +176,7 @@ myDashboard.page('Data Management').sidebar(input, featureExtractor).use(label);
 The textInput component exposes a `$text` stream that emits values whenever the user input changes. Let's log it to the console:
 
 ```js
-label.$text.subscribe((currentInput) => {
+label.$value.subscribe((currentInput) => {
   console.log('currentInput:', currentInput);
 });
 ```
@@ -187,7 +187,7 @@ We can access the current value of a stream using its `.value` property. We use 
 const $instances = input.$images
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: label.$text.value,
+    y: label.$value.value,
     thumbnail: input.$thumbnails.value,
   }))
   .awaitPromises();
@@ -235,7 +235,7 @@ const $instances = capture.$click
   .sample(input.$images)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: label.$text.value,
+    y: label.$value.value,
     thumbnail: input.$thumbnails.value,
   }))
   .awaitPromises();
@@ -342,7 +342,7 @@ const $instances = capture.$click
   .sample(input.$images)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: label.$text.value,
+    y: label.$value.value,
     thumbnail: input.$thumbnails.value,
   }))
   .awaitPromises();

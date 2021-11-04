@@ -219,22 +219,22 @@ slider.$values.subscribe((x) => console.log('slider $values:', x));
 ## text
 
 ```tsx
-text({ text: string }): Text;
+text(initial?: string): Text;
 ```
 
 A generic GUI text display component accepting HTL strings.
 
 ### Parameters
 
-| Option | Type            | Description             | Required |
-| ------ | --------------- | ----------------------- | :------: |
-| text   | string/function | The text of the togggle |          |
+| Option  | Type   | Description  | Required |
+| ------- | ------ | ------------ | :------: |
+| initial | string | Initial text |          |
 
 ### Streams
 
-| Name   | Type    | Description                      | Hold |
-| ------ | ------- | -------------------------------- | :--: |
-| \$text | boolean | Stream defining the text content |      |
+| Name    | Type    | Description                      | Hold |
+| ------- | ------- | -------------------------------- | :--: |
+| \$value | boolean | Stream defining the text content |      |
 
 ### Screenshot
 
@@ -245,9 +245,10 @@ A generic GUI text display component accepting HTL strings.
 ### Example
 
 ```js
-const t = text({
-  text: 'Just some <strong>HTML</strong> text content... Accepts HTML: <button class="btn">button</button>',
-});
+const t = text(
+  `Just some HTML text content...<br>
+  Accepts HTML: <a href="https://marcelle.dev">Click me!</a>`,
+);
 ```
 
 ## textInput
@@ -280,11 +281,10 @@ A generic GUI text input component.
 ### Example
 
 ```js
-const label = textInput();
+const label = textInput('myLabel');
 label.title = 'Instance label';
 
-label.$text.subscribe(console.log);
-label.$text.set('myLabel');
+label.$value.subscribe(console.log);
 ```
 
 ## toggle

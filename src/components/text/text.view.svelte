@@ -1,3 +1,5 @@
+<svelte:options accessors />
+
 <script lang="ts">
   import type { Stream } from '../../core';
   import ViewContainer from '../../core/ViewContainer.svelte';
@@ -6,10 +8,8 @@
   export let text: Stream<string>;
 </script>
 
-<svelte:options accessors />
-
 <ViewContainer {title}>
-  <div class="flex-grow flex">
+  <div class="flex-grow">
     {#if $text}
       {@html $text}
     {/if}

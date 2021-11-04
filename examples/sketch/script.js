@@ -29,7 +29,7 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 
 const labelField = textInput();
 labelField.title = 'Correct the prediction if necessary';
-labelField.$text.set('...');
+labelField.$value.set('...');
 const addToDataset = button('Add to Dataset and Train');
 addToDataset.title = 'Improve the classifier';
 
@@ -43,7 +43,7 @@ const $instances = input.$images
 
 addToDataset.$click
   .sample($instances)
-  .map((instance) => ({ ...instance, y: labelField.$text.value }))
+  .map((instance) => ({ ...instance, y: labelField.$value.value }))
   .subscribe(trainingSet.create.bind(trainingSet));
 
 // -----------------------------------------------------------
@@ -105,7 +105,7 @@ const $predictions = classifier.$training
   .filter((x) => !!x);
 
 $predictions.subscribe(({ label }) => {
-  labelField.$text.set(label);
+  labelField.$value.set(label);
 });
 
 const plotResults = confidencePlot($predictions);

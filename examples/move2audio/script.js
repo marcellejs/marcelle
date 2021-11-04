@@ -41,7 +41,7 @@ input.$images
   .filter(() => capture.$pressed.value)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: labelInput.$text.value,
+    y: labelInput.$value.value,
     thumbnail: input.$thumbnails.value,
   }))
   .awaitPromises()
@@ -110,7 +110,7 @@ dash.settings.dataStores(store).datasets(trainingSet).models(classifier);
 // -----------------------------------------------------------
 
 const wizardButton = button('Record Examples (class a)');
-const wizardText = text({ text: 'Waiting for examples...' });
+const wizardText = text('Waiting for examples...');
 wizardButton.$pressed.subscribe((x) => {
   capture.$pressed.set(x);
 });
@@ -129,9 +129,9 @@ trainingSet.$changes.subscribe(async (changes) => {
       }
     }
   }
-  const label = labelInput.$text.value;
+  const label = labelInput.$value.value;
   const numExamples = countPerClass[label] || 0;
-  wizardText.$text.set(
+  wizardText.$value.set(
     numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
   );
 });
@@ -160,21 +160,21 @@ wiz
   .description('Reproduce your gestures to test if the classifier works as expected')
   .use([input, plotResults]);
 
-labelInput.$text.subscribe((label) => {
-  wizardButton.$text.set(`Record Examples (class ${label})`);
+labelInput.$value.subscribe((label) => {
+  wizardButton.$value.set(`Record Examples (class ${label})`);
   const numExamples = countPerClass[label] || 0;
-  wizardText.$text.set(
+  wizardText.$value.set(
     numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
   );
 });
 
 wiz.$current.subscribe((pageIndex) => {
   if (pageIndex === 0) {
-    labelInput.$text.set('A');
+    labelInput.$value.set('A');
   } else if (pageIndex === 1) {
-    labelInput.$text.set('B');
+    labelInput.$value.set('B');
   } else if (pageIndex === 2) {
-    labelInput.$text.set('C');
+    labelInput.$value.set('C');
   }
   if (pageIndex === 4) {
     tog.$checked.set(true);

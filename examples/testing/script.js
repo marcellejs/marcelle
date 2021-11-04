@@ -68,7 +68,7 @@ batchTesting.$predictions.subscribe(async () => {
   const accuracy =
     data.map(({ label, trueLabel }) => (label === trueLabel ? 1 : 0)).reduce((x, y) => x + y, 0) /
     data.length;
-  predictionAccuracy.$text.set(`Global Accuracy (Mobilenet): ${accuracy}`);
+  predictionAccuracy.$value.set(`Global Accuracy (Mobilenet): ${accuracy}`);
 });
 
 // -----------------------------------------------------------
@@ -90,7 +90,7 @@ let numIncorrect = 0;
 const quality = text('Waiting for predictions...');
 function updateQuality() {
   const percent = (100 * numCorrect) / (numCorrect + numIncorrect);
-  quality.$text.set(
+  quality.$value.set(
     `You evaluated ${percent.toFixed(0)}% of tested images as correct. ${
       percent > 50 ? '😛' : '🤔'
     }`,
@@ -114,9 +114,9 @@ const dash = dashboard({
   author: 'Marcelle Pirates Crew',
 });
 
-const help = text({
-  text: 'In this example, you can test an existing trained model (mobileNet), by uploading your own images to assess the quality of the predictions.',
-});
+const help = text(
+  'In this example, you can test an existing trained model (mobileNet), by uploading your own images to assess the quality of the predictions.',
+);
 help.title = 'Test Mobilenet with your images!';
 
 dash
