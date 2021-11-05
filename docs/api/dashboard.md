@@ -63,7 +63,7 @@ Hide the dashboard application. This destroys the current view, if it exists, bu
 ### .page()
 
 ```tsx
-Dashboard.page(name: string): DashboardPage
+Dashboard.page(name: string, showSidebar?: boolean): DashboardPage
 ```
 
 Create a new page on the dashboard entitled `name`, and returns the corresponding [`DashboardPage`](#dashboardpage) instance.
