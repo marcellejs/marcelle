@@ -1,5 +1,3 @@
-<svelte:options accessors />
-
 <script lang="ts">
   import type { Stream } from '../../core/stream';
   import ViewContainer from '../../core/ViewContainer.svelte';
@@ -9,6 +7,14 @@
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let parameters: Record<string, Stream<any>>;
   export let config: Record<string, { type: string; options?: string[] }> = {};
+
+  let unSub: Array<() => void> = [];
+  $: {
+    for (const u of unSub) {
+      u();
+    }
+    unSub = Object.values(parameters).map((s) => s.subscribe());
+  }
 </script>
 
 <ViewContainer {title}>
