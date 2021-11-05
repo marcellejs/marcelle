@@ -7,8 +7,11 @@
   export let options: Stream<string[]>;
   export let value: Stream<string>;
 
+  function updateStream({ detail }: CustomEvent) {
+    value.set(detail);
+  }
 </script>
 
 <ViewContainer {title}>
-  <Select options={$options} bind:value={$value} />
+  <Select options={$options} value={$value} on:change={updateStream} />
 </ViewContainer>
