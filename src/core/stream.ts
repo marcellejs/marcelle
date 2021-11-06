@@ -16,7 +16,7 @@ function isMostStream<T>(s: MostStream<T> | unknown): s is MostStream<T> {
   return s && typeof s === 'object' && (s as Stream<T>).run !== undefined;
 }
 
-export function isStream<T>(s: Stream<T> | T): s is Stream<T> {
+export function isStream<T>(s: Stream<T> | unknown): s is Stream<T> {
   return (s as Stream<T>).id !== undefined && (s as Stream<T>).run !== undefined;
 }
 
@@ -179,11 +179,11 @@ export class Stream<T> {
   }
 
   switchLatest<U>(): Stream<U> {
-    return new Stream(most.switchLatest((this as unknown) as Stream<Stream<U>>));
+    return new Stream(most.switchLatest(this as unknown as Stream<Stream<U>>));
   }
 
   join<U>(): Stream<U> {
-    return new Stream(most.join((this as unknown) as Stream<Stream<U>>));
+    return new Stream(most.join(this as unknown as Stream<Stream<U>>));
   }
 
   chain<B>(f: (value: T) => Stream<B>): Stream<B> {
@@ -195,7 +195,7 @@ export class Stream<T> {
   }
 
   mergeConcurrently<U>(concurrency: number): Stream<U> {
-    return new Stream(most.mergeConcurrently(concurrency, (this as unknown) as Stream<Stream<U>>));
+    return new Stream(most.mergeConcurrently(concurrency, this as unknown as Stream<Stream<U>>));
   }
 
   mergeMapConcurrently<B>(f: (a: T) => Stream<B>, concurrency: number): Stream<B> {
@@ -291,7 +291,7 @@ export class Stream<T> {
   }
 
   awaitPromises<A>(): Stream<A> {
-    return new Stream(most.awaitPromises((this as unknown) as Stream<Promise<A>>));
+    return new Stream(most.awaitPromises(this as unknown as Stream<Promise<A>>));
   }
 
   recoverWith<A, E extends Error>(f: (error: E) => Stream<A>): Stream<T | A> {

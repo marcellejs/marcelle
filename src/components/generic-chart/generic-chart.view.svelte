@@ -25,7 +25,7 @@
     Tooltip,
   } from 'chart.js';
   import type { ChartOptions as ChartJsOptions, ChartConfiguration } from 'chart.js';
-  import { onDestroy } from 'svelte';
+  import { onDestroy, onMount, tick } from 'svelte';
   import { mergeDeep } from '../../utils/object';
   import ViewContainer from '../../core/ViewContainer.svelte';
   import type { ChartDataset } from './generic-chart.component';
@@ -134,14 +134,9 @@
 
   let chart: Chart;
   let unSub: Array<() => void> = [];
+  let canvasElement: HTMLCanvasElement;
 
-  onDestroy(() => {
-    for (const f of unSub) {
-      f();
-    }
-  });
-
-  function setup(canvasElement: HTMLCanvasElement) {
+  function setup() {
     // const t0 = performance.now();
     let chartOptions: Partial<ChartConfiguration> = mergeDeep(defaultOptions, preset.global);
     chartOptions = mergeDeep(chartOptions, {
@@ -150,12 +145,12 @@
     });
     if (options.xlabel) {
       chartOptions = mergeDeep(chartOptions, {
-        options: { scales: { x: { scaleLabel: { display: true, labelString: options.xlabel } } } },
+        options: { scales: { x: { title: { display: true, text: options.xlabel } } } },
       });
     }
     if (options.ylabel) {
       chartOptions = mergeDeep(chartOptions, {
-        options: { scales: { y: { scaleLabel: { display: true, labelString: options.ylabel } } } },
+        options: { scales: { y: { title: { display: true, text: options.ylabel } } } },
       });
     }
     unSub = datasets.map(({ dataStream, options: localOptions }, i) =>
@@ -183,8 +178,32 @@
     const ctx = canvasElement.getContext('2d');
     chart = new Chart(ctx, chartOptions as ChartConfiguration);
   }
+
+  function destroy() {
+    for (const f of unSub) {
+      f();
+    }
+    chart?.destroy();
+  }
+
+  onMount(async () => {
+    await tick();
+    await tick();
+    setup();
+  });
+
+  let numDatasets = datasets.length;
+  $: {
+    if (datasets.length !== numDatasets) {
+      destroy();
+      setup();
+      numDatasets = datasets.length;
+    }
+  }
+
+  onDestroy(destroy);
 </script>
 
 <ViewContainer {title}>
-  <div class="w-full h-96"><canvas use:setup /></div>
+  <div class="w-full h-96"><canvas bind:this={canvasElement} /></div>
 </ViewContainer>
