@@ -18,6 +18,7 @@ export * from './mobile-net';
 export * from './model-parameters';
 export * from './number';
 export * from './number-array';
+export * from './onnx-model';
 export * from './scatter-plot';
 export * from './select';
 export * from './sketch-pad';

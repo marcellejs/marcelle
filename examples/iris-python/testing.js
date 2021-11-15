@@ -1,6 +1,6 @@
 import { confidencePlot, slider } from '../../dist/marcelle.esm';
 import { tst } from './data';
-import { classifier } from './training';
+import { classifier, components } from './model';
 
 const sepalLength = slider({ min: 0, max: 10, pips: true, step: 0.1, pipstep: 20 });
 sepalLength.title = 'Sepal Length (cm)';
@@ -43,5 +43,8 @@ const $predictions = sepalLength.$values
 const predViz = confidencePlot($predictions);
 
 export function setup(dash) {
-  dash.page('Testing').use([sepalLength, sepalWidth, petalLength, petalWidth], predViz, tst);
+  dash
+    .page('Testing')
+    .sidebar(...components)
+    .use([sepalLength, sepalWidth, petalLength, petalWidth], predViz, tst);
 }

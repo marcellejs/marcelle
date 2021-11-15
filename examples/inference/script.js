@@ -37,10 +37,9 @@ up.$files.subscribe((fl) => {
 // CAPTURE TO DATASET
 // -----------------------------------------------------------
 
-const instances = source.$thumbnails.map((thumbnail) => ({
-  type: 'image',
-  data: source.$images.value,
-  label: 'unlabeled',
+const $instances = source.$thumbnails.map((thumbnail) => ({
+  x: source.$images.value,
+  y: 'unlabeled',
   thumbnail,
 }));
 
@@ -48,12 +47,11 @@ const store = dataStore('memory');
 const trainingSet = dataset('TrainingSet-inference', store);
 
 const tog = toggle('Capture to dataset');
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+let unSub = () => {};
 tog.$checked.skipRepeats().subscribe((x) => {
-  if (x) {
-    trainingSet.capture(instances);
-  } else {
-    trainingSet.capture(null);
-  }
+  unSub();
+  unSub = $instances.subscribe(trainingSet.create.bind(trainingSet));
 });
 
 const trainingSetBrowser = datasetBrowser(trainingSet);
