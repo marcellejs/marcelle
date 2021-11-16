@@ -12,7 +12,7 @@ import {
   notification,
   trainingProgress,
   sketchPad,
-  textField,
+  textInput,
   trainingPlot,
 } from '../../dist/marcelle.esm';
 
@@ -27,10 +27,10 @@ const store = dataStore('localStorage');
 const trainingSet = dataset('TrainingSet-sketch', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
-const labelField = textField();
+const labelField = textInput();
 labelField.title = 'Correct the prediction if necessary';
-labelField.$text.set('...');
-const addToDataset = button({ text: 'Add to Dataset and Train' });
+labelField.$value.set('...');
+const addToDataset = button('Add to Dataset and Train');
 addToDataset.title = 'Improve the classifier';
 
 const $instances = input.$images
@@ -43,14 +43,14 @@ const $instances = input.$images
 
 addToDataset.$click
   .sample($instances)
-  .map((instance) => ({ ...instance, y: labelField.$text.value }))
+  .map((instance) => ({ ...instance, y: labelField.$value.value }))
   .subscribe(trainingSet.create.bind(trainingSet));
 
 // -----------------------------------------------------------
 // TRAINING
 // -----------------------------------------------------------
 
-const b = button({ text: 'Train' });
+const b = button('Train');
 const classifier = mlpClassifier({ layers: [64, 32], epochs: 20, dataStore: store });
 classifier.sync('sketch-classifier');
 
@@ -105,7 +105,7 @@ const $predictions = classifier.$training
   .filter((x) => !!x);
 
 $predictions.subscribe(({ label }) => {
-  labelField.$text.set(label);
+  labelField.$value.set(label);
 });
 
 const plotResults = confidencePlot($predictions);

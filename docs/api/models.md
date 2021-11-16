@@ -195,7 +195,7 @@ const classifier = marcelle.mlp({ layers: [64, 32], epochs: 20 });
 
 const batchMLP = marcelle.batchPrediction({ name: 'mlp', dataStore: store });
 
-const predictButton = marcelle.button({ text: 'Update predictions' });
+const predictButton = marcelle.button('Update predictions');
 predictButton.$click.subscribe(async () => {
   await batchMLP.clear();
   await batchMLP.predict(classifier, trainingSet);

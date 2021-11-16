@@ -10,11 +10,10 @@
 </script>
 
 <div class="select-container">
-  <!-- svelte-ignore a11y-no-onchange -->
   <select
     class:small={size === 'small'}
     bind:value
-    on:change={(e) => dispatch('change', e.target.value)}
+    on:change={(e) => dispatch('change', e.currentTarget.value)}
   >
     {#if placeholder}
       <option value="" disabled>{placeholder}</option>

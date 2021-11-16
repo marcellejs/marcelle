@@ -13,7 +13,7 @@ import {
   confidencePlot,
   trainingProgress,
   text,
-  textField,
+  textInput,
   toggle,
   trainingPlot,
   webcam,
@@ -27,9 +27,9 @@ import {
 const input = webcam();
 const featureExtractor = mobileNet();
 
-const labelInput = textField();
+const labelInput = textInput();
 labelInput.title = 'Instance label';
-const capture = button({ text: 'Hold to record instances' });
+const capture = button('Hold to record instances');
 capture.title = 'Capture instances to the training set';
 
 const store = dataStore('localStorage');
@@ -40,7 +40,7 @@ input.$images
   .filter(() => capture.$pressed.value)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: labelInput.$text.value,
+    y: labelInput.$value.value,
     thumbnail: input.$thumbnails.value,
   }))
   .awaitPromises()
@@ -50,7 +50,7 @@ input.$images
 // TRAINING
 // -----------------------------------------------------------
 
-const b = button({ text: 'Train' });
+const b = button('Train');
 const classifier = mlpClassifier({ layers: [64, 32], epochs: 20, dataStore: store });
 classifier.sync('wizard-classifier');
 b.$click.subscribe(() => classifier.train(trainingSet));
@@ -66,7 +66,7 @@ const plotTraining = trainingPlot(classifier);
 const batchMLP = batchPrediction({ name: 'mlp', dataStore: store });
 const confMat = confusionMatrix(batchMLP);
 
-const predictButton = button({ text: 'Update predictions' });
+const predictButton = button('Update predictions');
 predictButton.$click.subscribe(async () => {
   await batchMLP.clear();
   await batchMLP.predict(classifier, trainingSet);
@@ -76,7 +76,7 @@ predictButton.$click.subscribe(async () => {
 // REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
-const tog = toggle({ text: 'toggle prediction' });
+const tog = toggle('toggle prediction');
 
 const $predictions = input.$images
   .filter(() => tog.$checked.value)
@@ -108,8 +108,8 @@ dash.settings.dataStores(store).datasets(trainingSet).models(classifier);
 // WIZARD
 // -----------------------------------------------------------
 
-const wizardButton = button({ text: 'Record Examples (class a)' });
-const wizardText = text({ text: 'Waiting for examples...' });
+const wizardButton = button('Record Examples (class a)');
+const wizardText = text('Waiting for examples...');
 wizardButton.$pressed.subscribe((x) => {
   capture.$pressed.set(x);
 });
@@ -129,9 +129,9 @@ trainingSet.$changes.subscribe(async (changes) => {
       }
     }
   }
-  const label = labelInput.$text.value;
+  const label = labelInput.$value.value;
   const numExamples = countPerClass[label] || 0;
-  wizardText.$text.set(
+  wizardText.$value.set(
     numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
   );
 });
@@ -156,19 +156,19 @@ wiz
   .description('Reproduce your gestures to test if the classifier works as expected')
   .use([input, plotResults]);
 
-labelInput.$text.subscribe((label) => {
-  wizardButton.$text.set(`Record Examples (class ${label})`);
+labelInput.$value.subscribe((label) => {
+  wizardButton.$value.set(`Record Examples (class ${label})`);
   const numExamples = countPerClass[label] || 0;
-  wizardText.$text.set(
+  wizardText.$value.set(
     numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
   );
 });
 
 wiz.$current.subscribe((pageIndex) => {
   if (pageIndex === 0) {
-    labelInput.$text.set('A');
+    labelInput.$value.set('A');
   } else if (pageIndex === 1) {
-    labelInput.$text.set('B');
+    labelInput.$value.set('B');
   }
   if (pageIndex === 3) {
     tog.$checked.set(true);

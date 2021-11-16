@@ -12,7 +12,25 @@ export interface SliderOptions {
   vertical: boolean;
   pips: boolean;
   pipstep: number;
-  formatter: (x: unknown) => unknown;
+  formatter: (x: number) => unknown;
+  continuous: boolean;
+}
+
+function round(value: number, exp: number): number {
+  if (typeof exp === 'undefined' || +exp === 0) return Math.round(value);
+
+  let v = +value;
+  const e = +exp;
+
+  if (isNaN(v) || !(typeof e === 'number' && e % 1 === 0)) return NaN;
+
+  // Shift
+  let vv = v.toString().split('e');
+  v = Math.round(+(vv[0] + 'e' + (vv[1] ? +vv[1] + e : e)));
+
+  // Shift back
+  vv = v.toString().split('e');
+  return +(vv[0] + 'e' + (vv[1] ? +vv[1] - e : -e));
 }
 
 export class Slider extends Component {
@@ -27,7 +45,8 @@ export class Slider extends Component {
   vertical: boolean;
   pips: boolean;
   pipstep: number;
-  formatter: (x: unknown) => unknown;
+  formatter: (x: number) => unknown;
+  continuous: boolean;
   constructor({
     values = [0.2],
     min = 0,
@@ -38,7 +57,8 @@ export class Slider extends Component {
     vertical = false,
     pips = false,
     pipstep = undefined,
-    formatter = (x) => x,
+    formatter = (x: number) => round(x, 3),
+    continuous = true,
   }: Partial<SliderOptions> = {}) {
     super();
     this.$values = new Stream(values, true);
@@ -49,8 +69,9 @@ export class Slider extends Component {
     this.float = float;
     this.vertical = vertical;
     this.pips = pips;
-    this.pipstep = pipstep !== undefined ? pipstep : 10 / (max - min);
+    this.pipstep = pipstep !== undefined ? pipstep : Math.floor((max - min) / (10 * step));
     this.formatter = formatter;
+    this.continuous = continuous;
     this.start();
   }
 
@@ -72,6 +93,7 @@ export class Slider extends Component {
         pips: this.pips,
         pipstep: this.pipstep,
         formatter: this.formatter,
+        continuous: this.continuous,
       },
     });
   }

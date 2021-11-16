@@ -2,7 +2,6 @@
   export let text = '';
   export let checked = false;
   export let disabled = false;
-
 </script>
 
 <label class="marcelle">
@@ -39,19 +38,18 @@
   }
 
   input[type='checkbox']:disabled ~ .switch .track {
-    @apply bg-gray-500 cursor-default;
+    @apply bg-gray-300 cursor-not-allowed;
   }
   input[type='checkbox']:disabled:active + .switch .track {
     @apply shadow-none;
   }
 
   input[type='checkbox']:disabled ~ .switch .thumb {
-    @apply bg-gray-100 border-gray-500;
+    @apply bg-gray-100 border-gray-300 cursor-not-allowed;
   }
 
   input[type='checkbox']:focus + .switch .track,
   input[type='checkbox']:active + .switch .track {
     @apply ring;
   }
-
 </style>

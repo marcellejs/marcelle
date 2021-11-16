@@ -2,10 +2,6 @@ import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
 import View from './toggle.view.svelte';
 
-export interface ToggleOptions {
-  text: string;
-}
-
 export class Toggle extends Component {
   title = 'toggle';
 
@@ -13,7 +9,7 @@ export class Toggle extends Component {
   $checked = new Stream(false, true);
   $disabled = new Stream(false, true);
 
-  constructor({ text = 'toggle me' }: Partial<ToggleOptions> = {}) {
+  constructor(text = 'toggle me') {
     super();
     this.$text = new Stream(text, true);
     this.start();

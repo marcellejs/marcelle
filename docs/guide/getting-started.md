@@ -160,10 +160,10 @@ const $instances = input.$images
   .awaitPromises();
 ```
 
-Instances have few properties. In this example, we see that the label is specified by a string that we 'hard-coded' to `test`. In an application, a label can be provided by the user through a [textfield](../api/components/widgets.html#textfield) on the interface:
+Instances have few properties. In this example, we see that the label is specified by a string that we 'hard-coded' to `test`. In an application, a label can be provided by the user through a [textInput](../api/components/widgets.html#textinput) on the interface:
 
 ```js
-const label = marcelle.textField();
+const label = marcelle.textInput();
 label.title = 'Instance label';
 ```
 
@@ -173,10 +173,10 @@ Let's add the text field to the dashboard page using the dashboard's `.use()` me
 myDashboard.page('Data Management').sidebar(input, featureExtractor).use(label);
 ```
 
-The textfield component exposes a `$text` stream that emits values whenever the user input changes. Let's log it to the console:
+The textInput component exposes a `$text` stream that emits values whenever the user input changes. Let's log it to the console:
 
 ```js
-label.$text.subscribe((currentInput) => {
+label.$value.subscribe((currentInput) => {
   console.log('currentInput:', currentInput);
 });
 ```
@@ -187,7 +187,7 @@ We can access the current value of a stream using its `.value` property. We use 
 const $instances = input.$images
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: label.$text.value,
+    y: label.$value.value,
     thumbnail: input.$thumbnails.value,
   }))
   .awaitPromises();
@@ -217,7 +217,7 @@ myDashboard.page('Data Management').sidebar(input, featureExtractor).use(label, 
 If you draw on the sketchpad, you will notice that an instance is recorded at every stroke, because the dataset is capturing all instances coming from the sketchpad. To give the user more control over what is captured as training data, we can create a [button](../api/components/widgets.html#button) to capture particular drawings.
 
 ```js
-const capture = marcelle.button({ text: 'Click to record an instance' });
+const capture = marcelle.button('Click to record an instance');
 capture.title = 'Capture instances to the training set';
 
 // ...
@@ -235,7 +235,7 @@ const $instances = capture.$click
   .sample(input.$images)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: label.$text.value,
+    y: label.$value.value,
     thumbnail: input.$thumbnails.value,
   }))
   .awaitPromises();
@@ -256,7 +256,7 @@ const classifier = marcelle.mlpClassifier({ layers: [32, 32], epochs: 20 });
 To start training, a button is added on the interface:
 
 ```js{8}
-const trainingButton = marcelle.button({ text: 'Train' });
+const trainingButton = marcelle.button('Train');
 
 // ...
 
@@ -332,17 +332,17 @@ import * as marcelle from '@marcellejs/core';
 const input = marcelle.sketchPad();
 const featureExtractor = marcelle.mobileNet();
 
-const label = marcelle.textField();
+const label = marcelle.textInput();
 label.title = 'Instance label';
 
-const capture = marcelle.button({ text: 'Click to record an instance' });
+const capture = marcelle.button('Click to record an instance');
 capture.title = 'Capture instances to the training set';
 
 const $instances = capture.$click
   .sample(input.$images)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: label.$text.value,
+    y: label.$value.value,
     thumbnail: input.$thumbnails.value,
   }))
   .awaitPromises();
@@ -355,7 +355,7 @@ $instances.subscribe(trainingSet.create.bind(trainingSet));
 const trainingSetBrowser = marcelle.datasetBrowser(trainingSet);
 
 const classifier = marcelle.mlpClassifier({ layers: [32, 32], epochs: 20 });
-const trainingButton = marcelle.button({ text: 'Train' });
+const trainingButton = marcelle.button('Train');
 
 trainingButton.$click.subscribe(() => {
   classifier.train(trainingSet);

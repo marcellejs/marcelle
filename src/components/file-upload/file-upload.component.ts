@@ -6,7 +6,7 @@ import View from './file-upload.view.svelte';
 export class FileUpload extends Component {
   title = 'file upload';
 
-  $files = new Stream(never());
+  $files = new Stream<File[]>(never());
 
   constructor() {
     super();

@@ -13,7 +13,7 @@ import {
   confidencePlot,
   trainingProgress,
   sketchPad,
-  textField,
+  textInput,
   toggle,
   trainingPlot,
   throwError,
@@ -26,9 +26,9 @@ import {
 const input = sketchPad();
 const featureExtractor = mobileNet();
 
-const label = textField();
+const label = textInput();
 label.title = 'Instance label';
-const capture = button({ text: 'Capture this drawing' });
+const capture = button('Capture this drawing');
 capture.title = 'Capture instances to the training set';
 
 const store = dataStore('localStorage');
@@ -39,7 +39,7 @@ capture.$click
   .sample(input.$images)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: label.$text.value,
+    y: label.$value.value,
     thumbnail: input.$thumbnails.value,
   }))
   .awaitPromises()
@@ -49,7 +49,7 @@ capture.$click
 // TRAINING
 // -----------------------------------------------------------
 
-const b = button({ text: 'Train' });
+const b = button('Train');
 
 const classifier = mlpClassifier({ layers: [64, 32], epochs: 20, dataStore: store });
 classifier.sync('sketch-classifier');
@@ -67,7 +67,7 @@ const plotTraining = trainingPlot(classifier);
 const batchMLP = batchPrediction({ name: 'mlp', dataStore: store });
 const confMat = confusionMatrix(batchMLP);
 
-const predictButton = button({ text: 'Update predictions' });
+const predictButton = button('Update predictions');
 predictButton.$click.subscribe(async () => {
   if (!classifier.ready) {
     throwError(new Error('No classifier has been trained'));
@@ -80,7 +80,7 @@ predictButton.$click.subscribe(async () => {
 // REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
-const tog = toggle({ text: 'toggle prediction' });
+const tog = toggle('toggle prediction');
 tog.$checked.subscribe((checked) => {
   if (checked && !classifier.ready) {
     throwError(new Error('No classifier has been trained'));

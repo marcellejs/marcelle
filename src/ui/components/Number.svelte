@@ -1,37 +1,39 @@
-<svelte:options accessors />
-
 <script lang="ts">
-  import type { Stream } from '../../core/stream';
-
   export let disabled = false;
-  export let stream: Stream<number>;
+  export let value: number;
 
   function changeValue(e: Event) {
     const target = e.target as HTMLInputElement;
-    const x = parseInt(target.value, 10);
+    const x = parseFloat(target.value);
     if (!Number.isNaN(x)) {
-      stream.set(x);
+      value = x;
     } else {
-      target.value = stream.value.toString();
+      target.value = value.toString();
     }
   }
-
 </script>
 
 <div class="flex">
   <button
     on:click={() => {
-      stream.set(stream.value - 1);
+      value -= 1;
     }}
     {disabled}
     class="left"
   >
     -
   </button>
-  <input type="text" value={$stream} {disabled} on:change={changeValue} style="width: 80px" />
+  <input
+    type="number"
+    inputmode="decimal"
+    {value}
+    {disabled}
+    on:change={changeValue}
+    style="width: 80px"
+  />
   <button
     on:click={() => {
-      stream.set(stream.value + 1);
+      value += 1;
     }}
     {disabled}
     class="right"
@@ -68,6 +70,18 @@
     @apply bg-white text-gray-300 border-gray-300 cursor-not-allowed ring-0;
   }
 
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
   button {
     @apply bg-transparent border-solid border uppercase text-xs rounded outline-none py-1 px-2 m-0
     bg-gray-50 border-gray-300 text-gray-700 font-normal
@@ -96,5 +110,4 @@
   button:hover[disabled] {
     @apply bg-white text-gray-300 border-gray-300 cursor-not-allowed ring-0;
   }
-
 </style>

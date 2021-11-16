@@ -1,10 +1,10 @@
 import { ChartOptions as ChartJsOptions } from 'chart.js';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
+import { ServiceIterable } from '../../core/data-store/service-iterable';
+import { Stream, isStream } from '../../core/stream';
 import { throwError } from '../../utils/error-handling';
 import View from './generic-chart.view.svelte';
 
-// TODO: update view when series are added or removed
 // TODO: Automatic switch to fast mode when high number of points
 
 const presets = {
@@ -84,12 +84,10 @@ const presets = {
       type: 'scatter',
       options: {
         scales: {
-          xAxes: [
-            {
-              type: 'linear',
-              position: 'bottom',
-            },
-          ],
+          x: {
+            type: 'linear',
+            position: 'bottom',
+          },
         },
       },
     },
@@ -113,7 +111,7 @@ export class GenericChart extends Component {
   #presetName: string;
   #preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };
   #datasets: Array<ChartDataset> = [];
-  #options: ChartJsOptions & { xlabel?: string; ylabel?: string };
+  options: ChartJsOptions & { xlabel?: string; ylabel?: string };
 
   constructor({ preset = 'line', options = {} }: GenericChartOptions = {}) {
     super();
@@ -122,25 +120,41 @@ export class GenericChart extends Component {
     }
     this.#presetName = preset;
     this.#preset = presets[preset];
-    this.#options = options;
+    this.options = options;
     this.start();
   }
 
   addSeries(
-    dataStream: Stream<number[]> | Stream<Array<{ x: unknown; y: unknown }>>,
+    series:
+      | Stream<number[]>
+      | Stream<Array<{ x: unknown; y: unknown }>>
+      | ServiceIterable<number>
+      | ServiceIterable<{ x: unknown; y: unknown }>,
     label: string,
     options: Record<string, unknown> = {},
   ): void {
-    if (this.#presetName === 'line-fast') {
-      const throttledStream = dataStream.throttle(100);
-      throttledStream.value = dataStream.value;
-      this.#datasets.push({
-        dataStream: throttledStream,
-        label,
-        options,
-      });
+    if (isStream<number[]>(series)) {
+      if (this.#presetName === 'line-fast') {
+        const throttledStream = series.throttle(100);
+        throttledStream.value = series.value;
+        this.#datasets.push({
+          dataStream: throttledStream,
+          label,
+          options,
+        });
+      } else {
+        this.#datasets.push({ dataStream: series, label, options });
+      }
     } else {
-      this.#datasets.push({ dataStream, label, options });
+      (series as ServiceIterable<number> | ServiceIterable<{ x: unknown; y: unknown }>)
+        .toArray()
+        .then((values) => {
+          const dataStream = new Stream(values, true) as
+            | Stream<number[]>
+            | Stream<Array<{ x: unknown; y: unknown }>>;
+          this.#datasets.push({ dataStream, label, options });
+          this.updateView();
+        });
     }
   }
 
@@ -157,6 +171,17 @@ export class GenericChart extends Component {
     }
   }
 
+  clear(): void {
+    this.#datasets = [];
+    this.updateView();
+  }
+
+  updateView(): void {
+    if (this.$$.app) {
+      this.$$.app.$set({ datasets: this.#datasets });
+    }
+  }
+
   mount(target?: HTMLElement): void {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
@@ -166,7 +191,7 @@ export class GenericChart extends Component {
       props: {
         title: this.title,
         preset: this.#preset,
-        options: this.#options,
+        options: this.options,
         datasets: this.#datasets,
       },
     });

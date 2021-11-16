@@ -36,7 +36,7 @@ const instances = source.$thumbnails.map((thumbnail) => ({
 const store = dataStore('memory');
 const trainingSet = dataset('TrainingSet', store);
 
-const tog = toggle({ text: 'Capture to dataset' });
+const tog = toggle('Capture to dataset');
 tog.$checked.skipRepeats().subscribe((x) => {
   if (x) {
     trainingSet.capture(instances);
@@ -52,8 +52,8 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 // -----------------------------------------------------------
 
 const batchTesting = batchPrediction({ name: 'mobileNet', dataStore: store });
-const predictButton = button({ text: 'Update predictions' });
-const predictionAccuracy = text({ text: 'Waiting for predictions...' });
+const predictButton = button('Update predictions');
+const predictionAccuracy = text('Waiting for predictions...');
 const confMat = confusionMatrix(batchTesting);
 confMat.title = 'Mobilenet: Confusion Matrix';
 
@@ -68,7 +68,7 @@ batchTesting.$predictions.subscribe(async () => {
   const accuracy =
     data.map(({ label, trueLabel }) => (label === trueLabel ? 1 : 0)).reduce((x, y) => x + y, 0) /
     data.length;
-  predictionAccuracy.$text.set(`Global Accuracy (Mobilenet): ${accuracy}`);
+  predictionAccuracy.$value.set(`Global Accuracy (Mobilenet): ${accuracy}`);
 });
 
 // -----------------------------------------------------------
@@ -80,17 +80,17 @@ const plotResults = confidencePlot(predictionStream);
 
 const instanceViewer = imageDisplay(source.$images);
 
-const buttonCorrect = button({ text: 'Yes! 😛' });
+const buttonCorrect = button('Yes! 😛');
 buttonCorrect.title = '';
-const buttonIncorrect = button({ text: 'No... 🤔' });
+const buttonIncorrect = button('No... 🤔');
 buttonIncorrect.title = '';
 
 let numCorrect = 0;
 let numIncorrect = 0;
-const quality = text({ text: 'Waiting for predictions...' });
+const quality = text('Waiting for predictions...');
 function updateQuality() {
   const percent = (100 * numCorrect) / (numCorrect + numIncorrect);
-  quality.$text.set(
+  quality.$value.set(
     `You evaluated ${percent.toFixed(0)}% of tested images as correct. ${
       percent > 50 ? '😛' : '🤔'
     }`,
@@ -114,9 +114,9 @@ const dash = dashboard({
   author: 'Marcelle Pirates Crew',
 });
 
-const help = text({
-  text: 'In this example, you can test an existing trained model (mobileNet), by uploading your own images to assess the quality of the predictions.',
-});
+const help = text(
+  'In this example, you can test an existing trained model (mobileNet), by uploading your own images to assess the quality of the predictions.',
+);
 help.title = 'Test Mobilenet with your images!';
 
 dash

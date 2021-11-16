@@ -44,7 +44,7 @@ import {
   dataStore,
   dashboard,
   text,
-  textField,
+  textInput,
   imageUpload,
 } from '@marcellejs/core';
 
@@ -55,7 +55,7 @@ import {
 const input = imageUpload();
 const featureExtractor = mobileNet();
 
-const label = textField({ text: 'cat' });
+const label = textInput('cat');
 label.title = 'Label (to record in the dataset)';
 
 const $instances = input.$images
@@ -63,7 +63,7 @@ const $instances = input.$images
     async (thumbnail, img) => ({
       type: 'image',
       x: await featureExtractor.process(img),
-      y: label.$text.value,
+      y: label.$value.value,
       thumbnail,
     }),
     input.$thumbnails,
@@ -255,7 +255,7 @@ Let's add a button to our dashboard to trigger an update of our component. When 
 ```js{1,3-6,13}
 const trainingSetUmap = umap(trainingSet);
 
-const updateUMap = button({ text: 'Update Visualization' });
+const updateUMap = button('Update Visualization');
 updateUMap.$click.subscribe(() => {
   trainingSetUmap.update();
 });

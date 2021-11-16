@@ -1,53 +1,49 @@
 <script lang="ts">
-  import type { Stream } from '../../core/stream';
-
   export let disabled = false;
-  export let stream: Stream<number[]>;
+  export let value: number[];
 
   function changeValue(e: Event, i: number) {
     const target = e.target as HTMLInputElement;
-    const x = parseInt(target.value, 10);
+    const x = parseFloat(target.value);
     if (!Number.isNaN(x)) {
-      const v = stream.value.slice();
-      v[i] = x;
-      stream.set(v);
+      value[i] = x;
     } else {
-      target.value = stream.value[i].toString();
+      target.value = value[i].toString();
     }
   }
 
   function decrement(i: number) {
-    const v = stream.value.slice();
+    const v = value.slice();
     v[i] -= 1;
-    stream.set(v);
+    value = v;
   }
 
   function increment(i: number) {
-    const v = stream.value.slice();
+    const v = value.slice();
     v[i] += 1;
-    stream.set(v);
+    value = v;
   }
 
   function extend() {
-    const v = stream.value.slice();
+    const v = value.slice();
     v.push(v.length ? v[v.length - 1] : 0);
-    stream.set(v);
+    value = v;
   }
 
   function reduce() {
-    stream.set(stream.value.slice(0, stream.value.length - 1));
+    value = value.slice(0, value.length - 1);
   }
-
 </script>
 
-{#if $stream}
+{#if value && Array.isArray(value)}
   <div class="flex items-center">
-    {#each $stream as value, i}
+    {#each value as v, i}
       <div class="flex mr-2">
         <button {disabled} on:click={() => decrement(i)} class="left"> - </button>
         <input
-          type="text"
-          value={$stream[i]}
+          type="number"
+          inputmode="decimal"
+          value={v}
           on:change={(e) => changeValue(e, i)}
           {disabled}
           style="width: 80px"
@@ -90,6 +86,18 @@
     @apply bg-white text-gray-300 border-gray-300 cursor-not-allowed ring-0;
   }
 
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
   button {
     @apply bg-transparent border-solid border uppercase text-xs rounded outline-none py-1 px-2 m-0
     bg-gray-50 border-gray-300 text-gray-700 font-normal
@@ -118,5 +126,4 @@
   button:hover[disabled] {
     @apply bg-white text-gray-300 border-gray-300 cursor-not-allowed ring-0;
   }
-
 </style>

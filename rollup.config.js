@@ -1,5 +1,6 @@
 /* eslint-env node */
 import commonjs from '@rollup/plugin-commonjs';
+import externalGlobals from 'rollup-plugin-external-globals';
 import filesize from 'rollup-plugin-filesize';
 import preprocess from 'svelte-preprocess';
 import postcss from 'rollup-plugin-postcss';
@@ -39,6 +40,7 @@ const plugins = [
     preferBuiltins: false,
     dedupe: ['svelte'],
   }),
+  externalGlobals({ 'onnxruntime-web': 'ort' }),
   commonjs(),
   typescript(),
   progress(),

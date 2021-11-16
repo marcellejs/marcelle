@@ -1,5 +1,15 @@
 # Marcelle changelog
 
+## Next
+
+- `modelParameters` was improved to support other types
+- `genericChart` was improved to support lazy iterators (e.g. for datasets)
+- New component `onnxModel` using onnruntime-web with a wasm backend by default
+- New widgets (components): `number` and `numberArray`
+- `textField` was updated to `textInput` and its API was updated (`$value` stream instead of `$text`)
+- `button`, `text`, `toggle`, `select`: minor API changes (simplified constructors)
+- `slider` was improved with better defaults for pips and a continuous mode
+
 ## 0.4.4
 
 - Various minor bugfixes

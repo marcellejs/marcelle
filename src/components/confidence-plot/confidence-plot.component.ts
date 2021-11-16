@@ -34,9 +34,9 @@ export class ConfidencePlot extends Component {
       'Confidences',
     );
     this.#plotConfidences.title = '';
-    this.#displayLabel = text({ text: 'Waiting for predictions...' });
+    this.#displayLabel = text('Waiting for predictions...');
     this.#displayLabel.title = this.title;
-    this.#displayLabel.$text = new Stream(
+    this.#displayLabel.$value = new Stream(
       startWith('Waiting for predictions...')(
         map(({ label, trueLabel }: Prediction) => {
           let t = `<h2>Predicted Label: <code>${label}</code></h2>`;

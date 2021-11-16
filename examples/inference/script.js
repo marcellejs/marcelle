@@ -37,23 +37,21 @@ up.$files.subscribe((fl) => {
 // CAPTURE TO DATASET
 // -----------------------------------------------------------
 
-const instances = source.$thumbnails.map((thumbnail) => ({
-  type: 'image',
-  data: source.$images.value,
-  label: 'unlabeled',
+const $instances = source.$thumbnails.map((thumbnail) => ({
+  x: source.$images.value,
+  y: 'unlabeled',
   thumbnail,
 }));
 
 const store = dataStore('memory');
 const trainingSet = dataset('TrainingSet-inference', store);
 
-const tog = toggle({ text: 'Capture to dataset' });
+const tog = toggle('Capture to dataset');
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+let unSub = () => {};
 tog.$checked.skipRepeats().subscribe((x) => {
-  if (x) {
-    trainingSet.capture(instances);
-  } else {
-    trainingSet.capture(null);
-  }
+  unSub();
+  unSub = $instances.subscribe(trainingSet.create.bind(trainingSet));
 });
 
 const trainingSetBrowser = datasetBrowser(trainingSet);
@@ -63,8 +61,8 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 // -----------------------------------------------------------
 
 const batchTesting = batchPrediction({ name: 'mobileNet', dataStore: store });
-const predictButton = button({ text: 'Update predictions' });
-const predictionAccuracy = text({ text: 'Waiting for predictions...' });
+const predictButton = button('Update predictions');
+const predictionAccuracy = text('Waiting for predictions...');
 const confMat = confusionMatrix(batchTesting);
 confMat.title = 'Mobilenet: Confusion Matrix';
 
@@ -109,9 +107,9 @@ const dash = dashboard({
   author: 'Marcelle Pirates Crew',
 });
 
-const help = text({
-  text: 'In this example, you can upload a pre-trained classification model (converted from a Keras model, see examples here: https://keras.io/api/applications/) and perform inference with input images of your choice.',
-});
+const help = text(
+  `In this example, you can upload a pre-trained classification model (converted from a Keras model, see examples here: https://keras.io/api/applications/) and perform inference with input images of your choice.`,
+);
 help.title = 'Test generic DNN classifier';
 
 dash

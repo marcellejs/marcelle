@@ -2,18 +2,14 @@ import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
 import View from './text.view.svelte';
 
-export interface TextOptions {
-  text: string;
-}
-
 export class Text extends Component {
   title = 'text';
 
-  $text: Stream<string>;
+  $value: Stream<string>;
 
-  constructor({ text = 'click me' }: Partial<TextOptions> = {}) {
+  constructor(initial = 'click me') {
     super();
-    this.$text = new Stream(text, true);
+    this.$value = new Stream(initial, true);
     this.start();
   }
 
@@ -25,7 +21,7 @@ export class Text extends Component {
       target: t,
       props: {
         title: this.title,
-        text: this.$text,
+        text: this.$value,
       },
     });
   }

@@ -2,14 +2,19 @@ import { Component } from '../../core/component';
 import { Parametrable } from '../../core/types';
 import View from './model-parameters.view.svelte';
 
+type WidgetType = 'menu' | 'text' | 'boolean' | 'number' | 'number array' | 'auto';
+export type ParamConfig = Record<string, { type: WidgetType | 'auto'; options?: string[] }>;
+
 export class ModelParameters extends Component {
   title = 'modelParameters';
 
   #component: Parametrable;
+  config: ParamConfig;
 
-  constructor(m: Parametrable) {
+  constructor(m: Parametrable, config: ParamConfig = {}) {
     super();
     this.#component = m;
+    this.config = config;
   }
 
   mount(target?: HTMLElement): void {
@@ -21,6 +26,7 @@ export class ModelParameters extends Component {
       props: {
         title: this.title,
         parameters: this.#component.parameters,
+        config: this.config,
       },
     });
   }

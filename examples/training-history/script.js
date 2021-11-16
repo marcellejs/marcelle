@@ -12,7 +12,7 @@ import {
   modelParameters,
   confidencePlot,
   trainingProgress,
-  textField,
+  textInput,
   toggle,
   trainingHistory,
   trainingPlot,
@@ -27,9 +27,9 @@ import {
 const input = webcam();
 const featureExtractor = mobileNet();
 
-const label = textField();
+const label = textInput();
 label.title = 'Instance label';
-const capture = button({ text: 'Hold to record instances' });
+const capture = button('Hold to record instances');
 capture.title = 'Capture instances to the training set';
 
 const store = dataStore('localStorage');
@@ -38,14 +38,14 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
   .filter(() => capture.$pressed.value)
-  .map((x) => ({ x, y: label.$text.value, thumbnail: input.$thumbnails.value }))
+  .map((x) => ({ x, y: label.$value.value, thumbnail: input.$thumbnails.value }))
   .subscribe(trainingSet.create.bind(trainingSet));
 
 // -----------------------------------------------------------
 // TRAINING
 // -----------------------------------------------------------
 
-const b = button({ text: 'Train' });
+const b = button('Train');
 b.title = 'Training Launcher';
 const classifier = mlpClassifier({ layers: [64, 32], epochs: 20, dataStore: store }).sync(
   'mlp-dashboard',
@@ -72,7 +72,7 @@ const plotTraining = trainingPlot(classifier);
 const batchMLP = batchPrediction({ name: 'mlp', dataStore: store });
 const confMat = confusionMatrix(batchMLP);
 
-const predictButton = button({ text: 'Update predictions' });
+const predictButton = button('Update predictions');
 predictButton.$click.subscribe(async () => {
   if (!classifier.ready) {
     throwError(new Error('No classifier has been trained'));
@@ -90,7 +90,7 @@ predictButton.$click.subscribe(async () => {
 // REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
-const tog = toggle({ text: 'toggle prediction' });
+const tog = toggle('toggle prediction');
 tog.$checked.subscribe((checked) => {
   if (checked && !classifier.ready) {
     throwError(new Error('No classifier has been trained'));

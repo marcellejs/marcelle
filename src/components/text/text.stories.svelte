@@ -3,18 +3,15 @@
   import { text } from './';
   import { onMount } from 'svelte';
 
-  const t = text({
-    text: `<div>
+  const t = text(`<div>
       You can put some <strong>HTML</strong> here...<br><br>
       <img src="https://media.giphy.com/media/10KTdhr5Zzq6uA/giphy.gif">
-      </div>`,
-  });
+      </div>`);
   t.title = "The text's title";
 
   onMount(() => {
     t.mount();
   });
-
 </script>
 
 <Meta

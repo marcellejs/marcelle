@@ -1,7 +1,7 @@
-import { Button, ButtonOptions } from './button.component';
+import { Button } from './button.component';
 
-export function button(options: Partial<ButtonOptions>): Button {
-  return new Button(options);
+export function button(text?: string): Button {
+  return new Button(text);
 }
 
-export type { Button, ButtonOptions };
+export type { Button };

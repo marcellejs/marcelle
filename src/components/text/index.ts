@@ -1,7 +1,7 @@
-import { Text, TextOptions } from './text.component';
+import { Text } from './text.component';
 
-export function text(options: Partial<TextOptions>): Text {
-  return new Text(options);
+export function text(initial?: string): Text {
+  return new Text(initial);
 }
 
-export type { Text, TextOptions };
+export type { Text };

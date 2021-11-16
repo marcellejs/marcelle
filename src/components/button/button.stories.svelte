@@ -3,13 +3,12 @@
   import { button } from './';
   import { onMount } from 'svelte';
 
-  const b = button({ text: 'The button text' });
+  const b = button('The button text');
   b.title = "The button's title";
 
   onMount(() => {
     b.mount();
   });
-
 </script>
 
 <Meta

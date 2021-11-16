@@ -16,14 +16,7 @@ Marcelle is still experimental and is currently under active development. Breaki
 
 ## About
 
-Marcelle is an interactive machine learning toolkit that has been designed to allow ML practitioners, with various levels of expertise, to explore ML and build applications embedding ML models. In particular, Marcelle aims to address the following use cases:
-
-1. interactively designing ML-based web applications with small datasets
-2. teaching ML to an audience without specific skills in ML or CS
-3. learning about ML concepts through exploratory interactive training and testing
-4. discovering and exploring expressive (big) ML models.
-
-Marcelle is a web-based reactive toolkit facilitating the design of custom ML pipelines and personalized user interfaces enabling user interactions on the pipeline's constitutive elements.
+Marcelle is a modular open source toolkit for programming interactive machine learning applications. Marcelle is built around components embedding computation and interaction that can be composed to form reactive machine learning pipelines and custom user interfaces. This architecture enables rapid prototyping and extension. Marcelle can be used to build interfaces to Python scripts, and it provides flexible data stores to facilitate collaboration between machine learning experts, designers and end users.
 
 ## Installation
 
@@ -72,10 +65,30 @@ To generate the typescript declaration files (useful for the rollup example), ru
 - [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 - [Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
 
-## ✍️ Authors
+## Credits
 
-- Jules Françoise ([@JulesFrancoise](https://github.com/JulesFrancoise/)), LISN, Université Paris-Saclay, CNRS.
-- Baptiste Caramiaux ([@bcaramiaux](https://github.com/bcaramiaux/)), ISIR, Sorbonne Université, CNRS.
+Marcelle is a research project led by [Jules Françoise](https://www.julesfrancoise.com/) (CNRS researcher at [LISN](https://www.lisn.upsaclay.fr/)) and [Baptiste Caramiaux](https://baptistecaramiaux.com/) (CNRS researcher at [ISIR](https://hci.isir.upmc.fr/)).
+
+This research was supported by the [ELEMENT project](https://element-project.ircam.fr/) (ANR-18-CE33-0002) from the French National Research Agency.
+
+### ✍️ Authors
+
+- [Jules Françoise](https://www.julesfrancoise.com/) (CNRS researcher at [LISN](https://www.lisn.upsaclay.fr/))
+- [Baptiste Caramiaux](https://baptistecaramiaux.com/) (CNRS researcher at [ISIR](https://hci.isir.upmc.fr/)).
+- [Téo Sanchez](https://teo-sanchez.github.io/) (PhD Student at [LISN](https://www.lisn.upsaclay.fr/))
+
+### Citing this work
+
+Please cite the following publication when refering to Marcelle in academic publications:
+
+> Jules Françoise, Baptiste Caramiaux, Téo Sanchez. **Marcelle: Composing Interactive Machine Learning Workflows and Interfaces.** Annual ACM Symposium on User Interface Software and Technology (UIST ’21), Oct 2021, Virtual. DOI: [10.1145/3472749.3474734](https://doi.org/10.1145/3472749.3474734).<br> > [PDF](https://hal.archives-ouvertes.fr/hal-03335115/document)
+
+### Supporting institutions
+
+- [CNRS](https://www.cnrs.fr)
+- [Université Paris Saclay](https://www.universite-paris-saclay.fr/)
+- [Sorbonne Université](https://www.sorbonne-universite.fr/)
+- [Inria](https://www.inria.fr/)
 
 ## 🔨 Built Using
 

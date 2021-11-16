@@ -35,13 +35,31 @@ The component will automatically display all parameters with appropriate GUI Wid
   <img src="./images/model-parameters.png" alt="Screenshot of the parameters component">
 </div>
 
-### Example
+### Examples
 
 ```js
 const classifier = marcelle.mlp({ layers: [64, 32], epochs: 20 });
 const params = marcelle.parameters(classifier);
 
 dashboard.page('Training').use(params);
+```
+
+```js
+const parametrable = {
+  parameters: {
+    int: new Stream(12, true),
+    float: new Stream(-0.0000045, true),
+    intArray: new Stream(Array.from(Array(3), () => Math.floor(100 * Math.random()))),
+    floatArray: new Stream(Array.from(Array(3), () => Math.random())),
+    string: new Stream('test'),
+    menu: new Stream('three'),
+    bool: new Stream(false),
+  },
+};
+
+const p = modelParameters(parametrable, {
+  menu: { type: 'menu', options: ['one', 'two', 'three'] },
+});
 ```
 
 ## trainingProgress
