@@ -1,4 +1,3 @@
-import skl2onnx
 from skl2onnx.common.data_types import FloatTensorType
 from skl2onnx import convert_sklearn
 from sklearn.datasets import load_iris
@@ -30,7 +29,8 @@ onx_rf = convert_sklearn(
     options={"zipmap": False},
 )
 
-skl2onnx.helpers.onnx_helper.save_onnx_model(onx_rf, filename="rf_iris.onnx")
+with open("../public/iris_rf.onnx", "wb") as f:
+    f.write(onx_rf.SerializeToString())
 
 clr_svm = SVC()
 clr_svm.fit(X_train, y_train)
@@ -47,4 +47,5 @@ onx_svm = convert_sklearn(
     options={"zipmap": False},
 )
 
-skl2onnx.helpers.onnx_helper.save_onnx_model(onx_svm, filename="svc_iris.onnx")
+with open("../public/iris_svc.onnx", "wb") as f:
+    f.write(onx_svm.SerializeToString())

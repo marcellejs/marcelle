@@ -7,11 +7,10 @@ export const classifier = onnxModel({
 });
 classifier.labels = ['Setosa', 'Versicolor', 'Virginica'];
 
-const selectModel = select(['rf_iris.onnx', 'svc_iris.onnx']);
+const selectModel = select(['iris_rf.onnx', 'iris_svc.onnx']);
 selectModel.title = 'Select a Python-Trained Model';
 selectModel.$value.subscribe((v) => {
-  console.log('v', v);
-  classifier.loadFromUrl(`/iris-python/${v}`);
+  classifier.loadFromUrl(`/${v}`);
 });
 
 const uploadModel = fileUpload();
