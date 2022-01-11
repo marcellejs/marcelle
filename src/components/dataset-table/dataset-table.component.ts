@@ -22,9 +22,11 @@ export class DatasetTable<InputType, OutputType> extends Component {
     if (!columns) {
       this.#dataset.ready
         .then(() => this.#dataset.items().take(1).toArray())
-        .then(([firstInstance]) => {
-          const cols = Object.keys(firstInstance);
-          this.$columns.set(cols);
+        .then((res) => {
+          if (res.length > 0) {
+            const cols = Object.keys(res[0]);
+            this.$columns.set(cols);
+          }
         })
         .catch((error) => {
           // eslint-disable-next-line no-console

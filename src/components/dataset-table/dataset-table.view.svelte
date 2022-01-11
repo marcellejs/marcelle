@@ -29,6 +29,11 @@
     if (typeof x === 'string' && !isNaN(Date.parse(x))) {
       return 'date';
     }
+    if (Array.isArray(x)) {
+      if ((x.length > 1 && Array.isArray(x[0])) || x.length > 3) {
+        return 'array';
+      }
+    }
     return 'generic';
   }
 
