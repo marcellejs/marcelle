@@ -1,6 +1,6 @@
 # Marcelle changelog
 
-## Next
+## 0.5.0
 
 - `modelParameters` was improved to support other types
 - `genericChart` was improved to support lazy iterators (e.g. for datasets)
