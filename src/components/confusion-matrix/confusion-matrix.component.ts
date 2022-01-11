@@ -1,4 +1,4 @@
-import { awaitPromises, map } from '@most/core';
+import { awaitPromises, debounce, map } from '@most/core';
 import { dequal } from 'dequal';
 import { Component } from '../../core/component';
 import { BatchPrediction } from '../batch-prediction';
@@ -29,7 +29,7 @@ export class ConfusionMatrix extends Component {
         map(
           async (predictionIds: string[]) =>
             Promise.all(predictionIds.map((id) => this.#prediction.predictionService.get(id))),
-          this.#prediction.$predictions,
+          debounce(500, this.#prediction.$predictions),
         ),
       ),
     );
