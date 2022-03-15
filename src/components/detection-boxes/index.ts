@@ -1,5 +1,5 @@
+import type { Stream, ObjectDetectorResults } from '../../core';
 import { DetectionBoxes } from './detection-boxes.component';
-import { Stream, ObjectDetectorResults } from '../../core';
 
 export function detectionBoxes(
   imgStream: Stream<ImageData>,

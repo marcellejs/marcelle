@@ -1,5 +1,5 @@
+import type { Stream } from '../../core/stream';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import View from './scatter-plot.view.svelte';
 
 export class ScatterPlot extends Component {

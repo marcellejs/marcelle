@@ -1,5 +1,5 @@
+import type { Model } from '../../core';
 import { TrainingProgress } from './training-progress.component';
-import { Model } from '../../core';
 
 export function trainingProgress<T, U>(m: Model<T, U>): TrainingProgress<T, U> {
   if (!m.$training) {

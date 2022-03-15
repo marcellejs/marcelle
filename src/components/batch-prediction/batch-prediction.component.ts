@@ -1,6 +1,7 @@
 import type { Prediction, ObjectId, Instance } from '../../core/types';
+import type { ServiceIterable } from '../../core/data-store/service-iterable';
+import type { Service, Paginated } from '@feathersjs/feathers';
 import { map } from '@most/core';
-import { Service, Paginated } from '@feathersjs/feathers';
 import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
 import { DataStore } from '../../core/data-store/data-store';
@@ -14,7 +15,6 @@ import { Dataset, isDataset } from '../../core/dataset';
 import { logger, Model } from '../../core';
 import { readJSONFile, saveBlob } from '../../utils/file-io';
 import { throwError } from '../../utils/error-handling';
-import { ServiceIterable } from '../../core/data-store/service-iterable';
 
 export interface BatchPredictionOptions {
   name: string;

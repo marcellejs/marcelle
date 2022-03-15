@@ -1,5 +1,5 @@
+import type { Stream } from '../../core/stream';
 import { ScatterPlot } from './scatter-plot.component';
-import { Stream } from '../../core/stream';
 
 export function scatterPlot(
   dataset: Stream<number[][]>,

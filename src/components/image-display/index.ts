@@ -1,4 +1,4 @@
-import { Stream } from '../../core';
+import type { Stream } from '../../core';
 import { ImageDisplay } from './image-display.component';
 
 export function imageDisplay(imageStream: Stream<ImageData> | Stream<ImageData[]>): ImageDisplay {

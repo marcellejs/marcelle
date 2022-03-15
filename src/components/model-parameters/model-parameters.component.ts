@@ -1,5 +1,5 @@
+import type { Parametrable } from '../../core/types';
 import { Component } from '../../core/component';
-import { Parametrable } from '../../core/types';
 import View from './model-parameters.view.svelte';
 
 type WidgetType = 'menu' | 'text' | 'boolean' | 'number' | 'number array' | 'auto';

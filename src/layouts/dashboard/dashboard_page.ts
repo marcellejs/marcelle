@@ -1,4 +1,4 @@
-import { Component } from '../../core/component';
+import type { Component } from '../../core/component';
 
 function isTitle(x: Component | Component[] | string): x is string {
   return typeof x === 'string';

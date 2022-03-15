@@ -1,8 +1,8 @@
+import type { Model } from '../../core';
 import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
 import { genericChart, GenericChart } from '../generic-chart';
 import { throwError } from '../../utils/error-handling';
-import { Model } from '../../core';
 import View from './training-plot.view.svelte';
 
 export type LogSpec = string | string[] | { [key: string]: string | string[] };

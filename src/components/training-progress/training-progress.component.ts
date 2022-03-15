@@ -1,4 +1,4 @@
-import { Model } from '../../core';
+import type { Model } from '../../core';
 import { Component } from '../../core/component';
 import View from './training-progress.view.svelte';
 

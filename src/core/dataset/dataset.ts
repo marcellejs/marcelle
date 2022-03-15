@@ -40,8 +40,8 @@ export class Dataset<InputType, OutputType> extends Component {
         .connect()
         .then(() => this.setup())
         .then(resolve)
-        .catch(() => {
-          logger.log(`[dataset:${name}] dataStore connection failed`);
+        .catch((err) => {
+          logger.log(`[dataset:${name}] dataStore connection failed`, err);
           reject();
         });
     });
@@ -52,6 +52,7 @@ export class Dataset<InputType, OutputType> extends Component {
     this.instanceService = this.#store.service(instanceServiceName) as Service<
       Instance<InputType, OutputType>
     >;
+
     this.instanceService.hooks({
       before: {
         create: [addScope('datasetName', this.name), imageData2DataURL],

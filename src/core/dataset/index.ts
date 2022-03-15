@@ -1,4 +1,4 @@
-import { DataStore } from '../data-store';
+import type { DataStore } from '../data-store';
 import { Dataset } from './dataset';
 
 export function dataset<InputType, OutputType>(

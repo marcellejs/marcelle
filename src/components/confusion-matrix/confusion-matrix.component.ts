@@ -1,7 +1,7 @@
+import type { BatchPrediction } from '../batch-prediction';
 import { awaitPromises, debounce, map } from '@most/core';
 import { dequal } from 'dequal';
 import { Component } from '../../core/component';
-import { BatchPrediction } from '../batch-prediction';
 import { Stream } from '../../core/stream';
 import type { Prediction } from '../../core/types';
 import View from './confusion-matrix.view.svelte';

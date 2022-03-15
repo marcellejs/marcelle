@@ -1,4 +1,6 @@
-import { tensor, tensor2d, Tensor2D, TensorLike } from '@tensorflow/tfjs-core';
+import type { ServiceIterable } from '../../core/data-store/service-iterable';
+import type { Tensor2D, TensorLike } from '@tensorflow/tfjs-core';
+import { tensor, tensor2d } from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/flatten';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/norm';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/mat_mul';
@@ -19,7 +21,6 @@ import { Dataset, isDataset } from '../../core/dataset';
 import { Catch } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
-import { ServiceIterable } from '../../core/data-store/service-iterable';
 
 export interface KNNClassifierOptions extends ModelOptions {
   k: number;
