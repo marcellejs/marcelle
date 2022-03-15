@@ -100,7 +100,6 @@
   },
   "dependencies": {
     "@feathersjs/authentication-client": "^4.5.11",
-    "@feathersjs/client": "^4.5.11",
     "@feathersjs/feathers": "^4.5.11",
     "@feathersjs/socketio-client": "^4.5.11",
     "@most/adapter": "^1.0.0",
