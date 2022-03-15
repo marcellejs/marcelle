@@ -1,5 +1,9 @@
 # Marcelle changelog
 
+## next
+
+- [dev] Storybook was removed
+
 ## 0.5.0
 
 - `modelParameters` was improved to support other types
