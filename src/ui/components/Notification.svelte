@@ -41,7 +41,6 @@
       }, duration);
     }
   }
-
 </script>
 
 <div class="marcelle notification-container">
@@ -133,5 +132,4 @@
   .notification-svg.danger {
     @apply text-red-500;
   }
-
 </style>

@@ -4,15 +4,14 @@ const production = !process.env.ROLLUP_WATCH;
 process.env.NODE_ENV = production ? JSON.stringify('production') : JSON.stringify('development');
 
 module.exports = {
-  mode: 'jit',
-  purge: ['./src/**/*.{css,js,jsx,ts,tsx,svelte}'],
+  content: ['./src/**/*.{css,js,jsx,ts,tsx,svelte}'],
   theme: {
     colors: {
       transparent: 'transparent',
       current: 'currentColor',
       black: colors.black,
       white: colors.white,
-      gray: colors.coolGray,
+      gray: colors.gray,
       blue: colors.sky,
       green: colors.emerald,
       indigo: colors.indigo,
@@ -21,7 +20,6 @@ module.exports = {
       yellow: colors.amber,
     },
   },
-  variants: {},
   plugins: [],
   corePlugins: {
     preflight: false,

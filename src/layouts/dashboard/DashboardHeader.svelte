@@ -26,7 +26,6 @@
       dispatch('quit');
     }, 400);
   }
-
 </script>
 
 <header class="bg-white text-gray-700 body-font">
@@ -37,7 +36,7 @@
     >
       <span class="mx-3 text-lg">{title}</span>
     </a>
-    <nav class="flex items-stretch justify-start flex-wrap text-base flex-grow mx-4">
+    <nav class="flex items-stretch justify-start flex-wrap text-base grow mx-4">
       {#each Object.entries(items) as [slug, name], index}
         <a
           href={`#${slug}`}
@@ -98,5 +97,4 @@
   .active {
     @apply text-gray-900 border-green-500;
   }
-
 </style>

@@ -20,7 +20,6 @@
   function selectAction(code: string) {
     dispatch('select', code);
   }
-
 </script>
 
 <svelte:body

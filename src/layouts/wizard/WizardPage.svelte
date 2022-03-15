@@ -5,7 +5,6 @@
   export let title: string;
   export let description: string;
   export let components: Array<Component[] | Component> = [];
-
 </script>
 
 <div class="bg-white px-4 pt-2 pb-4 sm:px-6 sm:pb-4 flex">
@@ -39,11 +38,10 @@
 
 <style type="text/postcss">
   .components {
-    @apply flex-grow p-1;
+    @apply grow p-1;
   }
 
   .desc {
-    @apply flex-shrink-0 p-4;
+    @apply shrink-0 p-4;
   }
-
 </style>

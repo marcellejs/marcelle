@@ -20,7 +20,6 @@
     pressed = false;
     dispatch('pressed', pressed);
   }
-
 </script>
 
 <svelte:body on:mouseup={pressed && stopDown} />
@@ -45,7 +44,7 @@
 
 <style lang="postcss">
   button {
-    @apply font-semibold text-xs px-4 py-2 rounded cursor-pointer;
+    @apply outline-none font-semibold text-xs px-4 py-2 rounded cursor-pointer;
     transition: all 0.15s ease;
   }
 
@@ -219,5 +218,4 @@
   button.round.size-large {
     @apply w-12 h-12;
   }
-
 </style>
