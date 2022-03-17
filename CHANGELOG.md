@@ -2,6 +2,9 @@
 
 ## next
 
+- `confusionMatrix` is debounced to avoid UI hangs
+- Dataset's `distinct` method was fixed for client-side storage
+- [dev] dependencies and config were upgraded
 - [dev] Storybook was removed
 
 ## 0.5.0
