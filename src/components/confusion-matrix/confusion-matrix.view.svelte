@@ -50,14 +50,17 @@
       legend: {
         display: false,
       },
-      tooltips: {
-        callbacks: {
-          title() {
-            return '';
-          },
-          label(context) {
-            const v = context.dataset.data[context.dataIndex];
-            return ['true label: ' + v.y, 'predicted label: ' + v.x, 'count: ' + v.v];
+      plugins: {
+        tooltip: {
+          callbacks: {
+            title([context]) {
+              const v = context.dataset.data[context.dataIndex];
+              return ['count: ' + v.v];
+            },
+            label(context) {
+              const v = context.dataset.data[context.dataIndex];
+              return ['true label: ' + v.y, 'predicted label: ' + v.x];
+            },
           },
         },
       },
@@ -67,11 +70,12 @@
           labels: [],
           ticks: {
             display: true,
+            autoSkip: false,
           },
           gridLines: {
             display: false,
           },
-          scaleLabel: { display: true, labelString: 'Predicted Label' },
+          title: { display: true, text: 'Predicted Label' },
         },
         y: {
           type: 'category',
@@ -80,11 +84,12 @@
           reverse: true,
           ticks: {
             display: true,
+            autoSkip: false,
           },
           gridLines: {
             display: false,
           },
-          scaleLabel: { display: true, labelString: 'True Label' },
+          title: { display: true, text: 'True Label' },
         },
       },
     },
@@ -98,8 +103,8 @@
     unSub.push(
       labels.subscribe((labs) => {
         nLabels = labs.length;
-        defaultOptions.options.scales.x.labels = labs;
-        defaultOptions.options.scales.y.labels = labs;
+        defaultOptions.options.scales.x.labels = labs.sort();
+        defaultOptions.options.scales.y.labels = labs.sort();
         chart.update();
       }),
     );
