@@ -13,7 +13,7 @@ export class SketchPad extends Component {
 
   sketchElement: HTMLCanvasElement;
 
-  #thumbnailWidth = 80;
+  #thumbnailWidth = 60;
   #thumbnailCanvas: HTMLCanvasElement;
   #thumbnailCtx: CanvasRenderingContext2D;
   #sketchCtx: CanvasRenderingContext2D;
