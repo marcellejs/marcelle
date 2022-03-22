@@ -8,11 +8,14 @@
   export let accuracy;
   export let confusion;
   export let labels;
+  export let selected;
 
   Chart.register(CategoryScale, Title, Tooltip, MatrixElement, MatrixController);
 
   let maxCount = 1;
   let nLabels = 1;
+
+  let selectedDataIndex = -1;
 
   const defaultOptions = {
     type: 'matrix',
@@ -23,6 +26,7 @@
           data: [],
           backgroundColor(context) {
             if (context.dataset.data.length > 0) {
+              if (context.dataIndex === selectedDataIndex) return 'green';
               const value = context.dataset.data[context.dataIndex].v;
               return `rgba(54, 162, 235, ${value / maxCount})`;
             }
@@ -91,6 +95,22 @@
           },
           title: { display: true, text: 'True Label' },
         },
+      },
+      onClick(e) {
+        try {
+          const dataIndex = e.chart.tooltip.dataPoints[0].dataIndex;
+          if (selectedDataIndex === dataIndex) {
+            selected.set([]);
+            selectedDataIndex = -1;
+          } else {
+            selected.set(e.chart.tooltip.dataPoints[0].raw);
+            selectedDataIndex = dataIndex;
+            e.chart.update();
+          }
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.log('[confusion matrix] selection error:', error);
+        }
       },
     },
   };

@@ -20,6 +20,7 @@ export class ConfusionMatrix extends Component {
   $confusion: Stream<ConfusionMatrixT>;
   $accuracy: Stream<number>;
   $labels: Stream<string[]> = new Stream([], true);
+  $selected: Stream<{ x: string; y: string; v: number }> = new Stream(null, true);
 
   constructor(prediction: BatchPrediction) {
     super();
@@ -86,6 +87,7 @@ export class ConfusionMatrix extends Component {
         confusion: this.$confusion,
         accuracy: this.$accuracy,
         labels: this.$labels,
+        selected: this.$selected,
       },
     });
   }
