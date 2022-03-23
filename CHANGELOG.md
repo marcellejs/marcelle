@@ -1,13 +1,13 @@
 # Marcelle changelog
 
-## next
+## v0.5.1
 
-- `confusionMatrix` is debounced to avoid UI hangs
+- `confusionMatrix` had a few improvements (debounced to avoid UI hangs, axis titles, tooltip, `$selected` stream)
 - Dataset's `distinct` method was fixed for client-side storage
 - [dev] dependencies and config were upgraded
 - [dev] Storybook was removed
 
-## 0.5.0
+## v0.5.0
 
 - `modelParameters` was improved to support other types
 - `genericChart` was improved to support lazy iterators (e.g. for datasets)
@@ -17,29 +17,29 @@
 - `button`, `text`, `toggle`, `select`: minor API changes (simplified constructors)
 - `slider` was improved with better defaults for pips and a continuous mode
 
-## 0.4.4
+## v0.4.4
 
 - Various minor bugfixes
 
-## 0.4.3
+## v0.4.3
 
 - Fixed svelte component compilation (reverted to svelte v3.39)
 - Fixed KNN Classifier
 
-## 0.4.2
+## v0.4.2
 
 - New `trainingHistory` component to track and monitor training runs.
 - `datasetTable` now automatically extracts columns from service data
 - Removed `onnxModel` from release due to limited operator support.
 - Improved documentation website
 
-## 0.4.1
+## v0.4.1
 
 - new component: `datasetTable` to display the contents of a dataset as a table
 - new example : `iris` classification from CSV data
 - Fixed: dataset count was not updated on instance deletion
 
-## 0.4.0
+## v0.4.0
 
 ### Breaking Changes ⚠️
 
@@ -173,6 +173,6 @@ Many components and methods have been renamed for consistency. Any application b
 - Data stores have a `$services` stream and have been simplified
 - The architecture for models has been improved
 
-## 0.1.0-alpha.4
+## v0.1.0-alpha.4
 
 - First-ish published version
