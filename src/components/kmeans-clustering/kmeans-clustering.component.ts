@@ -1,3 +1,4 @@
+import type { ServiceIterable } from '../../core/data-store/service-iterable';
 import kmeans from 'ml-kmeans';
 import {
   Stream,
@@ -12,7 +13,6 @@ import { Dataset, isDataset } from '../../core/dataset';
 import { Catch, throwError } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
-import { ServiceIterable } from '../../core/data-store/service-iterable';
 
 export interface KMeansClusteringOptions extends ModelOptions {
   k: number;

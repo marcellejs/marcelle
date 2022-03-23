@@ -1,6 +1,6 @@
-import { ChartOptions as ChartJsOptions } from 'chart.js';
+import type { ChartOptions as ChartJsOptions } from 'chart.js';
+import type { ServiceIterable } from '../../core/data-store/service-iterable';
 import { Component } from '../../core/component';
-import { ServiceIterable } from '../../core/data-store/service-iterable';
 import { Stream, isStream } from '../../core/stream';
 import { throwError } from '../../utils/error-handling';
 import View from './generic-chart.view.svelte';

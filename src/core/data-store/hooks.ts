@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { HookContext, Paginated } from '@feathersjs/feathers';
+import type { HookContext, Paginated } from '@feathersjs/feathers';
 import genId from './objectid';
 import { convertURIToImageData } from '../../utils/image';
 
@@ -138,14 +138,18 @@ export async function findDistinct(context: HookContext): Promise<HookContext> {
   const { $distinct, ...query } = context.params.query;
 
   query.$select = [$distinct];
-  query.$limit = 0;
-  const { total } = (await await context.service.find({ query })) as Paginated<
-    Record<string, unknown>
-  >;
-  query.$limit = total;
-  const { data } = (await context.service.find({ query })) as Paginated<Record<string, unknown>>;
-  const res = Array.from(new Set(data.map((item) => item[$distinct])));
-  context.result = res;
+  query.$skip = 0;
+  let tot = 1;
+  const distinct = new Set();
+  while (query.$skip < tot) {
+    const res = (await context.service.find({ query })) as Paginated<Record<string, unknown>>;
+    for (const x of res.data) {
+      distinct.add(x[$distinct]);
+    }
+    query.$skip += res.limit;
+    tot = res.total;
+  }
+  context.result = Array.from(distinct);
 
   return context;
 }

@@ -7,7 +7,6 @@
   afterUpdate(() => {
     dashboard.mount();
   });
-
 </script>
 
 {#if dashboard}
@@ -37,11 +36,11 @@
 
 <style type="text/postcss">
   .left {
-    @apply flex-shrink-0 p-1 w-full;
+    @apply shrink-0 p-1 w-full;
   }
 
   .right {
-    @apply flex-grow p-1;
+    @apply grow p-1;
   }
 
   @screen lg {
@@ -61,5 +60,4 @@
   h2 {
     @apply font-medium text-gray-700 ml-2 text-2xl;
   }
-
 </style>

@@ -9,7 +9,6 @@
   function onOutsideClick() {
     quit();
   }
-
 </script>
 
 <div class="modal-container">
@@ -45,5 +44,4 @@
       @apply max-w-3xl w-full;
     }
   }
-
 </style>

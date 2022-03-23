@@ -228,7 +228,7 @@
 
 <style>
   .browser-class {
-    @apply relative m-2 w-1/3 flex-grow;
+    @apply relative m-2 w-1/3 grow;
     @apply border-gray-500 border border-solid rounded-lg;
     min-width: 300px;
   }

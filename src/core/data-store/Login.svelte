@@ -37,11 +37,10 @@
       terminate(false);
     }
   }
-
 </script>
 
 <Modal>
-  <div class="p-12">
+  <div class="marcelle p-12">
     <div class="p-4 text-center">
       <h2 class="text-xl">
         {#if mode === 'login'}Log In{:else}Register{/if}

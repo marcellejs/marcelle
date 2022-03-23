@@ -1,11 +1,11 @@
 import { GraphModel, loadGraphModel } from '@tensorflow/tfjs-converter';
+import type { ObjectId, StoredModel } from '../types';
 import { io, Tensor, tidy, zeros } from '@tensorflow/tfjs-core';
 import { LayersModel, loadLayersModel } from '@tensorflow/tfjs-layers';
 import { DataStoreBackend } from '../data-store/data-store';
 import { Catch, checkProperty } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
-import { ObjectId, StoredModel } from '../types';
 import { Model, ModelOptions } from './model';
 import { browserFiles, http } from './tfjs-io';
 

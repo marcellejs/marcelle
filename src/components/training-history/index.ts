@@ -1,4 +1,4 @@
-import { DataStore } from '../../core/data-store';
+import type { DataStore } from '../../core/data-store';
 import { TrainingHistory, TrainingHistoryOptions } from './training-history.component';
 
 export function trainingHistory<InputType, OutputType>(

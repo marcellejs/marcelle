@@ -80,7 +80,6 @@
       console.log('Could not enable router', error);
     }
   });
-
 </script>
 
 <svelte:head>
@@ -118,7 +117,7 @@
   }
 
   .main-container {
-    @apply box-border w-full p-1 flex flex-col flex-nowrap flex-grow bg-gray-100;
+    @apply box-border w-full p-1 flex flex-col flex-nowrap grow bg-gray-100;
     background-color: rgb(237, 242, 247);
   }
 
@@ -127,5 +126,4 @@
       @apply flex-row;
     }
   }
-
 </style>

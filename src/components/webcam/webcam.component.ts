@@ -50,7 +50,7 @@ export class Webcam extends Component {
   #webcamWidth: number;
   #webcamHeight: number;
   #videoElement = document.createElement('video');
-  #thumbnailWidth = 80;
+  #thumbnailWidth = 60;
   #unsubActive = noop;
   #stopStreaming = noop;
   #thumbnailCanvas: HTMLCanvasElement;

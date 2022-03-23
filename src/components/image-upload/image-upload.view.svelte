@@ -53,8 +53,8 @@
       crossOrigin: 'Anonymous',
     });
     const { image: thumbnail } = await loadImage(file, {
-      maxWidth: 80,
-      maxHeight: 80,
+      maxWidth: 60,
+      maxHeight: 60,
       cover: true,
       crop: true,
       canvas: true,
@@ -108,7 +108,6 @@
       uploadInput.click();
     }
   }
-
 </script>
 
 <ViewContainer {title}>
@@ -174,5 +173,4 @@
       justify-center rounded-md;
     background-color: rgba(255, 255, 255, 0.7);
   }
-
 </style>

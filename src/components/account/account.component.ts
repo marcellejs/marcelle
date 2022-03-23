@@ -1,5 +1,5 @@
+import type { DataStore } from '../../core/data-store';
 import { Component } from '../../core/component';
-import { DataStore } from '../../core/data-store';
 import View from './account.view.svelte';
 
 export class Account extends Component {

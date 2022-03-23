@@ -1,6 +1,6 @@
-import { Paginated, Service } from '@feathersjs/feathers';
+import type { Paginated, Service } from '@feathersjs/feathers';
+import type { DataStore } from '../../core/data-store';
 import { logger, Model, Component, Stream, TrainingRun, TrainingStatus } from '../../core';
-import { DataStore } from '../../core/data-store';
 import { preventConcurrentCalls } from '../../utils/asynchronicity';
 import { noop } from '../../utils/misc';
 import View from './training-history.view.svelte';

@@ -13,27 +13,6 @@
   });
 </script>
 
-<style type="text/postcss">
-  .left {
-    @apply flex-shrink-0 p-1 w-full;
-  }
-
-  .right {
-    @apply flex-grow p-1;
-  }
-
-  @screen lg {
-    .left {
-      width: 50%;
-    }
-
-    .right {
-      width: 50%;
-      /* max-width: calc(100% - 350px); */
-    }
-  }
-</style>
-
 {#if settings}
   <div class="left">
     <h2>Data Stores</h2>
@@ -77,3 +56,24 @@
     {/each}
   </div>
 {/if}
+
+<style type="text/postcss">
+  .left {
+    @apply shrink-0 p-1 w-full;
+  }
+
+  .right {
+    @apply grow p-1;
+  }
+
+  @screen lg {
+    .left {
+      width: 50%;
+    }
+
+    .right {
+      width: 50%;
+      /* max-width: calc(100% - 350px); */
+    }
+  }
+</style>

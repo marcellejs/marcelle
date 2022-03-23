@@ -1,5 +1,5 @@
+import type { ComponentInternals } from './types';
 import { isStream } from './stream';
-import { ComponentInternals } from './types';
 
 let nextId = 0;
 

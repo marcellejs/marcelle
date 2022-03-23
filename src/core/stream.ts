@@ -1,8 +1,8 @@
+import type { Stream as MostStream, Disposable, Scheduler, Sink, Time } from '@most/types';
+import type { SeedValue } from '@most/core/dist/combinator/loop';
 import * as most from '@most/core';
 import { asap, newDefaultScheduler } from '@most/scheduler';
 import { createAdapter } from '@most/adapter';
-import { Stream as MostStream, Disposable, Scheduler, Sink, Time } from '@most/types';
-import { SeedValue } from '@most/core/dist/combinator/loop';
 import { noop } from '../utils/misc';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

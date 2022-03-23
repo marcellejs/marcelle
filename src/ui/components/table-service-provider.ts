@@ -1,8 +1,8 @@
-import { Paginated, Query, Service } from '@feathersjs/feathers';
+import type { Paginated, Query, Service } from '@feathersjs/feathers';
+import type { ObjectId } from '../../core';
+import type { Column } from './table-types';
 import { get } from 'svelte/store';
-import { ObjectId } from '../../core';
 import { TableDataProvider, TableProviderOptions } from './table-abstract-provider';
-import { Column } from './table-types';
 
 export interface ServiceProviderItem {
   id?: ObjectId;

@@ -1,5 +1,5 @@
+import type { Stream } from '../../core/stream';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import View from './image-display.view.svelte';
 
 export class ImageDisplay extends Component {

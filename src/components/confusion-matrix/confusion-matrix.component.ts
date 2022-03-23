@@ -1,7 +1,7 @@
-import { awaitPromises, map } from '@most/core';
+import type { BatchPrediction } from '../batch-prediction';
+import { awaitPromises, debounce, map } from '@most/core';
 import { dequal } from 'dequal';
 import { Component } from '../../core/component';
-import { BatchPrediction } from '../batch-prediction';
 import { Stream } from '../../core/stream';
 import type { Prediction } from '../../core/types';
 import View from './confusion-matrix.view.svelte';
@@ -20,6 +20,7 @@ export class ConfusionMatrix extends Component {
   $confusion: Stream<ConfusionMatrixT>;
   $accuracy: Stream<number>;
   $labels: Stream<string[]> = new Stream([], true);
+  $selected: Stream<{ x: string; y: string; v: number }> = new Stream(null, true);
 
   constructor(prediction: BatchPrediction) {
     super();
@@ -29,7 +30,7 @@ export class ConfusionMatrix extends Component {
         map(
           async (predictionIds: string[]) =>
             Promise.all(predictionIds.map((id) => this.#prediction.predictionService.get(id))),
-          this.#prediction.$predictions,
+          debounce(500, this.#prediction.$predictions),
         ),
       ),
     );
@@ -86,6 +87,7 @@ export class ConfusionMatrix extends Component {
         confusion: this.$confusion,
         accuracy: this.$accuracy,
         labels: this.$labels,
+        selected: this.$selected,
       },
     });
   }

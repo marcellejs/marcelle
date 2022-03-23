@@ -8,11 +8,14 @@
   export let accuracy;
   export let confusion;
   export let labels;
+  export let selected;
 
   Chart.register(CategoryScale, Title, Tooltip, MatrixElement, MatrixController);
 
   let maxCount = 1;
   let nLabels = 1;
+
+  let selectedDataIndex = -1;
 
   const defaultOptions = {
     type: 'matrix',
@@ -23,6 +26,7 @@
           data: [],
           backgroundColor(context) {
             if (context.dataset.data.length > 0) {
+              if (context.dataIndex === selectedDataIndex) return 'green';
               const value = context.dataset.data[context.dataIndex].v;
               return `rgba(54, 162, 235, ${value / maxCount})`;
             }
@@ -50,14 +54,17 @@
       legend: {
         display: false,
       },
-      tooltips: {
-        callbacks: {
-          title() {
-            return '';
-          },
-          label(context) {
-            const v = context.dataset.data[context.dataIndex];
-            return ['true label: ' + v.y, 'predicted label: ' + v.x, 'count: ' + v.v];
+      plugins: {
+        tooltip: {
+          callbacks: {
+            title([context]) {
+              const v = context.dataset.data[context.dataIndex];
+              return ['count: ' + v.v];
+            },
+            label(context) {
+              const v = context.dataset.data[context.dataIndex];
+              return ['true label: ' + v.y, 'predicted label: ' + v.x];
+            },
           },
         },
       },
@@ -67,11 +74,12 @@
           labels: [],
           ticks: {
             display: true,
+            autoSkip: false,
           },
           gridLines: {
             display: false,
           },
-          scaleLabel: { display: true, labelString: 'Predicted Label' },
+          title: { display: true, text: 'Predicted Label' },
         },
         y: {
           type: 'category',
@@ -80,12 +88,29 @@
           reverse: true,
           ticks: {
             display: true,
+            autoSkip: false,
           },
           gridLines: {
             display: false,
           },
-          scaleLabel: { display: true, labelString: 'True Label' },
+          title: { display: true, text: 'True Label' },
         },
+      },
+      onClick(e) {
+        try {
+          const dataIndex = e.chart.tooltip.dataPoints[0].dataIndex;
+          if (selectedDataIndex === dataIndex) {
+            selected.set([]);
+            selectedDataIndex = -1;
+          } else {
+            selected.set(e.chart.tooltip.dataPoints[0].raw);
+            selectedDataIndex = dataIndex;
+            e.chart.update();
+          }
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.log('[confusion matrix] selection error:', error);
+        }
       },
     },
   };
@@ -98,8 +123,8 @@
     unSub.push(
       labels.subscribe((labs) => {
         nLabels = labs.length;
-        defaultOptions.options.scales.x.labels = labs;
-        defaultOptions.options.scales.y.labels = labs;
+        defaultOptions.options.scales.x.labels = labs.sort();
+        defaultOptions.options.scales.y.labels = labs.sort();
         chart.update();
       }),
     );

@@ -9,7 +9,7 @@
 </script>
 
 <ViewContainer {title}>
-  <div class="flex-grow">
+  <div class="grow">
     {#if $text}
       {@html $text}
     {/if}
