@@ -342,6 +342,7 @@ importers:
       eslint-plugin-prettier: ^3.1.1
       jest: ^26.1.0
       lint-staged: ^9.4.3
+      lodash: ^4.17.21
       prettier: ^1.19.1
       yeoman-assert: ^3.1.0
       yeoman-generator: ^2.0.1
@@ -349,6 +350,7 @@ importers:
       yosay: ^2.0.1
     dependencies:
       chalk: 2.4.2
+      lodash: 4.17.21
       yeoman-generator: 2.0.5
       yosay: 2.0.2
     devDependencies:

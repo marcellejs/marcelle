@@ -6,14 +6,13 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
-    project: './tsconfig.json',
   },
-  plugins: ['svelte3', '@typescript-eslint'<% if (prettier) { %>, 'prettier'<% } %>],
+  plugins: ['svelte3', '@typescript-eslint', 'prettier'],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
-    <% if (prettier) { %>'prettier',<% } %>
+    'prettier',
   ],
   overrides: [
     {
@@ -78,7 +77,6 @@ module.exports = {
       },
     ],
     'no-proto': 'error',
-    'no-redeclare': 'error',
     'no-return-assign': ['error', 'always'],
     'no-return-await': 'error',
     'no-script-url': 'error',
@@ -110,6 +108,7 @@ module.exports = {
     'no-undef-init': 'error',
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': ['error'],
+    // 'no-use-before-define': ['error', { functions: true, classes: true, variables: true }],
     'no-use-before-define': 'off',
     '@typescript-eslint/no-use-before-define': ['error'],
     'no-redeclare': 'off',
@@ -118,8 +117,16 @@ module.exports = {
     semi: ['error', 'always'],
     // ES6
     'no-var': 'error',
+    // -------------
+    // TBD:
+    // https://eslint.org/docs/rules/no-extra-parens
+    // https://eslint.org/docs/rules/class-methods-use-this
+    // https://eslint.org/docs/rules/dot-location
+    // https://eslint.org/docs/rules/no-else-return
+    // -------------
   },
   settings: {
+    // eslint-disable-next-line global-require
     'svelte3/typescript': require('typescript'),
   },
   ignorePatterns: [

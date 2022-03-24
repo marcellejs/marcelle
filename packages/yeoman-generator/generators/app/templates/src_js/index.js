@@ -1,7 +1,7 @@
 import '@marcellejs/core/dist/marcelle.css';
 import { dashboard, text } from '@marcellejs/core';
 
-const x = text({ text: 'Welcome to Marcelle!' });
+const x = text('Welcome to Marcelle!');
 
 const dash = dashboard({
   title: 'My Marcelle App!',

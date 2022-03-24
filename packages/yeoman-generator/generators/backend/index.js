@@ -15,13 +15,11 @@ module.exports = class extends Generator {
       (this.pkg.keywords.includes('marcelle') &&
         !this.pkg.keywords.includes('marcelle-package') &&
         this.pkg.name !== '@marcellejs/core');
-    const useYarn = opts.useYarn || this.fs.exists(this.destinationPath('yarn.lock'));
 
     this.props = {
       lang,
       isApp,
       isSub: !!opts.isSub,
-      useYarn,
     };
   }
 
@@ -73,7 +71,7 @@ module.exports = class extends Generator {
         ...this.pkg.scripts,
         backend: 'marcelle-backend',
       },
-      dependencies: { ...this.pkg.dependencies, '@marcellejs/backend': '^0.0.4' },
+      dependencies: { ...this.pkg.dependencies, '@marcellejs/backend': '^0.0.5' },
     };
     this.fs.copy(this.templatePath('config'), this.destinationPath('backend/config'));
     this.fs.copyTpl(
@@ -90,20 +88,13 @@ module.exports = class extends Generator {
     this.fs.writeJSON(this.destinationPath('package.json'), pkg);
   }
 
-  install() {
-    if (this.props.isSub) return;
-    this.installDependencies({
-      yarn: this.props.useYarn,
-      npm: !this.props.useYarn,
-      bower: false,
-    });
-  }
-
   end() {
     this.log
       .writeln()
-      .info('Your backend is now ready. To run the server:\n')
-      .writeln(`\t${this.props.useYarn ? 'yarn' : 'npm run'} backend`);
+      .info('Your backend is now ready. Start by re-installing dependencies:\n')
+      .writeln(`\tnpm install # or yarn, pnpm\n`)
+      .info('To run the server:\n')
+      .writeln(`\tnpm run backend`);
     this.log
       .writeln()
       .info(

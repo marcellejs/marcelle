@@ -1,7 +1,13 @@
 const Generator = require('yeoman-generator');
 const path = require('path');
-const { kebabCase } = require('lodash');
 const makePkgConfig = require('./package.json');
+
+function toKebabCase(str) {
+  return str
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replace(/[\s_]+/g, '-')
+    .toLowerCase();
+}
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -28,7 +34,7 @@ module.exports = class extends Generator {
         message: 'Project name',
         when: !this.pkg.name,
         default: this.props.name,
-        filter: kebabCase,
+        filter: toKebabCase,
       },
       {
         type: 'list',
@@ -40,70 +46,19 @@ module.exports = class extends Generator {
           { name: 'TypeScript', value: 'ts' },
         ],
       },
-      {
-        name: 'packager',
-        type: 'list',
-        message: 'Which package manager are you using (has to be installed globally)?',
-        default: 'npm',
-        choices: [
-          { name: 'npm', value: 'npm' },
-          { name: 'Yarn', value: 'yarn' },
-        ],
-      },
-      {
-        name: 'buildTool',
-        type: 'list',
-        message: 'Which build tool do you prefer?',
-        default: 'vite',
-        choices: [
-          { name: 'vite', value: 'vite' },
-          { name: 'webpack', value: 'webpack' },
-        ],
-      },
-      {
-        name: 'linting',
-        type: 'checkbox',
-        message: 'Linting and Formatting',
-        choices: [
-          { name: 'ESLint', value: 'eslint', checked: true },
-          { name: 'Prettier', value: 'prettier', checked: true },
-          { name: 'None', value: 'none' },
-        ],
-      },
-      {
-        name: 'backend',
-        type: 'list',
-        message: 'Where do you want to store the data?',
-        default: 'browser',
-        choices: [
-          { name: 'In the browser (localStorage)', value: 'browser' },
-          { name: 'On the server', value: 'server' },
-        ],
-      },
     ];
 
     return this.prompt(prompts).then(props => {
       // To access props later use this.props.someAnswer;
       this.props = Object.assign({}, this.props, props);
       this.pkg = makePkgConfig(this);
-
-      if (props.backend === 'server') {
-        this.composeWith(require.resolve('../backend'), {
-          pkg: this.pkg,
-          language: props.language,
-          isSub: true,
-          useYarn: this.props.packager === 'yarn',
-        });
-      }
     });
   }
 
   writing() {
     const lang = this.props.language;
     const isTypeScript = lang === 'ts';
-    const eslint = this.props.linting.includes('eslint');
-    const prettier = this.props.linting.includes('prettier');
-    const context = Object.assign({}, this.props, { isTypeScript, eslint, prettier });
+    const context = Object.assign({}, this.props, { isTypeScript });
 
     this.fs.copy(this.templatePath(`src_${lang}`), this.destinationPath('src'));
     this.fs.writeJSON(this.destinationPath('package.json'), this.pkg);
@@ -111,62 +66,35 @@ module.exports = class extends Generator {
     if (isTypeScript) {
       this.fs.copy(this.templatePath('tsconfig.json'), this.destinationPath('tsconfig.json'));
     }
-    if (this.props.linting.includes('eslint')) {
-      this.fs.copyTpl(
-        this.templatePath(`_eslintrc-${lang}.js`),
-        this.destinationPath('', '.eslintrc.js'),
-        context,
-      );
-    }
 
-    if (this.props.linting.includes('prettier')) {
-      this.fs.copy(this.templatePath('_prettierrc.js'), this.destinationPath('', '.prettierrc.js'));
-    }
+    this.fs.copyTpl(
+      this.templatePath(`_eslintrc-${lang}.js`),
+      this.destinationPath('', '.eslintrc.js'),
+      context,
+    );
 
-    if (this.props.buildTool === 'vite') {
-      this.fs.copy(
-        this.templatePath('vite/vite.config.js'),
-        this.destinationPath('vite.config.js'),
-      );
-      this.fs.copyTpl(
-        this.templatePath('vite/index.html'),
-        this.destinationPath('index.html'),
-        context,
-      );
-      this.fs.copy(this.templatePath('vite/_gitignore'), this.destinationPath('', '.gitignore'));
-      this.fs.copyTpl(
-        this.templatePath('webpack/README.md'),
-        this.destinationPath('README.md'),
-        context,
-      );
-    } else if (this.props.buildTool === 'webpack') {
-      this.fs.copy(this.templatePath('webpack/_gitignore'), this.destinationPath('', '.gitignore'));
-      this.fs.copy(this.templatePath('webpack/public'), this.destinationPath('public'));
-      this.fs.copyTpl(
-        this.templatePath('webpack/webpack.config.js'),
-        this.destinationPath('webpack.config.js'),
-        context,
-      );
-      this.fs.copyTpl(
-        this.templatePath('webpack/README.md'),
-        this.destinationPath('README.md'),
-        context,
-      );
-    }
-  }
+    this.fs.copy(this.templatePath('_prettierrc.js'), this.destinationPath('', '.prettierrc.js'));
 
-  install() {
-    this.installDependencies({
-      yarn: this.props.packager === 'yarn',
-      npm: this.props.packager === 'npm',
-      bower: false,
-    });
+    this.fs.copy(this.templatePath('vite/vite.config.js'), this.destinationPath('vite.config.js'));
+    this.fs.copyTpl(
+      this.templatePath('vite/index.html'),
+      this.destinationPath('index.html'),
+      context,
+    );
+    this.fs.copy(this.templatePath('vite/_gitignore'), this.destinationPath('', '.gitignore'));
+    this.fs.copyTpl(
+      this.templatePath('vite/README.md'),
+      this.destinationPath('README.md'),
+      context,
+    );
   }
 
   end() {
     this.log
       .writeln('\n------\n')
-      .info('Your project is now ready. To run the application in development mode:\n')
-      .writeln(`\t${this.props.packager === 'yarn' ? 'yarn' : 'npm run'} dev`);
+      .info('Your project is now ready. Start by installing dependencies:\n')
+      .writeln(`\tnpm install # or yarn, pnpm\n`)
+      .info('To run the application in development mode:\n')
+      .writeln(`\tnpm run dev`);
   }
 };

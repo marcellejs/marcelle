@@ -6,8 +6,8 @@ module.exports = {
   env: {
     browser: true,
   },
-  plugins: ['svelte3'<% if (prettier) { %>, 'prettier'<% } %>],
-  extends: ['eslint:recommended'<% if (prettier) { %>, 'prettier'<% } %>],
+  plugins: ['svelte3', 'prettier'],
+  extends: ['eslint:recommended', 'prettier'],
   overrides: [
     {
       files: ['*.svelte'],
@@ -71,7 +71,6 @@ module.exports = {
       },
     ],
     'no-proto': 'error',
-    'no-redeclare': 'error',
     'no-return-assign': ['error', 'always'],
     'no-return-await': 'error',
     'no-script-url': 'error',
