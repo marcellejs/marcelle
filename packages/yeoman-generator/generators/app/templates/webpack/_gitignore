@@ -1,0 +1,9 @@
+**/.DS_Store
+node_modules
+public/bundle.*
+backend/data
+backend/uploads
+python/marcelle-logs
+python/**/__pycache__
+python/.python-version
+python/**/*.pkl
