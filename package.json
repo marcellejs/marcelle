@@ -6,6 +6,6 @@
   "license": "MIT",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "build": "pnpm run build --recursive"
+    "build": "pnpm run build --recursive --filter @marcellejs/*"
   }
 }

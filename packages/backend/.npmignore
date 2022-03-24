@@ -1,0 +1,13 @@
+.github
+.vscode
+data
+node_modules
+src
+test
+.editorconfig
+.eslintignore
+.eslintrc.js
+.eslintrc.json
+.prettierrc.js
+jest.config.js
+tsconfig.json
