@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Select from '../../ui/components/Select.svelte';
-  import ViewContainer from '../../core/ViewContainer.svelte';
   import type { Stream } from '../../core';
+  import { Select } from '@marcellejs/design-system';
+  import ViewContainer from '../../core/ViewContainer.svelte';
 
   export let title: string;
   export let options: Stream<string[]>;

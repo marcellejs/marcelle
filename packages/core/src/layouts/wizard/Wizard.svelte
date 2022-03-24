@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte';
   import type { Stream } from '../core';
-  import Button from '../../ui/components/Button.svelte';
+  import { Button } from '@marcellejs/design-system';
   import WizardPageComponent from './WizardPage.svelte';
   import type { WizardPage } from './wizard_page';
 
@@ -55,7 +55,6 @@
   function onOutsideClick() {
     quit();
   }
-
 </script>
 
 <div class="marcelle wizard">
@@ -129,5 +128,4 @@
   .page-button:hover {
     @apply bg-blue-500;
   }
-
 </style>

@@ -1,8 +1,7 @@
 <script lang="ts">
   import ViewContainer from '../../core/ViewContainer.svelte';
   import type { DataStore } from '../../data-store';
-  import Button from '../../ui/components/Button.svelte';
-  import Spinner from '../../ui/components/Spinner.svelte';
+  import { Button, Spinner } from '@marcellejs/design-system';
 
   export let dataStore: DataStore;
 
@@ -11,7 +10,6 @@
   function logout() {
     dataStore.logout();
   }
-
 </script>
 
 <ViewContainer title="data store ({dataStore.location})">

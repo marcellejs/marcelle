@@ -1,10 +1,6 @@
 <script lang="ts">
   import type { Stream } from '../../core/stream';
-  import Number from '../../ui/components/Number.svelte';
-  import NumberArray from '../../ui/components/NumberArray.svelte';
-  import Input from '../../ui/components/Input.svelte';
-  import Switch from '../../ui/components/Switch.svelte';
-  import Select from '../../ui/components/Select.svelte';
+  import { Number, NumberArray, Input, Switch, Select } from '@marcellejs/design-system';
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let stream: Stream<any>;

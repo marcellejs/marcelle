@@ -3,7 +3,7 @@
 
   import type { Instance, ObjectId, Stream } from '../../core';
   import ViewContainer from '../../core/ViewContainer.svelte';
-  import PopMenu from '../../ui/components/PopMenu.svelte';
+  import { PopMenu } from '@marcellejs/design-system';
   import type { Dataset } from '../../core/dataset';
 
   export let title: string;

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Stream } from '../../core';
   import ViewContainer from '../../core/ViewContainer.svelte';
-  import Switch from '../../ui/components/Switch.svelte';
+  import { Switch } from '@marcellejs/design-system';
 
   export let title: string;
   export let text: Stream<string>;

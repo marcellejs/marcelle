@@ -4,7 +4,10 @@ const production = !process.env.ROLLUP_WATCH;
 process.env.NODE_ENV = production ? JSON.stringify('production') : JSON.stringify('development');
 
 module.exports = {
-  content: ['./src/**/*.{css,js,jsx,ts,tsx,svelte}'],
+  content: [
+    './src/**/*.{css,js,jsx,ts,tsx,svelte}',
+    './node_modules/@marcellejs/design-system/dist/*.{css,js,jsx,ts,tsx,svelte}',
+  ],
   theme: {
     colors: {
       transparent: 'transparent',

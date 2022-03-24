@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Spinner from '../ui/components/Spinner.svelte';
+  import { Spinner } from '@marcellejs/design-system';
 
   export let title: string;
   export let loading = false;

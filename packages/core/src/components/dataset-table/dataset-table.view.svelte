@@ -1,11 +1,9 @@
 <script lang="ts">
   import type { Dataset, Instance, Stream } from '../../core';
-  import type { Column } from '../../ui/components/table-types';
+  import type { Column } from '@marcellejs/design-system';
   import { onMount, tick } from 'svelte';
   import { ViewContainer } from '../../core';
-  import { TableServiceProvider } from '../../ui/components/table-service-provider';
-  import Spinner from '../../ui/components/Spinner.svelte';
-  import Table from '../../ui/components/Table.svelte';
+  import { TableServiceProvider, Spinner, Table } from '@marcellejs/design-system';
 
   export let title: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

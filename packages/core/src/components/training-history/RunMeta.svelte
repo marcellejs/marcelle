@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { TableArrayProvider } from '../../ui/components/table-array-provider';
-  import Table from '../../ui/components/Table.svelte';
+  import { Table, TableArrayProvider } from '@marcellejs/design-system';
 
   export let runs: Record<string, unknown>[];
 

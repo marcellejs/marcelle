@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "svelte-kit dev",
-    "build": "npm run package",
+    "build": "pnpm run package",
     "package": "svelte-kit package && rm dist/package.json&& rm dist/README.md",
     "preview": "svelte-kit preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
@@ -12,6 +12,9 @@
     "lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
     "format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
   },
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "dependencies": {
     "@feathersjs/feathers": "^4.5.11",
     "@fontsource/fira-mono": "^4.5.0",
@@ -42,6 +45,7 @@
     "typescript": "~4.6.2"
   },
   "exports": {
+    "./package.json": "./package.json",
     "./Button.svelte": "./dist/Button.svelte",
     "./Input.svelte": "./dist/Input.svelte",
     "./Modal.svelte": "./dist/Modal.svelte",

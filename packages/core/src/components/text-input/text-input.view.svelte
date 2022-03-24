@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Stream } from '../../core';
   import ViewContainer from '../../core/ViewContainer.svelte';
-  import Input from '../../ui/components/Input.svelte';
+  import { Input } from '@marcellejs/design-system';
 
   export let title: string;
   export let value: Stream<string>;

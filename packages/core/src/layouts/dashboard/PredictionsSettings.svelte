@@ -2,7 +2,7 @@
   import { onMount, tick } from 'svelte';
 
   import type { BatchPrediction } from '../../components/batch-prediction';
-  import Button from '../../ui/components/Button.svelte';
+  import { Button } from '@marcellejs/design-system';
 
   export let prediction: BatchPrediction;
 
@@ -34,7 +34,6 @@
       prediction.upload(files);
     });
   });
-
 </script>
 
 <span class="card-title">{prediction.title}</span>

@@ -2,7 +2,7 @@
   import { onMount, tick } from 'svelte';
 
   import type { Dataset } from '../../dataset';
-  import Button from '../../ui/components/Button.svelte';
+  import { Button } from '@marcellejs/design-system';
 
   export let dataset: Dataset<unknown, unknown>;
 
@@ -34,7 +34,6 @@
       dataset.upload(files);
     });
   });
-
 </script>
 
 <span class="card-title">{dataset.title}</span>

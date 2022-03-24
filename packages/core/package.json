@@ -35,19 +35,17 @@
   ],
   "scripts": {
     "dev": "rollup -c -w",
-    "build": "rollup -c",
-    "build-all": "$npm_execpath run clean && $npm_execpath run build && $npm_execpath run ui:build && $npm_execpath run types:build",
+    "build": "pnpm run clean && rollup -c && pnpm run types:build",
     "types:dev": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir types --watch",
     "types:build": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir types",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
-    "ui:dev": "rollup -w -c rollup.config.ui.js",
-    "ui:build": "rollup -c rollup.config.ui.js",
     "lint": "eslint src",
-    "clean": "rm -rf dist types examples/dist"
+    "clean": "rm -rf dist types"
   },
   "devDependencies": {
     "@babel/core": "^7.14.0",
+    "@marcellejs/design-system": "workspace:^0.5.1",
     "@rollup/plugin-commonjs": "^21.0.2",
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-replace": "^4.0.0",
@@ -77,7 +75,7 @@
     "rollup-plugin-sizes": "^1.0.4",
     "rollup-plugin-svelte": "^7.1.0",
     "rollup-plugin-terser": "^7.0.2",
-    "svelte": "3.39.0",
+    "svelte": "^3.46.4",
     "svelte-loader": "^3.1.1",
     "svelte-preprocess": "^4.7.3",
     "svelte-range-slider-pips": "^2.0.0",

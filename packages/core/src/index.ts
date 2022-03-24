@@ -1,7 +1,7 @@
 import '@tensorflow/tfjs-backend-cpu';
 import '@tensorflow/tfjs-backend-webgl';
 import './utils';
-import './ui/css/styles.css';
+import '@marcellejs/design-system/styles.css';
 
 export * from './core';
 export * from './components';

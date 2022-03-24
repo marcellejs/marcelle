@@ -3,7 +3,7 @@
 
   import type { Stream } from '../../core';
   import ViewContainer from '../../core/ViewContainer.svelte';
-  import Button from '../../ui/components/Button.svelte';
+  import { Button } from '@marcellejs/design-system';
 
   export let title: string;
   export let fileStream: Stream<File[]>;
@@ -65,7 +65,6 @@
       uploadInput.click();
     }
   }
-
 </script>
 
 <ViewContainer {title}>
@@ -120,5 +119,4 @@
       justify-center rounded-md;
     background-color: rgba(255, 255, 255, 0.7);
   }
-
 </style>

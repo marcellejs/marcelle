@@ -1,15 +1,17 @@
 <script lang="ts">
   import type { Stream, TrainingRun } from '../../core';
-  import type { Column } from '../../ui/components/table-types';
+  import type { Column } from '@marcellejs/design-system';
   import type { Service } from '@feathersjs/feathers';
   import { createEventDispatcher, onMount, tick } from 'svelte';
   import { ViewContainer } from '../../core';
-  import { TableServiceProvider } from '../../ui/components/table-service-provider';
-  import Table from '../../ui/components/Table.svelte';
-  import Tab from '../../ui/components/Tab.svelte';
-  import TabList from '../../ui/components/TabList.svelte';
-  import TabPanel from '../../ui/components/TabPanel.svelte';
-  import Tabs from '../../ui/components/Tabs.svelte';
+  import {
+    TableServiceProvider,
+    Table,
+    Tab,
+    TabList,
+    TabPanel,
+    Tabs,
+  } from '@marcellejs/design-system';
   import RunMeta from './RunMeta.svelte';
   import RunGraphs from './RunGraphs.svelte';
 
@@ -120,7 +122,7 @@
         {#each $selection.map((x) => x.model?.summary || 'No summary available') as summary, i}
           <div>
             <h2>Model {i + 1}</h2>
-            <div class="summary"><pre>{summary}<br></pre></div>
+            <div class="summary"><pre>{summary}<br /></pre></div>
           </div>
         {/each}
       </div>

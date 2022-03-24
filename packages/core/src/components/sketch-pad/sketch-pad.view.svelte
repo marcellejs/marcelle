@@ -2,7 +2,7 @@
   import { onMount, createEventDispatcher, tick } from 'svelte';
   import { Stream } from '../../core';
   import ViewContainer from '../../core/ViewContainer.svelte';
-  import Button from '../../ui/components/Button.svelte';
+  import { Button } from '@marcellejs/design-system';
 
   export let title: string;
   export let strokeStart: Stream<void>;

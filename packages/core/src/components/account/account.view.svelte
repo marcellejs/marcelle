@@ -1,7 +1,7 @@
 <script lang="ts">
-  import ViewContainer from '../../core/ViewContainer.svelte';
   import type { DataStore } from '../../core/data-store';
-  import Spinner from '../../ui/components/Spinner.svelte';
+  import ViewContainer from '../../core/ViewContainer.svelte';
+  import { Spinner } from '@marcellejs/design-system';
 
   export let title: string;
   export let dataStore: DataStore;
@@ -9,7 +9,6 @@
   function logout() {
     dataStore.logout();
   }
-
 </script>
 
 <ViewContainer {title}>

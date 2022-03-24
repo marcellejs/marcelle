@@ -1,5 +1,5 @@
 import type { SvelteComponent } from 'svelte';
-import Notification from '../ui/components/Notification.svelte';
+import { Notification } from '@marcellejs/design-system';
 
 let notificationContainer: HTMLDivElement | undefined;
 let app: SvelteComponent | undefined;

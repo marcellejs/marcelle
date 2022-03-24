@@ -2,8 +2,7 @@
   import { onMount, onDestroy, tick } from 'svelte';
   import type { Stream } from '../../core';
   import ViewContainer from '../../core/ViewContainer.svelte';
-  import Spinner from '../../ui/components/Spinner.svelte';
-  import Switch from '../../ui/components/Switch.svelte';
+  import { Spinner, Switch } from '@marcellejs/design-system';
   import { noop } from '../../utils/misc';
 
   export let title: string;
@@ -30,7 +29,6 @@
   onDestroy(() => {
     unSub();
   });
-
 </script>
 
 <ViewContainer {title}>
@@ -79,5 +77,4 @@
   video {
     transform: scaleX(-1);
   }
-
 </style>

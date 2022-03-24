@@ -1,10 +1,9 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
   import loadImage from 'blueimp-load-image';
-
   import type { Stream } from '../../core';
   import ViewContainer from '../../core/ViewContainer.svelte';
-  import Button from '../../ui/components/Button.svelte';
+  import { Button } from '@marcellejs/design-system';
 
   export let title: string;
   export let images: Stream<ImageData>;

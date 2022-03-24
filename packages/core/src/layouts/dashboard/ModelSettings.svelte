@@ -2,7 +2,7 @@
   import { onMount, tick } from 'svelte';
 
   import { Model } from '../../core';
-  import Button from '../../ui/components/Button.svelte';
+  import { Button } from '@marcellejs/design-system';
   import { throwError } from '../../utils/error-handling';
 
   export let model: Model<unknown, unknown>;
@@ -48,7 +48,6 @@
       }
     });
   });
-
 </script>
 
 <span class="card-title">{model.title}</span>
