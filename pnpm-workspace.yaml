@@ -5,6 +5,7 @@ packages:
   - 'docs'
   # all packages in subdirs of packages/ and components/
   - 'packages/**'
+  - '!packages/**/dist'
   # all packages in subdirs of packages/ and components/
   - 'apps/**'
   # exclude packages that are inside test/ directories
