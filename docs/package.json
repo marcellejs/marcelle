@@ -1,6 +1,6 @@
 {
   "name": "docs",
-  "version": "0.6.0",
+  "version": "0.5.1",
   "description": "Marcelle Documentation Website",
   "main": "index.js",
   "scripts": {

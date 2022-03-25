@@ -1,11 +1,14 @@
 {
   "name": "marcelle",
-  "version": "0.6.0",
+  "version": "0.0.1",
   "description": "Monorepo for all Marcelle things (or at least some)",
   "author": "Jules Françoise <me@julesfrancoise.com>",
   "license": "MIT",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "pnpm run build --recursive --filter @marcellejs/*"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.21.1"
   }
 }
