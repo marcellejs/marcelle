@@ -65,7 +65,7 @@ export class KMeansClustering extends Model<number[][], ClusteringResults> {
     for await (const { x } of ds) {
       this.dataset.push(x[0]);
     }
-    const ans = kmeans(this.dataset, this.parameters.k.value);
+    const ans = kmeans(this.dataset, this.parameters.k.get());
     this.$centers.set(ans.centroids.map((x) => x.centroid));
     this.$clusters.set(ans.clusters);
     this.$training.set({ status: 'success' });
@@ -77,8 +77,8 @@ export class KMeansClustering extends Model<number[][], ClusteringResults> {
     let minDistance = 1000;
     const confidences: { [key: string]: number } = {};
     let distSum = 0;
-    for (let i = 0; i < this.$centers.value.length; i++) {
-      const dist = euclideanDistance(this.$centers.value[i], x[0]);
+    for (let i = 0; i < this.$centers.get().length; i++) {
+      const dist = euclideanDistance(this.$centers.get()[i], x[0]);
       if (dist < minDistance) {
         minDistance = dist;
         cluster = i;
@@ -87,11 +87,11 @@ export class KMeansClustering extends Model<number[][], ClusteringResults> {
       distSum += Math.exp(dist);
     }
     // console.log('confidences', confidences, distSum, minDistance);
-    // console.log('this.$centers.value', this.$centers.value);
+    // console.log('this.$centers.get()', this.$centers.get());
     Object.entries(confidences).forEach(([key]) => {
       confidences[key] /= distSum;
     });
-    if (this.$centers.value.length === 0) {
+    if (this.$centers.get().length === 0) {
       const e = new Error('KMeans is not trained');
       e.name = '[KMeans] Prediction Error';
       throwError(e);
@@ -111,7 +111,7 @@ export class KMeansClustering extends Model<number[][], ClusteringResults> {
     for (let i = 0; i < data.length; i++) {
       this.predict(data[i]).then((result) => resPromises.push(result));
     }
-    if (this.$centers.value.length === 0) {
+    if (this.$centers.get().length === 0) {
       const e = new Error('KMeans is not trained');
       e.name = '[KMeans] Prediction Error';
       throwError(e);
@@ -162,8 +162,8 @@ export class KMeansClustering extends Model<number[][], ClusteringResults> {
       files: [],
       format: 'ml-kmeans',
       metadata: {
-        clusters: this.$clusters.value,
-        centers: this.$centers.value,
+        clusters: this.$clusters.get(),
+        centers: this.$centers.get(),
         ...metadata,
       },
     };

@@ -63,7 +63,7 @@ const $instances = input.$images
     async (thumbnail, img) => ({
       type: 'image',
       x: await featureExtractor.process(img),
-      y: label.$value.value,
+      y: label.$value.get(),
       thumbnail,
     }),
     input.$thumbnails,

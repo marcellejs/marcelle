@@ -25,10 +25,10 @@
     embedding.subscribe((points) => {
       if (points.length > 0) {
         let labs: number[] = [];
-        if (labels === undefined || labels.value.length === 0) {
+        if (labels === undefined || labels.get().length === 0) {
           labs = new Array(points.length).fill(0);
         } else {
-          labs = labels.value;
+          labs = labels.get();
         }
 
         const dataset = new ScatterGL.Dataset(points as [number, number][]);

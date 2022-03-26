@@ -36,11 +36,11 @@ const trainingSet = dataset('training-set-dashboard', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
-  .filter(() => capture.$pressed.value)
+  .filter(() => capture.$pressed.get())
   .map((x) => ({
     x,
-    y: label.$value.value,
-    thumbnail: input.$thumbnails.value,
+    y: label.$value.get(),
+    thumbnail: input.$thumbnails.get(),
   }))
   .subscribe(trainingSet.create.bind(trainingSet));
 
@@ -58,13 +58,11 @@ const classifier = mlpClassifier({
 
 b.$click.subscribe(() =>
   classifier.train(
-    trainingSet
-      .items()
-      .map(async (instance) => ({
-        ...instance,
-        x: await featureExtractor.process(instance.x),
-      }))
-  )
+    trainingSet.items().map(async (instance) => ({
+      ...instance,
+      x: await featureExtractor.process(instance.x),
+    })),
+  ),
 );
 
 const params = modelParameters(classifier);
@@ -86,12 +84,10 @@ predictButton.$click.subscribe(async () => {
   await batchMLP.clear();
   await batchMLP.predict(
     classifier,
-    trainingSet
-      .items()
-      .map(async (instance) => ({
-        ...instance,
-        x: await featureExtractor.process(instance.x),
-      }))
+    trainingSet.items().map(async (instance) => ({
+      ...instance,
+      x: await featureExtractor.process(instance.x),
+    })),
   );
 });
 
@@ -110,7 +106,7 @@ tog.$checked.subscribe((checked) => {
 });
 
 const predictionStream = input.$images
-  .filter(() => tog.$checked.value && classifier.ready)
+  .filter(() => tog.$checked.get() && classifier.ready)
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
@@ -132,10 +128,6 @@ dash
 dash.page('Training').use(params, b, prog, plotTraining);
 dash.page('Batch Prediction').use(predictButton, confMat);
 dash.page('Real-time Prediction').sidebar(input).use(tog, plotResults);
-dash.settings
-  .dataStores(store)
-  .datasets(trainingSet)
-  .models(classifier)
-  .predictions(batchMLP);
+dash.settings.dataStores(store).datasets(trainingSet).models(classifier).predictions(batchMLP);
 
 dash.show();

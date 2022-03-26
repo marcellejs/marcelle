@@ -61,6 +61,13 @@ export class Stream<T> {
     );
   }
 
+  get(): T {
+    // if (!this.#hold) {
+    //   throw new Error('Cannot get value of a Stream if it was not instantiated with hold=true');
+    // }
+    return this.value;
+  }
+
   run(sink: Sink<T>, s: Scheduler): Disposable {
     return this.stream.run(sink, s);
   }

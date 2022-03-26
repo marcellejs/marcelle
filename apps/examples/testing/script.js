@@ -28,7 +28,7 @@ const classifier = mobileNet();
 
 const instances = source.$thumbnails.map((thumbnail) => ({
   type: 'image',
-  data: source.$images.value,
+  data: source.$images.get(),
   label: 'unlabeled',
   thumbnail,
 }));
@@ -66,9 +66,8 @@ batchTesting.$predictions.subscribe(async () => {
   if (!batchTesting.predictionService) return;
   const { data } = await batchTesting.predictionService.find();
   const accuracy =
-    data
-      .map(({ label, trueLabel }) => (label === trueLabel ? 1 : 0))
-      .reduce((x, y) => x + y, 0) / data.length;
+    data.map(({ label, trueLabel }) => (label === trueLabel ? 1 : 0)).reduce((x, y) => x + y, 0) /
+    data.length;
   predictionAccuracy.$value.set(`Global Accuracy (Mobilenet): ${accuracy}`);
 });
 
@@ -76,9 +75,7 @@ batchTesting.$predictions.subscribe(async () => {
 // REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
-const predictionStream = source.$images
-  .map(async (img) => classifier.predict(img))
-  .awaitPromises();
+const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
 const plotResults = confidencePlot(predictionStream);
 
 const instanceViewer = imageDisplay(source.$images);
@@ -96,7 +93,7 @@ function updateQuality() {
   quality.$value.set(
     `You evaluated ${percent.toFixed(0)}% of tested images as correct. ${
       percent > 50 ? '😛' : '🤔'
-    }`
+    }`,
   );
 }
 buttonCorrect.$click.subscribe(() => {
@@ -118,7 +115,7 @@ const dash = dashboard({
 });
 
 const help = text(
-  'In this example, you can test an existing trained model (mobileNet), by uploading your own images to assess the quality of the predictions.'
+  'In this example, you can test an existing trained model (mobileNet), by uploading your own images to assess the quality of the predictions.',
 );
 help.title = 'Test Mobilenet with your images!';
 
@@ -130,7 +127,7 @@ dash
     [instanceViewer, plotResults],
     'Is this prediction Correct?',
     [buttonCorrect, buttonIncorrect],
-    quality
+    quality,
   );
 dash
   .page('Batch Testing')

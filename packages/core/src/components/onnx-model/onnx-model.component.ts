@@ -66,7 +66,7 @@ export class OnnxModel<
 
   @Catch
   async predict(input: InputTypes[InputType]): Promise<OutputTypes[TaskType]> {
-    if (!this.#session || !this.$ready.value) {
+    if (!this.#session || !this.$ready.get()) {
       throw new Error('Model is not loaded');
     }
 

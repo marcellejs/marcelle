@@ -37,7 +37,7 @@
 
   async function deleteSelectedInstances() {
     let p: Promise<unknown> = Promise.resolve();
-    for (const id of selected.value) {
+    for (const id of selected.get()) {
       // eslint-disable-next-line no-loop-func
       p = p.then(() => dataset.remove(id));
     }
@@ -47,7 +47,7 @@
 
   async function relabelSelectedInstances(newLabel: string) {
     let p: Promise<unknown> = Promise.resolve();
-    for (const id of selected.value) {
+    for (const id of selected.get()) {
       // eslint-disable-next-line no-loop-func
       p = p.then(() => dataset.patch(id, { y: newLabel }));
     }
@@ -78,10 +78,10 @@
   function selectInstance(id?: ObjectId) {
     if (metaPressed) {
       if (!id) return;
-      if (selected.value.includes(id)) {
-        selected.set(selected.value.filter((x) => x !== id));
+      if (selected.get().includes(id)) {
+        selected.set(selected.get().filter((x) => x !== id));
       } else {
-        selected.set(selected.value.concat([id]));
+        selected.set(selected.get().concat([id]));
       }
     } else if (shiftPressed) {
       if (!initialId || !id) return;

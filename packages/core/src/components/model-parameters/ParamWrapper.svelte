@@ -10,11 +10,11 @@
 <div style="flex-grow: 1;">
   {#if spec.type === 'menu' && Array.isArray(spec.options) && spec.options.length > 0}
     <Select options={spec.options} bind:value={$stream} />
-  {:else if spec.type === 'boolean' || (spec.type === 'auto' && typeof stream.value === 'boolean')}
+  {:else if spec.type === 'boolean' || (spec.type === 'auto' && typeof stream.get() === 'boolean')}
     <Switch bind:checked={$stream} />
-  {:else if spec.type === 'number' || (spec.type === 'auto' && typeof stream.value === 'number')}
+  {:else if spec.type === 'number' || (spec.type === 'auto' && typeof stream.get() === 'number')}
     <Number bind:value={$stream} />
-  {:else if spec.type === 'number array' || (spec.type === 'auto' && Array.isArray(stream.value) && stream.value.length && typeof stream.value[0] === 'number')}
+  {:else if spec.type === 'number array' || (spec.type === 'auto' && Array.isArray(stream.get()) && stream.get().length && typeof stream.get()[0] === 'number')}
     <NumberArray bind:value={$stream} />
   {:else}
     <Input type="text" bind:value={$stream} />

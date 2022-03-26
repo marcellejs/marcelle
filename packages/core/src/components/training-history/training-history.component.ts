@@ -100,7 +100,7 @@ export class TrainingHistory<InputType, OutputType> extends Component {
         status: x.status,
         epochs: x.epochs,
         params: Object.entries(this.model.parameters)
-          .map(([key, s]) => ({ [key]: s.value }))
+          .map(([key, s]) => ({ [key]: s.get() }))
           .reduce((o, y) => ({ ...o, ...y }), {}), // this.model.parameters
         logs: {},
       });

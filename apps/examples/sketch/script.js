@@ -40,13 +40,13 @@ const $instances = input.$images
       thumbnail,
       x: await featureExtractor.process(img),
     }),
-    input.$thumbnails
+    input.$thumbnails,
   )
   .awaitPromises();
 
 addToDataset.$click
   .sample($instances)
-  .map((instance) => ({ ...instance, y: labelField.$value.value }))
+  .map((instance) => ({ ...instance, y: labelField.$value.get() }))
   .subscribe(trainingSet.create.bind(trainingSet));
 
 // -----------------------------------------------------------
@@ -90,10 +90,7 @@ trainingSet.$changes.subscribe(async (changes) => {
       classifier.train(trainingSet);
     } else {
       const allInstances = await trainingSet.items().select(['y']).toArray();
-      countPerClass = allInstances.reduce(
-        (cpc, { y }) => ({ ...cpc, [y]: (cpc[y] || 0) + 1 }),
-        {}
-      );
+      countPerClass = allInstances.reduce((cpc, { y }) => ({ ...cpc, [y]: (cpc[y] || 0) + 1 }), {});
     }
   }
 });
@@ -133,14 +130,8 @@ dash
   .page('Online Learning')
   .sidebar(input, featureExtractor)
   .use(plotResults, [labelField, addToDataset], prog, trainingSetBrowser);
-dash
-  .page('Offline Training')
-  .sidebar(trainingSetBrowser)
-  .use(params, b, prog, plotTraining);
-dash.settings
-  .dataStores(store)
-  .datasets(trainingSet)
-  .models(classifier, featureExtractor);
+dash.page('Offline Training').sidebar(trainingSetBrowser).use(params, b, prog, plotTraining);
+dash.settings.dataStores(store).datasets(trainingSet).models(classifier, featureExtractor);
 
 dash.show();
 
@@ -149,13 +140,12 @@ dash.show();
 // -----------------------------------------------------------
 
 input.$images
-  .filter(() => trainingSet.$count.value === 0 && !classifier.ready)
+  .filter(() => trainingSet.$count.get() === 0 && !classifier.ready)
   .take(1)
   .subscribe(() => {
     notification({
       title: 'Tip',
-      message:
-        'Start by editing the label and adding the drawing to the dataset',
+      message: 'Start by editing the label and adding the drawing to the dataset',
       duration: 5000,
     });
   });

@@ -130,7 +130,7 @@ export class MLPClassifier extends TFJSBaseModel<TensorLike, ClassifierResults> 
       ? await dataset.distinct('y')
       : (this.labels = Array.from(new Set(await dataset.map(({ y }) => y).toArray())));
     const ds = isDataset(dataset) ? dataset.items() : dataset;
-    this.$training.set({ status: 'start', epochs: this.parameters.epochs.value });
+    this.$training.set({ status: 'start', epochs: this.parameters.epochs.get() });
     if (this.labels.length === 0) {
       throwError(new TrainingError('This dataset is empty or is missing labels'));
       this.$training.set({
@@ -163,7 +163,7 @@ export class MLPClassifier extends TFJSBaseModel<TensorLike, ClassifierResults> 
   buildModel(inputDim: number, numClasses: number): void {
     logger.debug('[MLP] Building a model with layers:', this.parameters.layers);
     this.model = sequential();
-    for (const [i, units] of this.parameters.layers.value.entries()) {
+    for (const [i, units] of this.parameters.layers.get().entries()) {
       const layerParams: Parameters<typeof tfLayers.dense>[0] = {
         units,
         activation: 'relu', // potentially add kernel init
@@ -189,10 +189,10 @@ export class MLPClassifier extends TFJSBaseModel<TensorLike, ClassifierResults> 
   }
 
   fit(data: TrainingData, epochs = -1): void {
-    const numEpochs = epochs > 0 ? epochs : this.parameters.epochs.value;
+    const numEpochs = epochs > 0 ? epochs : this.parameters.epochs.get();
     this.model
       .fit(data.training_x, data.training_y, {
-        batchSize: this.parameters.batchSize.value,
+        batchSize: this.parameters.batchSize.get(),
         validationData: [data.validation_x, data.validation_y],
         epochs: numEpochs,
         shuffle: true,
@@ -201,7 +201,7 @@ export class MLPClassifier extends TFJSBaseModel<TensorLike, ClassifierResults> 
             this.$training.set({
               status: 'epoch',
               epoch,
-              epochs: this.parameters.epochs.value,
+              epochs: this.parameters.epochs.get(),
               data: {
                 accuracy: logs.acc,
                 loss: logs.loss,

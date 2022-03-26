@@ -39,8 +39,8 @@ export class Webcam extends Component {
   $active = new Stream(false, true);
   $ready = new Stream(false, true);
   $mediastream = new Stream<MediaStream>(undefined, true);
-  $images = new Stream<ImageData>(never());
-  $thumbnails = new Stream<string>(never());
+  $images = new Stream<ImageData>(never(), true);
+  $thumbnails = new Stream<string>(never(), true);
 
   period: number;
 
@@ -103,8 +103,8 @@ export class Webcam extends Component {
     super.stop();
     this.#stopStreaming();
     this.#unsubActive();
-    if (this.$mediastream.value) {
-      for (const track of this.$mediastream.value.getTracks()) {
+    if (this.$mediastream.get()) {
+      for (const track of this.$mediastream.get().getTracks()) {
         track.stop();
       }
     }
@@ -143,8 +143,8 @@ export class Webcam extends Component {
   }
 
   stopCamera(): void {
-    if (this.$mediastream.value) {
-      const tracks = this.$mediastream.value.getTracks();
+    if (this.$mediastream.get()) {
+      const tracks = this.$mediastream.get().getTracks();
       for (const track of tracks) {
         track.stop();
         this.#videoElement.srcObject = null;
@@ -155,13 +155,13 @@ export class Webcam extends Component {
   }
 
   process(): void {
-    if (!this.$ready.value) return;
+    if (!this.$ready.get()) return;
     this.$thumbnails.set(this.captureThumbnail());
     this.$images.set(this.captureImage());
   }
 
   captureThumbnail(): string {
-    if (!this.$ready.value) return null;
+    if (!this.$ready.get()) return null;
     const hRatio = this.#height / this.#webcamHeight;
     const wRatio = this.#width / this.#webcamWidth;
     if (hRatio > wRatio) {
@@ -187,7 +187,7 @@ export class Webcam extends Component {
   }
 
   captureImage(): ImageData {
-    if (!this.$ready.value) return null;
+    if (!this.$ready.get()) return null;
     const hRatio = this.#height / this.#webcamHeight;
     const wRatio = this.#width / this.#webcamWidth;
     if (hRatio > wRatio) {

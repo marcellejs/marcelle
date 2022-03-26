@@ -96,15 +96,15 @@
     const data: { labels: string[]; datasets?: unknown[] } = { labels: [] };
     let maxElts = 0;
     data.datasets = ds.map(({ dataStream, label, options: localOptions }, i) => {
-      maxElts = Math.max(maxElts, dataStream.value ? dataStream.value.length : 0);
+      maxElts = Math.max(maxElts, dataStream.get() ? dataStream.get().length : 0);
       if (i === 0) {
         data.labels = localOptions.labels || [];
-        if (!localOptions.labels && dataStream.value && dataStream.value.length > 0) {
-          if (typeof dataStream.value[0] === 'number') {
-            data.labels = Array.from(Array(dataStream.value.length), (_, j) => j.toString());
+        if (!localOptions.labels && dataStream.get() && dataStream.get().length > 0) {
+          if (typeof dataStream.get()[0] === 'number') {
+            data.labels = Array.from(Array(dataStream.get().length), (_, j) => j.toString());
           } else {
             data.labels = (
-              dataStream.value as Array<{
+              dataStream.get() as Array<{
                 x: unknown;
                 y: unknown;
               }>
@@ -117,7 +117,7 @@
         ...opts,
         ...localOptions,
         label: label,
-        data: dataStream.value || [],
+        data: dataStream.get() || [],
       };
       if (
         (['bar', 'bar-fast'].includes(localOptions.type) ||

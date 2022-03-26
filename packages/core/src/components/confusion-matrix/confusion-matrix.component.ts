@@ -39,7 +39,7 @@ export class ConfusionMatrix extends Component {
         const labels = predictions.map((x) => x.label);
         const trueLabels = predictions.map((x) => x.trueLabel);
         const uniqueLabels = Array.from(new Set(labels.concat(trueLabels)));
-        if (!dequal(uniqueLabels, this.$labels.value)) {
+        if (!dequal(uniqueLabels, this.$labels.get())) {
           this.$labels.set(uniqueLabels);
         }
         const nLabels = uniqueLabels.length;

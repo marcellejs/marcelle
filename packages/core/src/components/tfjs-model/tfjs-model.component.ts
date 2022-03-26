@@ -85,7 +85,7 @@ export class TFJSModel<
 
   @Catch
   async predict(input: InputTypes[InputType]): Promise<OutputTypes[TaskType]> {
-    if (!this.model || this.$training.value.status !== 'loaded') {
+    if (!this.model || this.$training.get().status !== 'loaded') {
       throw new Error('Model is not loaded');
     }
 

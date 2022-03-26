@@ -73,7 +73,7 @@ export class KNNClassifier extends Model<TensorLike, ClassifierResults> {
     }
     const { label, confidences } = await this.classifier.predictClass(
       tensor(x),
-      this.parameters.k.value,
+      this.parameters.k.get(),
     );
     return { label, confidences };
   }

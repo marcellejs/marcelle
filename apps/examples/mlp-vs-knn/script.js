@@ -37,11 +37,11 @@ const trainingSet = dataset('training-set-mlp-vs-knn', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
-  .filter(() => capture.$pressed.value)
+  .filter(() => capture.$pressed.get())
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    thumbnail: input.$thumbnails.value,
-    y: label.$value.value,
+    thumbnail: input.$thumbnails.get(),
+    y: label.$value.get(),
   }))
   .awaitPromises()
   .subscribe(trainingSet.create.bind(trainingSet));
@@ -54,9 +54,7 @@ const b = button('Train');
 b.title = 'Training Launcher';
 
 // KNN
-const classifierKNN = knnClassifier({ k: 3, dataStore: store }).sync(
-  'mlp-vs-knn-knn'
-);
+const classifierKNN = knnClassifier({ k: 3, dataStore: store }).sync('mlp-vs-knn-knn');
 const paramsKNN = modelParameters(classifierKNN);
 paramsKNN.title = 'KNN: Parameters';
 const progressKNN = trainingProgress(classifierKNN);
@@ -107,7 +105,7 @@ predictButton.$click.subscribe(async () => {
 const tog = toggle('toggle prediction');
 
 const rtFeatureStream = input.$images
-  .filter(() => tog.$checked.value)
+  .filter(() => tog.$checked.get())
   .map(async (img) => featureExtractor.process(img))
   .awaitPromises();
 
@@ -146,18 +144,10 @@ dash
     'MLP (Multilayer Perceptron)',
     paramsMLP,
     progressMLP,
-    plotTrainingMLP
+    plotTrainingMLP,
   );
-dash
-  .page('Batch Prediction')
-  .use(predictButton, predictionAccuracy, [confusionMLP, confusionKNN]);
-dash
-  .page('Real-time prediction')
-  .sidebar(input)
-  .use(tog, [plotResultsMLP, plotResultsKNN]);
-dash.settings
-  .dataStores(store)
-  .datasets(trainingSet)
-  .models(classifierKNN, classifierMLP);
+dash.page('Batch Prediction').use(predictButton, predictionAccuracy, [confusionMLP, confusionKNN]);
+dash.page('Real-time prediction').sidebar(input).use(tog, [plotResultsMLP, plotResultsKNN]);
+dash.settings.dataStores(store).datasets(trainingSet).models(classifierKNN, classifierMLP);
 
 dash.show();

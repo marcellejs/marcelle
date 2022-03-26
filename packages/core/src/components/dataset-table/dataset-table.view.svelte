@@ -49,7 +49,7 @@
     provider = new TableServiceProvider({ service: dataset.instanceService, columns });
     colNames.subscribe(async (cols) => {
       columns = cols.map((name) => ({ name }));
-      if (dataset.$count.value > 0) {
+      if (dataset.$count.get() > 0) {
         const [firstInstance] = await dataset.items().take(1).toArray();
         columns = columns.map(({ name }) => ({
           name,

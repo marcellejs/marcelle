@@ -39,8 +39,8 @@ capture.$click
   .sample(input.$images)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: label.$value.value,
-    thumbnail: input.$thumbnails.value,
+    y: label.$value.get(),
+    thumbnail: input.$thumbnails.get(),
   }))
   .awaitPromises()
   .subscribe(trainingSet.create.bind(trainingSet));
@@ -95,7 +95,7 @@ tog.$checked.subscribe((checked) => {
 });
 
 const $predictions = input.$images
-  .filter(() => tog.$checked.value && classifier.ready)
+  .filter(() => tog.$checked.get() && classifier.ready)
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 

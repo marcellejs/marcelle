@@ -37,11 +37,11 @@ const trainingSet = dataset('TrainingSet-wizard', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
-  .filter(() => capture.$pressed.value)
+  .filter(() => capture.$pressed.get())
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: labelInput.$value.value,
-    thumbnail: input.$thumbnails.value,
+    y: labelInput.$value.get(),
+    thumbnail: input.$thumbnails.get(),
   }))
   .awaitPromises()
   .subscribe(trainingSet.create.bind(trainingSet));
@@ -83,7 +83,7 @@ predictButton.$click.subscribe(async () => {
 const tog = toggle('toggle prediction');
 
 const $predictions = input.$images
-  .filter(() => tog.$checked.value)
+  .filter(() => tog.$checked.get())
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
@@ -133,12 +133,10 @@ trainingSet.$changes.subscribe(async (changes) => {
       }
     }
   }
-  const label = labelInput.$value.value;
+  const label = labelInput.$value.get();
   const numExamples = countPerClass[label] || 0;
   wizardText.$value.set(
-    numExamples
-      ? `Recorded ${numExamples} examples of "${label}"`
-      : 'Waiting for examples...'
+    numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
   );
 });
 
@@ -147,36 +145,26 @@ const wiz = wizard();
 wiz
   .page()
   .title('Record examples for class A')
-  .description(
-    'Hold on the record button to capture training examples for class A'
-  )
+  .description('Hold on the record button to capture training examples for class A')
   .use(input, wizardButton, wizardText)
   .page()
   .title('Record examples for class B')
-  .description(
-    'Hold on the record button to capture training examples for class B'
-  )
+  .description('Hold on the record button to capture training examples for class B')
   .use(input, wizardButton, wizardText)
   .page()
   .title('Train the model')
-  .description(
-    'Now that we have collected images, we can train the model from these examples.'
-  )
+  .description('Now that we have collected images, we can train the model from these examples.')
   .use(b, prog)
   .page()
   .title('Test the classifier')
-  .description(
-    'Reproduce your gestures to test if the classifier works as expected'
-  )
+  .description('Reproduce your gestures to test if the classifier works as expected')
   .use([input, plotResults]);
 
 labelInput.$value.subscribe((label) => {
   wizardButton.$value.set(`Record Examples (class ${label})`);
   const numExamples = countPerClass[label] || 0;
   wizardText.$value.set(
-    numExamples
-      ? `Recorded ${numExamples} examples of "${label}"`
-      : 'Waiting for examples...'
+    numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
   );
 });
 

@@ -136,7 +136,7 @@ export class GenericChart extends Component {
     if (isStream<number[]>(series)) {
       if (this.#presetName === 'line-fast') {
         const throttledStream = series.throttle(100);
-        throttledStream.value = series.value;
+        throttledStream.value = series.get();
         this.#datasets.push({
           dataStream: throttledStream,
           label,
@@ -160,8 +160,8 @@ export class GenericChart extends Component {
 
   setColors(colorStream: Stream<number[]>): void {
     this.#datasets[0].label = 'clusters';
-    this.#datasets[0].options.backgroundColor = colorStream.value;
-    this.#datasets[0].options.color = colorStream.value; //alternatePointStyles;
+    this.#datasets[0].options.backgroundColor = colorStream.get();
+    this.#datasets[0].options.color = colorStream.get(); //alternatePointStyles;
   }
 
   removeSeries(dataStream: Stream<number[]> | Stream<Array<{ x: unknown; y: unknown }>>): void {

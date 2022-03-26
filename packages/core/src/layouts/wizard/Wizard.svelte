@@ -10,7 +10,7 @@
 
   function goToPage(index: number) {
     if (index >= 0 && index <= pages.length - 1) {
-      for (const m of pages[current.value].components) {
+      for (const m of pages[current.get()].components) {
         if (Array.isArray(m)) {
           for (const n of m) {
             n.destroy();
@@ -24,7 +24,7 @@
   }
 
   afterUpdate(() => {
-    for (const m of pages[current.value].components) {
+    for (const m of pages[current.get()].components) {
       if (Array.isArray(m)) {
         for (const n of m) {
           n.mount();
@@ -36,7 +36,7 @@
   });
 
   onDestroy(() => {
-    for (const m of pages[current.value].components) {
+    for (const m of pages[current.get()].components) {
       if (Array.isArray(m)) {
         for (const n of m) {
           n.destroy();
@@ -91,7 +91,7 @@
           variant="filled"
           type={$current >= pages.length - 1 ? 'success' : 'default'}
           on:click={() => {
-            if (current.value < pages.length - 1) {
+            if (current.get() < pages.length - 1) {
               goToPage($current + 1);
             } else {
               quit();

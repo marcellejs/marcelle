@@ -38,7 +38,7 @@ up.$files.subscribe((fl) => {
 // -----------------------------------------------------------
 
 const $instances = source.$thumbnails.map((thumbnail) => ({
-  x: source.$images.value,
+  x: source.$images.get(),
   y: 'unlabeled',
   thumbnail,
 }));
@@ -75,9 +75,7 @@ predictButton.$click.subscribe(async () => {
 // REAL-TIME PREDICTION
 // -----------------------------------------------------------
 
-const predictionStream = source.$images
-  .map(async (img) => classifier.predict(img))
-  .awaitPromises();
+const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
 
 let labels;
 fetch('./imagenet_class_index.json')
@@ -110,7 +108,7 @@ const dash = dashboard({
 });
 
 const help = text(
-  `In this example, you can upload a pre-trained classification model (converted from a Keras model, see examples here: https://keras.io/api/applications/) and perform inference with input images of your choice.`
+  `In this example, you can upload a pre-trained classification model (converted from a Keras model, see examples here: https://keras.io/api/applications/) and perform inference with input images of your choice.`,
 );
 help.title = 'Test generic DNN classifier';
 

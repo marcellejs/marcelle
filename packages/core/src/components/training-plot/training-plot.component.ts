@@ -76,7 +76,7 @@ export class TrainingPlot<T, U> extends Component {
           if (Array.isArray(val)) {
             streams[key].set(val as number[]);
           } else {
-            streams[key].set(streams[key].value.concat([val as number]));
+            streams[key].set(streams[key].get().concat([val as number]));
           }
         }
       }
