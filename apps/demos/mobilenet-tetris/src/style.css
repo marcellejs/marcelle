@@ -1,0 +1,60 @@
+main#tetris {
+  font-family: 'Benton Sans', 'Helvetica Neue', helvetica, arial, sans-serif !important;
+  color: #444 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  /* text-align: center; */
+  display: flex !important;
+  width: 100% !important;
+}
+
+#gggame {
+  width: 640px !important;
+  padding: 20px !important;
+}
+
+#gggame p,
+#gggame ul,
+#gggame li {
+  text-align: left;
+  line-height: 1.5;
+}
+
+#gggame li {
+  margin-bottom: 0.5em;
+  padding-left: 0.5em;
+}
+
+#gggame a {
+  text-decoration: none;
+  color: #1e90ff;
+}
+
+#gggame h1,
+#gggame h2 {
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 2em;
+  text-align: center;
+  margin-top: 0;
+  color: #444;
+}
+
+#gggame h2 {
+  font-size: 1.3em;
+  text-align: left;
+  margin-bottom: 0.5em;
+}
+
+#gggame canvas {
+  margin: 1em auto;
+}
+
+#gggame .controls {
+  text-align: center;
+  max-width: 30em;
+  margin: 1em auto;
+}
+
+.card-title {
+  display: none !important;
+}

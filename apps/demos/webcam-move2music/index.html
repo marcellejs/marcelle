@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Marcelle Example</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <script defer type="module" src="/webcam-move2music/script.js"></script>
+  </head>
+  <body>
+    <noscript>
+      <strong>
+        We're sorry but this application doesn't work properly without JavaScript enabled. Please
+        enable it to continue.
+      </strong>
+    </noscript>
+    <div
+      id="app"
+      style="
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      "
+    >
+      <div style="width: 350px">
+        <div class="card">
+          <video id="my-webcam" autoplay muted playsinline></video>
+        </div>
+      </div>
+      <div
+        style="
+          width: 350px;
+          text-align: center;
+          border: 1px solid lightgrey;
+          padding: 2rem;
+          margin: 2rem;
+          border-radius: 0.5rem;
+        "
+      >
+        <h2 id="results">Train the model first...</h2>
+        <img
+          id="result-img"
+          src="https://media.giphy.com/media/JTIfLXqvVkX7ACWbOy/giphy.gif"
+          alt="Look down"
+          style="height: 200px; margin: 5px auto"
+        />
+      </div>
+      <div class="flex">
+        <button class="btn" id="open-wizard">open wizard</button>
+        <button class="btn" id="open-dashboard">open dashboard</button>
+      </div>
+    </div>
+  </body>
+</html>
