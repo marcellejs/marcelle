@@ -1,5 +1,4 @@
 ---
-'docs': minor
 '@marcellejs/core': minor
 'generator-marcelle': minor
 ---
