@@ -99,7 +99,7 @@ importers:
       svelte: 3.46.4
       vite: 2.8.6
 
-  apps/examples:
+  apps/prototypes:
     specifiers:
       '@marcellejs/core': workspace:^0.5.1
       '@sveltejs/vite-plugin-svelte': ^1.0.0-next.11
@@ -8439,6 +8439,18 @@ packages:
     dependencies:
       debug: 3.2.7
 
+  /follow-redirects/1.14.9_debug@4.3.4:
+    resolution: {integrity: sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dependencies:
+      debug: 4.3.4_supports-color@6.1.0
+    dev: true
+
   /for-in/1.0.2:
     resolution: {integrity: sha1-gQaNKVqBQuwKxybG4iAMMPttXoA=}
     engines: {node: '>=0.10.0'}
@@ -9299,7 +9311,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.14.9
+      follow-redirects: 1.14.9_debug@4.3.4
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug

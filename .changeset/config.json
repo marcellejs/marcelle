@@ -6,8 +6,8 @@
     "@marcellejs/core",
     "@marcellejs/backend",
     "@marcellejs/design-system",
-    "docs",
-    "examples"
+    "@marcellejs/demos",
+    "docs"
   ], [
     "generator-marcelle",
     "@marcellejs/cli"
