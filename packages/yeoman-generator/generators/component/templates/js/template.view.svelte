@@ -1,5 +1,5 @@
 <script>
-  import { ViewContainer } from '<% if (!isMarcelleCore) { %>@marcellejs/core<% } else { %>../../core<% } %>';
+  import { ViewContainer } from '<% if (!isMarcelleCore) { %>@marcellejs/core/svelte<% } else { %>../../core<% } %>';
 
   export let title;
   export let options;
@@ -14,5 +14,4 @@
   .my-color {
     color: seagreen;
   }
-
 </style>

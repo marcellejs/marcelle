@@ -1,8 +1,8 @@
-<script>
-  import { ViewContainer } from '<% if (!isMarcelleCore) { %>@marcellejs/core<% } else { %>../../core<% } %>';
+<script lang="ts">
+  import { ViewContainer } from '<% if (!isMarcelleCore) { %>@marcellejs/core/svelte<% } else { %>../../core<% } %>';
 
-  export let title;
-  export let options;
+  export let title: string;
+  export let options: Record<string, unknown>;
 </script>
 
 <ViewContainer {title}>
@@ -14,5 +14,4 @@
   .my-color {
     color: seagreen;
   }
-
 </style>

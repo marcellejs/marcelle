@@ -26,8 +26,7 @@
       "default": "./dist/marcelle.esm.js"
     },
     "./dist/marcelle.css": "./dist/marcelle.css",
-    "./ui": "./dist/ui.js",
-    "./ui.css": "./dist/ui.css"
+    "./svelte": "./dist/svelte/index.js"
   },
   "files": [
     "dist",
@@ -35,9 +34,10 @@
   ],
   "scripts": {
     "dev": "rollup -c -w",
-    "build": "pnpm run clean && rollup -c && pnpm run types:build",
+    "build": "pnpm run clean && rollup -c && pnpm run types:build&& pnpm run svelte:build",
     "types:dev": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir types --watch",
     "types:build": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir types",
+    "svelte:build": "node --experimental-modules scripts/compile_svelte.js",
     "lint": "eslint src",
     "clean": "rm -rf dist types"
   },
@@ -59,7 +59,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-svelte3": "^3.2.0",
+    "eslint-plugin-svelte3": "^3.2.1",
     "postcss": "^8.2.14",
     "postcss-load-config": "^3.0.1",
     "prettier": "^2.2.0",
