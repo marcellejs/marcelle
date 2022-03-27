@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@marcellejs/core": "workspace:^0.5.1"

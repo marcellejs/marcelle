@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "build": "pnpm run build --recursive --filter @marcellejs/*"
+    "build": "pnpm run build --recursive --filter @marcellejs/*",
+    "clean": "pnpm run clean --recursive"
   },
   "devDependencies": {
     "@changesets/cli": "^2.21.1"
