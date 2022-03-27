@@ -46,7 +46,7 @@ const $instances = captureButton.$click
   .sample(input.$images.zip((thumbnail, data) => ({ thumbnail, data }), input.$thumbnails))
   .map(async ({ thumbnail, data }) => ({
     x: await featureExtractor.process(data),
-    y: classLabel.$value.value,
+    y: classLabel.$value.get(),
     thumbnail,
   }))
   .awaitPromises();
@@ -58,7 +58,7 @@ trainButton.$click.subscribe(() => classifier.train(trainingSet));
 
 // Real-time Prediction Pipeline
 const $features = input.$images
-  .filter(() => realTimePredictToggle.$checked.value && classifier.ready)
+  .filter(() => realTimePredictToggle.$checked.get() && classifier.ready)
   .map((img) => featureExtractor.process(img))
   .awaitPromises();
 

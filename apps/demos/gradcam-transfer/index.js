@@ -33,8 +33,8 @@ const trainingSet = dataset('training-set-dashboard', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
-  .filter(() => capture.$pressed.value)
-  .map((x) => ({ x, y: label.$value.value, thumbnail: input.$thumbnails.value }))
+  .filter(() => capture.$pressed.get())
+  .map((x) => ({ x, y: label.$value.get(), thumbnail: input.$thumbnails.get() }))
   .subscribe(trainingSet.create.bind(trainingSet));
 
 // -----------------------------------------------------------

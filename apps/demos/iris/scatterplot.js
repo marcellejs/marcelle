@@ -13,8 +13,8 @@ ts.ready
   .then(() => ts.distinct('variety'))
   .then((labels) => {
     selX.$value
-      .startWith(selX.$value.value)
-      .combine((y, x) => [x, y], selY.$value.startWith(selY.$value.value))
+      .startWith(selX.$value.get())
+      .combine((y, x) => [x, y], selY.$value.startWith(selY.$value.get()))
       .subscribe(([xKey, yKey]) => {
         chart.clear();
         chart.options.xlabel = xKey;

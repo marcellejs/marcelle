@@ -34,7 +34,7 @@ const $instances = captureButton.$click
   .sample(input.$images.zip((thumbnail, data) => ({ thumbnail, data }), input.$thumbnails))
   .map(async ({ thumbnail, data }) => ({
     x: await featureExtractor.process(data),
-    y: classLabel.$value.value,
+    y: classLabel.$value.get(),
     thumbnail,
   }))
   .awaitPromises();
@@ -52,7 +52,7 @@ trainingSet.$changes.subscribe(async (changes) => {
       message: 'You need to have at least two classes to train the model',
       duration: 5000,
     });
-  } else if (trainingSet.$count.value < 4) {
+  } else if (trainingSet.$count.get() < 4) {
     notification({
       title: 'Tip',
       message: 'You need to have at least two example in each class',
@@ -94,7 +94,7 @@ myDashboard.show();
 // Help messages
 
 input.$images
-  .filter(() => trainingSet.$count.value === 0 && !classifier.ready)
+  .filter(() => trainingSet.$count.get() === 0 && !classifier.ready)
   .take(1)
   .subscribe(() => {
     notification({

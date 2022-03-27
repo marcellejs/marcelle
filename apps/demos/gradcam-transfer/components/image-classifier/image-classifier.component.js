@@ -107,7 +107,7 @@ export class ImageClassifier extends TFJSBaseModel {
       : // eslint-disable-next-line no-undef
         (this.labels = Array.from(new Set(await dataset.map(({ y }) => y).toArray())));
     const ds = isDataset(dataset) ? dataset.items() : dataset;
-    this.$training.set({ status: 'start', epochs: this.parameters.epochs.value });
+    this.$training.set({ status: 'start', epochs: this.parameters.epochs.get() });
     if (this.labels.length === 0) {
       throwError(new Error('This dataset is empty or is missing labels'));
       this.$training.set({
@@ -144,7 +144,7 @@ export class ImageClassifier extends TFJSBaseModel {
 
   buildModel(inputDim, numClasses) {
     let previousOutput = this.mobilenet.layers[this.mobilenet.layers.length - 2].output;
-    for (const [i, units] of this.parameters.layers.value.entries()) {
+    for (const [i, units] of this.parameters.layers.get().entries()) {
       const layerParams = {
         units,
         activation: 'relu', // potentially add kernel init
@@ -172,10 +172,10 @@ export class ImageClassifier extends TFJSBaseModel {
   }
 
   fit(data, epochs = -1) {
-    const numEpochs = epochs > 0 ? epochs : this.parameters.epochs.value;
+    const numEpochs = epochs > 0 ? epochs : this.parameters.epochs.get();
     this.model
       .fit(data.training_x, data.training_y, {
-        batchSize: this.parameters.batchSize.value,
+        batchSize: this.parameters.batchSize.get(),
         validationData: [data.validation_x, data.validation_y],
         epochs: numEpochs,
         shuffle: true,
@@ -184,7 +184,7 @@ export class ImageClassifier extends TFJSBaseModel {
             this.$training.set({
               status: 'epoch',
               epoch,
-              epochs: this.parameters.epochs.value,
+              epochs: this.parameters.epochs.get(),
               data: {
                 accuracy: logs.acc,
                 loss: logs.loss,

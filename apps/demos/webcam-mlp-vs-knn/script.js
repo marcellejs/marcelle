@@ -37,11 +37,11 @@ const trainingSet = dataset('training-set-mlp-vs-knn', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
-  .filter(() => capture.$pressed.value)
+  .filter(() => capture.$pressed.get())
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    thumbnail: input.$thumbnails.value,
-    y: label.$value.value,
+    thumbnail: input.$thumbnails.get(),
+    y: label.$value.get(),
   }))
   .awaitPromises()
   .subscribe(trainingSet.create.bind(trainingSet));
@@ -103,7 +103,7 @@ predictButton.$click.subscribe(async () => {
 const tog = toggle('toggle prediction');
 
 const rtFeatureStream = input.$images
-  .filter(() => tog.$checked.value)
+  .filter(() => tog.$checked.get())
   .map(async (img) => featureExtractor.process(img))
   .awaitPromises();
 

@@ -34,11 +34,11 @@ const trainingSet = dataset('TrainingSet', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
-  .filter(() => capture.$pressed.value)
+  .filter(() => capture.$pressed.get())
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    thumbnail: input.$thumbnails.value,
-    y: label.$value.value,
+    thumbnail: input.$thumbnails.get(),
+    y: label.$value.get(),
   }))
   .awaitPromises()
   .subscribe(trainingSet.create.bind(trainingSet));
@@ -92,7 +92,7 @@ tog.$checked.subscribe((checked) => {
 });
 
 const predictionStream = input.$images
-  .filter(() => tog.$checked.value && clusteringKMeans.ready)
+  .filter(() => tog.$checked.get() && clusteringKMeans.ready)
   .map(async (img) => clusteringKMeans.predict(await featureExtractor.process(img)))
   .awaitPromises();
 

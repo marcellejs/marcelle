@@ -36,7 +36,7 @@ const $instances = captureButton.$click
   .sample(input.$images.zip((thumbnail, data) => ({ thumbnail, data }), input.$thumbnails))
   .map(async ({ thumbnail, data }) => ({
     x: await featureExtractor.process(data),
-    y: classLabel.$value.value,
+    y: classLabel.$value.get(),
     thumbnail,
   }))
   .awaitPromises();

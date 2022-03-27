@@ -38,11 +38,11 @@ const trainingSet = dataset('TrainingSet-move2audio', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
-  .filter(() => capture.$pressed.value)
+  .filter(() => capture.$pressed.get())
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: labelInput.$value.value,
-    thumbnail: input.$thumbnails.value,
+    y: labelInput.$value.get(),
+    thumbnail: input.$thumbnails.get(),
   }))
   .awaitPromises()
   .subscribe(trainingSet.create.bind(trainingSet));
@@ -80,7 +80,7 @@ predictButton.$click.subscribe(async () => {
 const tog = toggle('toggle prediction');
 
 const $predictions = input.$images
-  .filter(() => tog.$checked.value)
+  .filter(() => tog.$checked.get())
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
@@ -129,7 +129,7 @@ trainingSet.$changes.subscribe(async (changes) => {
       }
     }
   }
-  const label = labelInput.$value.value;
+  const label = labelInput.$value.get();
   const numExamples = countPerClass[label] || 0;
   wizardText.$value.set(
     numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',

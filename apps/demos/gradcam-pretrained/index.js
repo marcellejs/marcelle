@@ -65,7 +65,7 @@ const gcDisplay = [
     $predictions
       .merge(selectClass.$value)
       .sample($inputStream)
-      .map((img) => gc.explain(img, labels.indexOf(selectClass.$value.value)))
+      .map((img) => gc.explain(img, labels.indexOf(selectClass.$value.get())))
       .awaitPromises(),
   ),
 ];

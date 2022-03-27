@@ -31,10 +31,10 @@ const $predictions = sepalLength.$values
   .filter(() => classifier.ready)
   .map(() => [
     [
-      sepalLength.$values.value[0],
-      sepalWidth.$values.value[0],
-      petalLength.$values.value[0],
-      petalWidth.$values.value[0],
+      sepalLength.$values.get()[0],
+      sepalWidth.$values.get()[0],
+      petalLength.$values.get()[0],
+      petalWidth.$values.get()[0],
     ],
   ])
   .map(classifier.predict.bind(classifier))

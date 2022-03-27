@@ -28,11 +28,11 @@ const trainingSet = dataset('training-set-umap', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
-  .filter(() => capture.$pressed.value)
+  .filter(() => capture.$pressed.get())
   .map(async (x) => ({
     x: await featureExtractor.process(x),
-    y: label.$value.value,
-    thumbnail: input.$thumbnails.value,
+    y: label.$value.get(),
+    thumbnail: input.$thumbnails.get(),
   }))
   .awaitPromises()
   .subscribe(trainingSet.create.bind(trainingSet));

@@ -39,11 +39,11 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 
 let recording = false;
 input.$images
-  .filter(() => capture.$pressed.value || recording)
+  .filter(() => capture.$pressed.get() || recording)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    thumbnail: input.$thumbnails.value,
-    y: label.$value.value,
+    thumbnail: input.$thumbnails.get(),
+    y: label.$value.get(),
   }))
   .awaitPromises()
   .subscribe(trainingSet.create.bind(trainingSet));
@@ -81,7 +81,7 @@ predictButton.$click.subscribe(async () => {
 const tog = toggle('toggle prediction');
 
 const predictionStream = input.$images
-  .filter(() => tog.$checked.value)
+  .filter(() => tog.$checked.get())
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 

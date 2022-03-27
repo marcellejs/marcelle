@@ -49,7 +49,7 @@ const wc = webcam();
 const tog = toggle('toggle prediction');
 
 const rtDetectStream = wc.$images
-  .filter(() => tog.$checked.value)
+  .filter(() => tog.$checked.get())
   .map(async (img) => cocoClassifier.predict(img))
   .awaitPromises();
 
@@ -60,7 +60,7 @@ const realtimePredictions = rtDetectStream
     confidences: outputs.reduce((x, y) => ({ ...x, [y.class]: y.confidence }), {}),
   }));
 
-const imgStream = wc.$images.filter(() => tog.$checked.value);
+const imgStream = wc.$images.filter(() => tog.$checked.get());
 
 const rtObjDetectionVis = detectionBoxes(imgStream, rtDetectStream);
 const rtPlotResults = confidencePlot(realtimePredictions);

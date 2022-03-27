@@ -36,8 +36,8 @@ const trainingSet = dataset('training-set-dashboard', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
-  .filter(() => capture.$pressed.value)
-  .map((x) => ({ x, y: label.$value.value, thumbnail: input.$thumbnails.value }))
+  .filter(() => capture.$pressed.get())
+  .map((x) => ({ x, y: label.$value.get(), thumbnail: input.$thumbnails.get() }))
   .subscribe(trainingSet.create.bind(trainingSet));
 
 // -----------------------------------------------------------
@@ -98,7 +98,7 @@ tog.$checked.subscribe((checked) => {
 });
 
 const predictionStream = input.$images
-  .filter(() => tog.$checked.value && classifier.ready)
+  .filter(() => tog.$checked.get() && classifier.ready)
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
