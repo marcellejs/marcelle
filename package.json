@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "build": "pnpm run build --recursive --filter @marcellejs/*",
+    "build": "pnpm run build --recursive --filter @marcellejs/* --filter create-marcelle",
     "clean": "pnpm run clean --recursive"
   },
   "devDependencies": {

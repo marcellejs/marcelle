@@ -1,0 +1,6 @@
+{
+	"devDependencies": {
+		"typescript": "~4.6.2",
+		"tslib": "^2.3.1"
+	}
+}

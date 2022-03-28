@@ -1,0 +1,19 @@
+{
+  "name": "~TODO~",
+  "description": "A Marcelle Application",
+  "version": "0.0.0",
+  "keywords": ["marcelle"],
+  "main": "public/bundle.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@marcellejs/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.11",
+    "svelte": "^3.46.4",
+    "vite": "^2.3.7"
+  }
+}

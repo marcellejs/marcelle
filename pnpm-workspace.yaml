@@ -1,13 +1,6 @@
 packages:
-  # the root package.json
   - '.'
-  # the docs
   - 'docs'
-  # all packages in subdirs of packages/ and components/
-  - 'packages/**'
-  - '!packages/**/dist'
-  # - '!packages/backend'
-  # all packages in subdirs of packages/ and components/
+  - 'packages/*'
   - 'apps/**'
-  # exclude packages that are inside test/ directories
   - '!**/test/**'
