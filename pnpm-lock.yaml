@@ -374,6 +374,7 @@ importers:
   packages/create-marcelle:
     specifiers:
       '@marcellejs/core': workspace:^0.5.1
+      '@marcellejs/devtools': workspace:^0.0.1
       '@types/gitignore-parser': ^0.0.0
       '@types/prettier': ^2.4.2
       '@types/prompts': ^2.0.14
@@ -391,6 +392,7 @@ importers:
       prompts: 2.4.2
     devDependencies:
       '@marcellejs/core': link:../core
+      '@marcellejs/devtools': link:../devtools
       '@types/gitignore-parser': 0.0.0
       '@types/prettier': 2.4.4
       '@types/prompts': 2.0.14

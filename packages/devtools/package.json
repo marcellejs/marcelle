@@ -11,7 +11,9 @@
   ],
   "author": "",
   "license": "MIT",
-  "bin": "./bin.js",
+  "bin": {
+    "marcelle":"./bin.js"
+  },
   "type": "module",
   "devDependencies": {
     "@marcellejs/backend": "workspace:^0.0.5",

@@ -61,6 +61,12 @@ async function generate_templates(shared) {
             thisPkg.devDependencies['@marcellejs/core'].split('workspace:')[1]
           }"`,
         );
+        contents = contents.replace(
+          '"@marcellejs/devtools": "workspace:*"',
+          `"@marcellejs/devtools": "${
+            thisPkg.devDependencies['@marcellejs/devtools'].split('workspace:')[1]
+          }"`,
+        );
         fs.writeFileSync(`${dir}/package.json`, contents);
         return;
       }
