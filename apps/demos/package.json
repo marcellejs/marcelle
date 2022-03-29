@@ -13,16 +13,10 @@
     "@tensorflow/tfjs-layers": "^3.15.0"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.11",
-    "eslint": "^8.11.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.23.4",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-svelte3": "^3.2.0",
-    "prettier": "^2.2.0",
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.40",
     "svelte": "^3.46.4",
     "svelte-bricks": "^0.1.0",
     "svelte-select": "^4.4.3",
-    "vite": "^2.3.7"
+    "vite": "^2.8.6"
   }
 }

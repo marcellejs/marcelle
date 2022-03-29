@@ -15,23 +15,16 @@
     "marcelle":"./bin.js"
   },
   "type": "module",
+  "files": ["dist"],
   "devDependencies": {
     "@marcellejs/backend": "workspace:^0.0.5",
     "@marcellejs/core": "workspace:^0.5.1",
-    "@typescript-eslint/eslint-plugin": "^5.15.0",
-    "@typescript-eslint/parser": "^5.15.0",
-    "eslint": "^8.11.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.23.4",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-svelte3": "^3.2.1",
-    "prettier": "^2.6.0",
     "sucrase": "^3.20.3",
     "svelte": "^3.46.4",
     "svelte-preprocess": "^4.10.4",
     "tiny-glob": "^0.2.9",
     "tslib": "^2.3.1",
-    "typescript": "^4.3.2"
+    "typescript": "^4.6.3"
   },
   "dependencies": {
     "change-case": "^4.1.2",

@@ -18,11 +18,11 @@ async function setPermissions(context: HookContext): Promise<HookContext> {
     throw new Error('The "setField" hook should only be used as a "before" hook.');
   }
 
-  const addRole = (data: any) => {
-    if (!data) {
+  const addRole = (d: Record<string, unknown>) => {
+    if (!d) {
       return { permissions };
     }
-    return { ...data, permissions };
+    return { ...d, permissions };
   };
 
   context.data = Array.isArray(data) ? Promise.all(data.map(addRole)) : addRole(data);
