@@ -71,7 +71,6 @@
   "devDependencies": {
     "@types/compression": "^1.7.0",
     "@types/cors": "^2.8.8",
-    "@types/helmet": "^4.0.0",
     "@types/jest": "^26.0.15",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/mongodb": "^3.5.33",
@@ -79,7 +78,6 @@
     "@types/multer-gridfs-storage": "^4.0.1",
     "@types/nedb": "^1.8.11",
     "@types/serve-favicon": "^2.5.1",
-    "@types/socket.io-parser": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^4.6.1",
     "@typescript-eslint/parser": "^4.6.1",
     "axios": "^0.21.0",

@@ -63,7 +63,7 @@
     "rollup-plugin-sizes": "^1.0.4",
     "rollup-plugin-svelte": "^7.1.0",
     "rollup-plugin-terser": "^7.0.2",
-    "svelte": "^3.46.4",
+    "svelte": "^3.46.6",
     "svelte-loader": "^3.1.1",
     "svelte-preprocess": "^4.10.4",
     "svelte-range-slider-pips": "^2.0.0",
@@ -80,7 +80,7 @@
     "@most/scheduler": "^1.3.0",
     "@most/types": "^1.1.0",
     "@tensorflow-models/coco-ssd": "^2.2.2",
-    "@tensorflow-models/knn-classifier": "^1.2.2",
+    "@tensorflow-models/knn-classifier": "^1.2.4",
     "@tensorflow-models/mobilenet": "^2.1.0",
     "@tensorflow/tfjs-backend-cpu": "^3.7.0",
     "@tensorflow/tfjs-backend-webgl": "^3.7.0",
@@ -96,8 +96,9 @@
     "feathers-memory": "^4.1.0",
     "lodash": "^4.17.21",
     "ml-kmeans": "^5.0.0",
-    "onnxruntime-web": "^1.9.0",
+    "onnxruntime-web": "^1.11.0",
     "scatter-gl": "^0.0.12",
+    "sift": "^16.0.0",
     "socket.io-client": "^2.4.0"
   }
 }

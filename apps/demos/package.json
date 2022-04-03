@@ -14,9 +14,9 @@
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.40",
-    "svelte": "^3.46.4",
+    "svelte": "^3.46.6",
     "svelte-bricks": "^0.1.0",
     "svelte-select": "^4.4.3",
-    "vite": "^2.8.6"
+    "vite": "^2.9.1"
   }
 }

@@ -12,15 +12,17 @@
   "author": "",
   "license": "MIT",
   "bin": {
-    "marcelle":"./bin.js"
+    "marcelle": "./bin.js"
   },
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@marcellejs/backend": "workspace:^0.0.5",
     "@marcellejs/core": "workspace:^0.5.1",
     "sucrase": "^3.20.3",
-    "svelte": "^3.46.4",
+    "svelte": "^3.46.6",
     "svelte-preprocess": "^4.10.4",
     "tiny-glob": "^0.2.9",
     "tslib": "^2.3.1",
