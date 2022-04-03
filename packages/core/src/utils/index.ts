@@ -3,6 +3,7 @@ import { notification } from './notification';
 export { throwError } from './error-handling';
 export { notification } from './notification';
 export { LazyIterable } from './lazy-iterable';
+export { mergeDeep } from './object';
 
 window.onerror = (message) => {
   if (typeof message === 'string') {

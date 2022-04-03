@@ -1,4 +1,10 @@
-import type { Paginated, Service, Params as FeathersParams } from '@feathersjs/feathers';
+import type {
+  Paginated,
+  Service,
+  Params as FeathersParams,
+  Query,
+  HookContext,
+} from '@feathersjs/feathers';
 import type { Instance, ObjectId } from '../types';
 import { Stream } from '../stream';
 import { logger } from '../logger';
@@ -9,6 +15,8 @@ import { iterableFromService, ServiceIterable } from '../data-store/service-iter
 import { throwError } from '../../utils/error-handling';
 import { readJSONFile, saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
+import { mergeDeep } from '../../utils';
+import sift from 'sift';
 
 interface DatasetChange {
   level: 'instance' | 'dataset';
@@ -25,6 +33,7 @@ export class Dataset<InputType, OutputType> extends Component {
   ready: Promise<void>;
 
   instanceService: Service<Instance<InputType, OutputType>>;
+  query: Query = {};
 
   $count: Stream<number> = new Stream(0, true);
   $changes: Stream<DatasetChange[]> = new Stream([]);
@@ -55,6 +64,13 @@ export class Dataset<InputType, OutputType> extends Component {
 
     this.instanceService.hooks({
       before: {
+        all: [
+          (context: HookContext): HookContext => {
+            context.params = context.params || {};
+            context.params.query = mergeDeep(context.params.query || {}, this.query);
+            return context;
+          },
+        ],
         create: [addScope('datasetName', this.name), imageData2DataURL],
         find: [limitToScope('datasetName', this.name)],
         get: [limitToScope('datasetName', this.name)],
@@ -82,7 +98,9 @@ export class Dataset<InputType, OutputType> extends Component {
   }
 
   protected watchChanges(): void {
+    const respectsQuery = sift(this.query);
     this.instanceService.on('created', (x: Instance<InputType, OutputType>) => {
+      if (!respectsQuery(x)) return;
       this.$count.set(this.$count.get() + 1);
       this.$changes.set([
         {
@@ -94,6 +112,7 @@ export class Dataset<InputType, OutputType> extends Component {
     });
 
     const cb = (x: Instance<InputType, OutputType>) => {
+      if (!respectsQuery(x)) return;
       const instance = {
         ...x,
         id: x.id || x._id,
@@ -110,6 +129,7 @@ export class Dataset<InputType, OutputType> extends Component {
     this.instanceService.on('patched', cb);
 
     this.instanceService.on('removed', (x: Instance<InputType, OutputType>) => {
+      if (!respectsQuery(x)) return;
       this.$count.set(this.$count.get() - 1);
       const instance = {
         ...x,
@@ -123,6 +143,11 @@ export class Dataset<InputType, OutputType> extends Component {
         },
       ]);
     });
+  }
+
+  sift(query: Query = {}): void {
+    this.query = query;
+    this.setup();
   }
 
   items(): ServiceIterable<Instance<InputType, OutputType>> {
