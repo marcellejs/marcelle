@@ -20,7 +20,7 @@
 }
 
 .card {
-  @apply bg-white rounded-xl relative mx-1 my-2 p-3 flex flex-col shadow-sm;
+  @apply bg-white rounded-xl relative mx-1 my-2 p-3 flex flex-col shadow-sm overflow-hidden;
 }
 
 .card-title {
