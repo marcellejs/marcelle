@@ -6,7 +6,7 @@
     "@marcellejs/core",
     "@marcellejs/backend",
     "@marcellejs/design-system",
-    "@marcellejs/demos",
+    "demos",
     "docs"
   ], [
     "generator-marcelle",
