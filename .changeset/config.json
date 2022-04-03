@@ -1,0 +1,20 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@1.7.0/schema.json",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [[
+    "@marcellejs/core",
+    "@marcellejs/backend",
+    "@marcellejs/design-system",
+    "@marcellejs/demos",
+    "docs"
+  ], [
+    "generator-marcelle",
+    "@marcellejs/cli"
+  ]],
+  "linked": [],
+  "access": "restricted",
+  "baseBranch": "master",
+  "updateInternalDependencies": "patch",
+  "ignore": ["marcelle"]
+}

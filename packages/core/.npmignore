@@ -1,0 +1,12 @@
+.github
+.vscode
+docs
+node_modules
+src
+.eslintignore
+.eslintrc.js
+.prettierrc.js
+postcss.config.js
+rollup.config.js
+tailwind.config.js
+tsconfig.json

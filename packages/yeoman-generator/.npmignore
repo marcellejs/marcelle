@@ -1,0 +1,8 @@
+**/.DS_Store
+.DS_Store
+.vscode
+node_modules
+.editorconfig
+.eslintignore
+.eslintrc.js
+.prettierrc.js

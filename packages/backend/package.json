@@ -1,0 +1,93 @@
+{
+  "name": "@marcellejs/backend",
+  "description": "",
+  "version": "0.0.5",
+  "homepage": "",
+  "main": "lib",
+  "keywords": [
+    "feathers",
+    "marcelle"
+  ],
+  "author": {
+    "name": "Jules Françoise",
+    "email": "me@julesfrancoise.com"
+  },
+  "license": "MIT",
+  "contributors": [],
+  "bugs": {},
+  "bin": {
+    "marcelle-backend": "./bin/backend.js"
+  },
+  "directories": {
+    "lib": "src",
+    "test": "test/",
+    "config": "config/"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "yarn": ">= 0.18.0"
+  },
+  "scripts": {
+    "dev": "tsc-watch",
+    "build": "shx rm -rf lib/ && tsc",
+    "test": "yarn run lint && yarn run build && yarn run jest",
+    "lint": "eslint src/. test/. --ext .ts",
+    "jest": "jest  --forceExit"
+  },
+  "standard": {
+    "env": [
+      "jest"
+    ],
+    "ignore": []
+  },
+  "types": "lib/",
+  "dependencies": {
+    "@feathersjs/authentication": "^4.5.8",
+    "@feathersjs/authentication-local": "^4.5.8",
+    "@feathersjs/authentication-oauth": "^4.5.8",
+    "@feathersjs/configuration": "^4.5.8",
+    "@feathersjs/errors": "^4.5.8",
+    "@feathersjs/express": "^4.5.8",
+    "@feathersjs/feathers": "^4.5.8",
+    "@feathersjs/socketio": "^4.5.8",
+    "@feathersjs/transport-commons": "^4.5.10",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "feathers-authentication-hooks": "^1.0.2",
+    "feathers-debugger-service": "^1.3.6",
+    "feathers-hooks-common": "^5.0.4",
+    "feathers-mongodb": "^6.2.0",
+    "feathers-nedb": "^5.1.0",
+    "feathers-permissions": "^2.1.4",
+    "helmet": "^4.1.1",
+    "mongodb": "^3.6.3",
+    "mongodb-core": "^3.2.7",
+    "multer": "^1.4.2",
+    "multer-gridfs-storage": "^4.2.0",
+    "nedb": "^1.8.0",
+    "serve-favicon": "^2.5.0",
+    "winston": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.7.0",
+    "@types/cors": "^2.8.8",
+    "@types/jest": "^26.0.15",
+    "@types/jsonwebtoken": "^8.5.0",
+    "@types/mongodb": "^3.5.33",
+    "@types/multer": "^1.4.4",
+    "@types/multer-gridfs-storage": "^4.0.1",
+    "@types/nedb": "^1.8.11",
+    "@types/serve-favicon": "^2.5.1",
+    "@typescript-eslint/eslint-plugin": "^4.6.1",
+    "@typescript-eslint/parser": "^4.6.1",
+    "axios": "^0.21.0",
+    "eslint": "^7.10.0",
+    "jest": "^26.6.3",
+    "shx": "^0.3.3",
+    "styled-components": "5.3.0",
+    "ts-jest": "^26.4.4",
+    "ts-node-dev": "^1.0.0",
+    "tsc-watch": "^4.2.9",
+    "typescript": "^4.6.3"
+  }
+}

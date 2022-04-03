@@ -63,7 +63,7 @@ const $instances = input.$images
     async (thumbnail, img) => ({
       type: 'image',
       x: await featureExtractor.process(img),
-      y: label.$value.value,
+      y: label.$value.get(),
       thumbnail,
     }),
     input.$thumbnails,
@@ -211,7 +211,7 @@ In our example, we define "props" in the script part by using the keyword `expor
 
 ```html
 <script>
-  import { ViewContainer } from '@marcellejs/core';
+  import { ViewContainer } from '@marcellejs/core/svelte';
 
   export let title;
   export let options;
@@ -356,7 +356,7 @@ Let's edit `umap.view.svelte` to pass our stream of embeddings to the component:
 
 ```html
 <script>
-  import { ViewContainer } from '@marcellejs/core';
+  import { ViewContainer } from '@marcellejs/core/svelte';
 
   export let title;
   export let embedding;
@@ -404,7 +404,7 @@ We then integrate scatter-gl in the Svelte component:
 <script>
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
-  import { ViewContainer } from '@marcellejs/core';
+  import { ViewContainer } from '@marcellejs/core/svelte';
 
   export let title;
   export let embedding;
@@ -514,7 +514,7 @@ export class Umap extends Component {
 <script>
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
-  import { ViewContainer } from '@marcellejs/core';
+  import { ViewContainer } from '@marcellejs/core/svelte';
 
   export let title;
   export let embedding;

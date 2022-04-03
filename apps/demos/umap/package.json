@@ -1,0 +1,29 @@
+{
+  "name": "marcelle-demo-umap",
+  "description": "Dataset visualization with UMAP",
+  "version": "0.0.0",
+  "main": "public/bundle.js",
+  "keywords": [
+    "marcelle"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Jules Françoise",
+    "email": "me@julesfrancoise.com"
+  },
+  "scripts": {
+    "dev": "vite --force",
+    "build": "vite build",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@marcellejs/core": "workspace:^0.5.1",
+    "scatter-gl": "^0.0.11",
+    "umap-js": "^1.3.3"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.40",
+    "svelte": "^3.46.6",
+    "vite": "^2.9.1"
+  }
+}

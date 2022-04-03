@@ -279,6 +279,18 @@ Remove an instance from the dataset
 | id     | ObjectId       | The instance's unique ID                                                                                 |    ✓     |
 | params | FeathersParams | Feathers Query parameters. See [Feathers docs](https://docs.feathersjs.com/api/databases/querying.html). |          |
 
+### .sift()
+
+```tsx
+sift(query: Query = {}): void
+```
+
+Filter the contents of the dataset from a [Feathers Query](https://docs.feathersjs.com/api/databases/querying.html).
+
+| Option | Type  | Description                                                                                              | Required |
+| ------ | ----- | -------------------------------------------------------------------------------------------------------- | :------: |
+| query  | Query | Feathers Query parameters. See [Feathers docs](https://docs.feathersjs.com/api/databases/querying.html). |          |
+
 ### .update()
 
 ```tsx

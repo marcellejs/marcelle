@@ -1,0 +1,29 @@
+{
+  "name": "marcelle-demo-mobilenet-tetris",
+  "description": "A tetris game controlled from your webcam using image classification",
+  "version": "0.0.0",
+  "main": "public/bundle.js",
+  "keywords": [
+    "marcelle"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Jules Françoise",
+    "email": "me@julesfrancoise.com"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@marcellejs/core": "workspace:^0.5.1",
+    "@tensorflow/tfjs-core": "^3.9.0",
+    "xmmjs": "^0.0.3"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.40",
+    "svelte": "^3.46.6",
+    "vite": "^2.9.1"
+  }
+}

@@ -155,7 +155,7 @@ const $instances = input.$images
   .map(async (img) => ({
     x: await featureExtractor.process(img),
     y: 'test',
-    thumbnail: input.$thumbnails.value,
+    thumbnail: input.$thumbnails.get(),
   }))
   .awaitPromises();
 ```
@@ -181,14 +181,14 @@ label.$value.subscribe((currentInput) => {
 });
 ```
 
-We can access the current value of a stream using its `.value` property. We use it to complement our stream of instances:
+We can access the current value of a stream using its `.get()` method. We use it to complement our stream of instances:
 
 ```js{4}
 const $instances = input.$images
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: label.$value.value,
-    thumbnail: input.$thumbnails.value,
+    y: label.$value.get(),
+    thumbnail: input.$thumbnails.get(),
   }))
   .awaitPromises();
 ```
@@ -235,8 +235,8 @@ const $instances = capture.$click
   .sample(input.$images)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: label.$value.value,
-    thumbnail: input.$thumbnails.value,
+    y: label.$value.get(),
+    thumbnail: input.$thumbnails.get(),
   }))
   .awaitPromises();
 ```
@@ -342,8 +342,8 @@ const $instances = capture.$click
   .sample(input.$images)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: label.$value.value,
-    thumbnail: input.$thumbnails.value,
+    y: label.$value.get(),
+    thumbnail: input.$thumbnails.get(),
   }))
   .awaitPromises();
 
