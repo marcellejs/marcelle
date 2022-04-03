@@ -26,7 +26,7 @@ const store = dataStore('localStorage');
 const trainingSet = dataset('TrainingSet', store);
 const classifier = mlpClassifier({ layers: [64, 32], epochs: 20, dataStore: store });
 classifier.sync('sketch-classifier');
-const batchResults = batchPrediction({ name: 'mlp', dataStore: store });
+const batchResults = batchPrediction('mlp', store);
 
 // Additional widgets and visualizations
 const classLabel = textInput();

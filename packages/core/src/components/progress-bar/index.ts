@@ -35,6 +35,7 @@ export function trainingProgress<T, U>(m: Model<T, U>): ProgressBar {
       };
     })
     .hold();
+
   const p = new ProgressBar($stream);
   p.title = 'Training Progress';
   return p;

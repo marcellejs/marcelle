@@ -151,7 +151,7 @@ Synchronize a model with a data store, given a model name. The model will be aut
 ## BatchPrediction
 
 ```tsx
-marcelle.batchPrediction({ name: string, dataStore?: DataStore }): BatchPrediction;
+marcelle.batchPrediction(name: string, dataStore?: DataStore): BatchPrediction;
 ```
 
 This component allows to compute and store batch predictions with a given model over an entire dataset. Similarly to [Datasets](/api/data-storage.html#dataset), the prediction results are stored in a data store passed in argument.
@@ -165,10 +165,18 @@ This component allows to compute and store batch predictions with a given model 
 
 ### Streams
 
-| Name          | Type                 | Description                                                       | Hold |
-| ------------- | -------------------- | ----------------------------------------------------------------- | :--: |
-| \$predictions | Stream\<ObjectId[]\> | Stream of all the ids of the predictions stored in the data store |  ✓   |
-| \$count       | Stream\<number\>     | Total number of predictions                                       |  ✓   |
+| Name     | Type                            | Description                                                  | Hold |
+| -------- | ------------------------------- | ------------------------------------------------------------ | :--: |
+| \$status | Stream\<BatchPredictionStatus\> | Stream containing the status of the batch prediction process |  ✓   |
+
+```ts
+export interface BatchPredictionStatus {
+  status: 'idle' | 'start' | 'running' | 'success' | 'error' | 'loaded' | 'loading';
+  count?: number;
+  total?: number;
+  data?: Record<string, unknown>;
+}
+```
 
 ### Methods
 
@@ -193,7 +201,7 @@ Clear all predictions from the data store, resetting the resulting streams.
 ```js
 const classifier = marcelle.mlp({ layers: [64, 32], epochs: 20 });
 
-const batchMLP = marcelle.batchPrediction({ name: 'mlp', dataStore: store });
+const batchMLP = marcelle.batchPrediction('mlp', store);
 
 const predictButton = marcelle.button('Update predictions');
 predictButton.$click.subscribe(async () => {

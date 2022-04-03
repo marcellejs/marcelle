@@ -3,7 +3,7 @@ import { processDataset } from './preprocessing';
 import { classifier } from './training';
 import './testing';
 
-const bp = batchPrediction({ name: 'iris-predictions' });
+const bp = batchPrediction('iris-predictions');
 const batchButton = button('Update Predictions');
 batchButton.title = 'Batch prediction';
 batchButton.$click.subscribe(() => {

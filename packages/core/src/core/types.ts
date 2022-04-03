@@ -69,8 +69,11 @@ export interface TrainingRun {
 export interface Prediction {
   id?: ObjectId;
   instanceId: ObjectId;
-  label?: string;
-  trueLabel?: string;
-  confidences?: Record<string, number>;
+  yTrue?: string;
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+}
+
+export interface ClassifierPrediction extends Prediction {
+  label?: string;
+  confidences?: Record<string, number>;
 }

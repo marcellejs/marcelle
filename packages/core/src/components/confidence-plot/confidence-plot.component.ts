@@ -1,4 +1,4 @@
-import type { Prediction } from '../../core/types';
+import type { ClassifierPrediction } from '../../core/types';
 import { map, startWith } from '@most/core';
 import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
@@ -12,11 +12,11 @@ export class ConfidencePlot extends Component {
   #plotConfidences: GenericChart;
   #displayLabel: Text;
 
-  constructor(predictionStream: Stream<Prediction>) {
+  constructor(predictionStream: Stream<ClassifierPrediction>) {
     super();
     this.$confidenceStream = new Stream(
       map(
-        ({ confidences }: Prediction) =>
+        ({ confidences }: ClassifierPrediction) =>
           Object.entries(confidences).map(([label, value]) => ({ x: label, y: value })),
         predictionStream,
       ),
@@ -38,7 +38,7 @@ export class ConfidencePlot extends Component {
     this.#displayLabel.title = this.title;
     this.#displayLabel.$value = new Stream(
       startWith('Waiting for predictions...')(
-        map(({ label, trueLabel }: Prediction) => {
+        map(({ label, trueLabel }: ClassifierPrediction) => {
           let t = `<h2>Predicted Label: <code>${label}</code></h2>`;
           if (trueLabel !== undefined) {
             t += `<p>True Label: ${trueLabel} (${

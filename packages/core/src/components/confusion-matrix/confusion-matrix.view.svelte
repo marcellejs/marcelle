@@ -5,6 +5,8 @@
   import ViewContainer from '../../core/ViewContainer.svelte';
 
   export let title;
+  export let loading;
+  export let progress;
   export let accuracy;
   export let confusion;
   export let labels;
@@ -144,10 +146,19 @@
   });
 </script>
 
-<ViewContainer {title}>
+<ViewContainer {title} loading={$loading} progress={$progress}>
   {#if $accuracy !== undefined}
     <p class="m-2">Global Accuracy: {$accuracy.toFixed(2)}</p>
     <div class="confusion-container"><canvas use:setup /></div>
+    {#if $progress > 0 && $progress < 100}
+      <div class="overflow-hidden h-1 mb-2 text-xs flex rounded  bg-blue-200 text-blue-600">
+        <div
+          style="width:{$progress}%"
+          class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center
+        bg-blue-500"
+        />
+      </div>
+    {/if}
   {:else}
     <p class="m-2">Waiting for predictions...</p>
   {/if}

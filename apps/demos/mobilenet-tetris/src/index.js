@@ -65,7 +65,7 @@ const prog = trainingProgress(classifier);
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchMLP = batchPrediction({ name: 'mlp', dataStore: store });
+const batchMLP = batchPrediction('mlp', store);
 const confMat = confusionMatrix(batchMLP);
 
 const predictButton = button('Update predictions');

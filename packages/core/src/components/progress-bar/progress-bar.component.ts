@@ -13,6 +13,7 @@ export class ProgressBar extends Component {
 
   constructor(public $progress: Stream<ProgressType>) {
     super();
+    this.start();
   }
 
   mount(target?: HTMLElement): void {

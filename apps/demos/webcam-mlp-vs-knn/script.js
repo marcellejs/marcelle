@@ -80,8 +80,8 @@ b.$click.subscribe(() => {
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchMLP = batchPrediction({ name: 'mlp', dataStore: store });
-const batchKNN = batchPrediction({ name: 'knn', dataStore: store });
+const batchMLP = batchPrediction('mlp', store);
+const batchKNN = batchPrediction('knn', store);
 const predictButton = button('Update predictions');
 const predictionAccuracy = text('Waiting for predictions...');
 const confusionMLP = confusionMatrix(batchMLP);

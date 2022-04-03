@@ -107,6 +107,16 @@ Displays a confusion matrix from a [BatchPrediction](#batchprediction) component
 | ---------- | --------------- | --------------------------------------------------------- | :------: |
 | prediction | BatchPrediction | A batch prediction component storing a set of predictions |    ✓     |
 
+### Streams
+
+| Name        | Type                                                    | Description                 | Hold |
+| ----------- | ------------------------------------------------------- | --------------------------- | :--: |
+| \$confusion | Stream\<Array\<{ x: string; y: string; v: number; }\>\> | Current confusion matrix    |  ✓   |
+| \$accuracy  | Stream\<number\>                                        | Current accuracy            |  ✓   |
+| \$labels    | Stream\<string[]\>                                      | current list of labels      |  ✓   |
+| \$selected  | Stream\<{ x: string; y: string; v: number }\>           | Selected value              |  ✓   |
+| \$progress  | Stream\<number \| false\>                               | Progress of the computation |  ✓   |
+
 ### Screenshot
 
 <div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
@@ -116,6 +126,6 @@ Displays a confusion matrix from a [BatchPrediction](#batchprediction) component
 ### Example
 
 ```js
-const batchMLP = marcelle.batchPrediction({ name: 'mlp', dataStore: store });
+const batchMLP = marcelle.batchPrediction('mlp', store);
 const confusionMatrix = marcelle.confusionMatrix(batchMLP);
 ```

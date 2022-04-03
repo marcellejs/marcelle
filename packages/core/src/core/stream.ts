@@ -17,7 +17,12 @@ function isMostStream<T>(s: MostStream<T> | unknown): s is MostStream<T> {
 }
 
 export function isStream<T>(s: Stream<T> | unknown): s is Stream<T> {
-  return (s as Stream<T>).id !== undefined && (s as Stream<T>).run !== undefined;
+  return (
+    s &&
+    typeof s === 'object' &&
+    (s as Stream<T>).run !== undefined &&
+    (s as Stream<T>).id !== undefined
+  );
 }
 
 export class Stream<T> {
@@ -30,14 +35,13 @@ export class Stream<T> {
 
   value: T = undefined;
   ready = false;
-  #hasValue = false;
   #hold: boolean;
   #running = false;
   #startPromise: Promise<void>;
 
   set: (value: T) => void;
 
-  constructor(s: MostStream<T> | T, hold = false) {
+  constructor(s: Stream<T> | MostStream<T> | T, hold = false) {
     this.#hold = hold;
     const [stopStream, stopEvents] = createAdapter<undefined>();
     const [induce, events] = createAdapter<T>();
@@ -49,12 +53,16 @@ export class Stream<T> {
       induce(v);
     };
     let stream;
-    if (isMostStream(s)) {
+    if (isStream<T>(s)) {
+      stream = s;
+      if (s.holding) {
+        this.value = s.value;
+      }
+    } else if (isMostStream(s)) {
       stream = s;
     } else {
       stream = most.map(() => this.value, most.now(s));
       this.value = s;
-      this.#hasValue = true;
     }
     this.stream = most.multicast(
       most.tap(this.runListeners.bind(this), most.until(stopEvents, most.merge(stream, events))),
@@ -68,20 +76,23 @@ export class Stream<T> {
     return this.value;
   }
 
+  get holding(): boolean {
+    return this.#hold;
+  }
+
   run(sink: Sink<T>, s: Scheduler): Disposable {
     return this.stream.run(sink, s);
   }
 
   private runListeners(value: T) {
     this.value = value;
-    this.#hasValue = true;
     for (const listener of this.subscribers) {
       listener(value);
     }
   }
 
   subscribe(run: (value: T) => void = dummySubscriber, invalidate = noop): () => void {
-    if (this.#hold && this.#running && this.#hasValue) {
+    if (this.#hold && this.#running) {
       run(this.value);
     }
     const subscriber = (x: T) => {

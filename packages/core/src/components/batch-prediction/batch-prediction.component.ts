@@ -1,140 +1,87 @@
-import type { Prediction, ObjectId, Instance } from '../../core/types';
-import type { ServiceIterable } from '../../core/data-store/service-iterable';
-import type { Service, Paginated } from '@feathersjs/feathers';
-import { map } from '@most/core';
+import type { Prediction, Instance } from '../../core/types';
+import type { Paginated, Service } from '@feathersjs/feathers';
 import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
 import { DataStore } from '../../core/data-store/data-store';
-import {
-  addScope,
-  limitToScope,
-  imageData2DataURL,
-  dataURL2ImageData,
-} from '../../core/data-store/hooks';
 import { Dataset, isDataset } from '../../core/dataset';
-import { logger, Model } from '../../core';
-import { readJSONFile, saveBlob } from '../../utils/file-io';
-import { throwError } from '../../utils/error-handling';
+import { dataStore, logger, Model } from '../../core';
+import { iterableFromService, ServiceIterable } from '../../core/data-store/service-iterable';
+import { toKebabCase } from '../../utils/string';
 
-export interface BatchPredictionOptions {
-  name: string;
-  dataStore?: DataStore;
+export interface BatchPredictionStatus {
+  status: 'idle' | 'start' | 'running' | 'success' | 'error' | 'loaded' | 'loading';
+  count?: number;
+  total?: number;
+  data?: Record<string, unknown>;
 }
 
 export class BatchPrediction extends Component {
   title = 'batch prediction';
+  name: string;
 
-  #dataStore: DataStore;
+  #store: DataStore;
   predictionService: Service<Prediction>;
 
-  $predictions: Stream<ObjectId[]> = new Stream([], true);
-  $count: Stream<number>;
+  $status = new Stream<BatchPredictionStatus>({ status: 'loading' }, true);
 
-  constructor({ name, dataStore }: BatchPredictionOptions) {
+  constructor(name: string, store = dataStore()) {
     super();
-    this.title = name;
-    this.#dataStore = dataStore || new DataStore();
-    this.$count = new Stream(
-      map((x) => x.length, this.$predictions),
-      true,
-    );
+    this.name = name;
+    this.title = `batch prediction (${name})`;
+    this.#store = store || new DataStore();
     this.start();
-    this.#dataStore
+    this.#store
       .connect()
       .then(() => {
         this.setup();
       })
-      .catch(() => {
-        logger.log('[BatchPrediction] data store connection failed');
+      .catch((err) => {
+        logger.log(`[batchPrediction:${name}] dataStore connection failed`, err);
       });
   }
 
   async setup(): Promise<void> {
-    const serviceName = `predictions-${this.title}`;
-    this.predictionService = this.#dataStore.service(serviceName) as Service<Prediction>;
-    this.predictionService.hooks({
-      before: {
-        create: [addScope('predictionName', this.title), imageData2DataURL].filter((x) => !!x),
-        find: [limitToScope('predictionName', this.title)],
-        get: [limitToScope('predictionName', this.title)],
-        update: [limitToScope('predictionName', this.title)],
-        patch: [limitToScope('predictionName', this.title)],
-        remove: [limitToScope('predictionName', this.title)],
-      },
-      after: {
-        find: [dataURL2ImageData].filter((x) => !!x),
-        get: [dataURL2ImageData].filter((x) => !!x),
-      },
-    });
+    const serviceName = toKebabCase(`predictions-${this.name}`);
+    this.predictionService = this.#store.service(serviceName) as Service<Prediction>;
 
-    const result = await this.predictionService.find({
-      query: { $select: ['id', 'label'] },
-    });
-    const { data } = result as Paginated<Prediction>;
-    this.$predictions.set(data.map((x) => x.id));
+    const { total } = (await this.predictionService.find({
+      query: { $limit: 1, $select: ['id'] },
+    })) as Paginated<Prediction>;
+    this.$status.set({ status: total > 0 ? 'loaded' : 'idle' });
   }
 
   async predict<T, U>(
     model: Model<T, U>,
     dataset: Dataset<T, string> | ServiceIterable<Instance<T, string>>,
   ): Promise<void> {
-    const ds = isDataset(dataset) ? dataset.items() : dataset;
-    const predictionIds = [];
-    for await (const { id, x, y } of ds) {
-      const prediction = await model.predict(x);
-      const { id: predId } = await this.predictionService.create(
-        { ...prediction, instanceId: id, trueLabel: y },
-        { query: { $select: ['id'] } },
-      );
-      predictionIds.push(predId);
-      this.$predictions.set(predictionIds);
+    try {
+      const total = isDataset(dataset) ? dataset.$count.value : (await dataset.toArray()).length;
+      this.$status.set({ status: 'start' });
+      const ds = isDataset(dataset) ? dataset.items() : dataset;
+      let i = 0;
+      for await (const { id, x, y } of ds) {
+        const prediction = await model.predict(x);
+        const storedPrediction = await this.predictionService.create({
+          ...prediction,
+          instanceId: id,
+          yTrue: y,
+        });
+        this.$status.set({ status: 'running', count: ++i, total, data: storedPrediction });
+      }
+      this.$status.set({ status: 'success', count: i, total });
+    } catch (error) {
+      this.$status.set({ status: 'error', data: { error } });
     }
   }
 
   async clear(): Promise<void> {
-    const result = await this.predictionService.find({ query: { $select: ['id'] } });
-    const { data } = result as Paginated<Prediction>;
-    await Promise.all(data.map(({ id }) => this.predictionService.remove(id)));
-    this.$predictions.set([]);
+    await this.predictionService.remove(null, { query: {} });
   }
 
-  mount(): void {
-    // Nothing to show
+  items(): ServiceIterable<Prediction> {
+    return iterableFromService(this.predictionService);
   }
 
-  async download(): Promise<void> {
-    const predictions = await this.predictionService.find();
-    const fileContents = {
-      marcelleMeta: {
-        type: 'predictions',
-      },
-      predictions: (predictions as Paginated<Prediction>).data,
-    };
-    const today = new Date(Date.now());
-    const fileName = `${this.title}-${today.toISOString()}.json`;
-    await saveBlob(JSON.stringify(fileContents), fileName, 'text/plain');
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  async upload(files: File[]): Promise<void> {
-    const jsonFiles = await Promise.all(
-      files.filter((f) => f.type === 'application/json').map((f) => readJSONFile(f)),
-    );
-    const preds = await Promise.all(
-      jsonFiles.map((fileContent: { predictions: Prediction[] }) =>
-        Promise.all(
-          fileContent.predictions.map((prediction: Prediction) => {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { id, ...predictionNoId } = prediction;
-            return this.predictionService
-              .create(predictionNoId, { query: { $select: ['id'] } })
-              .catch((e) => {
-                throwError(e);
-              });
-          }),
-        ),
-      ),
-    );
-    this.$predictions.set(preds.flat().map((x) => (x as Prediction).id));
-  }
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  mount(): void {}
 }
