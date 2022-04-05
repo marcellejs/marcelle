@@ -1,8 +1,7 @@
 import { MLPClassifier } from './mlp-classifier.component';
-import type { MLPClassifierOptions } from './mlp-classifier.component';
 
-export function mlpClassifier(options: Partial<MLPClassifierOptions>): MLPClassifier {
-  return new MLPClassifier(options);
+export function mlpClassifier(...args: ConstructorParameters<typeof MLPClassifier>): MLPClassifier {
+  return new MLPClassifier(...args);
 }
 
-export type { MLPClassifierOptions, MLPClassifier };
+export type { MLPClassifier };

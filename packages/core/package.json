@@ -86,6 +86,7 @@
     "@tensorflow/tfjs-backend-webgl": "^3.7.0",
     "@tensorflow/tfjs-converter": "^3.7.0",
     "@tensorflow/tfjs-core": "^3.7.0",
+    "@tensorflow/tfjs-data": "^3.15.0",
     "@tensorflow/tfjs-layers": "^3.7.0",
     "blueimp-load-image": "^5.14.0",
     "chart.js": "^3.3.0",
