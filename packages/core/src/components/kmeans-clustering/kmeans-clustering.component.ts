@@ -32,7 +32,7 @@ function euclideanDistance(a: number[], b: number[]): number {
   );
 }
 
-export class KMeansClustering extends Model<number[][], ClusteringResults> {
+export class KMeansClustering extends Model<number[][], undefined, ClusteringResults> {
   title = 'k-means clustering';
   serviceName = 'kmeans-clusering-models';
 
@@ -86,8 +86,6 @@ export class KMeansClustering extends Model<number[][], ClusteringResults> {
       confidences[`${i}`] = Math.exp(dist);
       distSum += Math.exp(dist);
     }
-    // console.log('confidences', confidences, distSum, minDistance);
-    // console.log('this.$centers.get()', this.$centers.get());
     Object.entries(confidences).forEach(([key]) => {
       confidences[key] /= distSum;
     });

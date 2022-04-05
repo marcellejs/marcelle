@@ -26,7 +26,7 @@ export interface KNNClassifierOptions extends ModelOptions {
   k: number;
 }
 
-export class KNNClassifier extends Model<TensorLike, ClassifierResults> {
+export class KNNClassifier extends Model<TensorLike, string, ClassifierResults> {
   title = 'KNN classifier';
 
   parameters: {

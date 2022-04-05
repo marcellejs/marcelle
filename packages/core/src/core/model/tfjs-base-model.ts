@@ -11,7 +11,11 @@ import { browserFiles, http } from './tfjs-io';
 
 export type TFJSBaseModelOptions = ModelOptions;
 
-export abstract class TFJSBaseModel<InputType, OutputType> extends Model<InputType, OutputType> {
+export abstract class TFJSBaseModel<InputType, OutputType, PredictionType> extends Model<
+  InputType,
+  OutputType,
+  PredictionType
+> {
   serviceName = 'tfjs-models';
   model: LayersModel | GraphModel;
   loadFn: typeof loadLayersModel | typeof loadGraphModel;

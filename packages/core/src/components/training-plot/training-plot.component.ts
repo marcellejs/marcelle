@@ -1,4 +1,4 @@
-import type { Model } from '../../core';
+import type { Model, TrainingStatus } from '../../core';
 import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
 import { genericChart, GenericChart } from '../generic-chart';
@@ -7,13 +7,13 @@ import View from './training-plot.view.svelte';
 
 export type LogSpec = string | string[] | { [key: string]: string | string[] };
 
-export class TrainingPlot<T, U> extends Component {
+export class TrainingPlot extends Component {
   title = 'training plot';
 
   charts: { [key: string]: GenericChart } = {};
 
   constructor(
-    public model: Model<T, U>,
+    public model: Model<unknown, unknown, unknown>,
     logs: LogSpec = {
       loss: ['loss', 'lossVal'],
       accuracy: ['accuracy', 'accuracyVal'],
@@ -67,7 +67,7 @@ export class TrainingPlot<T, U> extends Component {
       }
     }
 
-    model.$training.subscribe((x) => {
+    model.$training.subscribe((x: TrainingStatus) => {
       if (x.status === 'start') {
         resetCharts();
       } else if (x.data) {

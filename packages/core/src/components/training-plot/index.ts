@@ -1,8 +1,7 @@
-import type { Model } from '../../core';
-import { TrainingPlot, LogSpec } from './training-plot.component';
+import { TrainingPlot } from './training-plot.component';
 
-export function trainingPlot<T, U>(model: Model<T, U>, logs?: LogSpec): TrainingPlot<T, U> {
-  return new TrainingPlot(model, logs);
+export function trainingPlot(...args: ConstructorParameters<typeof TrainingPlot>): TrainingPlot {
+  return new TrainingPlot(...args);
 }
 
 export type { TrainingPlot };

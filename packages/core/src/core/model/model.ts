@@ -14,7 +14,10 @@ export interface ModelOptions {
   dataStore: DataStore;
 }
 
-export abstract class Model<InputType, OutputType> extends Component implements Parametrable {
+export abstract class Model<InputType, OutputType, PredictionType>
+  extends Component
+  implements Parametrable
+{
   abstract parameters: Parametrable['parameters'];
   abstract serviceName: string;
 
@@ -36,9 +39,9 @@ export abstract class Model<InputType, OutputType> extends Component implements 
   }
 
   abstract train(
-    dataset: Dataset<InputType, unknown> | ServiceIterable<Instance<InputType, unknown>>,
+    dataset: Dataset<InputType, unknown> | ServiceIterable<Instance<InputType, OutputType>>,
   ): void;
-  abstract predict(x: InputType): Promise<OutputType>;
+  abstract predict(x: InputType): Promise<PredictionType>;
 
   abstract save(
     name: string,

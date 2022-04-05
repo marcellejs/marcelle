@@ -1,11 +1,9 @@
-import type { DataStore } from '../../core/data-store';
-import { TrainingHistory, TrainingHistoryOptions } from './training-history.component';
+import { TrainingHistory } from './training-history.component';
 
-export function trainingHistory<InputType, OutputType>(
-  dataStore: DataStore,
-  options: TrainingHistoryOptions,
-): TrainingHistory<InputType, OutputType> {
-  return new TrainingHistory(dataStore, options);
+export function trainingHistory<InputType, OutputType, PredictionType>(
+  ...args: ConstructorParameters<typeof TrainingHistory>
+): TrainingHistory<InputType, OutputType, PredictionType> {
+  return new TrainingHistory(...args);
 }
 
 export type { TrainingHistory };

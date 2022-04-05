@@ -10,7 +10,7 @@ export interface CocoSsdOptions {
   base?: ObjectDetectionBaseModel;
 }
 
-export class CocoSsd extends Model<ImageData, ObjectDetectorResults> {
+export class CocoSsd extends Model<ImageData, undefined, ObjectDetectorResults> {
   title = 'COCO-SSD Object Detection';
 
   parameters = {};
