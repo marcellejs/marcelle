@@ -21,7 +21,7 @@ import sift from 'sift';
 interface DatasetChange {
   level: 'instance' | 'dataset';
   type: 'created' | 'updated' | 'removed' | 'renamed';
-  data?: unknown;
+  data?: any;
 }
 
 export class Dataset<InputType, OutputType> extends Component {
