@@ -30,12 +30,14 @@ footer: MIT Licensed | Copyright © 2020-present Jules Françoise, Baptiste Cara
 
 <!-- <svg id="visual" viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"><g transform="translate(137.1465233658941 164.78352067797127)"><path d="M56.1 -84C75.4 -63.1 95.7 -50.4 116.3 -28.1C136.8 -5.8 157.6 26.1 154.5 54.7C151.4 83.4 124.5 108.8 94.8 118.2C65 127.5 32.5 120.8 3.8 115.5C-24.9 110.2 -49.8 106.5 -73.5 95.2C-97.3 83.9 -120 65.2 -126.7 41.8C-133.5 18.4 -124.3 -9.5 -118.4 -41.9C-112.6 -74.3 -110.1 -111.2 -90.9 -132.1C-71.7 -153 -35.9 -158 -8.7 -146C18.4 -134 36.7 -104.9 56.1 -84" fill="#F7770F"></path></g></svg> -->
 
-**Marcelle** is a modular open source toolkit for programming interactive machine learning applications. Marcelle is built around components embedding computation and interaction that can be composed to form reactive machine learning pipelines and custom user interfaces. This architecture enables rapid prototyping and extension. Marcelle can be used to build interfaces to Python scripts, and it provides flexible data stores to facilitate collaboration between machine learning experts, designers and end users.</p></div>
+**Marcelle** is a modular open source toolkit for programming interactive machine learning applications. Marcelle is built around components embedding computation and interaction that can be composed to form reactive machine learning pipelines and custom user interfaces. This architecture enables rapid prototyping and extension. Marcelle can be used to build interfaces to Python scripts, and it provides flexible data stores to facilitate collaboration between machine learning experts, designers and end users.
 
-<div class="hero"><p class="action">
+</div>
+
+<!-- <div class="hero"><p class="action">
 <a href="/guide/" class="nav-link action-button">Get Started →</a>
 <a href="https://demos.marcelle.dev/" class="nav-link demos">Try the Demos <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>
-</p></div>
+</p></div> -->
 
 <!-- <div class="arch"> -->
 
