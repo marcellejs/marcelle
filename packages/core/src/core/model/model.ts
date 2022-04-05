@@ -39,7 +39,10 @@ export abstract class Model<InputType, OutputType, PredictionType>
   }
 
   abstract train(
-    dataset: Dataset<InputType, unknown> | ServiceIterable<Instance<InputType, OutputType>>,
+    dataset: Dataset<InputType, OutputType> | ServiceIterable<Instance<InputType, OutputType>>,
+    validationDataset?:
+      | Dataset<InputType, OutputType>
+      | ServiceIterable<Instance<InputType, OutputType>>,
   ): void;
   abstract predict(x: InputType): Promise<PredictionType>;
 

@@ -57,13 +57,11 @@ export class KNNClassifier extends Model<TensorLike, string, ClassifierResults> 
       throw new Error('Cannot train a kNN with no classes');
     }
     this.$training.set({ status: 'start', epochs: 1 });
-    setTimeout(async () => {
-      this.classifier.clearAllClasses();
-      for await (const { x, y } of ds) {
-        this.classifier.addExample(tensor(x), y);
-      }
-      this.$training.set({ status: 'success' });
-    }, 100);
+    this.classifier.clearAllClasses();
+    for await (const { x, y } of ds) {
+      this.classifier.addExample(tensor(x), y);
+    }
+    this.$training.set({ status: 'success' });
   }
 
   @Catch

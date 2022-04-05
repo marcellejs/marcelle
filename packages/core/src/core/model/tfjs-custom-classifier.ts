@@ -27,6 +27,7 @@ export abstract class TFJSCustomClassifier extends TFJSCustomModel<
   @Catch
   async train(
     dataset: Dataset<TensorLike, string> | ServiceIterable<Instance<TensorLike, string>>,
+    validationDataset?: Dataset<TensorLike, string> | ServiceIterable<Instance<TensorLike, string>>,
   ): Promise<void> {
     const isDs = isDataset(dataset);
     this.labels = isDs
@@ -49,7 +50,7 @@ export abstract class TFJSCustomClassifier extends TFJSCustomModel<
         ys: oneHot(this.labels.indexOf(instance.y), numClasses),
       }));
 
-    super.train(dataset);
+    super.train(dataset, validationDataset);
   }
 
   async predict(x: TensorLike): Promise<ClassifierResults> {

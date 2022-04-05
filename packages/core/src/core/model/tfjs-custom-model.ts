@@ -42,7 +42,7 @@ export abstract class TFJSCustomModel<InputType, OutputType, PredictionType> ext
     ...rest
   }: Partial<TFJSCustomModelOptions> = {}) {
     super(rest);
-    this.validationSplit = validationSplit;
+    this.validationSplit = Math.max(Math.min(validationSplit, 1), 0);
     this.parameters = {
       epochs: new Stream(epochs, true),
       batchSize: new Stream(batchSize, true),
@@ -61,6 +61,9 @@ export abstract class TFJSCustomModel<InputType, OutputType, PredictionType> ext
   @Catch
   async train(
     dataset: Dataset<InputType, OutputType> | ServiceIterable<Instance<InputType, OutputType>>,
+    validationDataset?:
+      | Dataset<InputType, OutputType>
+      | ServiceIterable<Instance<InputType, OutputType>>,
   ): Promise<void> {
     this.$training.set({ status: 'start', epochs: this.parameters.epochs.get() });
 
@@ -71,9 +74,19 @@ export abstract class TFJSCustomModel<InputType, OutputType, PredictionType> ext
       nFetch,
     );
 
-    const nTrain = Math.floor(count * (1 - this.validationSplit));
-    const dsTrain = ds.take(nTrain);
-    const dsVal = ds.skip(nTrain);
+    let dsTrain: TFDataset<{ xs: Tensor; ys: Tensor }>;
+    let dsVal: TFDataset<{ xs: Tensor; ys: Tensor }>;
+    if (validationDataset) {
+      dsTrain = ds;
+      dsVal = this.transformDataset(
+        dataset2tfjs(validationDataset, ['x', 'y'], count < 200),
+      ).shuffle(nFetch);
+    } else {
+      const nTrain = Math.floor(count * (1 - this.validationSplit));
+      dsTrain = ds.take(nTrain);
+      dsVal = this.validationSplit > 0 && ds.skip(nTrain);
+    }
+
     const [{ xs, ys }] = await dsTrain.take(1).toArray();
 
     this.buildModel(xs.shape, ys.shape);
@@ -104,7 +117,7 @@ export abstract class TFJSCustomModel<InputType, OutputType, PredictionType> ext
   ): void {
     this.model
       .fitDataset(dsTrain.batch(this.parameters.batchSize.get()), {
-        validationData: dsVal.batch(this.parameters.batchSize.get()),
+        ...(dsVal ? { validationData: dsVal.batch(this.parameters.batchSize.get()) } : {}),
         epochs: this.parameters.epochs.get(),
         callbacks: {
           onEpochEnd: (epoch, logs) => {
