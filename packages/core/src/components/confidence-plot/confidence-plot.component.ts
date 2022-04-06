@@ -1,5 +1,4 @@
-import type { ClassifierPrediction } from '../../core/types';
-import { map, startWith } from '@most/core';
+import type { ClassifierResults } from '../../core/model/types';
 import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
 import { genericChart, GenericChart } from '../generic-chart';
@@ -12,14 +11,10 @@ export class ConfidencePlot extends Component {
   #plotConfidences: GenericChart;
   #displayLabel: Text;
 
-  constructor(predictionStream: Stream<ClassifierPrediction>) {
+  constructor(predictionStream: Stream<ClassifierResults>) {
     super();
-    this.$confidenceStream = new Stream(
-      map(
-        ({ confidences }: ClassifierPrediction) =>
-          Object.entries(confidences).map(([label, value]) => ({ x: label, y: value })),
-        predictionStream,
-      ),
+    this.$confidenceStream = predictionStream.map(({ confidences }: ClassifierResults) =>
+      Object.entries(confidences).map(([label, value]) => ({ x: label, y: value })),
     );
     this.#plotConfidences = genericChart({
       preset: 'bar-fast',
@@ -37,17 +32,12 @@ export class ConfidencePlot extends Component {
     this.#displayLabel = text('Waiting for predictions...');
     this.#displayLabel.title = this.title;
     this.#displayLabel.$value = new Stream(
-      startWith('Waiting for predictions...')(
-        map(({ label, trueLabel }: ClassifierPrediction) => {
-          let t = `<h2>Predicted Label: <code>${label}</code></h2>`;
-          if (trueLabel !== undefined) {
-            t += `<p>True Label: ${trueLabel} (${
-              label === trueLabel ? 'Correct' : 'Incorrect'
-            })</p>`;
-          }
-          return t;
-        }, predictionStream),
-      ),
+      predictionStream
+        .map(
+          ({ label }: ClassifierResults) =>
+            `<p>Predicted Label: <code style="font-size: 1.5rem;">${label}</code></p>`,
+        )
+        .startWith('Waiting for predictions...'),
       true,
     );
     this.start();
