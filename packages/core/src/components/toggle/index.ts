@@ -1,7 +1,7 @@
 import { Toggle } from './toggle.component';
 
-export function toggle(text?: string): Toggle {
-  return new Toggle(text);
+export function toggle(...args: ConstructorParameters<typeof Toggle>): Toggle {
+  return new Toggle(...args);
 }
 
 export type { Toggle };

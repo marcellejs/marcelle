@@ -1,8 +1,9 @@
 import { ConfusionMatrix, ConfusionMatrixT } from './confusion-matrix.component';
-import type { BatchPrediction } from '../batch-prediction';
 
-export function confusionMatrix(prediction: BatchPrediction): ConfusionMatrix {
-  return new ConfusionMatrix(prediction);
+export function confusionMatrix(
+  ...args: ConstructorParameters<typeof ConfusionMatrix>
+): ConfusionMatrix {
+  return new ConfusionMatrix(...args);
 }
 
 export type { ConfusionMatrix, ConfusionMatrixT };

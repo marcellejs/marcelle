@@ -1,8 +1,8 @@
 import { throwError } from '../../utils/error-handling';
 import { TextInput } from './text-input.component';
 
-export function textInput(defaultValue?: string): TextInput {
-  return new TextInput(defaultValue);
+export function textInput(...args: ConstructorParameters<typeof TextInput>): TextInput {
+  return new TextInput(...args);
 }
 
 /** @deprecated */

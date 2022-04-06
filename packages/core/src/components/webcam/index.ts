@@ -1,7 +1,7 @@
-import { Webcam, WebcamOptions } from './webcam.component';
+import { Webcam } from './webcam.component';
 
-export function webcam(options?: WebcamOptions): Webcam {
-  return new Webcam(options);
+export function webcam(...args: ConstructorParameters<typeof Webcam>): Webcam {
+  return new Webcam(...args);
 }
 
-export type { Webcam, WebcamOptions } from './webcam.component';
+export type { Webcam };

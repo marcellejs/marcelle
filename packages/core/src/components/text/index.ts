@@ -1,7 +1,7 @@
 import { Text } from './text.component';
 
-export function text(initial?: string): Text {
-  return new Text(initial);
+export function text(...args: ConstructorParameters<typeof Text>): Text {
+  return new Text(...args);
 }
 
 export type { Text };

@@ -1,7 +1,7 @@
-import { Slider, SliderOptions } from './slider.component';
+import { Slider } from './slider.component';
 
-export function slider(options: Partial<SliderOptions>): Slider {
-  return new Slider(options);
+export function slider(...args: ConstructorParameters<typeof Slider>): Slider {
+  return new Slider(...args);
 }
 
-export type { Slider, SliderOptions };
+export type { Slider };

@@ -1,7 +1,9 @@
-import { KMeansClustering, KMeansClusteringOptions } from './kmeans-clustering.component';
+import { KMeansClustering } from './kmeans-clustering.component';
 
-export function kmeansClustering(options: Partial<KMeansClusteringOptions>): KMeansClustering {
-  return new KMeansClustering(options);
+export function kmeansClustering(
+  ...args: ConstructorParameters<typeof KMeansClustering>
+): KMeansClustering {
+  return new KMeansClustering(...args);
 }
 
-export type { KMeansClusteringOptions, KMeansClustering };
+export type { KMeansClustering };

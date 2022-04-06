@@ -1,7 +1,7 @@
 import { NumberArray } from './number-array.component';
 
-export function numberArray(defaultValue?: number[]): NumberArray {
-  return new NumberArray(defaultValue);
+export function numberArray(...args: ConstructorParameters<typeof NumberArray>): NumberArray {
+  return new NumberArray(...args);
 }
 
 export type { NumberArray };
