@@ -11,6 +11,37 @@ const onCancel = () => {
 };
 
 export async function generateComponent(cwd: string): Promise<void> {
+  let dst = path.join(cwd, 'src', 'components');
+  const isViteAppJs = fs.existsSync(path.join(dst, 'index.js'));
+  const isViteAppTs = fs.existsSync(path.join(dst, 'index.ts'));
+  let typescript = isViteAppTs;
+  let foundCompDir = isViteAppJs || isViteAppTs;
+  if (!foundCompDir) {
+    dst = path.join(cwd, 'src', 'lib', 'marcelle', 'components');
+    const isKitAppJs = fs.existsSync(path.join(dst, 'index.js'));
+    const isKitAppTs = fs.existsSync(path.join(dst, 'index.ts'));
+    typescript = isKitAppTs;
+    foundCompDir = isKitAppJs || isKitAppTs;
+  }
+
+  while (!foundCompDir) {
+    ({ dst } = await prompts(
+      [
+        {
+          type: 'text',
+          name: 'dst',
+          message: 'We could not find a component folder. Where is it located?',
+          initial: path.join(cwd, 'src', 'components'),
+        },
+      ],
+      { onCancel },
+    ));
+    const isCustomAppJs = fs.existsSync(path.join(dst, 'index.js'));
+    const isCustomAppTs = fs.existsSync(path.join(dst, 'index.ts'));
+    typescript = isCustomAppTs;
+    foundCompDir = isCustomAppJs || isCustomAppTs;
+  }
+
   const { name } = await prompts(
     [
       {
@@ -21,8 +52,7 @@ export async function generateComponent(cwd: string): Promise<void> {
     ],
     { onCancel },
   );
-  const dst = path.join(cwd, 'src', 'components');
-  const typescript = fs.existsSync(path.join(dst, 'index.ts'));
+
   const lang = typescript ? 'ts' : 'js';
 
   const dstComp = path.join(dst, paramCase(name));
