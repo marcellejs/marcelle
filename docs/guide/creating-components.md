@@ -14,13 +14,33 @@ The details for the underlying mathematics can be found in the [following paper 
 
 ## Generating the application
 
-Let's start by generating a new Marcelle application using the CLI:
+Let's start by generating a new Marcelle application:
 
+<code-group>
+<code-block title="npm">
 ```bash
-mkdir marcelle-umap
+npm init marcelle marcelle-umap
 cd marcelle-umap
-marcelle generate app
+npm install
 ```
+</code-block>
+
+<code-block title="yarn">
+```bash
+yarn create marcelle marcelle-umap
+cd marcelle-umap
+yarn
+```
+</code-block>
+
+<code-block title="pnpm">
+```bash
+pnpm create marcelle marcelle-umap
+cd marcelle-umap
+pnpm i
+```
+</code-block>
+</code-group>
 
 Select the default options of the CLI. Then, make sure the application works by running the development server:
 
@@ -40,10 +60,8 @@ import {
   datasetBrowser,
   mobileNet,
   dataset,
-  button,
   dataStore,
   dashboard,
-  text,
   textInput,
   imageUpload,
 } from '@marcellejs/core';
@@ -71,7 +89,7 @@ const $instances = input.$images
   .awaitPromises();
 
 const store = dataStore('localStorage');
-const trainingSet = dataset('TrainingSet', store);
+const trainingSet = dataset('TrainingSet-Umap', store);
 
 $instances.subscribe(trainingSet.create.bind(trainingSet));
 
@@ -103,13 +121,29 @@ You should obtain the following application:
 
 ## Generating a Component
 
-Components are essentially JavaScript objects exposing a set of streams for communicating with other Marcelle components, and optionally providing a view. The easiest way to generate a new component is using the CLI:
+Components are essentially JavaScript objects exposing a set of streams for communicating with other Marcelle components, and optionally providing a view. The easiest way to generate a new component is using the [CLI](/cli):
 
+<code-group>
+<code-block title="npm">
 ```bash
-marcelle generate component
-````
+npx marcelle
+```
+</code-block>
 
-Choosing the name `umap`, the CLI will generate the following files:
+<code-block title="yarn">
+```bash
+yarn marcelle
+```
+</code-block>
+
+<code-block title="pnpm">
+```bash
+pnpx marcelle
+```
+</code-block>
+</code-group>
+
+Select 'Create a component', choose the name 'umap', the CLI will generate the following files:
 
 ![Component generation with Marcelle CLI](./images/components-umap-cli.png)
 
@@ -120,7 +154,7 @@ Choosing the name `umap`, the CLI will generate the following files:
 The generated component is already functional. Let's start by displaying it in our application. Edit `src/index.js` to import the component, create a new instance, and display it in the dashboard:
 
 ```js{5,11,18}
-import '@marcellejs/core/dist/bundle.css';
+import '@marcellejs/core/dist/marcelle.css';
 import {
   ...
 } from '@marcellejs/core';
@@ -162,9 +196,9 @@ The main component definition is a class in `umap.component.js`:
 ```js
 // Our custom UMAP component extends the base class "Component"
 export class Umap extends Component {
-  constructor(options) {
+  constructor(options = {}) {
     super();
-    this.title = 'umap [custom module 🤖]';
+    this.title = 'umap [custom component 🤖]';
     this.options = options;
   }
 
@@ -212,13 +246,12 @@ In our example, we define "props" in the script part by using the keyword `expor
 ```html
 <script>
   import { ViewContainer } from '@marcellejs/core/svelte';
-
   export let title;
   export let options;
 </script>
 
 <ViewContainer {title}>
-  <div>This is a <span class="my-color">custom</span> module with the following options:</div>
+  <div>This is a <span class="my-color">custom</span> component with the following options:</div>
   <p>{JSON.stringify(options)}</p>
 </ViewContainer>
 
@@ -573,3 +606,4 @@ Finally, it is useful to visualize the images associated with each point in the 
 ## Final Result
 
 The source code for the example is available [on Github](https://github.com/marcellejs/demos/tree/main/umap), and the demo is [available online](https://demos.marcelle.dev/umap/).
+````
