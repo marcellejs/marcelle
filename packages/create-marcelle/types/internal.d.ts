@@ -12,7 +12,7 @@ export type File = {
   contents: string;
 };
 
-export type Condition = 'linting' | 'typescript' | 'default';
+export type Condition = 'linting' | 'typescript' | 'default' | 'sveltekit';
 
 export type Common = {
   files: Array<{

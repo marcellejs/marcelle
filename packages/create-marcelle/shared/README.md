@@ -13,5 +13,5 @@ The page will reload if you make edits.
 
 ### npm run build
 
-Builds a static copy of your site to the `build/` folder.
+Builds a static copy of your site to the `dist/` folder.
 Your app is ready to be deployed!

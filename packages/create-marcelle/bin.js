@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+/* eslint-env node */
+/* eslint-disable no-console */
 import fs from 'fs';
 import path from 'path';
 import { bold, cyan, gray, green, red } from 'kleur/colors';
@@ -111,7 +113,6 @@ async function main() {
 
   if (options.typescript) {
     console.log(bold('✔ Typescript'));
-    console.log('  Inside Svelte components, use <script lang="ts">');
   }
 
   // if (options.eslint) {
