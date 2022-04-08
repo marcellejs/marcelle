@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-env node */
-const fs = require('fs');
-const { preprocess } = require('svelte/compiler');
-const preprocessPlugin = require('svelte-preprocess');
+import fs from 'fs';
+import { preprocess } from 'svelte/compiler';
+import preprocessPlugin from 'svelte-preprocess';
 
 const config = {
   preprocess: preprocessPlugin({

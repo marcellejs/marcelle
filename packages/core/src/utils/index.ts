@@ -5,20 +5,22 @@ export { notification } from './notification';
 export { LazyIterable } from './lazy-iterable';
 export { mergeDeep } from './object';
 
-window.onerror = (message) => {
-  if (typeof message === 'string') {
+if (window) {
+  window.onerror = (message) => {
+    if (typeof message === 'string') {
+      notification({
+        title: 'An error occurred',
+        message,
+        type: 'danger',
+      });
+    }
+  };
+
+  window.addEventListener('unhandledrejection', (event) => {
     notification({
       title: 'An error occurred',
-      message,
+      message: event.reason,
       type: 'danger',
     });
-  }
-};
-
-window.addEventListener('unhandledrejection', (event) => {
-  notification({
-    title: 'An error occurred',
-    message: event.reason,
-    type: 'danger',
   });
-});
+}
