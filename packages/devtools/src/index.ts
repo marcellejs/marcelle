@@ -50,8 +50,6 @@ export default async function cli(): Promise<void> {
     { onCancel },
   );
 
-  console.log('action', action);
-
   if (action === 'component') {
     return generateComponent(cwd);
   }
