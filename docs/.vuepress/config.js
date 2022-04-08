@@ -8,11 +8,10 @@ module.exports = {
     // ['meta', { name: 'msapplication-TileImage', content: '/icons/msapplication-icon-144x144.png' }],
   ],
   serviceWorker: false,
-  plugins: ['@vuepress/plugin-search'],
   themeConfig: {
     repo: 'marcellejs/marcelle',
     docsDir: 'docs',
-    navbar: [
+    nav: [
       {
         text: 'Guide',
         link: '/guide/',
@@ -33,13 +32,13 @@ module.exports = {
     sidebar: {
       '/api/': [
         {
-          text: 'Core',
+          title: 'Core',
           collapsable: false,
           children: ['component', 'streams', 'data-storage', 'models', 'utilities'],
         },
         // 'components',
         {
-          text: 'Components',
+          title: 'Components',
           collapsable: false,
           children: [
             'components/charts',
@@ -52,7 +51,7 @@ module.exports = {
           ],
         },
         {
-          text: 'Layouts',
+          title: 'Layouts',
           collapsable: false,
           children: ['dashboard', 'wizard'],
         },
@@ -61,7 +60,7 @@ module.exports = {
       '/': [
         '/installation',
         {
-          text: 'Guide',
+          title: 'Guide',
           collapsable: false,
           children: [
             '/guide/',
