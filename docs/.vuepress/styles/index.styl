@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+
+body
+  font-family: 'Poppins', sans-serif
+
+div.language-tsx
+  background: none
+  background-color #f3f5f7
+  border-radius: 0
+  &::before
+    content: ""
+  pre.language-tsx
+    padding: 8px 12px
+    code
+      color: #476582
+
+h2 + div.language-tsx
+  border-top-width 4px
+  border-top-style solid
+  border-color: #476582
+  font-size: 1.2em
+  pre.language-tsx
+    margin: 0
+
+div.language-ts::before
+  content: 'ts'
+
+.theme-default-content
+  code
+    padding: 0.125rem 0.25rem
+
+.sidebar > .sidebar-links > li:not(:first-child)
+  margin-top: 0 !important
+
+.sidebar a.sidebar-link
+  font-size: 0.95em;
+
+table
+  font-size: 0.85em
+  width: 100%
+thead
+  border-bottom: 1px solid #b1c1d0
+  background-color #f3f5f7
+th, td
+  border: none
+  padding: 0.3em 1em
+  text-align: left
+  line-height: 1.5em
+td:first-child
+  // width: 15%
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace
+  color: #476582
+td:nth-child(2)
+  // width: 25%
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace
+  color: #cc99cd
+td:nth-child(3)
+  // width: 55%
+td:last-child
+  // width: 10%
+tr
+  border: none
+
+.home
+  // box-sizing: border-box
+  .blob
+    position: absolute
+    top: 0
+    right: 0
+  .title
+    font-size: 6rem
+    font-weight: 300
+    margin-top: 2rem
+    margin-bottom: 0
+    position: relative
+    mix-blend-mode: multiply
+  .subtitle
+    font-size: 2.5rem
+    font-weight: 300
+    color: #6a8bad
+    position: relative
+    mix-blend-mode: multiply
+  .row
+    position: relative
+    display: flex
+    margin: 3rem auto
+    width: 100%
+    @media (max-width: 900px)
+      flex-direction: column-reverse
+    :first-child
+      flex-shrink: 1
+      max-width: 100%
+      width: 340px
+      margin-top: 1rem
+    :last-child
+      max-width: 500px
+      margin-right: 0
+      margin-left: auto
+      font-size: 1.2rem
+      line-height: 1.3rem
+      flex-shrink: 0
+  .intro
+    justify-content: space-between
+  .teaser
+    margin: 3rem 0
+    position: relative
+    display: flex
+    align-items: flex-end
+    width: 100%
+    @media (max-width: 900px)
+      flex-direction: column
+    .teaser-title
+      width: 350px
+      max-width: 100%
+      // position absolute
+      margin-right: -2rem
+      margin-bottom: 2rem
+      background: white
+      opacity: 0.8
+      color: $textColor
+      padding: 1rem
+      border: 1px solid #ffc9b2;
+      // border-radius: 0.5rem
+      @media (max-width: 900px)
+        margin: 0 auto
+    p
+      img
+        max-width: 100%
+        width: 600px
+    &.top
+      align-items: flex-start
+    &.reversed
+      flex-direction: row-reverse
+      @media (max-width: 900px)
+        flex-direction: column
+      .teaser-title
+        margin-left: -2rem
+        margin-right: 0
+  .action-button
+    box-sizing: border-box
+    background-color: #FF6F61 !important
+    border-color: #FF6151 !important
+    margin-bottom: 2rem
+  a.demos
+    color: #FF6151 !important
+    margin-left: 1rem
+  h2.centered
+    text-align: center
+    font-size: 3rem
+    font-weight: 400
+    border: none
+  .feat
+    text-align: left
