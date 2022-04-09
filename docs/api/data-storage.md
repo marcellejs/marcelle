@@ -149,7 +149,7 @@ A Dataset component allowing for capturing instances from a stream, storing them
 const store = marcelle.dataStore('localStorage');
 const trainingSet = marcelle.dataset('TrainingSet', store);
 
-$instances.subscribe(trainingSet.create.bind(trainingSet));
+$instances.subscribe(trainingSet.create);
 ```
 
 ### Parameters

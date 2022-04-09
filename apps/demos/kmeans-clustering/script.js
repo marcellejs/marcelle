@@ -41,7 +41,7 @@ input.$images
     y: label.$value.get(),
   }))
   .awaitPromises()
-  .subscribe(trainingSet.create.bind(trainingSet));
+  .subscribe(trainingSet.create);
 
 // -----------------------------------------------------------
 // TRAINING

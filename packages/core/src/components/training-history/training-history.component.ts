@@ -83,7 +83,7 @@ export class TrainingHistory<InputType, OutputType, PredictionType> extends Comp
         this.nextIndex = nextIndex;
         this.crtRun = null;
         this.stopTracking = this.model
-          ? this.model.$training.subscribe(this.trackTrainingStream.bind(this))
+          ? this.model.$training.subscribe(this.trackTrainingStream)
           : noop;
       });
     return this;

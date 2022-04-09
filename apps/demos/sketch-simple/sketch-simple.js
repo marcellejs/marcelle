@@ -40,7 +40,7 @@ const $instances = captureButton.$click
   }))
   .awaitPromises();
 
-$instances.subscribe(trainingSet.create.bind(trainingSet));
+$instances.subscribe(trainingSet.create);
 
 // Training Pipeline
 trainButton.$click.subscribe(() => classifier.train(trainingSet));

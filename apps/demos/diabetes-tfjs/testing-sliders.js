@@ -30,7 +30,7 @@ const $features = features.reduce((s, x) => {
 
 export const $predictions = $features
   .filter(() => model.ready)
-  .map(model.predict.bind(model))
+  .map(model.predict)
   .awaitPromises();
 
 const result = text('Waiting for predictions...');

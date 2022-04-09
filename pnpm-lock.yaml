@@ -220,6 +220,7 @@ importers:
       '@types/lodash': ^4.14.181
       '@types/ndarray': ^1.0.9
       '@types/ndarray-ops': ^1.2.1
+      auto-bind: ^5.0.1
       autoprefixer: ^10.2.5
       blueimp-load-image: ^5.14.0
       chart.js: ^3.3.0
@@ -268,6 +269,7 @@ importers:
       '@tensorflow/tfjs-core': 3.15.0
       '@tensorflow/tfjs-data': 3.15.0_@tensorflow+tfjs-core@3.15.0
       '@tensorflow/tfjs-layers': 3.15.0_@tensorflow+tfjs-core@3.15.0
+      auto-bind: 5.0.1
       blueimp-load-image: 5.16.0
       chart.js: 3.7.1
       chartjs-chart-matrix: 1.1.1_chart.js@3.7.1
@@ -4283,6 +4285,11 @@ packages:
     engines: {node: '>= 4.5.0'}
     hasBin: true
     dev: true
+
+  /auto-bind/5.0.1:
+    resolution: {integrity: sha512-ooviqdwwgfIfNmDwo94wlshcdzfO64XV0Cg6oDsDYBJfITDz1EngD2z7DkbvCWn+XIMsIqW27sEVF6qcpJrRcg==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dev: false
 
   /autocomplete.js/0.36.0:
     resolution: {integrity: sha512-jEwUXnVMeCHHutUt10i/8ZiRaCb0Wo+ZyKxeGsYwBDtw6EJHqEeDrq4UwZRD8YBSvp3g6klP678il2eeiVXN2Q==}

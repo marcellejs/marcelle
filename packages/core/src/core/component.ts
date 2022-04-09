@@ -1,3 +1,4 @@
+import autoBind from 'auto-bind';
 import type { ComponentInternals } from './types';
 import { isStream } from './stream';
 
@@ -12,6 +13,10 @@ export abstract class Component {
     streams: [],
     app: undefined,
   };
+
+  constructor() {
+    autoBind(this);
+  }
 
   abstract mount(target?: HTMLElement): void;
 

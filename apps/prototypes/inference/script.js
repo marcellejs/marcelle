@@ -50,7 +50,7 @@ const tog = toggle('Capture to dataset');
 let unSub = () => {};
 tog.$checked.skipRepeats().subscribe((x) => {
   unSub();
-  unSub = $instances.subscribe(trainingSet.create.bind(trainingSet));
+  unSub = $instances.subscribe(trainingSet.create);
 });
 
 const trainingSetBrowser = datasetBrowser(trainingSet);

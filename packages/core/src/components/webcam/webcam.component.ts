@@ -71,7 +71,7 @@ export class Webcam extends Component {
       this.#stopStreaming();
       if (v) {
         this.loadCameras();
-        this.#stopStreaming = requestInterval(this.process.bind(this), this.period);
+        this.#stopStreaming = requestInterval(this.process, this.period);
       } else {
         this.stopCamera();
       }

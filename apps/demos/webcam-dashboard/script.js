@@ -38,7 +38,7 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 input.$images
   .filter(() => capture.$pressed.get())
   .map((x) => ({ x, y: label.$value.get(), thumbnail: input.$thumbnails.get() }))
-  .subscribe(trainingSet.create.bind(trainingSet));
+  .subscribe(trainingSet.create);
 
 // -----------------------------------------------------------
 // TRAINING

@@ -37,7 +37,7 @@ const $predictions = sepalLength.$values
       petalWidth.$values.get()[0],
     ],
   ])
-  .map(classifier.predict.bind(classifier))
+  .map(classifier.predict)
   .awaitPromises();
 
 const predViz = confidencePlot($predictions);

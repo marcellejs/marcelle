@@ -15,4 +15,4 @@ export const trainingSetBrowser = datasetBrowser(trainingSet);
 input.$images
   .filter(() => capture.$pressed.value)
   .map((x) => ({ x, y: label.$value.value, thumbnail: input.$thumbnails.value }))
-  .subscribe(trainingSet.create.bind(trainingSet));
+  .subscribe(trainingSet.create);

@@ -45,7 +45,7 @@ input.$images
     thumbnail: input.$thumbnails.get(),
   }))
   .awaitPromises()
-  .subscribe(trainingSet.create.bind(trainingSet));
+  .subscribe(trainingSet.create);
 
 // -----------------------------------------------------------
 // TRAINING

@@ -91,7 +91,7 @@ const $instances = input.$images
 const store = dataStore('localStorage');
 const trainingSet = dataset('TrainingSet-Umap', store);
 
-$instances.subscribe(trainingSet.create.bind(trainingSet));
+$instances.subscribe(trainingSet.create);
 
 const trainingSetBrowser = datasetBrowser(trainingSet);
 

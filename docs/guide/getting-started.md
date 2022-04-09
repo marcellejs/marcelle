@@ -211,7 +211,7 @@ Once the datastore has been instanciated, we declare a marcelle [dataset](../api
 const store = marcelle.dataStore('localStorage');
 const trainingSet = marcelle.dataset('TrainingSet', store);
 
-$instances.subscribe(trainingSet.create.bind(trainingSet));
+$instances.subscribe(trainingSet.create);
 ```
 
 To visualize our training dataset, we can use a component called [datasetBrowser](../api/components/data-displays.html#datasetbrowser) that provides an interface to visualize the dataset content.
@@ -360,7 +360,7 @@ const $instances = capture.$click
 const store = marcelle.dataStore('localStorage');
 const trainingSet = marcelle.dataset('TrainingSet', store);
 
-$instances.subscribe(trainingSet.create.bind(trainingSet));
+$instances.subscribe(trainingSet.create);
 
 const trainingSetBrowser = marcelle.datasetBrowser(trainingSet);
 

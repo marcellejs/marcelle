@@ -43,7 +43,7 @@ input.$images
     y: label.$value.get(),
     thumbnail: input.$thumbnails.get(),
   }))
-  .subscribe(trainingSet.create.bind(trainingSet));
+  .subscribe(trainingSet.create);
 
 // -----------------------------------------------------------
 // TRAINING
