@@ -46,9 +46,7 @@ input.$images
 
 const b = button('Train');
 b.title = 'Training Launcher';
-const classifier = mlpClassifier({ layers: [64, 32], epochs: 20, dataStore: store }).sync(
-  'mlp-dashboard',
-);
+const classifier = mlpClassifier({ layers: [64, 32], epochs: 20 }).sync(store, 'mlp-dashboard');
 
 b.$click.subscribe(() =>
   classifier.train(

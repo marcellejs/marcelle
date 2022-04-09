@@ -13,7 +13,7 @@ import '@tensorflow/tfjs-core/dist/public/chained_ops/mul';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/expand_dims';
 import { loadGraphModel } from '@tensorflow/tfjs-converter';
 import { loadLayersModel } from '@tensorflow/tfjs-layers';
-import { ClassifierResults, TFJSBaseModel, TFJSBaseModelOptions } from '../../core';
+import { ClassifierResults, TFJSBaseModel } from '../../core';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import { readJSONFile } from '../../utils/file-io';
 import Component from './tfjs-model.view.svelte';
@@ -47,7 +47,7 @@ function isPredictionType<T extends keyof PredictionTypes>(
   return t === tt;
 }
 
-export interface TFJSModelOptions<T, U> extends TFJSBaseModelOptions {
+export interface TFJSModelOptions<T, U> {
   inputType: T;
   taskType: U;
   segmentationOptions?: {
@@ -73,9 +73,8 @@ export class TFJSModel<
     inputType,
     taskType,
     segmentationOptions = { applyArgmax: false, output: 'image' },
-    ...rest
   }: TFJSModelOptions<InputType, TaskType>) {
-    super(rest);
+    super();
     this.segmentationOptions = { applyArgmax: false, output: 'image', ...segmentationOptions };
     this.inputType = inputType;
     this.taskType = taskType;
@@ -194,7 +193,6 @@ export class TFJSModel<
         this.loadFn = jsonData.format === 'graph-model' ? loadGraphModel : loadLayersModel;
         this.model = await this.loadFn(browserFiles([jsonFiles[0], ...weightFiles]));
         await this.warmup();
-        await this.save(this.id);
         this.$training.set({
           status: 'loaded',
           data: {

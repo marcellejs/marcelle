@@ -8,11 +8,11 @@ import type { ServiceIterable } from '../../core/data-store/service-iterable';
 import { Dataset, isDataset } from '../../core/dataset';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import { dataset2tfjs, TFDataset } from '../../core/model/tfjs-utils';
-import { TFJSBaseModel, TFJSBaseModelOptions } from './tfjs-base-model';
+import { TFJSBaseModel } from './tfjs-base-model';
 import { Stream } from '../stream';
 import type { Instance } from '../types';
 
-export interface TFJSCustomModelOptions extends TFJSBaseModelOptions {
+export interface TFJSCustomModelOptions {
   epochs: number;
   batchSize: number;
   validationSplit: number;
@@ -39,9 +39,8 @@ export abstract class TFJSCustomModel<InputType, OutputType, PredictionType> ext
     epochs = 20,
     batchSize = 8,
     validationSplit = 0.2,
-    ...rest
   }: Partial<TFJSCustomModelOptions> = {}) {
-    super(rest);
+    super();
     this.validationSplit = Math.max(Math.min(validationSplit, 1), 0);
     this.parameters = {
       epochs: new Stream(epochs, true),

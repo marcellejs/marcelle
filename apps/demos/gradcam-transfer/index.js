@@ -44,7 +44,7 @@ input.$images
 const b = button('Train');
 b.title = 'Training Launcher';
 
-const classifier = imageClassifier({ layers: [10], dataStore: store }).sync('custom-classifier');
+const classifier = imageClassifier({ layers: [10] }).sync(store, 'custom-classifier');
 
 b.$click.subscribe(() => classifier.train(trainingSet));
 

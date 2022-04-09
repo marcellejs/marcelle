@@ -11,11 +11,7 @@ import { TFJSCustomModel, TFJSCustomModelOptions } from './tfjs-custom-model';
 import type { ClassifierResults } from './types';
 import type { Instance } from '../types';
 
-export interface TFJSCustomClassifierOptions extends TFJSCustomModelOptions {
-  epochs: number;
-  batchSize: number;
-  validationSplit: number;
-}
+export type TFJSCustomClassifierOptions = TFJSCustomModelOptions;
 
 export abstract class TFJSCustomClassifier extends TFJSCustomModel<
   TensorLike,

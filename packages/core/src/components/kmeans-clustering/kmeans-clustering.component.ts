@@ -4,26 +4,21 @@ import {
   Stream,
   Model,
   ClusteringResults,
-  ModelOptions,
   StoredModel,
   ObjectId,
   Instance,
+  DataStore,
 } from '../../core';
 import { Dataset, isDataset } from '../../core/dataset';
 import { Catch, throwError } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
 
-export interface KMeansClusteringOptions extends ModelOptions {
+export interface KMeansClusteringOptions {
   k: number;
 }
 
 function euclideanDistance(a: number[], b: number[]): number {
-  // let summ = 0;
-  // for (let k = 0; k < a.length; k++) {
-  //   summ += Math.abs(a[k] - b[k]) ** 2;
-  //   console.log(a[k], b[k], Math.abs(a[k] - b[k]) ** 2, summ);
-  // }
   return (
     a
       .map((x, i) => Math.abs(x - b[i]) ** 2) // square the difference
@@ -34,7 +29,7 @@ function euclideanDistance(a: number[], b: number[]): number {
 
 export class KMeansClustering extends Model<number[][], undefined, ClusteringResults> {
   title = 'k-means clustering';
-  serviceName = 'kmeans-clusering-models';
+  serviceName = 'kmeans-models';
 
   parameters: {
     k: Stream<number>;
@@ -45,8 +40,8 @@ export class KMeansClustering extends Model<number[][], undefined, ClusteringRes
   extremes: { min: number; max: number }[];
   dataset: number[][];
 
-  constructor({ k = 3, ...rest }: Partial<KMeansClusteringOptions> = {}) {
-    super(rest);
+  constructor({ k = 3 }: Partial<KMeansClusteringOptions> = {}) {
+    super();
     this.parameters = {
       k: new Stream(k, true),
     };
@@ -118,17 +113,18 @@ export class KMeansClustering extends Model<number[][], undefined, ClusteringRes
   }
 
   async save(
+    store: DataStore,
     name: string,
     metadata?: Record<string, unknown>,
     id: ObjectId = null,
   ): Promise<ObjectId> {
     const storedModel = await this.write(metadata);
     storedModel.name = name;
-    return this.saveToDatastore(storedModel, id);
+    return this.saveToDatastore(store, storedModel, id);
   }
 
-  async load(id?: ObjectId): Promise<StoredModel> {
-    const storedModel = await this.loadFromDatastore(id);
+  async load(store: DataStore, id?: ObjectId): Promise<StoredModel> {
+    const storedModel = await this.loadFromDatastore(store, id);
     await this.read(storedModel);
     return storedModel;
   }
@@ -154,7 +150,7 @@ export class KMeansClustering extends Model<number[][], undefined, ClusteringRes
   }
 
   private async write(metadata: Record<string, unknown> = {}): Promise<StoredModel | null> {
-    const name = this.syncModelName || toKebabCase(this.title);
+    const name = toKebabCase(this.title);
     return {
       name,
       files: [],

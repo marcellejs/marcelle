@@ -24,8 +24,7 @@ const input = sketchPad();
 const featureExtractor = mobileNet();
 const store = dataStore('localStorage');
 const trainingSet = dataset('TrainingSet', store);
-const classifier = mlpClassifier({ layers: [64, 32], epochs: 20, dataStore: store });
-classifier.sync('sketch-classifier');
+const classifier = mlpClassifier({ layers: [64, 32], epochs: 20 }).sync(store, 'sketch-classifier');
 const batchResults = batchPrediction('mlp', store);
 
 // Additional widgets and visualizations

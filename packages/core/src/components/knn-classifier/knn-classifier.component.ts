@@ -14,15 +14,15 @@ import {
   ClassifierResults,
   StoredModel,
   ObjectId,
-  ModelOptions,
   Instance,
+  DataStore,
 } from '../../core';
 import { Dataset, isDataset } from '../../core/dataset';
 import { Catch } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
 
-export interface KNNClassifierOptions extends ModelOptions {
+export interface KNNClassifierOptions {
   k: number;
 }
 
@@ -37,8 +37,8 @@ export class KNNClassifier extends Model<TensorLike, string, ClassifierResults> 
   classifier = new TfjsKNNClassifier();
   labels: string[];
 
-  constructor({ k = 3, ...rest }: Partial<KNNClassifierOptions> = {}) {
-    super(rest);
+  constructor({ k = 3 }: Partial<KNNClassifierOptions> = {}) {
+    super();
     this.parameters = {
       k: new Stream(k, true),
     };
@@ -81,17 +81,18 @@ export class KNNClassifier extends Model<TensorLike, string, ClassifierResults> 
   }
 
   async save(
+    store: DataStore,
     name: string,
     metadata?: Record<string, unknown>,
     id: ObjectId = null,
   ): Promise<ObjectId> {
     const storedModel = await this.write(metadata);
     storedModel.name = name;
-    return this.saveToDatastore(storedModel, id);
+    return this.saveToDatastore(store, storedModel, id);
   }
 
-  async load(idOrName?: ObjectId | string): Promise<StoredModel> {
-    const storedModel = await this.loadFromDatastore(idOrName);
+  async load(store: DataStore, idOrName?: ObjectId | string): Promise<StoredModel> {
+    const storedModel = await this.loadFromDatastore(store, idOrName);
     await this.read(storedModel);
     return storedModel;
   }
@@ -124,7 +125,7 @@ export class KNNClassifier extends Model<TensorLike, string, ClassifierResults> 
       const data = dataset[key].arraySync();
       datasetObj[key] = data;
     }
-    const name = this.syncModelName || toKebabCase(this.title);
+    const name = toKebabCase(this.title);
     return {
       name,
       files: [],

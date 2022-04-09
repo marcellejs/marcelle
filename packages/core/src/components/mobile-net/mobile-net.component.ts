@@ -16,11 +16,6 @@ export interface MobileNetOptions {
   alpha?: MobileNetAlpha;
 }
 
-export interface MobileNetResults {
-  label: string;
-  confidences: { [key: string]: number };
-}
-
 export class MobileNet extends Model<ImageData, string, ClassifierResults> {
   title = 'mobileNet';
 
@@ -78,7 +73,7 @@ export class MobileNet extends Model<ImageData, string, ClassifierResults> {
     });
   }
 
-  async predict(image: ImageData): Promise<MobileNetResults> {
+  async predict(image: ImageData): Promise<ClassifierResults> {
     if (!this.#mobilenet) {
       throw new Error('Mobilenet is not loaded');
     }

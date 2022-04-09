@@ -1,6 +1,6 @@
 import type { RegularArray } from '@tensorflow/tfjs-core/dist/types';
 import ort from 'onnxruntime-web';
-import { ClassifierResults, Model, ModelOptions, Stream } from '../../core';
+import { ClassifierResults, Model, Stream } from '../../core';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './onnx-model.view.svelte';
 
@@ -30,7 +30,7 @@ function isPredictionType<T extends keyof PredictionTypes>(
   return t === tt;
 }
 
-export interface ONNXModelOptions<T, U> extends ModelOptions {
+export interface ONNXModelOptions<T, U> {
   inputType: T;
   taskType: U;
   inputShape: number[];
@@ -58,8 +58,8 @@ export class OnnxModel<
 
   #session: ort.InferenceSession;
 
-  constructor({ inputType, taskType, inputShape, ...rest }: ONNXModelOptions<InputType, TaskType>) {
-    super(rest);
+  constructor({ inputType, taskType, inputShape }: ONNXModelOptions<InputType, TaskType>) {
+    super();
     this.inputType = inputType;
     this.taskType = taskType;
     this.inputShape = inputShape;

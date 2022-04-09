@@ -111,7 +111,7 @@ export class TrainingHistory<InputType, OutputType, PredictionType> extends Comp
         logs: appendLogs(this.crtRun.logs, x.data),
       });
     } else if (x.status === 'success') {
-      const modelId = await this.model.save(this.modelName, {});
+      const modelId = await this.model.save(this.dataStore, this.modelName, {});
       this.runService.patch(this.crtRun.id, {
         status: x.status,
         epoch: x.epoch,

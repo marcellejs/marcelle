@@ -54,8 +54,7 @@ input.$images
 
 const trainingLauncher = button('Train');
 trainingLauncher.title = 'Training Launcher';
-const classifier = knnClassifier({ dataStore: store });
-classifier.sync('mobilenet-tetris-classifier');
+const classifier = knnClassifier().sync(store, 'mobilenet-tetris-classifier');
 trainingLauncher.$click.subscribe(() => classifier.train(trainingSet));
 
 const params = modelParameters(classifier);
