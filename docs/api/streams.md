@@ -66,7 +66,7 @@ $rnd.subscribe(console.log);
 ### .hold()
 
 ```tsx
-hold(): Stream<T>
+hold(h: boolean = true): Stream<T>
 ```
 
 Hold the stream values. When called, all new subscribers will receive the latest value at the time of subscription.

@@ -41,8 +41,8 @@ export class Stream<T> {
 
   set: (value: T) => void;
 
-  constructor(s: Stream<T> | MostStream<T> | T, hold = false) {
-    this.#hold = hold;
+  constructor(s: Stream<T> | MostStream<T> | T, hold: boolean = undefined) {
+    this.#hold = !!hold;
     const [stopStream, stopEvents] = createAdapter<undefined>();
     const [induce, events] = createAdapter<T>();
     this.stopStream = stopStream;
@@ -55,6 +55,9 @@ export class Stream<T> {
     let stream;
     if (isStream<T>(s)) {
       stream = s;
+      if (hold === undefined) {
+        this.#hold = s.holding;
+      }
       if (s.holding) {
         this.value = s.value;
       }
@@ -144,8 +147,8 @@ export class Stream<T> {
     this.#running = false;
   }
 
-  hold(): Stream<T> {
-    this.#hold = true;
+  hold(h = true): Stream<T> {
+    this.#hold = h;
     return this;
   }
 
