@@ -11,23 +11,35 @@ Models are standard Marcelle components with two additional characteristics. Fir
 Models implement the following interface:
 
 ```ts
-interface Model<InputType, OutputType> {
+interface Model<InputType, OutputType, PredictionType> {
   parameters: {
     [name: string]: Stream<any>;
   };
 
   $training: Stream<TrainingStatus>;
 
-  train(dataset: Dataset): void;
-  predict(x: InputType): Promise<OutputType>;
+  train(
+    dataset: Dataset<InputType, OutputType> | ServiceIterable<Instance<InputType, OutputType>>,
+    validationDataset?:
+      | Dataset<InputType, OutputType>
+      | ServiceIterable<Instance<InputType, OutputType>>,
+  ): void;
+  predict(x: InputType): Promise<PredictionType>;
 
-  save(update: boolean, metadata?: Record<string, unknown>): Promise<ObjectId | null>;
-  load(id?: ObjectId): Promise<StoredModel>;
+  save(
+    store: DataStore,
+    name: string,
+    metadata?: Record<string, unknown>,
+    id?: ObjectId,
+  ): Promise<ObjectId | null>;
+  load(store: DataStore, idOrName: ObjectId | string): Promise<StoredModel>;
   download(metadata?: Record<string, unknown>): Promise<void>;
   upload(...files: File[]): Promise<StoredModel>;
-  sync(name: string): void;
+  sync(store: DataStore, name: string): this;
 }
 ```
+
+## Streams
 
 Models expose a `$training` stream that monitors the training process. Each `TrainingStatus` event has the following interface:
 
@@ -47,33 +59,62 @@ Where the `data` field varies across models to include additional information, s
 ### .train()
 
 ```tsx
-train(dataset: Dataset): void;
+train(
+  dataset: Dataset<InputType, OutputType> | ServiceIterable<Instance<InputType, OutputType>>,
+  validationDataset?:
+    | Dataset<InputType, OutputType>
+    | ServiceIterable<Instance<InputType, OutputType>>,
+): void;
 ```
 
-Train the model from a given dataset.
+Train the model from a given dataset or dataset iterator. An optional validation set can be passed. The training can be monitored using the model's `$training` stream.
+
+#### Parameters
+
+| Option            | Type | Description                                                                                                                                                                                                                             | Required | Default |
+| ----------------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: | ------- |
+| dataset           | TODO | A Marcelle [Dataset](/api/data-storage.html#dataset) or an iterator (TODO: undocumented) for training.                                                                                                                                  |    ✔     |         |
+| validationDataset | TODO | A Marcelle [Dataset](/api/data-storage.html#dataset) or an iterator (TODO: undocumented) used for validation. If not defined, the validation datasets will be created automatically according to the model's validationSplit parameter. |          |         |
 
 ### .predict()
 
 ```tsx
-async predict(x: InputType): Promise<OutputType>;
+predict(x: InputType): Promise<PredictionType>;
 ```
 
-Make a prediction from a single input frame. Input and output formats vary across models, refer to each model's specific documentation below.
+Make a prediction from a single input frame. Input and output formats vary across models, refer to each model's specific [documentation](/api/components/models.html).
+
+#### Parameters
+
+| Option | Type      | Description                 | Required | Default |
+| ------ | --------- | --------------------------- | :------: | ------- |
+| x      | InputType | a single input to the model |    ✔     |         |
+
+#### Returns
+
+A promise that resolves with the resulting prediction.
 
 ### .save()
 
 ```tsx
-save(update?: boolean, metadata?: Record<string, unknown>): Promise<ObjectId | null>;
+abstract save(
+  store: DataStore,
+  name: string,
+  metadata?: Record<string, unknown>,
+  id?: ObjectId,
+): Promise<ObjectId | null>;
 ```
 
-Save the model to its associated datastore. The datastore can either be passed in the constructor's options (`dataStore` field), or by modifying the `dataStore` property of the model.
+Save the model to a data store with a given name and optional metadata. If the id of an existing model is passed it will be updated.
 
 #### Parameters
 
-| Option   | Type    | Description                                                                                                                      | Required | Default |
-| -------- | ------- | -------------------------------------------------------------------------------------------------------------------------------- | :------: | ------- |
-| update   | boolean | If true, the model will try to update the dataStore's object to which it is associated, otherwise it will create a new document. |          | false'  |
-| metadata | object  | A JSON-serializable object containing arbitrary model metadata                                                                   |          | {}      |
+| Option   | Type                      | Description                                                                  | Required | Default |
+| -------- | ------------------------- | ---------------------------------------------------------------------------- | :------: | ------- |
+| store    | DataStore                 | The data store to save the model                                             |    ✔     |         |
+| name     | string                    | The name of the model                                                        |    ✔     |         |
+| metadata | Record\<string, unknown\> | An optional object containing metadata about the model                       |          |         |
+| id       | ObjectId                  | The id of an existing model. If defined, the existing model will be updated. |          |         |
 
 #### Returns
 
@@ -82,16 +123,17 @@ A promise that resolves with the ObjectId of the document in the data store, or 
 ### .load()
 
 ```tsx
-load(id?: ObjectId): Promise<StoredModel>;
+load(store: DataStore, idOrName: ObjectId | string): Promise<StoredModel>;
 ```
 
-Load a model from its associated datastore. The datastore can either be passed in the constructor's options (`dataStore` field), or by modifying the `dataStore` property of the model.
+Load a model from a data store from either its id or its name.
 
 #### Parameters
 
-| Option | Type     | Description                                       | Required | Default |
-| ------ | -------- | ------------------------------------------------- | :------: | ------- |
-| id     | ObjectId | The ID of the model's document in the data store. |          |         |
+| Option | Type               | Description                                                                                                                                            | Required | Default |
+| ------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ | :------: | ------- |
+| store  | DataStore          | The data store from which to load the model                                                                                                            |    ✔     |         |
+| id     | ObjectId \| string | The ID of the model's document in the data store, or its name. If several models in the data store have the same name, the latest model will be loaded |    ✔     |         |
 
 #### Returns
 
@@ -137,16 +179,17 @@ Upload a model from a set of files. Files should be exported from Marcelle by th
 ### .sync()
 
 ```tsx
-sync(name: string): void;
+sync(store: DataStore, name: string): this;
 ```
 
 Synchronize a model with a data store, given a model name. The model will be automatically updated in the store whenever its training ends, or it is loaded from files. The model will be automatically restored on startup, from the latest version available in the store.
 
 #### Parameters
 
-| Option | Type   | Description                                                              | Required | Default |
-| ------ | ------ | ------------------------------------------------------------------------ | :------: | ------- |
-| name   | string | A unique name for the model so that it can be retrieved in the datastore |   yes    |         |
+| Option | Type      | Description                                                              | Required | Default |
+| ------ | --------- | ------------------------------------------------------------------------ | :------: | ------- |
+| store  | DataStore | The data store where the model should be synchronize                     |    ✔     |         |
+| name   | string    | A unique name for the model so that it can be retrieved in the datastore |    ✔     |         |
 
 ## BatchPrediction
 
