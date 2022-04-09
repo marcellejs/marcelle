@@ -13,6 +13,7 @@
     "@tensorflow/tfjs-layers": "^3.15.0"
   },
   "devDependencies": {
+    "@marcellejs/devtools": "workspace:^0.0.1",
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.40",
     "svelte": "^3.46.6",
     "svelte-bricks": "^0.1.0",

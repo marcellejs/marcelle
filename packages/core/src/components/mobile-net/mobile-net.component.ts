@@ -16,12 +16,7 @@ export interface MobileNetOptions {
   alpha?: MobileNetAlpha;
 }
 
-export interface MobileNetResults {
-  label: string;
-  confidences: { [key: string]: number };
-}
-
-export class MobileNet extends Model<ImageData, ClassifierResults> {
+export class MobileNet extends Model<ImageData, string, ClassifierResults> {
   title = 'mobileNet';
 
   parameters = {};
@@ -70,15 +65,15 @@ export class MobileNet extends Model<ImageData, ClassifierResults> {
     return this;
   }
 
-  async process(image: ImageData): Promise<number[][]> {
+  async process(image: ImageData): Promise<number[]> {
     if (!this.#mobilenet) return [];
     return tidy(() => {
       const x = this.#mobilenet.infer(image, true).arraySync() as number[][];
-      return x;
+      return x[0];
     });
   }
 
-  async predict(image: ImageData): Promise<MobileNetResults> {
+  async predict(image: ImageData): Promise<ClassifierResults> {
     if (!this.#mobilenet) {
       throw new Error('Mobilenet is not loaded');
     }

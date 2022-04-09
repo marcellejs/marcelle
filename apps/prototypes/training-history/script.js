@@ -54,8 +54,7 @@ b.title = 'Training Launcher';
 const classifier = mlpClassifier({
   layers: [64, 32],
   epochs: 20,
-  dataStore: store,
-}).sync('mlp-dashboard');
+}).sync(store, 'mlp-dashboard');
 
 const hist = trainingHistory(store).track(classifier, 'mlp-webcam');
 

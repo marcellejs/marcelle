@@ -8,7 +8,7 @@ import {
 import { store } from './common';
 import { processDataset } from './preprocessing';
 
-export const classifier = mlpClassifier({ dataStore: store }).sync('iris-classifier');
+export const classifier = mlpClassifier().sync(store, 'iris-classifier');
 const params = modelParameters(classifier);
 
 const trainBtn = button('Train the classifier');

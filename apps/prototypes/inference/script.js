@@ -27,8 +27,7 @@ up.title = 'Upload model files (.json and .bin)';
 const classifier = tfjsModel({
   inputType: 'image',
   taskType: 'classification',
-  dataStore: dataStore('localStorage'),
-}).sync('inference-example-classifier');
+}).sync(dataStore('localStorage'), 'inference-example-classifier');
 up.$files.subscribe((fl) => {
   classifier.loadFromFiles(fl);
 });

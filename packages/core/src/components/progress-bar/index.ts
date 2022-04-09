@@ -6,7 +6,7 @@ export function progressBar(...args: ConstructorParameters<typeof ProgressBar>):
   return new ProgressBar(...args);
 }
 
-export function trainingProgress<T, U>(m: Model<T, U>): ProgressBar {
+export function trainingProgress(m: Model<unknown, unknown, unknown>): ProgressBar {
   if (!m.$training) {
     throw new Error('The argument is not a valid MLP');
   }

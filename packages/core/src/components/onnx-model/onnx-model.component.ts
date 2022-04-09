@@ -1,6 +1,6 @@
 import type { RegularArray } from '@tensorflow/tfjs-core/dist/types';
 import ort from 'onnxruntime-web';
-import { ClassifierResults, Model, ModelOptions, Stream } from '../../core';
+import { ClassifierResults, Model, Stream } from '../../core';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './onnx-model.view.svelte';
 
@@ -10,6 +10,11 @@ export interface InputTypes {
 }
 
 export interface OutputTypes {
+  classification: string;
+  generic: number[];
+}
+
+export interface PredictionTypes {
   classification: ClassifierResults;
   generic: Record<string, Array<number>>;
 }
@@ -18,11 +23,14 @@ function isInputType<T extends keyof InputTypes>(t: keyof InputTypes, tt: T): t 
   return t === tt;
 }
 
-function isOutputType<T extends keyof OutputTypes>(t: keyof OutputTypes, tt: T): t is T {
+function isPredictionType<T extends keyof PredictionTypes>(
+  t: keyof PredictionTypes,
+  tt: T,
+): t is T {
   return t === tt;
 }
 
-export interface ONNXModelOptions<T, U> extends ModelOptions {
+export interface ONNXModelOptions<T, U> {
   inputType: T;
   taskType: U;
   inputShape: number[];
@@ -31,7 +39,7 @@ export interface ONNXModelOptions<T, U> extends ModelOptions {
 export class OnnxModel<
   InputType extends keyof InputTypes,
   TaskType extends keyof OutputTypes,
-> extends Model<InputTypes[InputType], OutputTypes[TaskType]> {
+> extends Model<InputTypes[InputType], OutputTypes[TaskType], PredictionTypes[TaskType]> {
   title = 'onnx model';
 
   parameters = {};
@@ -50,8 +58,8 @@ export class OnnxModel<
 
   #session: ort.InferenceSession;
 
-  constructor({ inputType, taskType, inputShape, ...rest }: ONNXModelOptions<InputType, TaskType>) {
-    super(rest);
+  constructor({ inputType, taskType, inputShape }: ONNXModelOptions<InputType, TaskType>) {
+    super();
     this.inputType = inputType;
     this.taskType = taskType;
     this.inputShape = inputShape;
@@ -65,7 +73,7 @@ export class OnnxModel<
   }
 
   @Catch
-  async predict(input: InputTypes[InputType]): Promise<OutputTypes[TaskType]> {
+  async predict(input: InputTypes[InputType]): Promise<PredictionTypes[TaskType]> {
     if (!this.#session || !this.$ready.get()) {
       throw new Error('Model is not loaded');
     }
@@ -179,12 +187,14 @@ export class OnnxModel<
     // See: https://github.com/marcellejs/marcelle/blob/dc9f5183f6d8fefdc869748d22ec81a3310e4f04/src/components/onnx-model/onnx-model.component.ts
   }
 
-  async postprocess(outputs: ort.InferenceSession.OnnxValueMapType): Promise<OutputTypes[TaskType]>;
+  async postprocess(
+    outputs: ort.InferenceSession.OnnxValueMapType,
+  ): Promise<PredictionTypes[TaskType]>;
   @Catch
   async postprocess(
     outputs: ort.InferenceSession.OnnxValueMapType,
-  ): Promise<OutputTypes[keyof OutputTypes]> {
-    if (isOutputType(this.taskType, 'classification')) {
+  ): Promise<PredictionTypes[keyof PredictionTypes]> {
+    if (isPredictionType(this.taskType, 'classification')) {
       // throw new Error('Classifier is not yet implemented');
       const getLabel = this.labels
         ? (index: number) => this.labels[index]
@@ -201,7 +211,7 @@ export class OnnxModel<
       };
     }
 
-    if (isOutputType(this.taskType, 'generic')) {
+    if (isPredictionType(this.taskType, 'generic')) {
       const res: Record<string, Array<number>> = {};
       for (const name of this.#session.outputNames) {
         res[name] = Array.from(outputs[name].data as Float32Array);

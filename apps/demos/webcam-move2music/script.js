@@ -52,8 +52,10 @@ input.$images
 // -----------------------------------------------------------
 
 const b = button('Train');
-const classifier = mlpClassifier({ layers: [64, 32], epochs: 20, dataStore: store });
-classifier.sync('move2audio-classifier');
+const classifier = mlpClassifier({ layers: [64, 32], epochs: 20 }).sync(
+  store,
+  'move2audio-classifier',
+);
 b.$click.subscribe(() => classifier.train(trainingSet));
 
 const params = modelParameters(classifier);

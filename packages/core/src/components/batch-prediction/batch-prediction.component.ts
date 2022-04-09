@@ -50,9 +50,9 @@ export class BatchPrediction extends Component {
     this.$status.set({ status: total > 0 ? 'loaded' : 'idle' });
   }
 
-  async predict<T, U>(
-    model: Model<T, U>,
-    dataset: Dataset<T, string> | ServiceIterable<Instance<T, string>>,
+  async predict<InputType, PredictionType>(
+    model: Model<InputType, unknown, PredictionType>,
+    dataset: Dataset<InputType, unknown> | ServiceIterable<Instance<InputType, unknown>>,
   ): Promise<void> {
     try {
       const total = isDataset(dataset) ? dataset.$count.value : (await dataset.toArray()).length;
@@ -66,7 +66,12 @@ export class BatchPrediction extends Component {
           instanceId: id,
           yTrue: y,
         });
-        this.$status.set({ status: 'running', count: ++i, total, data: storedPrediction });
+        this.$status.set({
+          status: 'running',
+          count: ++i,
+          total,
+          data: storedPrediction as Prediction,
+        });
       }
       this.$status.set({ status: 'success', count: i, total });
     } catch (error) {

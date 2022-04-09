@@ -23,7 +23,7 @@ const defaultOptions: TrainingHistoryOptions = {
   actions: [],
 };
 
-export class TrainingHistory<InputType, OutputType> extends Component {
+export class TrainingHistory<InputType, OutputType, PredictionType> extends Component {
   title = 'Training History';
 
   $selection = new Stream<TrainingRun[]>([], true);
@@ -31,7 +31,7 @@ export class TrainingHistory<InputType, OutputType> extends Component {
 
   runService: Service<TrainingRun>;
   options: TrainingHistoryOptions;
-  model: Model<InputType, OutputType>;
+  model: Model<InputType, OutputType, PredictionType>;
 
   protected ready = Promise.resolve();
   protected stopTracking: () => void = noop;
@@ -56,7 +56,7 @@ export class TrainingHistory<InputType, OutputType> extends Component {
       });
   }
 
-  track(model: Model<InputType, OutputType>, basename = 'anonymous'): this {
+  track(model: Model<InputType, OutputType, PredictionType>, basename = 'anonymous'): this {
     this.ready
       .then(() => {
         this.stopTracking();
@@ -111,7 +111,7 @@ export class TrainingHistory<InputType, OutputType> extends Component {
         logs: appendLogs(this.crtRun.logs, x.data),
       });
     } else if (x.status === 'success') {
-      const modelId = await this.model.save(this.modelName, {});
+      const modelId = await this.model.save(this.dataStore, this.modelName, {});
       this.runService.patch(this.crtRun.id, {
         status: x.status,
         epoch: x.epoch,

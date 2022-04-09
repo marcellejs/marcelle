@@ -29,7 +29,7 @@ Object detection model based on tensorflow's [COCO-SSD](https://github.com/tenso
 #### .predict()
 
 ```tsx
-async predict(img: ImageData): Promise<ObjectDetectorResults>
+predict(img: ImageData): Promise<ObjectDetectorResults>
 ```
 
 Make a prediction from an input image in `ImageData` format. The method is asynchronous and returns a promise that resolves with the results of the prediction. The results have the following signature:
@@ -58,17 +58,16 @@ const cocoPredictionStream = source.$images
 ## knnClassifier
 
 ```tsx
-marcelle.knnClassifier({ k?: number, dataStore: DataStore }): KNNClassifier;
+marcelle.knnClassifier({ k?: number }): KNNClassifier;
 ```
 
 A K-Nearest Neighbors classifier based on [Tensorflow.js's implementation](https://github.com/tensorflow/tfjs-models/tree/master/knn-classifier).
 
 ### Parameters
 
-| Option    | Type      | Description                                                                                                                                                                                                                                                                      | Required | default |
-| --------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: | ------- |
-| k         | number    | The K value to use in K-nearest neighbors. The algorithm will first find the K nearest examples from those it was previously shown, and then choose the class that appears the most as the final prediction for the input example. Defaults to 3. If examples < k, k = examples. |          | 3       |
-| dataStore | DataStore | The [dataStore](/api/data-stores) used to store the model. This parameter is optional.                                                                                                                                                                                           |          |
+| Option | Type   | Description                                                                                                                                                                                                                                                                      | Required | default |
+| ------ | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: | ------- |
+| k      | number | The K value to use in K-nearest neighbors. The algorithm will first find the K nearest examples from those it was previously shown, and then choose the class that appears the most as the final prediction for the input example. Defaults to 3. If examples < k, k = examples. |          | 3       |
 
 The set of reactive parameters has the following signature:
 
@@ -97,7 +96,7 @@ Clear the model, removing all instances
 #### .predict()
 
 ```tsx
-async predict(x: number[][]): Promise<ClassifierResults>
+predict(x: TensorLike): Promise<ClassifierResults>
 ```
 
 Make a prediction from an input feature array `x`. The method is asynchronous and returns a promise that resolves with the results of the prediction. The results have the following signature:
@@ -112,7 +111,9 @@ interface ClassifierResults {
 #### .train()
 
 ```tsx
-train(dataset: Dataset): void
+train(
+  dataset: Dataset<InputType, OutputType> | ServiceIterable<Instance<InputType, OutputType>>,
+): void;
 ```
 
 Train the model from a given dataset.
@@ -135,20 +136,19 @@ marcelle.mlpClassifier({
   layers?: number[],
   epochs?: number,
   batchSize?: number,
-  dataStore: DataStore
-  }): MLPClassifier;
+}): MLPClassifier;
 ```
 
 A Multi-Layer Perceptron using Tensorflow.js. The configuration of the model (number of layers and number of hidden nodes per layer) can be configured.
 
 ### Parameters
 
-| Option    | Type      | Description                                                                                                                                | Required | Default  |
-| --------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------ | :------: | -------- |
-| layers    | number[]  | The model configuration as an array of numbers, where each element defines a layer with the given number of hidden nodes                   |          | [64, 32] |
-| epochs    | number    | Number of epochs used for training                                                                                                         |          | 20       |
-| batchSize | number    | Training data batch size                                                                                                                   |          | 8        |
-| dataStore | DataStore | The [dataStore](/api/data-stores) used to store the model. This parameter is optional. By default, a data store in memory will be created. |          |
+| Option          | Type     | Description                                                                                                              | Required | Default  |
+| --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------ | :------: | -------- |
+| layers          | number[] | The model configuration as an array of numbers, where each element defines a layer with the given number of hidden nodes |          | [64, 32] |
+| epochs          | number   | Number of epochs used for training                                                                                       |          | 20       |
+| batchSize       | number   | Training data batch size                                                                                                 |          | 8        |
+| validationSplit | number   | Proportion of data to use for validation                                                                                 |          | 0.2      |
 
 The set of reactive parameters has the following signature:
 
@@ -157,6 +157,7 @@ parameters {
   layers: Stream<number[]>;
   epochs: Stream<number>;
   batchSize: Stream<number>;
+  validationSplit: number;
 }
 ```
 
@@ -179,13 +180,13 @@ Clear the model, removing all instances
 #### .predict()
 
 ```tsx
-async predict(x: number[][]): Promise<MLPResults>
+predict(x: TensorLike): Promise<ClassifierResults>
 ```
 
 Make a prediction from an input feature array `x`. The method is asynchronous and returns a promise that resolves with the results of the prediction. The results have the following signature:
 
 ```ts
-interface MLPResults {
+interface ClassifierResults {
   label: string;
   confidences: { [key: string]: number };
 }
@@ -194,10 +195,15 @@ interface MLPResults {
 #### .train()
 
 ```tsx
-train(dataset: Dataset): void
+train(
+  dataset: Dataset<InputType, OutputType> | ServiceIterable<Instance<InputType, OutputType>>,
+  validationDataset?:
+    | Dataset<InputType, OutputType>
+    | ServiceIterable<Instance<InputType, OutputType>>,
+): void;
 ```
 
-Train the model from a given dataset.
+Train the model from a given dataset, optionally passing a custom validation dataset. If no validation dataset is passed, a train/validation split will be created automatically based on the `validationSplit` parameter.
 
 ### Example
 
@@ -235,13 +241,13 @@ Since parameters are used to load a heavy model, they can only be used on when t
 #### .predict()
 
 ```tsx
-async predict(image: ImageData): Promise<MobilenetResults>
+predict(image: ImageData): Promise<ClassifierResults>
 ```
 
 Make a prediction from an input image `image` in ImageData format. The method is asynchronous and returns a promise that resolves with the results of the prediction. The results have the following signature:
 
 ```ts
-interface MobilenetResults {
+interface ClassifierResults {
   label: string;
   confidences: { [key: string]: number };
 }
@@ -250,7 +256,7 @@ interface MobilenetResults {
 #### .process()
 
 ```tsx
-async process(image: ImageData): Promise<number[][]>
+process(image: ImageData): Promise<number[]>
 ```
 
 Use mobilenet for feature extraction, for example to perform transfer learning. The method returns the embedding for the input image. The size of the embedding depends on the alpha (width) of the model.
@@ -292,7 +298,7 @@ Such generic models cannot be trained.
 #### .loadFromFile()
 
 ```tsx
-async loadFromFile(file: File): Promise<void>
+loadFromFile(file: File): Promise<void>
 ```
 
 Load a pre-trained ONNX model from a `*.onnx` file.
@@ -300,7 +306,7 @@ Load a pre-trained ONNX model from a `*.onnx` file.
 #### .loadFromUrl()
 
 ```tsx
-async loadFromUrl(url: string): Promise<void>
+loadFromUrl(url: string): Promise<void>
 ```
 
 Load a pre-trained ONNX model from a URL.
@@ -308,7 +314,7 @@ Load a pre-trained ONNX model from a URL.
 #### .predict()
 
 ```tsx
-async predict(input: InputType): Promise<OutputType>
+predict(input: InputTypes[InputType]): Promise<PredictionTypes[TaskType]>
 ```
 
 Make a prediction from an input instance, which type depends on the `inputType` specified in the constructor. The method is asynchronous and returns a promise that resolves with the results of the prediction.
@@ -376,7 +382,7 @@ Note that exporting models from Keras to TFJS can lead to loading errors when pa
 #### .loadFromFiles()
 
 ```tsx
-async loadFromFiles(files: File[]): Promise<void>
+loadFromFiles(files: File[]): Promise<void>
 ```
 
 Load a pre-trained TFJS model from a list files, that should include:
@@ -387,7 +393,7 @@ Load a pre-trained TFJS model from a list files, that should include:
 #### .loadFromUrl()
 
 ```tsx
-async loadFromUrl(url: string): Promise<void>
+loadFromUrl(url: string): Promise<void>
 ```
 
 Load a pre-trained TFJS model from a URL.
@@ -395,7 +401,7 @@ Load a pre-trained TFJS model from a URL.
 #### .predict()
 
 ```tsx
-async predict(input: InputType): Promise<OutputType>
+predict(input: InputTypes[InputType]): Promise<PredictionTypes[TaskType]>
 ```
 
 Make a prediction from an input instance, which type depends on the `inputType` specified in the constructor. The method is asynchronous and returns a promise that resolves with the results of the prediction.

@@ -13,7 +13,7 @@ import '@tensorflow/tfjs-core/dist/public/chained_ops/mul';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/expand_dims';
 import { loadGraphModel } from '@tensorflow/tfjs-converter';
 import { loadLayersModel } from '@tensorflow/tfjs-layers';
-import { ClassifierResults, TFJSBaseModel, TFJSBaseModelOptions } from '../../core';
+import { ClassifierResults, TFJSBaseModel } from '../../core';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import { readJSONFile } from '../../utils/file-io';
 import Component from './tfjs-model.view.svelte';
@@ -29,16 +29,25 @@ function isInputType<T extends keyof InputTypes>(t: keyof InputTypes, tt: T): t 
 }
 
 export interface OutputTypes {
+  classification: string;
+  segmentation: ImageData | TensorLike;
+  generic: TensorLike;
+}
+
+export interface PredictionTypes {
   classification: ClassifierResults;
   segmentation: ImageData | TensorLike;
   generic: TensorLike;
 }
 
-function isOutputType<T extends keyof OutputTypes>(t: keyof OutputTypes, tt: T): t is T {
+function isPredictionType<T extends keyof PredictionTypes>(
+  t: keyof PredictionTypes,
+  tt: T,
+): t is T {
   return t === tt;
 }
 
-export interface TFJSModelOptions<T, U> extends TFJSBaseModelOptions {
+export interface TFJSModelOptions<T, U> {
   inputType: T;
   taskType: U;
   segmentationOptions?: {
@@ -50,7 +59,7 @@ export interface TFJSModelOptions<T, U> extends TFJSBaseModelOptions {
 export class TFJSModel<
   InputType extends keyof InputTypes,
   TaskType extends keyof OutputTypes,
-> extends TFJSBaseModel<InputTypes[InputType], OutputTypes[TaskType]> {
+> extends TFJSBaseModel<InputTypes[InputType], OutputTypes[TaskType], PredictionTypes[TaskType]> {
   title = 'tfjs model';
 
   inputShape: number[];
@@ -64,9 +73,8 @@ export class TFJSModel<
     inputType,
     taskType,
     segmentationOptions = { applyArgmax: false, output: 'image' },
-    ...rest
   }: TFJSModelOptions<InputType, TaskType>) {
-    super(rest);
+    super();
     this.segmentationOptions = { applyArgmax: false, output: 'image', ...segmentationOptions };
     this.inputType = inputType;
     this.taskType = taskType;
@@ -84,7 +92,7 @@ export class TFJSModel<
   }
 
   @Catch
-  async predict(input: InputTypes[InputType]): Promise<OutputTypes[TaskType]> {
+  async predict(input: InputTypes[InputType]): Promise<PredictionTypes[TaskType]> {
     if (!this.model || this.$training.get().status !== 'loaded') {
       throw new Error('Model is not loaded');
     }
@@ -119,10 +127,10 @@ export class TFJSModel<
     ]);
   }
 
-  async postprocess(outputs: Tensor): Promise<OutputTypes[TaskType]>;
+  async postprocess(outputs: Tensor): Promise<PredictionTypes[TaskType]>;
   @Catch
-  async postprocess(outputs: Tensor): Promise<OutputTypes[keyof OutputTypes]> {
-    if (isOutputType(this.taskType, 'classification')) {
+  async postprocess(outputs: Tensor): Promise<PredictionTypes[keyof PredictionTypes]> {
+    if (isPredictionType(this.taskType, 'classification')) {
       // throw new Error('Classifier is not yet implemented');
       const getLabel = this.labels
         ? (index: number) => this.labels[index]
@@ -141,7 +149,7 @@ export class TFJSModel<
         confidences,
       };
     }
-    if (isOutputType(this.taskType, 'segmentation')) {
+    if (isPredictionType(this.taskType, 'segmentation')) {
       const [width, height] = (outputs as Tensor3D).shape;
 
       const processedOutputs = this.segmentationOptions.applyArgmax
@@ -160,7 +168,7 @@ export class TFJSModel<
       }
       return mask;
     }
-    if (isOutputType(this.taskType, 'generic')) {
+    if (isPredictionType(this.taskType, 'generic')) {
       return outputs.array();
     }
     throw new Error('Invalid output data type');
@@ -185,7 +193,6 @@ export class TFJSModel<
         this.loadFn = jsonData.format === 'graph-model' ? loadGraphModel : loadLayersModel;
         this.model = await this.loadFn(browserFiles([jsonFiles[0], ...weightFiles]));
         await this.warmup();
-        await this.save(this.id);
         this.$training.set({
           status: 'loaded',
           data: {

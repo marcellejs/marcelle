@@ -1,17 +1,20 @@
 import { GraphModel, loadGraphModel } from '@tensorflow/tfjs-converter';
 import type { ObjectId, StoredModel } from '../types';
+import type { DataStore } from '../data-store';
 import { io, Tensor, tidy, zeros } from '@tensorflow/tfjs-core';
 import { LayersModel, loadLayersModel } from '@tensorflow/tfjs-layers';
 import { DataStoreBackend } from '../data-store/data-store';
-import { Catch, checkProperty } from '../../utils/error-handling';
+import { Catch } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
-import { Model, ModelOptions } from './model';
+import { Model } from './model';
 import { browserFiles, http } from './tfjs-io';
 
-export type TFJSBaseModelOptions = ModelOptions;
-
-export abstract class TFJSBaseModel<InputType, OutputType> extends Model<InputType, OutputType> {
+export abstract class TFJSBaseModel<InputType, OutputType, PredictionType> extends Model<
+  InputType,
+  OutputType,
+  PredictionType
+> {
   serviceName = 'tfjs-models';
   model: LayersModel | GraphModel;
   loadFn: typeof loadLayersModel | typeof loadGraphModel;
@@ -25,26 +28,26 @@ export abstract class TFJSBaseModel<InputType, OutputType> extends Model<InputTy
     warmupResult.dispose();
   }
 
-  @checkProperty('dataStore')
   async save(
+    store: DataStore,
     name: string,
     metadata?: Record<string, unknown>,
     id: ObjectId = null,
   ): Promise<ObjectId> {
     if (!this.model) return null;
     let files: [string, string][];
-    if (this.dataStore.backend === DataStoreBackend.LocalStorage) {
+    if (store.backend === DataStoreBackend.LocalStorage) {
       await this.model.save(`indexeddb://${name}`);
       files = [['main', `indexeddb://${name}`]];
-    } else if (this.dataStore.backend === DataStoreBackend.Remote) {
+    } else if (store.backend === DataStoreBackend.Remote) {
       const requestOpts: { requestInit?: unknown } = {};
-      if (this.dataStore.requiresAuth) {
-        const jwt = await this.dataStore.feathers.authentication.getAccessToken();
+      if (store.requiresAuth) {
+        const jwt = await store.feathers.authentication.getAccessToken();
         const headers = new Headers({ Authorization: `Bearer ${jwt}` });
         requestOpts.requestInit = { headers };
       }
       files = await this.model
-        .save(http(`${this.dataStore.location}/tfjs-models/upload`, requestOpts))
+        .save(http(`${store.location}/tfjs-models/upload`, requestOpts))
         .then((res) => res.responses[0].json());
     }
 
@@ -58,32 +61,31 @@ export abstract class TFJSBaseModel<InputType, OutputType> extends Model<InputTy
         ...metadata,
       },
     };
-    return this.saveToDatastore(storedModel, id);
+    return this.saveToDatastore(store, storedModel, id);
   }
 
-  @checkProperty('dataStore')
-  async load(idOrName: ObjectId | string): Promise<StoredModel> {
+  async load(store: DataStore, idOrName: ObjectId | string): Promise<StoredModel> {
     if (!idOrName) return null;
     this.$training.set({
       status: 'loading',
     });
     try {
-      const storedModel = await this.loadFromDatastore(idOrName);
+      const storedModel = await this.loadFromDatastore(store, idOrName);
       this.loadFn =
         storedModel.metadata.tfjsModelFormat === 'graph-model' ? loadGraphModel : loadLayersModel;
       let model: LayersModel | GraphModel;
-      if (this.dataStore.backend === DataStoreBackend.LocalStorage) {
+      if (store.backend === DataStoreBackend.LocalStorage) {
         model = await this.loadFn(storedModel.files[0][1]);
-      } else if (this.dataStore.backend === DataStoreBackend.Remote) {
+      } else if (store.backend === DataStoreBackend.Remote) {
         const requestOpts: { requestInit?: unknown } = {};
-        if (this.dataStore.requiresAuth) {
-          const jwt = await this.dataStore.feathers.authentication.getAccessToken();
+        if (store.requiresAuth) {
+          const jwt = await store.feathers.authentication.getAccessToken();
           const headers = new Headers({ Authorization: `Bearer ${jwt}` });
           requestOpts.requestInit = { headers };
         }
 
         model = await this.loadFn(
-          http(`${this.dataStore.location}/tfjs-models/${storedModel.id}/model.json`, requestOpts),
+          http(`${store.location}/tfjs-models/${storedModel.id}/model.json`, requestOpts),
         );
       }
       if (model) {
@@ -100,7 +102,7 @@ export abstract class TFJSBaseModel<InputType, OutputType> extends Model<InputTy
         status: 'loaded',
         data: {
           source: 'datastore',
-          url: this.dataStore.location,
+          url: store.location,
         },
       });
       return storedModel;
@@ -115,7 +117,7 @@ export abstract class TFJSBaseModel<InputType, OutputType> extends Model<InputTy
   }
 
   async download(metadata?: Record<string, unknown>): Promise<void> {
-    const name = this.syncModelName || toKebabCase(this.title);
+    const name = toKebabCase(this.title);
     const meta = {
       type: 'tfjs-model',
       tfjsModelFormat: this.model instanceof LayersModel ? 'layers-model' : 'graph-model',
