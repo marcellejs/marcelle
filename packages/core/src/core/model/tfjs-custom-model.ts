@@ -18,6 +18,15 @@ export interface TFJSCustomModelOptions {
   validationSplit: number;
 }
 
+function transformEpochData(data: Record<string, unknown>) {
+  const newData: Record<string, unknown> = {};
+  for (const [key, val] of Object.entries(data)) {
+    const newKey = key.startsWith('val_') ? key.replace('val_', '') + 'Val' : key;
+    newData[newKey] = val;
+  }
+  return newData;
+}
+
 export abstract class TFJSCustomModel<InputType, OutputType, PredictionType> extends TFJSBaseModel<
   InputType,
   OutputType,
@@ -124,12 +133,7 @@ export abstract class TFJSCustomModel<InputType, OutputType, PredictionType> ext
               status: 'epoch',
               epoch,
               epochs: this.parameters.epochs.get(),
-              data: {
-                accuracy: logs.acc,
-                loss: logs.loss,
-                accuracyVal: logs.val_acc,
-                lossVal: logs.val_loss,
-              },
+              data: transformEpochData(logs),
             });
           },
         },
@@ -137,12 +141,7 @@ export abstract class TFJSCustomModel<InputType, OutputType, PredictionType> ext
       .then((results) => {
         this.$training.set({
           status: 'success',
-          data: {
-            accuracy: results.history.acc,
-            loss: results.history.loss,
-            accuracyVal: results.history.val_acc,
-            lossVal: results.history.val_loss,
-          },
+          data: transformEpochData(results.history),
         });
       })
       .catch((error) => {
