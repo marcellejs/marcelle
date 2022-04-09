@@ -42,12 +42,23 @@ export async function generateComponent(cwd: string): Promise<void> {
     foundCompDir = isCustomAppJs || isCustomAppTs;
   }
 
-  const { name } = await prompts(
+  const { name, type } = await prompts(
     [
       {
         type: 'text',
         name: 'name',
         message: 'What is the name of your component?',
+      },
+      {
+        type: 'select',
+        name: 'type',
+        message: 'What type of component to you want?',
+        choices: [
+          { title: 'Skeleton component with a Svelte UI [default]', value: 'default' },
+          { title: 'Simple Classifier (Tensorflow.js)', value: 'tfjs_classifier' },
+          { title: 'Custom Model (Tensorflow.js)', value: 'tfjs_model' },
+        ],
+        initial: 0,
       },
     ],
     { onCancel },
@@ -73,7 +84,7 @@ export async function generateComponent(cwd: string): Promise<void> {
   }
   mkdirp(dstComp);
 
-  const dir = dist(`templates/component_${lang}`);
+  const dir = dist(`templates/component_${type}_${lang}`);
   console.log('dir', dir);
   const files = fs.readdirSync(dir).filter((x) => x !== '.DS_Store');
   for (const srcname of files) {

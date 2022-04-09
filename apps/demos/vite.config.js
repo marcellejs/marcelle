@@ -1,12 +1,11 @@
 /* eslint-env node */
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { resolve } from 'path';
-import pkg from './package.json';
 import meta from './meta.js';
 
-const subpackages_path = ['mobilenet-tetris', 'umap'];
+const subpackages_path = ['mobilenet-tetris', 'umap', 'webcam2'];
 
-function injectHtml({ injectData = {}, injectOptions = {}, tags = [] } = {}) {
+function injectHtml({ tags = [] } = {}) {
   return {
     name: 'vite:injectHtml',
     transformIndexHtml: {

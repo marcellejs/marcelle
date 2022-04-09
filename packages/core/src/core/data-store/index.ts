@@ -4,6 +4,6 @@ export function dataStore(location?: string): DataStore {
   return new DataStore(location);
 }
 
-export { iterableFromService } from './service-iterable';
+export * from './service-iterable';
 
 export type { DataStore };

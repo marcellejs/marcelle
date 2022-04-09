@@ -1,9 +1,6 @@
 import { train, Tensor } from '@tensorflow/tfjs-core';
-import '@tensorflow/tfjs-core/dist/public/chained_ops/gather';
-import '@tensorflow/tfjs-core/dist/public/chained_ops/arg_max';
-import '@tensorflow/tfjs-core/dist/public/chained_ops/squeeze';
 import { sequential, layers as tfLayers } from '@tensorflow/tfjs-layers';
-import { Stream } from '../../core';
+import { Stream } from '../../core/stream';
 import {
   TFJSCustomClassifier,
   TFJSCustomClassifierOptions,
