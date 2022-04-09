@@ -4,21 +4,21 @@
 
 ![Marcelle Overview](./images/marcelle_overview.jpg)
 
-<!-- Can't wait? [→ Go to the Getting Started Guide](/guide/getting-started.html) -->
-
 <div class="home" style="padding-top: 1rem"><div class="hero" ><p class="action" style="margin-top: 0"><a href="/guide/" class="nav-link action-button">Get Started →</a></p></div></div>
 
 ::: warning ⚠️ Experimental
 Marcelle is still experimental and is currently under active development. Breaking changes are expected.
 :::
 
-<!-- <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/GPNBlJMunNA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
-
-## Example
+<!-- ## Example
 
 The following screenshot shows a simple example of application with an interactive dashboard dedicated to training an image recognizer using training examples captured from the webcam. The application, along with the source code, is available online on [Glitch](https://glitch.com/~marcelle-v2-dashboard).
 
-![Screenshot of an example marcelle Application](./images/marcelle_dashboard_01.png)
+![Screenshot of an example marcelle Application](./images/marcelle_dashboard_01.png) -->
+
+<!-- ## 30s to Marcelle
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/GPNBlJMunNA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
 
 ## Architecture
 

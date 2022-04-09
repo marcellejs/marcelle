@@ -4,15 +4,24 @@ import type { ObjectId } from '../../core/types';
 import { Stream } from '../../core/stream';
 import View from './dataset-browser.view.svelte';
 
-export class DatasetBrowser<InputType> extends Component {
+interface DatasetBrowserOptions {
+  batchSize: number;
+}
+export class DatasetBrowser extends Component {
   title = 'dataset browser';
 
-  #dataset: Dataset<InputType, string>;
+  #dataset: Dataset<unknown, string>;
   $selected: Stream<ObjectId[]> = new Stream([], true);
 
-  constructor(dataset: Dataset<InputType, string>) {
+  batchSize: number;
+
+  constructor(
+    dataset: Dataset<unknown, string>,
+    { batchSize = 6 }: Partial<DatasetBrowserOptions> = {},
+  ) {
     super();
     this.#dataset = dataset;
+    this.batchSize = batchSize;
     this.start();
   }
 
@@ -24,6 +33,7 @@ export class DatasetBrowser<InputType> extends Component {
       target: t,
       props: {
         title: this.title,
+        batchSize: this.batchSize,
         count: this.#dataset.$count,
         dataset: this.#dataset,
         selected: this.$selected,

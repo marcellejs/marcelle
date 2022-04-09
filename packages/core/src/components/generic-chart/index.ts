@@ -1,7 +1,7 @@
-import { GenericChart, GenericChartOptions } from './generic-chart.component';
+import { GenericChart } from './generic-chart.component';
 
-export function genericChart(options: GenericChartOptions): GenericChart {
-  return new GenericChart(options);
+export function genericChart(...args: ConstructorParameters<typeof GenericChart>): GenericChart {
+  return new GenericChart(...args);
 }
 
-export type { GenericChart, GenericChartOptions };
+export type { GenericChart };

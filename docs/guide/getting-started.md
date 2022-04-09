@@ -4,31 +4,41 @@ In this tutorial, you will learn how to build a simple Marcelle application that
 
 ## Setting up
 
-The best way to set up your application is by using the dedicated [Marcelle CLI tools](https://github.com/marcellejs/cli)). The CLI is an npm package that must be installed globally:
+The best way to set up your application is by using the Marcelle's dedicated [CLI tools](/cli). You will need a recent version of [Node.js](https://nodejs.org/) installed (v14 or later).
 
+To create a new project:
+
+<code-group>
+<code-block title="npm">
 ```bash
-npm install -g @marcellejs/cli
-```
-
-Once installed, the `marcelle` command should be available:
-
-```bash
-marcelle --version
-```
-
-Then, create a folder for the app and generate an application with the CLI:
-
-```bash
-mkdir marcelle-tutorial
+npm init marcelle marcelle-tutorial
 cd marcelle-tutorial
-marcelle generate app
+npm install
 ```
+</code-block>
+
+<code-block title="yarn">
+```bash
+yarn create marcelle marcelle-tutorial
+cd marcelle-tutorial
+yarn
+```
+</code-block>
+
+<code-block title="pnpm">
+```bash
+pnpm create marcelle marcelle-tutorial
+cd marcelle-tutorial
+pnpm i
+```
+</code-block>
+</code-group>
 
 Several options are available to customize the project. If you don't know what to choose, just hit enter to select the defaults.
 
 ![Screenshot of the CLI's options](../images/cli_app.png)
 
-This will scaffold a new Marcelle project with the following structure (it might vary according to the build tool, this example is for vite):
+This will scaffold a new Marcelle project with the following structure:
 
 ```bash
 .
@@ -255,7 +265,7 @@ const classifier = marcelle.mlpClassifier({ layers: [32, 32], epochs: 20 });
 
 To start training, a button is added on the interface:
 
-```js{8}
+```js{1,8}
 const trainingButton = marcelle.button('Train');
 
 // ...

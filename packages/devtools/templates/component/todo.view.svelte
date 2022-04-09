@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ViewContainer } from '@marcellejs/core';
+  import { ViewContainer } from '@marcellejs/core/svelte';
 
   export let title: string;
   export let options: Record<string, unknown>;

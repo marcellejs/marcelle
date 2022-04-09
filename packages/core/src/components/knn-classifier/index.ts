@@ -1,7 +1,7 @@
-import { KNNClassifier, KNNClassifierOptions } from './knn-classifier.component';
+import { KNNClassifier } from './knn-classifier.component';
 
-export function knnClassifier(options: Partial<KNNClassifierOptions>): KNNClassifier {
-  return new KNNClassifier(options);
+export function knnClassifier(...args: ConstructorParameters<typeof KNNClassifier>): KNNClassifier {
+  return new KNNClassifier(...args);
 }
 
-export type { KNNClassifierOptions, KNNClassifier };
+export type { KNNClassifier };

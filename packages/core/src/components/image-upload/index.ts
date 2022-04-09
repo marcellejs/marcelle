@@ -1,7 +1,7 @@
-import { ImageUpload, ImageUploadOptions } from './image-upload.component';
+import { ImageUpload } from './image-upload.component';
 
-export function imageUpload(options: ImageUploadOptions): ImageUpload {
-  return new ImageUpload(options);
+export function imageUpload(...args: ConstructorParameters<typeof ImageUpload>): ImageUpload {
+  return new ImageUpload(...args);
 }
 
 export type { ImageUpload, ImageUploadOptions } from './image-upload.component';

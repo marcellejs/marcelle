@@ -1,33 +1,74 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { scale } from 'svelte/transition';
 
   import type { Instance, ObjectId, Stream } from '../../core';
   import ViewContainer from '../../core/ViewContainer.svelte';
-  import { PopMenu } from '@marcellejs/design-system';
+  import { Button, PopMenu } from '@marcellejs/design-system';
   import type { Dataset } from '../../core/dataset';
 
   export let title: string;
+  export let batchSize: number;
   export let count: Stream<number>;
   export let dataset: Dataset<unknown, string>;
   export let selected: Stream<ObjectId[]>;
 
   let loading = false;
 
-  let classes: Record<string, Partial<Instance<unknown, string>>[]> = {};
+  let classes: Record<
+    string,
+    {
+      total: number;
+      loaded: number;
+      instances: Partial<Instance<unknown, string>>[];
+    }
+  > = {};
+
+  async function loadMore(label: string) {
+    await dataset.ready;
+    for await (const instance of dataset
+      .items()
+      .query({ y: label, $sort: { updatedAt: -1 } })
+      .skip(classes[label].loaded)
+      .take(batchSize)
+      .select(['id', 'y', 'thumbnail'])) {
+      classes[label].instances = [...classes[label].instances, instance];
+      classes[label].loaded += 1;
+    }
+  }
 
   async function updateClassesFromDataset() {
     if (loading) return;
     loading = true;
-    classes = {};
     await dataset.ready;
-    for await (const instance of dataset.items().select(['id', 'y', 'thumbnail'])) {
-      classes[instance.y] = (classes[instance.y] || []).concat([instance]);
+    const labels = await dataset.distinct('y');
+    classes = labels.reduce(
+      (x, lab) => ({
+        ...x,
+        [lab]: {
+          total: 0,
+          loaded: 0,
+          instances: [],
+        },
+      }),
+      {},
+    );
+    for (const label of labels) {
+      const { total } = await dataset.find({ query: { $limit: 0, y: label } });
+      classes[label].total = total;
+      if (batchSize > 0) {
+        await loadMore(label);
+      } else {
+        while (classes[label].loaded < classes[label].total) {
+          await loadMore(label);
+        }
+      }
     }
     loading = false;
   }
 
   function getLabel(id: ObjectId) {
-    for (const [label, instances] of Object.entries(classes)) {
+    for (const [label, { instances }] of Object.entries(classes)) {
       if (instances.map((x) => x.id).includes(id)) {
         return label;
       }
@@ -88,7 +129,7 @@
       const srcLabel = getLabel(initialId);
       const dstLabel = getLabel(id);
       if (srcLabel !== dstLabel) return;
-      const instances = classes[srcLabel].map((x) => x.id);
+      const instances = classes[srcLabel].instances.map((x) => x.id);
       const srcIndex = instances.indexOf(initialId);
       const dstIndex = instances.indexOf(id);
       selected.set(
@@ -139,30 +180,56 @@
   onMount(() => {
     updateClassesFromDataset();
     dataset.$changes.subscribe(async (changes) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      for (const { level, type, data } of changes as any[]) {
+      for (const { level, type, data } of changes) {
         if (level === 'dataset') {
           if (type === 'created') {
             updateClassesFromDataset();
           }
         } else if (level === 'instance') {
           if (type === 'created') {
-            classes[data.y] = (classes[data.y] || []).concat([
+            if (!classes[data.y]) {
+              classes[data.y] = {
+                total: 0,
+                loaded: 0,
+                instances: [],
+              };
+            }
+            classes[data.y].total += 1;
+            classes[data.y].loaded += 1;
+            classes[data.y].instances = [
               { id: data.id, y: data.y, thumbnail: data.thumbnail },
-            ]);
+              ...classes[data.y].instances,
+            ];
           } else if (type === 'updated') {
+            // TODO: what if the image is not displayed?
             const originalLabel = getLabel(data.id);
-            classes[originalLabel] = classes[originalLabel].filter(({ id }) => id !== data.id);
-            if (classes[originalLabel].length === 0) {
+            classes[originalLabel].total -= 1;
+            classes[originalLabel].loaded -= 1;
+            classes[originalLabel].instances = classes[originalLabel].instances.filter(
+              ({ id }) => id !== data.id,
+            );
+            if (classes[originalLabel].total === 0) {
               delete classes[originalLabel];
               classes = classes;
             }
-            classes[data.y] = (classes[data.y] || []).concat([
+            if (!classes[data.y]) {
+              classes[data.y] = {
+                total: 0,
+                loaded: 0,
+                instances: [],
+              };
+            }
+            classes[data.y].instances = [
               { id: data.id, y: data.y, thumbnail: data.thumbnail },
-            ]);
+              ...classes[data.y].instances,
+            ];
           } else if (type === 'removed') {
-            classes[data.y] = classes[data.y].filter(({ id }) => id !== data.id);
-            if (classes[data.y].length === 0) {
+            classes[data.y].total -= 1;
+            classes[data.y].loaded -= 1;
+            classes[data.y].instances = classes[data.y].instances.filter(
+              ({ id }) => id !== data.id,
+            );
+            if (classes[data.y].total === 0) {
               delete classes[data.y];
               classes = classes;
             }
@@ -184,41 +251,53 @@
     {/if}
 
     <div class="flex flex-wrap" on:click={() => selectInstance()}>
-      {#each Object.entries(classes) as [label, instances]}
+      {#each Object.entries(classes) as [label, { loaded, total, instances }]}
         <div class="browser-class">
-          <div class="browser-class-header">
-            <span class="browser-class-title">{label}</span>
-            <PopMenu
-              actions={[
-                { code: 'edit', text: 'Edit class label' },
-                { code: 'delete', text: 'Delete class' },
-              ].concat(
-                $selected.length > 0
-                  ? [
-                      {
-                        code: 'deleteInstances',
-                        text: `Delete selected instance${$selected.length > 1 ? 's' : ''}`,
-                      },
-                      {
-                        code: 'relabelInstances',
-                        text: `Relabel selected instance${$selected.length > 1 ? 's' : ''}`,
-                      },
-                    ]
-                  : [],
-              )}
-              on:select={(e) => onClassAction(label, e.detail)}
-            />
-          </div>
-          <div class="browser-class-body">
-            {#each instances as { id, thumbnail }}
-              <img
-                src={thumbnail}
-                alt="thumbnail"
-                class="m-1"
-                class:selected={$selected.includes(id)}
-                on:click|stopPropagation={() => selectInstance(id)}
+          <div class="w-full">
+            <div class="browser-class-header">
+              <span class="browser-class-title">{label}</span>
+              <PopMenu
+                actions={[
+                  { code: 'edit', text: 'Edit class label' },
+                  { code: 'delete', text: 'Delete class' },
+                ].concat(
+                  $selected.length > 0
+                    ? [
+                        {
+                          code: 'deleteInstances',
+                          text: `Delete selected instance${$selected.length > 1 ? 's' : ''}`,
+                        },
+                        {
+                          code: 'relabelInstances',
+                          text: `Relabel selected instance${$selected.length > 1 ? 's' : ''}`,
+                        },
+                      ]
+                    : [],
+                )}
+                on:select={(e) => onClassAction(label, e.detail)}
               />
-            {/each}
+            </div>
+
+            <div class="browser-class-body">
+              {#each instances as { id, thumbnail }}
+                <img
+                  src={thumbnail}
+                  alt="thumbnail"
+                  class="m-1"
+                  class:selected={$selected.includes(id)}
+                  in:scale
+                  out:scale
+                  on:click|stopPropagation={() => selectInstance(id)}
+                />
+              {/each}
+            </div>
+          </div>
+          <div class="pb-1">
+            {#if loaded < total}
+              <Button size="small" variant="light" on:click={() => loadMore(label)}>
+                View More
+              </Button>
+            {/if}
           </div>
         </div>
       {/each}
@@ -228,7 +307,7 @@
 
 <style>
   .browser-class {
-    @apply relative m-2 w-1/3 grow;
+    @apply relative m-2 w-1/3 grow flex flex-col items-center justify-between;
     @apply border-gray-500 border border-solid rounded-lg;
     min-width: 300px;
   }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import fs from 'fs';
 import path from 'path';
 import { mkdirp, copy, dist } from './utils.js';
@@ -23,7 +24,7 @@ export async function create(cwd, options) {
  */
 function write_template_files(template, typescript, name, cwd) {
   const dir = dist(`templates/${template}`);
-  copy(`${dir}/assets`, cwd, (name) => name.replace('DOT-', '.'));
+  copy(`${dir}/assets`, cwd, (fname) => fname.replace('DOT-', '.'));
   copy(`${dir}/package.json`, `${cwd}/package.json`);
 
   const manifest = `${dir}/files.${typescript ? 'ts' : 'js'}.json`;
@@ -83,7 +84,7 @@ function write_common_files(cwd, options, name) {
  * @returns {boolean}
  */
 function matches_condition(condition, options) {
-  return condition === 'default' // || condition === 'skeleton'
+  return condition === 'default' || condition === 'sveltekit'
     ? options.template === condition
     : options[condition];
 }
@@ -107,6 +108,7 @@ function merge(target, source) {
 
       merge(target_value, source_value);
     } else {
+      // eslint-disable-next-line no-param-reassign
       target[key] = source[key];
     }
   }
@@ -114,7 +116,7 @@ function merge(target, source) {
 
 /** @param {Record<string, any>} obj */
 function sort_keys(obj) {
-  if (!obj) return;
+  if (!obj) return null;
 
   /** @type {Record<string, any>} */
   const sorted = {};
