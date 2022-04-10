@@ -253,6 +253,41 @@ const t = text(
 );
 ```
 
+## textArea
+
+```tsx
+textArea(defaultValue: string, placeholder: string): TextArea;
+```
+
+A generic GUI text area component.
+
+### Parameters
+
+| Option       | Type   | Description      | Required |
+| ------------ | ------ | ---------------- | :------: |
+| defaultValue | string | Initial value    |          |
+| placeholder  | string | Placeholder text |          |
+
+### Streams
+
+| Name       | Type    | Description                                 | Hold |
+| ---------- | ------- | ------------------------------------------- | :--: |
+| \$value    | string  | Stream defining the textarea's value        |  ✓   |
+| \$disabled | boolean | Stream defining if the textarea is disabled |  ✓   |
+
+### Screenshot
+
+<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
+  <img src="./images/text-area.png" alt="Screenshot of the text-area component">
+</div>
+
+### Example
+
+```js
+const comments = textArea('', 'Enter some comments');
+comments.$value.subscribe(console.log);
+```
+
 ## textInput
 
 ```tsx
@@ -269,10 +304,10 @@ A generic GUI text input component.
 
 ### Streams
 
-| Name       | Type    | Description                               | Hold |
-| ---------- | ------- | ----------------------------------------- | :--: |
-| \$value    | string  | Stream defining the input's value         |  ✓   |
-| \$disabled | boolean | Stream defining if the toggle is disabled |  ✓   |
+| Name       | Type    | Description                              | Hold |
+| ---------- | ------- | ---------------------------------------- | :--: |
+| \$value    | string  | Stream defining the input's value        |  ✓   |
+| \$disabled | boolean | Stream defining if the input is disabled |  ✓   |
 
 ### Screenshot
 

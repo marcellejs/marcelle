@@ -25,6 +25,7 @@ export * from './select';
 export * from './sketch-pad';
 export * from './slider';
 export * from './text';
+export * from './text-area';
 export * from './text-input';
 export * from './tfjs-model';
 export * from './toggle';
