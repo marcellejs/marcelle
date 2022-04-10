@@ -1,5 +1,11 @@
 import { fileUpload, onnxModel, select } from '@marcellejs/core';
 
+/**
+ * @warning
+ * onnxruntime-web is not included in the build, to use the `onnxModel` component,
+ * add the following line to your `index.html`:
+ * <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@dev/dist/ort.js"></script>
+ */
 export const classifier = onnxModel({
   inputType: 'generic',
   taskType: 'classification',

@@ -293,6 +293,16 @@ The implementation currently supports tensors as input, formatted as nested numb
 
 Such generic models cannot be trained.
 
+::: warning
+
+onnxruntime-web is not included in the build, to use the `onnxModel` component, add the following line to your `index.html`:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@dev/dist/ort.js"></script>
+```
+
+:::
+
 ### Methods
 
 #### .loadFromFile()
