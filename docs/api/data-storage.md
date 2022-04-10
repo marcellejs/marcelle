@@ -329,18 +329,36 @@ The backend package is under active development and is not yet stable. It is not
 
 ### Adding a backend to an existing application
 
-If you generated a Marcelle application using the CLI, adding a backend only requires one additional command:
+A backend can be added to a Marcelle application using the [CLI](/cli.html):
 
-```sh
-marcelle generate backend
+<code-group>
+<code-block title="npm">
+```bash
+npx marcelle
 ```
+</code-block>
+
+<code-block title="yarn">
+```bash
+yarn marcelle
+```
+</code-block>
+
+<code-block title="pnpm">
+```bash
+pnpx marcelle
+```
+</code-block>
+</code-group>
+
+Select 'Manage the backend', then 'Configure a backend'. this will install `@marcellejs/backend` as a dependency to your project and create configuration files.
 
 Two database systems are currently available for storing data:
 
 - [NeDb](https://github.com/louischatriot/nedb) - an embedded datastore with a MongoDB like API. NeDB can store data in-memory or on the filesystem which makes it useful as a persistent storage without a separate database server.
 - [MongoDb](https://www.mongodb.com/)
 
-The CLI will install `@marcellejs/core` and store configuration files in `backend/config`.
+The CLI will install `@marcellejs/backend` and store configuration files in `backend/config`.
 
 To run the backend locally:
 

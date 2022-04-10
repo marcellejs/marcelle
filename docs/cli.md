@@ -100,7 +100,7 @@ The CLI offers two tools to manage persistent data in a server-side 'backend'.
 
 #### Configuring a backend
 
-To simply add a backend to your application, select 'Manage the backend', then 'Configure a backend'. this will install `@marcellejs/backend` as a dependency to your project and create configuration files
+To simply add a backend to your application, select 'Manage the backend', then 'Configure a backend'. this will install `@marcellejs/backend` as a dependency to your project and create configuration files.
 
 Two options are available for the backend:
 

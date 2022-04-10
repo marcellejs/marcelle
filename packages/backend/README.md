@@ -13,20 +13,28 @@ It currently supports NeDB and MongoDB databases.
 
 ## Getting Started
 
-The easiest way to get started is to use Marcelle's CLI:
-https://github.com/marcellejs/cli
+[Online Documentation](https://marcelle.dev/api/data-storage.html#server-side-storage)
 
-1. Install `@marcellejs/cli`:
+The easiest way to get started is to use Marcelle's [CLI](https://marcelle.dev/cli.html). In an existing Marcelle application, run the cli with `npx marcelle`. Select 'Manage the backend', then 'Configure a backend'. this will install `@marcellejs/backend` as a dependency to your project and create configuration files.
 
-   ```
-   npm i -g yo @marcellejs/cli
-   ```
+Two database systems are currently available for storing data:
 
-2. Generate an application, choosing `On the server` to the question 'Where do you want to store the data?'
+- [NeDb](https://github.com/louischatriot/nedb) - an embedded datastore with a MongoDB like API. NeDB can store data in-memory or on the filesystem which makes it useful as a persistent storage without a separate database server.
+- [MongoDb](https://www.mongodb.com/)
 
-   ```
-   marcelle generate app
-   ```
+The CLI will install `@marcellejs/backend` and store configuration files in `backend/config`.
+
+To run the backend locally:
+
+```sh
+npm run backend
+```
+
+The backend API will be available on [http://localhost:3030](http://localhost:3030). From a Marcelle application, interacting with this backend can be done through data stores, by instanciating them with the server URL as `location` parameter:
+
+```js
+const store = dataStore('http://localhost:3030');
+```
 
 ## Configuration
 

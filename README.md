@@ -23,10 +23,10 @@ Marcelle is a modular open source toolkit for programming interactive machine le
 [See online documentation](https://marcelle.dev/guide/)
 
 ```bash
-npm install -g @marcellejs/cli
-mkdir marcelle-tutorial
+npm init marcelle marcelle-tutorial
 cd marcelle-tutorial
-marcelle generate app
+npm install
+npm run dev -- --open
 ```
 
 ## Usage

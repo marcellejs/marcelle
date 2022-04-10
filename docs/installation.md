@@ -10,21 +10,37 @@ There are several ways to start using Marcelle:
 Marcelle is still experimental and is currently under active development. Breaking changes are expected.
 :::
 
-## Using Marcelle CLI
+## Using create-marcelle
 
-Install the CLI globally:
+To create a new Marcelle project, just run:
 
+<code-group>
+<code-block title="npm">
 ```bash
-npm install -g @marcellejs/cli
+npm init marcelle marcelle-tutorial
+cd marcelle-tutorial
+npm install
 ```
+</code-block>
 
-Generate a Marcelle application (if unsure about the options, just select the defaults):
-
+<code-block title="yarn">
 ```bash
-marcelle generate app
+yarn create marcelle marcelle-tutorial
+cd marcelle-tutorial
+yarn
 ```
+</code-block>
 
-See the [CLI's documentation](/cli.html)
+<code-block title="pnpm">
+```bash
+pnpm create marcelle marcelle-tutorial
+cd marcelle-tutorial
+pnpm i
+```
+</code-block>
+</code-group>
+
+See the [CLI's documentation](/cli.html) for more information about available options.
 
 ## Using a package manager
 
