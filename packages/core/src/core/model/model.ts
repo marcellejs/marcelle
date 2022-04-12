@@ -7,6 +7,7 @@ import type { DataStore } from '../data-store';
 import { Stream } from '../stream';
 import { Component } from '../component';
 import { logger } from '../logger';
+import { throwError } from '../../utils';
 
 export abstract class Model<InputType, OutputType, PredictionType>
   extends Component
@@ -55,10 +56,19 @@ export abstract class Model<InputType, OutputType, PredictionType>
 
   sync(store: DataStore, name: string): this {
     this.syncData = { name, store };
-    this.syncData.store.connect().then(() => {
-      this.syncData.service = this.syncData.store.service(this.serviceName) as Service<StoredModel>;
-      this.setupSync();
-    });
+    this.syncData.store
+      .connect()
+      .then(() => {
+        this.syncData.service = this.syncData.store.service(
+          this.serviceName,
+        ) as Service<StoredModel>;
+        this.setupSync();
+      })
+      .catch((e) => {
+        const err = new Error(e?.message);
+        err.name = `Model Sync Error (${name}): datastore connection failed`;
+        throwError(err, { duration: 0 });
+      });
     return this;
   }
 

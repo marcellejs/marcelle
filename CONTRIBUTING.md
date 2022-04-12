@@ -63,10 +63,6 @@ The core Svelte team will be monitoring for pull requests. Do help us by making 
 
 Please configure your editor to use [Eslint](https://eslint.org) and [Prettier](https://prettier.io/), for which configuration files are provided.
 
-### Code conventions
-
-TODO
-
 ## Other ressources
 
 The [Open Source Guides](https://opensource.guide/) website has a collection of resources for individuals, communities, and companies. These resources help people who want to learn how to run and contribute to open source projects. Contributors and people new to open source alike will find the following guides especially useful:

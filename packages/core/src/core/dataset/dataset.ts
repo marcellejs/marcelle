@@ -7,7 +7,6 @@ import type {
 } from '@feathersjs/feathers';
 import type { Instance, ObjectId } from '../types';
 import { Stream } from '../stream';
-import { logger } from '../logger';
 import { Component } from '../component';
 import { dataStore, DataStore } from '../data-store';
 import { addScope, limitToScope, dataURL2ImageData, imageData2DataURL } from '../data-store/hooks';
@@ -49,9 +48,11 @@ export class Dataset<InputType, OutputType> extends Component {
         .connect()
         .then(() => this.setup())
         .then(resolve)
-        .catch((err) => {
-          logger.log(`[dataset:${name}] dataStore connection failed`, err);
-          reject();
+        .catch((e) => {
+          const err = new Error(e?.message);
+          err.name = `Dataset Error (${name}): datastore connection failed`;
+          throwError(err, { duration: 0 });
+          reject(err);
         });
     });
   }

@@ -27,7 +27,7 @@ export enum DataStoreBackend {
   Remote,
 }
 
-interface User {
+export interface User {
   email: string;
 }
 
@@ -40,6 +40,23 @@ export class DataStore {
   location: string;
 
   $services: Stream<string[]> = new Stream([], true);
+
+  loginFunction = async (): Promise<User> => {
+    const app = new Login({
+      target: document.body,
+      props: { dataStore: this },
+    });
+    return new Promise<User>((resolve, reject) => {
+      app.$on('terminate', (user: User) => {
+        app.$destroy();
+        if (user) {
+          resolve(user);
+        } else {
+          reject();
+        }
+      });
+    });
+  };
 
   #initPromise: Promise<void>;
   #connectPromise: Promise<void>;
@@ -125,14 +142,14 @@ export class DataStore {
     }
     await this.#initPromise;
     await this.#connectPromise;
-    if (this.requiresAuth) {
-      await this.authenticate();
-    }
-    return this.requiresAuth ? this.user : { email: null };
+    return this.authenticate();
   }
 
   async authenticate(): Promise<User> {
-    if (!this.requiresAuth) return { email: null };
+    if (!this.requiresAuth) {
+      this.user = { email: null };
+      return this.user;
+    }
     if (!this.#authenticationPromise) {
       this.#authenticationPromise = new Promise<void>((resolve, reject) => {
         this.feathers
@@ -143,23 +160,16 @@ export class DataStore {
             resolve();
           })
           .catch(() => {
-            const app = new Login({
-              target: document.body,
-              props: { dataStore: this },
-            });
-            app.$on('terminate', (success) => {
-              app.$destroy();
-              if (success) {
+            this.loginFunction()
+              .then((user) => {
+                this.user = user;
                 resolve();
-              } else {
-                reject();
-              }
-            });
+              })
+              .catch(reject);
           });
       });
     }
-    await this.#authenticationPromise;
-    return this.user;
+    return this.#authenticationPromise.then(() => this.user);
   }
 
   async login(email: string, password: string): Promise<User> {

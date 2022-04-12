@@ -4,9 +4,10 @@ import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
 import { DataStore } from '../../core/data-store/data-store';
 import { Dataset, isDataset } from '../../core/dataset';
-import { dataStore, logger, Model } from '../../core';
+import { dataStore, Model } from '../../core';
 import { iterableFromService, ServiceIterable } from '../../core/data-store/service-iterable';
 import { toKebabCase } from '../../utils/string';
+import { throwError } from '../../utils';
 
 export interface BatchPredictionStatus {
   status: 'idle' | 'start' | 'running' | 'success' | 'error' | 'loaded' | 'loading';
@@ -35,8 +36,10 @@ export class BatchPrediction extends Component {
       .then(() => {
         this.setup();
       })
-      .catch((err) => {
-        logger.log(`[batchPrediction:${name}] dataStore connection failed`, err);
+      .catch((e) => {
+        const err = new Error(e?.message);
+        err.name = `Batch Prediction Error (${name}): Datastore connection failed`;
+        throwError(err, { duration: 0 });
       });
   }
 
