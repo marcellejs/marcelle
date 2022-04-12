@@ -11,11 +11,13 @@ const findDistinctNedb = async (context: HookContext) => {
 
   query.$select = [$distinct];
   query.$limit = 0;
-  const { total } = (await await context.service.find({ query })) as Paginated<
+  const { total } = (await await context.service.find({ ...context.params, query })) as Paginated<
     Record<string, unknown>
   >;
   query.$limit = total;
-  const { data } = (await context.service.find({ query })) as Paginated<Record<string, unknown>>;
+  const { data } = (await context.service.find({ ...context.params, query })) as Paginated<
+    Record<string, unknown>
+  >;
   const res = Array.from(new Set(data.map((item) => item[$distinct])));
   context.result = res;
 
