@@ -311,8 +311,8 @@ export class Stream<T> {
     return new Stream(most.debounce(period, this));
   }
 
-  awaitPromises<A>(): Stream<A> {
-    return new Stream(most.awaitPromises(this as unknown as Stream<Promise<A>>));
+  awaitPromises(): Stream<Awaited<T>> {
+    return new Stream(most.awaitPromises(this as unknown as Stream<Promise<Awaited<T>>>));
   }
 
   recoverWith<A, E extends Error>(f: (error: E) => Stream<A>): Stream<T | A> {
