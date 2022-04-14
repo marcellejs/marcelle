@@ -233,7 +233,7 @@ This tutorial won't extensively cover Svelte. For details, please refer to Svelt
 
 ## Connecting to the dataset
 
-Our UMAP component will apply to any dataset to visualize its instances on a 2D map. We start by specifying a dataset as the main parameter in our constructor. We then define a method `update` that will fetch all instances in the dataset and log them to the console.
+Our UMAP component will apply to any dataset to visualize its instances on a 2D map. We start by specifying a dataset as the main parameter in our constructor. We then define a method `update` that will fetch all instances in the dataset and log them to the console. In `src/components/umap/umap.component.js`:
 
 ```js{2,5,8-11}
 export class Umap extends Component {
@@ -247,6 +247,9 @@ export class Umap extends Component {
     const instances = await this.dataset.items().toArray();
     console.log('instances', instances);
   }
+
+  // ...
+
 }
 ```
 
@@ -376,12 +379,12 @@ Let's correct our view's instanciation in the component definition (`umap.compon
 export class Umap extends Component {
   // ...
 
-  mount(targetSelector) {
-    const target = document.querySelector(targetSelector || `#${this.id}`);
-    if (!target) return;
+  mount(target) {
+    const t = target || document.querySelector(`#${this.id}`);
+    if (!t) return;
     this.destroy();
     this.$$.app = new View({
-      target,
+      target: t,
       props: {
         title: this.title,
         embedding: this.$embedding,
