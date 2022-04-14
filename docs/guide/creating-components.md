@@ -255,8 +255,8 @@ Let's add a button to our dashboard to trigger an update of our component. When 
 ```js{1,3-6,13}
 const trainingSetUmap = umap(trainingSet);
 
-const updateUMap = button('Update Visualization');
-updateUMap.$click.subscribe(() => {
+const updateUmap = button('Update Visualization');
+updateUmap.$click.subscribe(() => {
   trainingSetUmap.update();
 });
 
@@ -265,7 +265,7 @@ updateUMap.$click.subscribe(() => {
 dash
   .page('Data Management')
   .sidebar(input, label, featureExtractor)
-  .use(trainingSetBrowser, updateUMap, trainingSetUmap);
+  .use(trainingSetBrowser, updateUmap, trainingSetUmap);
 ```
 
 When clicking the 'Update Visualization' button, an array containing the data of all instances should be displayed in the console.
@@ -283,7 +283,7 @@ We can then import the library and compute UMAP asynchronously, following the li
 ```js{2,11-16}
 import { Component } from '@marcellejs/core';
 import { UMAP } from 'umap-js';
-import Component from './umap.view.svelte';
+import View from './umap.view.svelte';
 
 export class Umap extends Component {
   // ...
@@ -316,7 +316,7 @@ First, we initialize the stream in the constructor, and call the component's `st
 ```js{1,10-11,20,22}
 import { Component, Stream } from '@marcellejs/core';
 import { UMAP } from 'umap-js';
-import Component from './umap.view.svelte';
+import View from './umap.view.svelte';
 
 export class Umap extends Component {
   constructor(dataset) {
@@ -328,8 +328,9 @@ export class Umap extends Component {
   }
 
   async update() {
-    const instances = await this.dataset.getAllInstances();
+    const instances = await this.dataset.items().select(['x', 'y']).toArray();
     // Concatenate all instance features in a 2D array:
+    const umapData = instances.reduce((d, { x }) => d.concat([x[0]]), []);
     const umapData = instances.reduce((data, { features }) => data.concat(features), []);
     const umap = new UMAP();
     const finalEmbedding = await umap.fitAsync(umapData, () => {
@@ -379,10 +380,10 @@ export class Umap extends Component {
     const target = document.querySelector(targetSelector || `#${this.id}`);
     if (!target) return;
     this.destroy();
-    this.$$.app = new Component({
+    this.$$.app = new View({
       target,
       props: {
-        title: this.name,
+        title: this.title,
         embedding: this.$embedding,
       },
     });
