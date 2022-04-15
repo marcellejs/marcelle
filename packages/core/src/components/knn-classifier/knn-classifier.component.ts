@@ -1,4 +1,3 @@
-import type { ServiceIterable } from '../../core/data-store/service-iterable';
 import type { Tensor2D, TensorLike } from '@tensorflow/tfjs-core';
 import { tensor, tensor2d } from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/flatten';
@@ -21,6 +20,7 @@ import { Dataset, isDataset } from '../../core/dataset';
 import { Catch } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
+import type { LazyIterable } from '../../utils';
 
 export interface KNNClassifierOptions {
   k: number;
@@ -46,7 +46,7 @@ export class KNNClassifier extends Model<TensorLike, string, ClassifierResults> 
 
   @Catch
   async train(
-    dataset: Dataset<TensorLike, string> | ServiceIterable<Instance<TensorLike, string>>,
+    dataset: Dataset<TensorLike, string> | LazyIterable<Instance<TensorLike, string>>,
   ): Promise<void> {
     this.labels = isDataset(dataset)
       ? await dataset.distinct('y')

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { ObjectDetectorResults, Stream } from '../../core';
-  import ViewContainer from '../../core/ViewContainer.svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
 
   export let title: string;
   export let imageStream: Stream<ImageData>;

@@ -3,7 +3,7 @@
 <script lang="ts">
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
-  import ViewContainer from '../../core/ViewContainer.svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
   import { Stream } from '../../core/stream';
 
   export let title: string;

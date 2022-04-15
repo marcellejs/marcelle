@@ -1,6 +1,6 @@
 <script lang="ts">
   export let progress: number;
-  export let type: 'default' | 'idle' | 'success' | 'danger';
+  export let type: 'default' | 'idle' | 'success' | 'danger' = 'default';
   export let thin = false;
 </script>
 

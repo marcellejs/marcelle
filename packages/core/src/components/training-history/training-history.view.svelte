@@ -3,7 +3,6 @@
   import type { Column } from '@marcellejs/design-system';
   import type { Service } from '@feathersjs/feathers';
   import { createEventDispatcher, onMount, tick } from 'svelte';
-  import { ViewContainer } from '../../core';
   import {
     TableServiceProvider,
     Table,
@@ -11,6 +10,7 @@
     TabList,
     TabPanel,
     Tabs,
+    ViewContainer,
   } from '@marcellejs/design-system';
   import RunMeta from './RunMeta.svelte';
   import RunGraphs from './RunGraphs.svelte';

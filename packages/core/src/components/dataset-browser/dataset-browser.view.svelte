@@ -3,7 +3,7 @@
   import { scale } from 'svelte/transition';
 
   import type { Instance, ObjectId, Stream } from '../../core';
-  import ViewContainer from '../../core/ViewContainer.svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
   import { Button, PopMenu } from '@marcellejs/design-system';
   import type { Dataset } from '../../core/dataset';
 

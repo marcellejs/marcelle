@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, createEventDispatcher, tick } from 'svelte';
   import { Stream } from '../../core';
-  import ViewContainer from '../../core/ViewContainer.svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
   import { Button } from '@marcellejs/design-system';
 
   export let title: string;

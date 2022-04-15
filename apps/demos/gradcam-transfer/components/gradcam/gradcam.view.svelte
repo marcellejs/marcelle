@@ -1,5 +1,5 @@
 <script>
-  import { ViewContainer } from '@marcellejs/core/svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
 
   export let title;
   export let options;

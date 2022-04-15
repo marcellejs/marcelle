@@ -2,7 +2,7 @@
   import { onMount, tick } from 'svelte';
 
   import type { Stream } from '../../core';
-  import ViewContainer from '../../core/ViewContainer.svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
   import { Button } from '@marcellejs/design-system';
 
   export let title: string;

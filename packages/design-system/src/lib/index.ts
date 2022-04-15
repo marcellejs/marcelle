@@ -19,4 +19,5 @@ export { default as Tabs } from './Tabs.svelte';
 export { TableDataProvider } from './table-abstract-provider';
 export { TableArrayProvider } from './table-array-provider';
 export { TableServiceProvider } from './table-service-provider';
+export { default as ViewContainer } from './ViewContainer.svelte';
 export * from './types';

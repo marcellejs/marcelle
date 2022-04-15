@@ -7,7 +7,7 @@ import { Dataset, isDataset } from '../../core/dataset';
 import { dataStore, Model } from '../../core';
 import { iterableFromService, ServiceIterable } from '../../core/data-store/service-iterable';
 import { toKebabCase } from '../../utils/string';
-import { throwError } from '../../utils';
+import { LazyIterable, throwError } from '../../utils';
 
 export interface BatchPredictionStatus {
   status: 'idle' | 'start' | 'running' | 'success' | 'error' | 'loaded' | 'loading';
@@ -55,7 +55,7 @@ export class BatchPrediction extends Component {
 
   async predict<InputType, PredictionType>(
     model: Model<InputType, unknown, PredictionType>,
-    dataset: Dataset<InputType, unknown> | ServiceIterable<Instance<InputType, unknown>>,
+    dataset: Dataset<InputType, unknown> | LazyIterable<Instance<InputType, unknown>>,
   ): Promise<void> {
     try {
       const total = isDataset(dataset) ? dataset.$count.value : (await dataset.toArray()).length;

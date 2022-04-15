@@ -30,8 +30,7 @@
       "import": "./dist/marcelle.esm.js",
       "require": "./dist/marcelle.bundle.umd.js"
     },
-    "./dist/marcelle.css": "./dist/marcelle.css",
-    "./svelte": "./dist/svelte/index.js"
+    "./dist/marcelle.css": "./dist/marcelle.css"
   },
   "files": [
     "dist",
@@ -39,10 +38,9 @@
   ],
   "scripts": {
     "dev": "rollup -c -w",
-    "build": "pnpm run clean && rollup -c && pnpm run types:build&& pnpm run svelte:build",
+    "build": "pnpm run clean && rollup -c && pnpm run types:build",
     "types:dev": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir types --watch",
     "types:build": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir types",
-    "svelte:build": "node scripts/compile_svelte.js",
     "lint": "eslint src",
     "clean": "rm -rf dist types"
   },

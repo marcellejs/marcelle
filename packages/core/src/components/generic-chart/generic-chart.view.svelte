@@ -27,7 +27,7 @@
   import type { ChartOptions as ChartJsOptions, ChartConfiguration } from 'chart.js';
   import { onDestroy, onMount, tick } from 'svelte';
   import { mergeDeep } from '../../utils/object';
-  import ViewContainer from '../../core/ViewContainer.svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
   import type { ChartDataset } from './generic-chart.component';
   export let title: string;
   export let preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };

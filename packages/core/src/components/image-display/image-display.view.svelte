@@ -1,8 +1,9 @@
 <svelte:options accessors />
 
 <script lang="ts">
+  import type { Stream } from '../../core/stream';
   import { onDestroy, onMount, tick } from 'svelte';
-  import { ViewContainer, Stream } from '../../core';
+  import { ViewContainer } from '@marcellejs/design-system';
   import { noop } from '../../utils/misc';
 
   export let title: string;

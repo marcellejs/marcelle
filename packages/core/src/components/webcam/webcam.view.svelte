@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, onDestroy, tick } from 'svelte';
   import type { Stream } from '../../core';
-  import ViewContainer from '../../core/ViewContainer.svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
   import { Spinner, Switch } from '@marcellejs/design-system';
   import { noop } from '../../utils/misc';
 

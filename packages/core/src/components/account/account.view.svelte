@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { DataStore } from '../../core/data-store';
-  import ViewContainer from '../../core/ViewContainer.svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
   import { Spinner } from '@marcellejs/design-system';
 
   export let title: string;

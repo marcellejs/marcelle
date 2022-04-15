@@ -2,12 +2,11 @@
 import type { Paginated, Service } from '@feathersjs/feathers';
 import type { Dataset } from '../dataset';
 import type { Instance, ObjectId, Parametrable, StoredModel, TrainingStatus } from '../types';
-import type { ServiceIterable } from '../data-store/service-iterable';
 import type { DataStore } from '../data-store';
 import { Stream } from '../stream';
 import { Component } from '../component';
 import { logger } from '../logger';
-import { throwError } from '../../utils';
+import { LazyIterable, throwError } from '../../utils';
 
 export abstract class Model<InputType, OutputType, PredictionType>
   extends Component
@@ -37,10 +36,10 @@ export abstract class Model<InputType, OutputType, PredictionType>
   }
 
   abstract train(
-    dataset: Dataset<InputType, OutputType> | ServiceIterable<Instance<InputType, OutputType>>,
+    dataset: Dataset<InputType, OutputType> | LazyIterable<Instance<InputType, OutputType>>,
     validationDataset?:
       | Dataset<InputType, OutputType>
-      | ServiceIterable<Instance<InputType, OutputType>>,
+      | LazyIterable<Instance<InputType, OutputType>>,
   ): void;
   abstract predict(x: InputType): Promise<PredictionType>;
 

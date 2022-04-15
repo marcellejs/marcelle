@@ -4,13 +4,13 @@ import '@tensorflow/tfjs-core/dist/public/chained_ops/arg_max';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/squeeze';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/expand_dims';
 import { loadLayersModel, Sequential } from '@tensorflow/tfjs-layers';
-import type { ServiceIterable } from '../../core/data-store/service-iterable';
 import { Dataset, isDataset } from '../../core/dataset';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import { dataset2tfjs, TFDataset } from '../../core/model/tfjs-utils';
 import { TFJSBaseModel } from './tfjs-base-model';
 import { Stream } from '../stream';
 import type { Instance } from '../types';
+import type { LazyIterable } from '../../utils';
 
 export interface TFJSCustomModelOptions {
   epochs: number;
@@ -68,10 +68,10 @@ export abstract class TFJSCustomModel<InputType, OutputType, PredictionType> ext
 
   @Catch
   async train(
-    dataset: Dataset<InputType, OutputType> | ServiceIterable<Instance<InputType, OutputType>>,
+    dataset: Dataset<InputType, OutputType> | LazyIterable<Instance<InputType, OutputType>>,
     validationDataset?:
       | Dataset<InputType, OutputType>
-      | ServiceIterable<Instance<InputType, OutputType>>,
+      | LazyIterable<Instance<InputType, OutputType>>,
   ): Promise<void> {
     this.$training.set({ status: 'start', epochs: this.parameters.epochs.get() });
 

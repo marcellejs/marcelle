@@ -3,13 +3,13 @@ import '@tensorflow/tfjs-core/dist/public/chained_ops/gather';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/arg_max';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/squeeze';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/expand_dims';
-import type { ServiceIterable } from '../../core/data-store/service-iterable';
 import { Dataset, isDataset } from '../../core/dataset';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import { throwError } from '../../utils/error-handling';
 import { TFJSCustomModel, TFJSCustomModelOptions } from './tfjs-custom-model';
 import type { ClassifierResults } from './types';
 import type { Instance } from '../types';
+import type { LazyIterable } from '../../utils';
 
 export type TFJSCustomClassifierOptions = TFJSCustomModelOptions;
 
@@ -22,8 +22,8 @@ export abstract class TFJSCustomClassifier extends TFJSCustomModel<
 
   @Catch
   async train(
-    dataset: Dataset<TensorLike, string> | ServiceIterable<Instance<TensorLike, string>>,
-    validationDataset?: Dataset<TensorLike, string> | ServiceIterable<Instance<TensorLike, string>>,
+    dataset: Dataset<TensorLike, string> | LazyIterable<Instance<TensorLike, string>>,
+    validationDataset?: Dataset<TensorLike, string> | LazyIterable<Instance<TensorLike, string>>,
   ): Promise<void> {
     const isDs = isDataset(dataset);
     this.labels = isDs

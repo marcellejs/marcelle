@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Stream } from '../../core/stream';
-  import ViewContainer from '../../core/ViewContainer.svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
   import RangeSlider from 'svelte-range-slider-pips';
 
   export let title: string;

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Stream } from '../../core/stream';
-  import ViewContainer from '../../core/ViewContainer.svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
   import ParamWrapper from './ParamWrapper.svelte';
 
   export let title: string;

@@ -2,7 +2,7 @@
   import { Chart, CategoryScale, Title, Tooltip } from 'chart.js';
   import { MatrixElement, MatrixController } from 'chartjs-chart-matrix';
   import { onDestroy } from 'svelte';
-  import ViewContainer from '../../core/ViewContainer.svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
 
   export let title;
   export let loading;

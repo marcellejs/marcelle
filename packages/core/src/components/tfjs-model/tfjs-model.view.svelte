@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Stream, TrainingStatus } from '../../core';
-  import ViewContainer from '../../core/ViewContainer.svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
 
   export let title: string;
   export let training: Stream<TrainingStatus>;

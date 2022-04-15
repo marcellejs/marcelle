@@ -1,4 +1,4 @@
-import type { ServiceIterable } from '../../core/data-store/service-iterable';
+import type { LazyIterable } from '../../utils';
 import kmeans from 'ml-kmeans';
 import {
   Stream,
@@ -53,7 +53,7 @@ export class KMeansClustering extends Model<number[][], undefined, ClusteringRes
 
   @Catch
   async train(
-    dataset: Dataset<number[][], undefined> | ServiceIterable<Instance<number[][], undefined>>,
+    dataset: Dataset<number[][], undefined> | LazyIterable<Instance<number[][], undefined>>,
   ): Promise<void> {
     this.$training.set({ status: 'start', epochs: 1 });
     const ds = isDataset(dataset) ? dataset.items() : dataset;

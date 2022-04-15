@@ -245,7 +245,7 @@ In our example, we define "props" in the script part by using the keyword `expor
 
 ```html
 <script>
-  import { ViewContainer } from '@marcellejs/core/svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
   export let title;
   export let options;
 </script>
@@ -389,7 +389,7 @@ Let's edit `umap.view.svelte` to pass our stream of embeddings to the component:
 
 ```html
 <script>
-  import { ViewContainer } from '@marcellejs/core/svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
 
   export let title;
   export let embedding;
@@ -437,7 +437,7 @@ We then integrate scatter-gl in the Svelte component:
 <script>
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
-  import { ViewContainer } from '@marcellejs/core/svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
 
   export let title;
   export let embedding;
@@ -547,7 +547,7 @@ export class Umap extends Component {
 <script>
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
-  import { ViewContainer } from '@marcellejs/core/svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
 
   export let title;
   export let embedding;

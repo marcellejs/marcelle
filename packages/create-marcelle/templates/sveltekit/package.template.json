@@ -18,6 +18,7 @@
     "@marcellejs/core": "workspace:*"
   },
   "devDependencies": {
+    "@marcellejs/design-system": "workspace:*",
     "@marcellejs/devtools": "workspace:*",
     "@sveltejs/adapter-static": "^1.0.0-next.29",
     "@sveltejs/kit": "next",

@@ -2,8 +2,7 @@
   import type { Dataset, Instance, Stream } from '../../core';
   import type { Column } from '@marcellejs/design-system';
   import { onMount, tick } from 'svelte';
-  import { ViewContainer } from '../../core';
-  import { TableServiceProvider, Spinner, Table } from '@marcellejs/design-system';
+  import { TableServiceProvider, Spinner, Table, ViewContainer } from '@marcellejs/design-system';
 
   export let title: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

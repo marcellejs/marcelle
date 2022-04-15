@@ -60,6 +60,7 @@
     "./TableFooter.svelte": "./dist/TableFooter.svelte",
     "./TableHeaderCell.svelte": "./dist/TableHeaderCell.svelte",
     "./Tabs.svelte": "./dist/Tabs.svelte",
+    "./ViewContainer.svelte": "./dist/ViewContainer.svelte",
     ".": "./dist/index.js",
     "./styles.css": "./dist/styles.css",
     "./table-abstract-provider": "./dist/table-abstract-provider.js",

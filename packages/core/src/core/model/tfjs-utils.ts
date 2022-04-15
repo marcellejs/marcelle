@@ -1,6 +1,6 @@
 import type { Dataset as TFDataset } from '@tensorflow/tfjs-data';
 import { generator } from '@tensorflow/tfjs-data';
-import type { ServiceIterable } from '../data-store/service-iterable';
+import type { LazyIterable } from '../../utils';
 import type { Dataset } from '../dataset';
 import { isDataset } from '../dataset';
 import type { Instance } from '../types';
@@ -8,7 +8,7 @@ import type { Instance } from '../types';
 export type { TFDataset };
 
 export function dataset2tfjs<InputType, OutputType>(
-  dataset: Dataset<InputType, OutputType> | ServiceIterable<Instance<InputType, OutputType>>,
+  dataset: Dataset<InputType, OutputType> | LazyIterable<Instance<InputType, OutputType>>,
   fields: string[] = null,
   cache = false,
 ): TFDataset<Partial<Instance<InputType, OutputType>>> {

@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { Spinner, Progress } from '@marcellejs/design-system';
+  import Spinner from './Spinner.svelte';
+  import Progress from './Progress.svelte';
 
   export let title: string;
   export let loading = false;

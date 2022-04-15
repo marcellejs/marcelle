@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ViewContainer from '../../core/ViewContainer.svelte';
+  import { ViewContainer } from '@marcellejs/design-system';
   import { Progress } from '@marcellejs/design-system';
   import type { Stream } from '../../core';
   import type { ProgressType } from './progress-bar.component';
