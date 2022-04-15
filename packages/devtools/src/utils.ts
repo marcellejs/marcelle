@@ -13,7 +13,7 @@ export function mkdirp(dir: string): void {
 }
 
 export function rimraf(p: string): void {
-  (fs.rmSync || fs.rmdirSync)(p, { recursive: true, force: true });
+  fs.rmdirSync(p, { recursive: true });
 }
 
 function identity(x: string): string {
