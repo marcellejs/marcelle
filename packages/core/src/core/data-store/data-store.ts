@@ -41,26 +41,10 @@ export class DataStore {
 
   $services: Stream<string[]> = new Stream([], true);
 
-  loginFunction = async (): Promise<User> => {
-    const app = new Login({
-      target: document.body,
-      props: { dataStore: this },
-    });
-    return new Promise<User>((resolve, reject) => {
-      app.$on('terminate', (user: User) => {
-        app.$destroy();
-        if (user) {
-          resolve(user);
-        } else {
-          reject();
-        }
-      });
-    });
-  };
-
   #initPromise: Promise<void>;
   #connectPromise: Promise<void>;
-  #authenticationPromise: Promise<void>;
+  #authenticationPromise = Promise.resolve();
+  #authenticating = false;
   #createService: (name: string) => void = noop;
 
   constructor(location = 'memory') {
@@ -150,25 +134,33 @@ export class DataStore {
       this.user = { email: null };
       return this.user;
     }
-    if (!this.#authenticationPromise) {
-      this.#authenticationPromise = new Promise<void>((resolve, reject) => {
+
+    if (this.user) {
+      return this.user;
+    }
+
+    const doAuth = () => {
+      this.#authenticating = true;
+      return new Promise<void>((resolve, reject) => {
         this.feathers
           .reAuthenticate()
           .then(({ user }) => {
+            this.#authenticating = false;
             this.user = user;
             logger.log(`Authenticated as ${user.email}`);
             resolve();
           })
-          .catch(() => {
-            this.loginFunction()
-              .then((user) => {
-                this.user = user;
-                resolve();
-              })
-              .catch(reject);
+          .catch((err) => {
+            this.#authenticating = false;
+            reject(err);
           });
       });
-    }
+    };
+
+    this.#authenticationPromise = this.#authenticationPromise.then(() =>
+      this.#authenticating ? null : doAuth(),
+    );
+
     return this.#authenticationPromise.then(() => this.user);
   }
 
@@ -176,6 +168,23 @@ export class DataStore {
     const res = await this.feathers.authenticate({ strategy: 'local', email, password });
     this.user = res.user;
     return this.user;
+  }
+
+  async loginWithUI(): Promise<User> {
+    const app = new Login({
+      target: document.body,
+      props: { dataStore: this },
+    });
+    return new Promise<User>((resolve, reject) => {
+      app.$on('terminate', (user: User) => {
+        app.$destroy();
+        if (user) {
+          resolve(user);
+        } else {
+          reject();
+        }
+      });
+    });
   }
 
   async signup(email: string, password: string): Promise<User> {

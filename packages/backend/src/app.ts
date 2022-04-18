@@ -7,6 +7,7 @@ import feathers from '@feathersjs/feathers';
 import configuration from '@feathersjs/configuration';
 import express from '@feathersjs/express';
 import socketio from '@feathersjs/socketio';
+import casl from 'feathers-casl';
 
 import { Application } from './declarations';
 import logger from './logger';
@@ -14,16 +15,12 @@ import middleware from './middleware';
 import services from './services';
 import appHooks from './app.hooks';
 import channels from './channels';
-// import { HookContext as FeathersHookContext } from '@feathersjs/feathers';
 import authentication from './authentication';
 import mongodb from './mongodb';
 import { getRegisteredServices } from './utils/registered-services';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const app: Application = express(feathers());
-// export type HookContext<T = any> = {
-//   app: Application;
-// } & FeathersHookContext<T>;
 
 // Load app configuration
 app.configure(configuration());
@@ -63,6 +60,7 @@ if (app.get('database') === 'mongodb') {
 app.configure(middleware);
 if (app.get('authentication').enabled) {
   app.configure(authentication);
+  app.configure(casl());
 }
 
 // Set up our services (see `services/index.ts`)

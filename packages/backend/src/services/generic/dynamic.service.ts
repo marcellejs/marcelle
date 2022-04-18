@@ -5,7 +5,6 @@ import createModel from '../../models/generic-nedb.model';
 import hooks from './generic.hooks';
 import { Id, NullableId, Paginated, Params } from '@feathersjs/feathers';
 import { Forbidden } from '@feathersjs/errors';
-import { HookContext } from '@feathersjs/feathers';
 
 class DynamicService<T = any> {
   app?: Application;
@@ -57,12 +56,14 @@ class DynamicService<T = any> {
           Model: createModel(app, name),
           paginate: app.get('paginate'),
           multi: true,
+          whitelist: ['$not', '$and', '$distinct'],
         };
         app.use(`/${name}`, new GenericNeDB(options, app));
       } else if (app.get('database') === 'mongodb') {
         const options = {
           paginate: app.get('paginate'),
           multi: true,
+          whitelist: ['$not', '$and', '$distinct'],
         };
         app.use(`/${name}`, new GenericMongoDB(options, app, name));
       } else {
@@ -73,20 +74,6 @@ class DynamicService<T = any> {
 
       const h = hooks(app.get('database'), app.get('authentication').enabled);
       service.hooks(h);
-
-      if (app.get('authentication').enabled) {
-        service.publish((data: any, context: HookContext) => {
-          return [
-            app.channel('admins'),
-            app
-              .channel(app.channels)
-              .filter(
-                (connection) =>
-                  data.public === true || connection.user._id.equals(context?.params?.user?._id),
-              ),
-          ];
-        });
-      }
     }
 
     return app.service(name);

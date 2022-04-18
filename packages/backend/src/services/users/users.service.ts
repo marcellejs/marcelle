@@ -42,14 +42,14 @@ export default function (app: Application): void {
 
   service.hooks(hooks);
 
-  if (app.get('authentication').enabled) {
-    service.publish((data, context: HookContext) => {
-      return [
-        app.channel('admins'),
-        app
-          .channel(app.channels)
-          .filter((connection) => connection.user._id.equals(context?.params?.user?._id)),
-      ];
-    });
-  }
+  // if (app.get('authentication').enabled) {
+  //   service.publish((data, context: HookContext) => {
+  //     return [
+  //       app.channel('admins'),
+  //       app
+  //         .channel(app.channels)
+  //         .filter((connection) => connection.user._id.equals(context?.params?.user?._id)),
+  //     ];
+  //   });
+  // }
 }

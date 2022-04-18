@@ -10,7 +10,6 @@ import { Assets as AssetsMongoDB } from './assets-mongodb.class';
 import createModel from '../../models/assets-nedb.model';
 import hooks from './assets.hooks';
 import genId from '../../utils/objectid';
-import { HookContext } from '@feathersjs/feathers';
 
 export default function (app: Application): void {
   if (app.get('database') === 'nedb') {
@@ -18,6 +17,7 @@ export default function (app: Application): void {
       Model: createModel(app),
       paginate: app.get('paginate'),
       multi: true,
+      whitelist: ['$not', '$and'],
     };
 
     // Initialize our service with any options it requires
@@ -26,6 +26,7 @@ export default function (app: Application): void {
     const options = {
       paginate: app.get('paginate'),
       multi: true,
+      whitelist: ['$not', '$and'],
     };
 
     // Initialize our service with any options it requires
@@ -49,20 +50,6 @@ export default function (app: Application): void {
 
   const h = hooks(app.get('authentication').enabled);
   service.hooks(h);
-
-  if (app.get('authentication').enabled) {
-    service.publish((data: any, context: HookContext) => {
-      return [
-        app.channel('admins'),
-        app
-          .channel(app.channels)
-          .filter(
-            (connection) =>
-              data.public === true || connection.user._id.equals(context?.params?.user?._id),
-          ),
-      ];
-    });
-  }
 
   // Setup Model File upload
   if (!fs.existsSync(app.get('uploads'))) {

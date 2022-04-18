@@ -11,6 +11,7 @@ const findDistinctNedb = async (context: HookContext) => {
 
   query.$select = [$distinct];
   query.$limit = 0;
+
   const { total } = (await await context.service.find({ ...context.params, query })) as Paginated<
     Record<string, unknown>
   >;
@@ -18,6 +19,7 @@ const findDistinctNedb = async (context: HookContext) => {
   const { data } = (await context.service.find({ ...context.params, query })) as Paginated<
     Record<string, unknown>
   >;
+
   const res = Array.from(new Set(data.map((item) => item[$distinct])));
   context.result = res;
 
@@ -55,13 +57,13 @@ const findDistinct = (db: string) => {
 export default (dbType: string, requireAuth: boolean): HooksObject => {
   return {
     before: {
-      all: authHooks(requireAuth),
-      find: [findDistinct(dbType)],
-      get: [],
+      all: [],
+      find: [...authHooks(requireAuth), findDistinct(dbType)],
+      get: [...authHooks(requireAuth)],
       create: [...authCreateHooks(requireAuth), setNow('createdAt', 'updatedAt')],
       update: [...authCreateHooks(requireAuth), setNow('updatedAt')],
       patch: [...authCreateHooks(requireAuth), setNow('updatedAt')],
-      remove: [],
+      remove: [...authHooks(requireAuth)],
     },
 
     after: {

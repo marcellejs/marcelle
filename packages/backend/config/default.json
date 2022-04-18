@@ -18,6 +18,7 @@
     "enabled": false,
     "entity": "user",
     "service": "users",
+    "allowSignup": false,
     "secret": "ZjXdk3pXZLVpvcEMGGuh6LYdi9o=",
     "authStrategies": [
       "jwt",
