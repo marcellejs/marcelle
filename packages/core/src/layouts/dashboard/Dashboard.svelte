@@ -87,7 +87,9 @@
 </svelte:head>
 
 {#if showApp}
-  <div class="marcelle fixed h-screen w-screen overflow-scroll top-0 left-0">
+  <div
+    class="marcelle fixed h-screen w-full max-w-full overflow-y-scroll overflow-x-hidden top-0 left-0"
+  >
     <div class="app-container" transition:blur={{ amount: 10, duration: closable ? 400 : 0 }}>
       <DashboardHeader
         {title}
@@ -113,7 +115,7 @@
 
 <style lang="postcss">
   .app-container {
-    @apply flex flex-col absolute top-0 left-0 w-screen min-h-screen z-10;
+    @apply flex flex-col absolute top-0 left-0 w-full min-h-screen z-10;
   }
 
   .main-container {
