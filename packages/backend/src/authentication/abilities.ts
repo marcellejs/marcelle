@@ -9,7 +9,7 @@ const resolveAction = createAliasResolver({
   delete: 'remove', // use 'delete' or 'remove'
 });
 
-interface User {
+export interface User {
   _id: string;
   role?: string;
 }
