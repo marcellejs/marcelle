@@ -12,23 +12,17 @@ export function isObject(item: unknown): boolean {
  * @param target
  * @param ...sources
  */
-export function mergeDeep(
-  target: Record<string, unknown>,
-  ...sources: Record<string, unknown>[]
-): Record<string, unknown> {
+export function mergeDeep<T, U>(target: T, ...sources: U[]): T & Partial<U> {
   if (!sources.length) return target;
   const source = sources.shift();
 
-  const result = { ...target };
+  const result: T & Partial<U> = { ...target };
   if (isObject(target) && isObject(source)) {
     // eslint-disable-next-line no-restricted-syntax
     for (const key in source) {
       if (isObject(source[key])) {
         if (!result[key]) Object.assign(result, { [key]: {} });
-        result[key] = mergeDeep(
-          result[key] as Record<string, unknown>,
-          source[key] as Record<string, unknown>,
-        );
+        result[key] = mergeDeep(result[key], source[key]);
       } else {
         Object.assign(result, { [key]: source[key] });
       }

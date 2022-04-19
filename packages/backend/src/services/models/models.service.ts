@@ -4,7 +4,7 @@ import type { Application } from '../../declarations';
 import fs from 'fs';
 import path from 'path';
 import multer, { FileFilterCallback } from 'multer';
-import GridFsStorage from 'multer-gridfs-storage';
+import { GridFile, GridFsStorage } from 'multer-gridfs-storage';
 import { GridFSBucket, ObjectId } from 'mongodb';
 import express from '@feathersjs/express';
 import { Models as ModelsNeDB } from './models-nedb.class';
@@ -12,7 +12,6 @@ import { Models as ModelsMongoDB } from './models-mongodb.class';
 import createModel from '../../models/models-nedb.model';
 import hooks from './models.hooks';
 import genId from '../../utils/objectid';
-import { HookContext } from '@feathersjs/feathers';
 
 type ModelType = 'tfjs' | 'onnx';
 
@@ -36,6 +35,7 @@ function setupModelService(app: Application, modelType: ModelType, useGridfs: bo
       Model: createModel(app, modelType),
       paginate: app.get('paginate'),
       multi: true,
+      whitelist: ['$not', '$and'],
     };
 
     // Initialize our service with any options it requires
@@ -44,6 +44,7 @@ function setupModelService(app: Application, modelType: ModelType, useGridfs: bo
     const options = {
       paginate: app.get('paginate'),
       multi: true,
+      whitelist: ['$not', '$and'],
     };
 
     // Initialize our service with any options it requires
@@ -57,20 +58,6 @@ function setupModelService(app: Application, modelType: ModelType, useGridfs: bo
 
   const h = hooks(app.get('authentication').enabled, modelType, useGridfs);
   service.hooks(h);
-
-  if (app.get('authentication').enabled) {
-    service.publish((data: any, context: HookContext) => {
-      return [
-        app.channel('admins'),
-        app
-          .channel(app.channels)
-          .filter(
-            (connection) =>
-              data.public === true || connection.user._id.equals(context?.params?.user?._id),
-          ),
-      ];
-    });
-  }
 
   return service;
 }
@@ -95,8 +82,6 @@ function setupDiskStorage(app: Application, modelType: ModelType) {
 }
 
 function setupGridFsStorage(app: Application) {
-  // const url = app.get('mongodb');
-  // const storage = new GridFsStorage({ url });
   const storage = new GridFsStorage({ db: app.get('mongoClient') });
   return storage;
 }
@@ -138,14 +123,16 @@ export default (modelType: ModelType): ((app: Application) => void) => {
       res.json(response);
     };
 
-    const gridfsPostResponse = function (req: Express.Request & { id?: string }, res: any) {
+    const gridfsPostResponse = function (req: Express.Request, res: any) {
       const response: Array<[string, string]> = [];
       if (Array.isArray(req.files)) {
-        req.files.forEach(({ originalname, id }) => {
+        const reqFiles = req.files as (Express.Multer.File & GridFile)[];
+        reqFiles.forEach(({ originalname, id }) => {
           response.push([originalname, id]);
         });
       } else {
-        Object.entries(req.files || []).forEach(([name, x]) => {
+        const reqFiles = (req.files || []) as Record<string, (Express.Multer.File & GridFile)[]>;
+        Object.entries(reqFiles).forEach(([name, x]) => {
           response.push([name, x[0].id]);
         });
       }

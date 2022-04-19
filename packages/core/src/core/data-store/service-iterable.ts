@@ -1,5 +1,6 @@
 import type { Paginated, Params, Service } from '@feathersjs/feathers';
 import { cloneDeep } from 'lodash';
+import { mergeDeep } from '../../utils';
 import { LazyIterable } from '../../utils/lazy-iterable/lazy-iterable';
 
 interface ServiceIterableParams {
@@ -69,7 +70,7 @@ export class ServiceIterable<T> extends LazyIterable<T> {
   }
 
   query(q: Params['query']): ServiceIterable<T> {
-    return new ServiceIterable(this.service, { ...this.params, query: q });
+    return new ServiceIterable(this.service, mergeDeep(this.params, { query: q }));
   }
 }
 

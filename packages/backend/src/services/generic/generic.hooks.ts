@@ -1,6 +1,6 @@
 import { HookContext, HooksObject, Paginated } from '@feathersjs/feathers';
 import { setNow } from 'feathers-hooks-common';
-import { authCreateHooks, authHooks } from '../../utils/permission-hooks';
+import { authWriteHooks, authReadHooks } from '../../utils/permission-hooks';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const findDistinctNedb = async (context: HookContext) => {
@@ -11,6 +11,7 @@ const findDistinctNedb = async (context: HookContext) => {
 
   query.$select = [$distinct];
   query.$limit = 0;
+
   const { total } = (await await context.service.find({ ...context.params, query })) as Paginated<
     Record<string, unknown>
   >;
@@ -18,6 +19,7 @@ const findDistinctNedb = async (context: HookContext) => {
   const { data } = (await context.service.find({ ...context.params, query })) as Paginated<
     Record<string, unknown>
   >;
+
   const res = Array.from(new Set(data.map((item) => item[$distinct])));
   context.result = res;
 
@@ -55,13 +57,13 @@ const findDistinct = (db: string) => {
 export default (dbType: string, requireAuth: boolean): HooksObject => {
   return {
     before: {
-      all: authHooks(requireAuth),
-      find: [findDistinct(dbType)],
-      get: [],
-      create: [...authCreateHooks(requireAuth), setNow('createdAt', 'updatedAt')],
-      update: [...authCreateHooks(requireAuth), setNow('updatedAt')],
-      patch: [...authCreateHooks(requireAuth), setNow('updatedAt')],
-      remove: [],
+      all: [],
+      find: [...authReadHooks(requireAuth), findDistinct(dbType)],
+      get: [...authReadHooks(requireAuth)],
+      create: [...authWriteHooks(requireAuth), setNow('createdAt', 'updatedAt')],
+      update: [...authWriteHooks(requireAuth), setNow('updatedAt')],
+      patch: [...authWriteHooks(requireAuth), setNow('updatedAt')],
+      remove: [...authWriteHooks(requireAuth)],
     },
 
     after: {

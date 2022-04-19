@@ -1,6 +1,7 @@
 import '@feathersjs/transport-commons';
 import { HookContext } from '@feathersjs/feathers';
 import { Application } from './declarations';
+import { makeOptions, getChannelsWithReadAbility } from 'feathers-casl/dist/channels';
 
 export default function (app: Application): void {
   if (typeof app.channel !== 'function') {
@@ -29,7 +30,7 @@ export default function (app: Application): void {
       // Channels can be named anything and joined on any condition
 
       // E.g. to send real-time events only to admins use
-      if (connection && connection.user.permissions === 'admin') {
+      if (connection && connection.user.role === 'Admin') {
         app.channel('admins').join(connection);
       }
 
@@ -42,8 +43,10 @@ export default function (app: Application): void {
     }
   });
 
+  const caslOptions = makeOptions(app);
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  app.publish((data: any, hook: HookContext) => {
+  app.publish((data: any, context: HookContext) => {
     // Here you can add event publishers to channels set up in `channels.ts`
     // To publish only for a specific event use `app.publish(eventname, () => {})`
 
@@ -51,7 +54,10 @@ export default function (app: Application): void {
 
     // e.g. to publish all service events to all authenticated users use
     if (app.get('authentication').enabled) {
-      return app.channel('authenticated');
+      // return app.channel('authenticated');
+      const channels = getChannelsWithReadAbility(app, data, context, caslOptions);
+      // console.log('Feathers Channels', data, channels);
+      return channels;
     }
     return app.channel('anonymous', 'authenticated');
   });

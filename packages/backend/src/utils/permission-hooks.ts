@@ -1,60 +1,41 @@
 import * as authentication from '@feathersjs/authentication';
-import { Hook } from '@feathersjs/feathers';
-import { HookContext } from '@feathersjs/feathers';
+import { Hook, HookContext } from '@feathersjs/feathers';
 import { setField } from 'feathers-authentication-hooks';
-import { iff } from 'feathers-hooks-common';
-import checkPermissions from 'feathers-permissions';
+import { authorize } from 'feathers-casl/dist/hooks';
+import { defineAbilitiesFor, User } from '../authentication/abilities';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const { authenticate } = authentication.hooks;
 
-async function limitToUserOrPublic(context: HookContext) {
-  const { type } = context;
-  let { params } = context;
-
-  if (type !== 'before') {
-    throw new Error('The "limitToUserOrPublic" hook should only be used as a "before" hook.');
+function setAbilitiesForRestProvider(context: HookContext) {
+  if (context.params.provider === 'rest') {
+    const { user } = context.params;
+    if (user) {
+      context.params.ability = defineAbilitiesFor(user as User, context.app);
+    }
   }
-  const userId = params?.user?._id;
-
-  if (userId === undefined) {
-    throw new Error('Expected field user not available');
-  }
-
-  if (!params) {
-    params = {};
-  }
-  if (!params.query) {
-    params.query = {};
-  }
-
-  if (params.query.public === undefined) {
-    // params.query.$or = [
-    //   { ...params.query, userId: userId },
-    //   { ...params.query, public: true },
-    // ];
-    params.query.$or = [{ userId }, { public: true }];
-  } else if (params.query.public === false) {
-    params.query.userId = userId;
-  }
-
   return context;
 }
 
-export const authHooks = (requireAuth: boolean): Hook[] => {
+export const authReadHooks = (requireAuth: boolean): Hook[] => {
   if (requireAuth) {
     return [
       authenticate('jwt'),
-      checkPermissions({ roles: ['admin'], error: false }),
-      iff((context) => !context.params.permitted, limitToUserOrPublic),
+      setAbilitiesForRestProvider,
+      authorize({ adapter: 'feathers-mongodb' }),
     ];
   }
   return [];
 };
 
-export const authCreateHooks = (requireAuth: boolean): Hook[] => {
+export const authWriteHooks = (requireAuth: boolean): Hook[] => {
   if (requireAuth) {
-    return [setField({ from: 'params.user._id', as: 'data.userId' })];
+    return [
+      authenticate('jwt'),
+      setAbilitiesForRestProvider,
+      setField({ from: 'params.user._id', as: 'data.userId' }),
+      authorize({ adapter: 'feathers-mongodb' }),
+    ];
   }
   return [];
 };

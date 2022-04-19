@@ -3,7 +3,7 @@
   import { createEventDispatcher } from 'svelte';
   import { Modal } from '@marcellejs/design-system';
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ terminate: User }>();
 
   export let dataStore: DataStore;
   export let mode = 'login';
