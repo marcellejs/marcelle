@@ -17,22 +17,22 @@
 <style>
   .progress-line,
   .progress-line:before {
-    @apply overflow-hidden h-2 mb-4 text-xs w-full rounded;
+    @apply overflow-hidden h-2 my-2 text-xs w-full rounded;
   }
 
   .progress-line.thin,
   .progress-line.thin:before {
-    @apply h-1 mb-2;
+    @apply h-1 my-1;
   }
 
   .progress-line {
     @apply bg-blue-200 flex;
   }
 
-  .progress-line:before {
-    @apply shadow-none bg-blue-500;
+  .progress-line:before,
+  .progress-line.thin:before {
+    @apply shadow-none bg-blue-500 mt-0 ml-0;
     content: '';
-    margin-left: 0;
     margin-right: var(--bar-mr);
   }
 
