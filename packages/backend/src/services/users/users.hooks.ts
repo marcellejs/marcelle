@@ -2,6 +2,7 @@ import * as feathersAuthentication from '@feathersjs/authentication';
 import * as local from '@feathersjs/authentication-local';
 import { HookContext } from '@feathersjs/feathers';
 import { authorize } from 'feathers-casl/dist/hooks';
+import { defineAbilitiesFor } from '../../authentication/abilities';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const { authenticate } = feathersAuthentication.hooks;
@@ -38,7 +39,19 @@ export default {
       authenticate('jwt'),
       //authorize({ adapter: 'feathers-mongodb' })
     ],
-    create: [hashPassword('password'), setRole, authorize({ adapter: 'feathers-mongodb' })],
+    create: [
+      hashPassword('password'),
+      setRole,
+      (context: HookContext): HookContext => {
+        const user = context.data;
+        if (!user) return context;
+        const ability = defineAbilitiesFor(user, context.app);
+        context.params.ability = ability;
+        context.params.rules = ability.rules;
+        return context;
+      },
+      authorize({ adapter: 'feathers-mongodb' }),
+    ],
     update: [
       hashPassword('password'),
       authenticate('jwt'),
