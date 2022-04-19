@@ -38,6 +38,14 @@ export abstract class TFJSCustomClassifier extends TFJSCustomModel<
       return;
     }
 
+    if (this.labels.length === 1) {
+      throwError(new TrainingError('At least two classes are needed to train the classifier'));
+      this.$training.set({
+        status: 'error',
+      });
+      return;
+    }
+
     const numClasses = this.labels.length;
 
     this.transformDataset = (ds) =>
