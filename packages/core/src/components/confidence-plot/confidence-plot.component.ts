@@ -14,7 +14,13 @@ export class ConfidencePlot extends Component {
   constructor(predictionStream: Stream<ClassifierResults>) {
     super();
     this.$confidenceStream = predictionStream.map(({ confidences }: ClassifierResults) =>
-      Object.entries(confidences).map(([label, value]) => ({ x: label, y: value })),
+      Object.entries(confidences)
+        .map(([label, value]) => ({ x: label, y: value }))
+        .sort((a, b) => {
+          if (a.x < b.x) return -1;
+          if (a.x > b.x) return 1;
+          return 0;
+        }),
     );
     this.#plotConfidences = genericChart({
       preset: 'bar-fast',

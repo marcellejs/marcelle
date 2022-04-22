@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onDestroy } from 'svelte';
 
-  import { Model, TrainingStatus } from '../../core';
+  import type { Model, TrainingStatus } from '../../core';
   import { Stream } from '../../core/stream';
   import { TrainingPlot, trainingPlot } from '../training-plot';
 
