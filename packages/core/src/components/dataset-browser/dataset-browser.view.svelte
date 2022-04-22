@@ -287,7 +287,7 @@
             </div>
 
             <div class="browser-class-body">
-              {#each instances as { id, thumbnail }}
+              {#each instances as { id, thumbnail } (id)}
                 <img
                   src={thumbnail}
                   alt="thumbnail"
