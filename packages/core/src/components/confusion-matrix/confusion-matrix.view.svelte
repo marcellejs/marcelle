@@ -102,7 +102,7 @@
         try {
           const dataIndex = e.chart.tooltip.dataPoints[0].dataIndex;
           if (selectedDataIndex === dataIndex) {
-            selected.set([]);
+            selected.set(null);
             selectedDataIndex = -1;
           } else {
             selected.set(e.chart.tooltip.dataPoints[0].raw);
