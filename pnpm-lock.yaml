@@ -226,6 +226,7 @@ importers:
       autoprefixer: ^10.2.5
       blueimp-load-image: ^5.14.0
       chart.js: ^3.3.0
+      chartjs-adapter-luxon: ^1.1.0
       chartjs-chart-matrix: ^1.0.0
       date-fns: ^2.22.1
       dequal: ^2.0.2
@@ -233,6 +234,7 @@ importers:
       feathers-localstorage: ^5.2.0
       feathers-memory: ^4.1.0
       lodash: ^4.17.21
+      luxon: ^2.3.2
       ml-kmeans: ^5.0.0
       onnxruntime-web: ^1.11.0
       postcss: ^8.2.14
@@ -274,12 +276,14 @@ importers:
       auto-bind: 5.0.1
       blueimp-load-image: 5.16.0
       chart.js: 3.7.1
+      chartjs-adapter-luxon: 1.1.0_chart.js@3.7.1+luxon@2.3.2
       chartjs-chart-matrix: 1.1.1_chart.js@3.7.1
       date-fns: 2.28.0
       dequal: 2.0.2
       feathers-localstorage: 5.2.0
       feathers-memory: 4.1.0
       lodash: 4.17.21
+      luxon: 2.3.2
       ml-kmeans: 5.0.0
       onnxruntime-web: 1.11.0
       scatter-gl: 0.0.12
@@ -5219,6 +5223,16 @@ packages:
 
   /chart.js/3.7.1:
     resolution: {integrity: sha512-8knRegQLFnPQAheZV8MjxIXc5gQEfDFD897BJgv/klO/vtIyFFmgMXrNfgrXpbTr/XbTturxRgxIXx/Y+ASJBA==}
+    dev: false
+
+  /chartjs-adapter-luxon/1.1.0_chart.js@3.7.1+luxon@2.3.2:
+    resolution: {integrity: sha512-CS+xBWEyXYVLBZ3dSY/MwlSXhz8er4JjkApazY84ft/++oOLsmkt6TaXBCsUFudum7QdoYmpxiL/gSp20+emkw==}
+    peerDependencies:
+      chart.js: ^3.0.0
+      luxon: ^1.0.0 || ^2.0.0
+    dependencies:
+      chart.js: 3.7.1
+      luxon: 2.3.2
     dev: false
 
   /chartjs-chart-matrix/1.1.1_chart.js@3.7.1:
@@ -10743,6 +10757,11 @@ packages:
     dependencies:
       yallist: 4.0.0
     dev: true
+
+  /luxon/2.3.2:
+    resolution: {integrity: sha512-MlAQQVMFhGk4WUA6gpfsy0QycnKP0+NlCBJRVRNPxxSIbjrCbQ65nrpJD3FVyJNZLuJ0uoqL57ye6BmDYgHaSw==}
+    engines: {node: '>=12'}
+    dev: false
 
   /magic-string/0.25.9:
     resolution: {integrity: sha512-RmF0AsMzgt25qzqqLc1+MbHmhdx0ojF2Fvs4XnOqz2ZOBXzzkEwc/dJQZCYHAn7v1jbVOjAZfK8msRn4BxO4VQ==}

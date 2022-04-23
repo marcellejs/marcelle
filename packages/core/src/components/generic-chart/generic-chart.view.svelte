@@ -24,11 +24,13 @@
     Title,
     Tooltip,
   } from 'chart.js';
+  import 'chartjs-adapter-luxon';
   import type { ChartOptions as ChartJsOptions, ChartConfiguration } from 'chart.js';
   import { onDestroy, onMount, tick } from 'svelte';
   import { mergeDeep } from '../../utils/object';
   import { ViewContainer } from '@marcellejs/design-system';
   import type { ChartDataset } from './generic-chart.component';
+
   export let title: string;
   export let preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };
   export let options: ChartJsOptions & { xlabel?: string; ylabel?: string };
@@ -153,7 +155,8 @@
         options: { scales: { y: { title: { display: true, text: options.ylabel } } } },
       });
     }
-    unSub = datasets.map(({ dataStream, options: localOptions }, i) =>
+
+    unSub = datasets.map(({ dataStream, options: localOptions, label }, i) =>
       dataStream.subscribe((values: Array<number> | Array<{ x: unknown; y: unknown }>) => {
         if (values && chart) {
           if (!localOptions.labels && i === 0 && values.length > 0) {
@@ -170,7 +173,11 @@
           }
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           chartOptions.data.datasets[i].data = values as any;
-          chart.update();
+          try {
+            chart.update();
+          } catch (error) {
+            console.log(error);
+          }
         }
       }),
     );
