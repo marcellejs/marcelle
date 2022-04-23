@@ -160,31 +160,59 @@ export class Stream<T> {
   // Wrap most operators
   // ------------------------------------
   startWith(x: T): Stream<T> {
-    return new Stream(most.startWith(x, this));
+    const s = new Stream(most.startWith(x, this));
+    if (this.holding) {
+      s.value = x;
+    }
+    return s;
   }
 
   continueWith<U>(f: () => Stream<U>): Stream<T | U> {
-    return new Stream(most.continueWith(f, this));
+    const s = new Stream(most.continueWith(f, this));
+    if (this.holding) {
+      s.value = this.value;
+    }
+    return s;
   }
 
   map<U>(f: (a: T) => U): Stream<U> {
-    return new Stream(most.map(f, this));
+    const s = new Stream(most.map(f, this));
+    if (this.holding) {
+      s.value = f(this.value);
+    }
+    return s;
   }
 
   constant<B>(x: B): Stream<B> {
-    return new Stream(most.constant(x, this));
+    const s = new Stream(most.constant(x, this));
+    if (this.holding) {
+      s.value = x;
+    }
+    return s;
   }
 
   tap(f: (a: T) => void): Stream<T> {
-    return new Stream(most.tap(f, this));
+    const s = new Stream(most.tap(f, this));
+    if (this.holding) {
+      s.value = this.value;
+    }
+    return s;
   }
 
   ap<B>(fs: Stream<(a: T) => B>): Stream<B> {
-    return new Stream(most.ap(fs, this));
+    const s = new Stream(most.ap(fs, this));
+    if (this.holding && fs.holding) {
+      s.value = fs.get()(this.value);
+    }
+    return s;
   }
 
   scan<B>(f: (b: B, a: T) => B, initial: B): Stream<B> {
-    return new Stream(most.scan(f, initial, this));
+    const s = new Stream(most.scan(f, initial, this));
+    if (this.holding) {
+      s.value = initial;
+    }
+    return s;
   }
 
   loop<B, S>(stepper: (seed: S, a: T) => SeedValue<S, B>, seed: S): Stream<B> {
@@ -224,15 +252,27 @@ export class Stream<T> {
   }
 
   merge<A>(stream1: Stream<A>): Stream<A | T> {
-    return new Stream(most.merge(stream1, this));
+    const s = new Stream(most.merge(stream1, this));
+    if (this.holding) {
+      s.value = this.value;
+    }
+    return s;
   }
 
   combine<A, R>(f: (a: A, b: T) => R, stream1: Stream<A>): Stream<R> {
-    return new Stream(most.combine(f, stream1, this));
+    const s = new Stream(most.combine(f, stream1, this));
+    if (this.holding) {
+      s.value = f(stream1.value, this.value);
+    }
+    return s;
   }
 
   zip<A, R>(f: (a: A, b: T) => R, stream1: Stream<A>): Stream<R> {
-    return new Stream(most.zip(f, stream1, this));
+    const s = new Stream(most.zip(f, stream1, this));
+    if (this.holding) {
+      s.value = f(stream1.value, this.value);
+    }
+    return s;
   }
 
   resample<B>(sampler: Stream<B>): Stream<T> {
@@ -248,11 +288,19 @@ export class Stream<T> {
   }
 
   filter(p: (a: T) => boolean): Stream<T> {
-    return new Stream(most.filter(p, this));
+    const s = new Stream(most.filter(p, this));
+    if (this.holding && p(this.value)) {
+      s.value = this.value;
+    }
+    return s;
   }
 
   skipRepeats(): Stream<T> {
-    return new Stream(most.skipRepeats(this));
+    const s = new Stream(most.skipRepeats(this));
+    if (this.holding) {
+      s.value = this.value;
+    }
+    return s;
   }
 
   skipRepeatsWith(equals: (a1: T, a2: T) => boolean): Stream<T> {
