@@ -1,10 +1,10 @@
-import type { Dataset } from '../../core';
+import type { Dataset, Instance } from '../../core';
 import { DatasetTable } from './dataset-table.component';
 
-export function datasetTable<InputType, OutputType>(
-  dataset: Dataset<InputType, OutputType>,
+export function datasetTable<T extends Instance>(
+  dataset: Dataset<T>,
   columns?: string[],
-): DatasetTable<InputType, OutputType> {
+): DatasetTable<T> {
   return new DatasetTable(dataset, columns);
 }
 

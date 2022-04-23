@@ -13,17 +13,21 @@ import type { LazyIterable } from '../../utils';
 
 export type TFJSCustomClassifierOptions = TFJSCustomModelOptions;
 
+export interface ClassifierInstance extends Instance {
+  x: TensorLike;
+  y: string;
+}
+
 export abstract class TFJSCustomClassifier extends TFJSCustomModel<
-  TensorLike,
-  string,
+  ClassifierInstance,
   ClassifierResults
 > {
   title = 'TFJSCustomClassifier';
 
   @Catch
   async train(
-    dataset: Dataset<TensorLike, string> | LazyIterable<Instance<TensorLike, string>>,
-    validationDataset?: Dataset<TensorLike, string> | LazyIterable<Instance<TensorLike, string>>,
+    dataset: Dataset<ClassifierInstance> | LazyIterable<ClassifierInstance>,
+    validationDataset?: Dataset<ClassifierInstance> | LazyIterable<ClassifierInstance>,
   ): Promise<void> {
     const isDs = isDataset(dataset);
     this.labels = isDs

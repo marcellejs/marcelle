@@ -53,9 +53,9 @@ export class BatchPrediction extends Component {
     this.$status.set({ status: total > 0 ? 'loaded' : 'idle' });
   }
 
-  async predict<InputType, PredictionType>(
-    model: Model<InputType, unknown, PredictionType>,
-    dataset: Dataset<InputType, unknown> | LazyIterable<Instance<InputType, unknown>>,
+  async predict<T extends Instance, PredictionType>(
+    model: Model<T, PredictionType>,
+    dataset: Dataset<T> | LazyIterable<T>,
   ): Promise<void> {
     try {
       const total = isDataset(dataset) ? dataset.$count.value : (await dataset.toArray()).length;

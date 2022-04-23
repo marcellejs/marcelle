@@ -1,5 +1,5 @@
 import type { BatchPrediction } from '../../components';
-import type { Model, Component } from '../../core';
+import type { Model, Component, Instance } from '../../core';
 import type { DataStore } from '../../core/data-store';
 import type { Dataset } from '../../core/dataset';
 
@@ -16,8 +16,8 @@ export class DashboardSettings {
   components: Array<Component | Component[] | string> = [];
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  xModels: Model<unknown, unknown, unknown>[] = [];
-  xDatasets: Dataset<unknown, unknown>[] = [];
+  xModels: Model<Instance, unknown>[] = [];
+  xDatasets: Dataset<Instance>[] = [];
   xPredictions: BatchPrediction[] = [];
   xDataStores: DataStore[] = [];
 
@@ -31,12 +31,12 @@ export class DashboardSettings {
     return this;
   }
 
-  models(...models: Model<unknown, unknown, unknown>[]): DashboardSettings {
+  models(...models: Model<Instance, unknown>[]): DashboardSettings {
     this.xModels = models;
     return this;
   }
 
-  datasets(...datasets: Dataset<unknown, unknown>[]): DashboardSettings {
+  datasets(...datasets: Dataset<Instance>[]): DashboardSettings {
     this.xDatasets = datasets;
     return this;
   }

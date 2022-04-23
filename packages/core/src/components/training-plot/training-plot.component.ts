@@ -1,4 +1,4 @@
-import type { Model, TrainingStatus } from '../../core';
+import type { Instance, Model, TrainingStatus } from '../../core';
 import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
 import { genericChart, GenericChart } from '../generic-chart';
@@ -13,7 +13,7 @@ export class TrainingPlot extends Component {
   charts: { [key: string]: GenericChart } = {};
 
   constructor(
-    public model: Model<unknown, unknown, unknown>,
+    public model: Model<Instance, unknown>,
     logs: LogSpec = {
       loss: ['loss', 'lossVal'],
       accuracy: ['accuracy', 'accuracyVal'],

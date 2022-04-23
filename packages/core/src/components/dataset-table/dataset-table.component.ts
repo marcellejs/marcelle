@@ -1,20 +1,16 @@
 import { Component, Dataset, Instance, Stream } from '../../core';
 import View from './dataset-table.view.svelte';
 
-export class DatasetTable<InputType, OutputType> extends Component {
+export class DatasetTable<T extends Instance> extends Component {
   title = 'dataset table';
 
-  #dataset: Dataset<InputType, OutputType>;
+  #dataset: Dataset<T>;
   $columns: Stream<string[]>;
-  $selection: Stream<Instance<InputType, OutputType>[]> = new Stream([], true);
+  $selection: Stream<T[]> = new Stream([], true);
 
   singleSelection = false;
 
-  constructor(
-    dataset: Dataset<InputType, OutputType>,
-    columns?: string[],
-    singleSelection = false,
-  ) {
+  constructor(dataset: Dataset<T>, columns?: string[], singleSelection = false) {
     super();
     this.#dataset = dataset;
     this.singleSelection = singleSelection;

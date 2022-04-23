@@ -26,7 +26,12 @@ export interface KNNClassifierOptions {
   k: number;
 }
 
-export class KNNClassifier extends Model<TensorLike, string, ClassifierResults> {
+export interface KNNInstance extends Instance {
+  x: TensorLike;
+  y: string;
+}
+
+export class KNNClassifier extends Model<KNNInstance, ClassifierResults> {
   title = 'KNN classifier';
 
   parameters: {
@@ -45,9 +50,7 @@ export class KNNClassifier extends Model<TensorLike, string, ClassifierResults> 
   }
 
   @Catch
-  async train(
-    dataset: Dataset<TensorLike, string> | LazyIterable<Instance<TensorLike, string>>,
-  ): Promise<void> {
+  async train(dataset: Dataset<KNNInstance> | LazyIterable<KNNInstance>): Promise<void> {
     this.labels = isDataset(dataset)
       ? await dataset.distinct('y')
       : (this.labels = Array.from(new Set(await dataset.map(({ y }) => y).toArray())));

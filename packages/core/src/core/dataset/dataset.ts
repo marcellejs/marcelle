@@ -24,7 +24,7 @@ interface DatasetChange {
   data?: any;
 }
 
-export class Dataset<InputType, OutputType> extends Component {
+export class Dataset<T extends Instance> extends Component {
   title = 'dataset';
   name: string;
 
@@ -32,7 +32,7 @@ export class Dataset<InputType, OutputType> extends Component {
   #store: DataStore;
   ready: Promise<void>;
 
-  instanceService: Service<Instance<InputType, OutputType>>;
+  instanceService: Service<T>;
   query: Query = {};
   #updatedCreate = new Set<string>();
 
@@ -61,9 +61,7 @@ export class Dataset<InputType, OutputType> extends Component {
 
   protected async setup(): Promise<void> {
     const instanceServiceName = toKebabCase(`instances-${this.name}`);
-    this.instanceService = this.#store.service(instanceServiceName) as Service<
-      Instance<InputType, OutputType>
-    >;
+    this.instanceService = this.#store.service(instanceServiceName) as Service<T>;
 
     if (this.instanceService.__hooks.before.find === undefined) {
       this.instanceService.hooks({
@@ -95,9 +93,7 @@ export class Dataset<InputType, OutputType> extends Component {
   }
 
   protected async reset(): Promise<void> {
-    const { total } = (await this.find({ query: { $limit: 0 } })) as Paginated<
-      Partial<Instance<InputType, OutputType>>
-    >;
+    const { total } = (await this.find({ query: { $limit: 0 } })) as Paginated<Partial<T>>;
     this.$count.set(total);
     this.$changes.set([
       {
@@ -133,7 +129,7 @@ export class Dataset<InputType, OutputType> extends Component {
 
   protected watchChanges(): void {
     const respectsQuery = sift(this.query);
-    this.instanceService.on('created', (x: Instance<InputType, OutputType>) => {
+    this.instanceService.on('created', (x: T) => {
       if (!respectsQuery(x)) return;
       this.$count.set(this.$count.get() + 1);
       this.$changes.set([
@@ -145,7 +141,7 @@ export class Dataset<InputType, OutputType> extends Component {
       ]);
     });
 
-    const cb = (x: Instance<InputType, OutputType>) => {
+    const cb = (x: T) => {
       if (!respectsQuery(x)) return;
       const instance = {
         ...x,
@@ -174,7 +170,7 @@ export class Dataset<InputType, OutputType> extends Component {
     this.instanceService.on('updated', cb);
     this.instanceService.on('patched', cb);
 
-    this.instanceService.on('removed', (x: Instance<InputType, OutputType>) => {
+    this.instanceService.on('removed', (x: T) => {
       if (!respectsQuery(x)) return;
       this.$count.set(this.$count.get() - 1);
       const instance = {
@@ -196,47 +192,36 @@ export class Dataset<InputType, OutputType> extends Component {
     return this.ready.then(() => this.reset());
   }
 
-  items(): ServiceIterable<Instance<InputType, OutputType>> {
+  items(): ServiceIterable<T> {
     return iterableFromService(this.instanceService).query(this.query);
   }
 
-  async find(params?: FeathersParams): Promise<Paginated<Instance<InputType, OutputType>>> {
+  async find(params?: FeathersParams): Promise<Paginated<T>> {
     const p = mergeDeep(params || {}, { query: this.query });
-    return this.instanceService.find(p) as Promise<Paginated<Instance<InputType, OutputType>>>;
+    return this.instanceService.find(p) as Promise<Paginated<T>>;
   }
 
-  async get(id: ObjectId, params?: FeathersParams): Promise<Instance<InputType, OutputType>> {
+  async get(id: ObjectId, params?: FeathersParams): Promise<T> {
     const p = mergeDeep(params || {}, { query: this.query });
     return this.instanceService.get(id, p);
   }
 
-  async create(
-    instance: Instance<InputType, OutputType>,
-    params?: FeathersParams,
-  ): Promise<Instance<InputType, OutputType>> {
+  async create(instance: Partial<T>, params?: FeathersParams): Promise<T> {
     const p = mergeDeep(params || {}, { query: this.query });
     return this.instanceService.create(instance, p);
   }
 
-  async update(
-    id: ObjectId,
-    instance: Instance<InputType, OutputType>,
-    params?: FeathersParams,
-  ): Promise<Instance<InputType, OutputType>> {
+  async update(id: ObjectId, instance: T, params?: FeathersParams): Promise<T> {
     const p = mergeDeep(params || {}, { query: this.query });
     return this.instanceService.update(id, instance, p);
   }
 
-  async patch(
-    id: ObjectId,
-    changes: Partial<Instance<InputType, OutputType>>,
-    params?: FeathersParams,
-  ): Promise<Instance<InputType, OutputType>> {
+  async patch(id: ObjectId, changes: Partial<T>, params?: FeathersParams): Promise<T> {
     const p = mergeDeep(params || {}, { query: this.query });
     return this.instanceService.patch(id, changes, p);
   }
 
-  async remove(id: ObjectId, params?: FeathersParams): Promise<Instance<InputType, OutputType>> {
+  async remove(id: ObjectId, params?: FeathersParams): Promise<T> {
     const p = mergeDeep(params || {}, { query: this.query });
     return this.instanceService.remove(id, p);
   }
@@ -245,9 +230,9 @@ export class Dataset<InputType, OutputType> extends Component {
     await this.remove(null, { query: {} });
   }
 
-  async distinct(field: string): Promise<OutputType[]> {
+  async distinct(field: string): Promise<T['y'][]> {
     const query = { $distinct: field, ...this.query };
-    return this.instanceService.find({ query }) as Promise<[]> as Promise<OutputType[]>;
+    return this.instanceService.find({ query }) as Promise<T['y'][]>;
   }
 
   async download(): Promise<void> {
@@ -256,7 +241,7 @@ export class Dataset<InputType, OutputType> extends Component {
       marcelleMeta: {
         type: 'dataset',
       },
-      instances: (instances as Paginated<Instance<InputType, OutputType>>).data,
+      instances: (instances as Paginated<T>).data,
     };
     const today = new Date(Date.now());
     const fileName = `${this.title}-${today.toISOString()}.json`;
@@ -268,15 +253,14 @@ export class Dataset<InputType, OutputType> extends Component {
       .filter((f) => f.type === 'application/json')
       .map((f) => readJSONFile(f));
     const jsonFiles = await Promise.all(filePromises);
-    const addPromises = jsonFiles.map(
-      (fileContent: { instances: Instance<InputType, OutputType>[] }) =>
-        fileContent.instances.map((instance: Instance<InputType, OutputType>) => {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { id, ...instanceNoId } = instance;
-          return this.create(instanceNoId).catch((e) => {
-            throwError(e);
-          });
-        }),
+    const addPromises = jsonFiles.map((fileContent: { instances: T[] }) =>
+      fileContent.instances.map((instance: T) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, ...instanceNoId } = instance;
+        return this.create(instanceNoId as Partial<T>).catch((e) => {
+          throwError(e);
+        });
+      }),
     );
     await Promise.all(addPromises);
   }

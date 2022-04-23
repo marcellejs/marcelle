@@ -7,11 +7,11 @@ import type { Instance } from '../types';
 
 export type { TFDataset };
 
-export function dataset2tfjs<InputType, OutputType>(
-  dataset: Dataset<InputType, OutputType> | LazyIterable<Instance<InputType, OutputType>>,
+export function dataset2tfjs<T extends Instance>(
+  dataset: Dataset<T> | LazyIterable<T>,
   fields: string[] = null,
   cache = false,
-): TFDataset<Partial<Instance<InputType, OutputType>>> {
+): TFDataset<Partial<T>> {
   const query = fields ? { $select: fields } : {};
   const ds = isDataset(dataset) ? dataset.items().query(query) : dataset;
 
@@ -19,9 +19,9 @@ export function dataset2tfjs<InputType, OutputType>(
   async function* dataGenerator() {
     const instances = await dataSource;
     for await (const instance of instances) {
-      yield instance as Instance<InputType, OutputType>;
+      yield instance as T;
     }
   }
 
-  return generator<Partial<Instance<InputType, OutputType>>>(dataGenerator as any);
+  return generator<Partial<T>>(dataGenerator as any);
 }

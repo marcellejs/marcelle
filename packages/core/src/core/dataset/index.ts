@@ -1,14 +1,12 @@
 import type { DataStore } from '../data-store';
+import type { Instance } from '../types';
 import { Dataset } from './dataset';
 
-export function dataset<InputType, OutputType>(
-  name: string,
-  store?: DataStore,
-): Dataset<InputType, OutputType> {
+export function dataset<T extends Instance>(name: string, store?: DataStore): Dataset<T> {
   return new Dataset(name, store);
 }
 
-export function isDataset(x: unknown): x is Dataset<unknown, unknown> {
+export function isDataset<T extends Instance>(x: unknown): x is Dataset<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return typeof x === 'object' && x !== null && (x as any).isDataset;
 }

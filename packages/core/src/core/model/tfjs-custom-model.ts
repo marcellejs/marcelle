@@ -27,9 +27,8 @@ function transformEpochData(data: Record<string, unknown>) {
   return newData;
 }
 
-export abstract class TFJSCustomModel<InputType, OutputType, PredictionType> extends TFJSBaseModel<
-  InputType,
-  OutputType,
+export abstract class TFJSCustomModel<T extends Instance, PredictionType> extends TFJSBaseModel<
+  T,
   PredictionType
 > {
   title = 'TFJSCustomModel';
@@ -57,9 +56,7 @@ export abstract class TFJSCustomModel<InputType, OutputType, PredictionType> ext
     };
   }
 
-  transformDataset(
-    ds: TFDataset<Partial<Instance<InputType, OutputType>>>,
-  ): TFDataset<{ xs: Tensor; ys: Tensor }> {
+  transformDataset(ds: TFDataset<Partial<T>>): TFDataset<{ xs: Tensor; ys: Tensor }> {
     return ds.map((instance) => ({
       xs: tensor(instance.x as unknown as TensorLike),
       ys: tensor(instance.y as unknown as TensorLike),
@@ -68,10 +65,8 @@ export abstract class TFJSCustomModel<InputType, OutputType, PredictionType> ext
 
   @Catch
   async train(
-    dataset: Dataset<InputType, OutputType> | LazyIterable<Instance<InputType, OutputType>>,
-    validationDataset?:
-      | Dataset<InputType, OutputType>
-      | LazyIterable<Instance<InputType, OutputType>>,
+    dataset: Dataset<T> | LazyIterable<T>,
+    validationDataset?: Dataset<T> | LazyIterable<T>,
   ): Promise<void> {
     this.$training.set({ status: 'start', epochs: this.parameters.epochs.get() });
 
@@ -101,7 +96,7 @@ export abstract class TFJSCustomModel<InputType, OutputType, PredictionType> ext
     this.fit(dsTrain, dsVal);
   }
 
-  abstract predict(x: InputType): Promise<PredictionType>;
+  abstract predict(x: T['x']): Promise<PredictionType>;
 
   _predict(x: TensorLike): Tensor {
     if (!this.model) return null;

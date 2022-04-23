@@ -1,6 +1,14 @@
 import type { Paginated, Service } from '@feathersjs/feathers';
 import type { DataStore } from '../../core/data-store';
-import { logger, Model, Component, Stream, TrainingRun, TrainingStatus } from '../../core';
+import {
+  logger,
+  Model,
+  Component,
+  Stream,
+  TrainingRun,
+  TrainingStatus,
+  Instance,
+} from '../../core';
 import { preventConcurrentCalls } from '../../utils/asynchronicity';
 import { noop } from '../../utils/misc';
 import View from './training-history.view.svelte';
@@ -23,7 +31,7 @@ const defaultOptions: TrainingHistoryOptions = {
   actions: [],
 };
 
-export class TrainingHistory<InputType, OutputType, PredictionType> extends Component {
+export class TrainingHistory<T extends Instance, PredictionType> extends Component {
   title = 'Training History';
 
   $selection = new Stream<TrainingRun[]>([], true);
@@ -31,7 +39,7 @@ export class TrainingHistory<InputType, OutputType, PredictionType> extends Comp
 
   runService: Service<TrainingRun>;
   options: TrainingHistoryOptions;
-  model: Model<InputType, OutputType, PredictionType>;
+  model: Model<T, PredictionType>;
 
   protected ready = Promise.resolve();
   protected stopTracking: () => void = noop;
@@ -56,7 +64,7 @@ export class TrainingHistory<InputType, OutputType, PredictionType> extends Comp
       });
   }
 
-  track(model: Model<InputType, OutputType, PredictionType>, basename = 'anonymous'): this {
+  track(model: Model<T, PredictionType>, basename = 'anonymous'): this {
     this.ready
       .then(() => {
         this.stopTracking();

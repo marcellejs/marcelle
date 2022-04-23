@@ -1,8 +1,9 @@
+import type { Instance } from '../../core';
 import { TrainingHistory } from './training-history.component';
 
-export function trainingHistory<InputType, OutputType, PredictionType>(
+export function trainingHistory<T extends Instance, PredictionType>(
   ...args: ConstructorParameters<typeof TrainingHistory>
-): TrainingHistory<InputType, OutputType, PredictionType> {
+): TrainingHistory<T, PredictionType> {
   return new TrainingHistory(...args);
 }
 

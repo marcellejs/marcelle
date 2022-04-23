@@ -1,6 +1,6 @@
 import { load, ObjectDetection, ObjectDetectionBaseModel } from '@tensorflow-models/coco-ssd';
 import { io } from '@tensorflow/tfjs-core';
-import { Model, ObjectDetectorResults } from '../../core';
+import { type Instance, Model, ObjectDetectorResults } from '../../core';
 import { logger } from '../../core/logger';
 import { Stream } from '../../core/stream';
 import { Catch, TrainingError } from '../../utils/error-handling';
@@ -10,7 +10,12 @@ export interface CocoSsdOptions {
   base?: ObjectDetectionBaseModel;
 }
 
-export class CocoSsd extends Model<ImageData, undefined, ObjectDetectorResults> {
+export interface CocoInstance extends Instance {
+  x: ImageData;
+  y: undefined;
+}
+
+export class CocoSsd extends Model<CocoInstance, ObjectDetectorResults> {
   title = 'COCO-SSD Object Detection';
 
   parameters = {};

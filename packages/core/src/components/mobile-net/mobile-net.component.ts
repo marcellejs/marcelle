@@ -6,7 +6,7 @@ import {
   MobileNetAlpha,
 } from '@tensorflow-models/mobilenet';
 import { io, tidy } from '@tensorflow/tfjs-core';
-import { ClassifierResults, logger, Model } from '../../core';
+import { ClassifierResults, Instance, logger, Model } from '../../core';
 import { Stream } from '../../core/stream';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './mobile-net.view.svelte';
@@ -16,7 +16,12 @@ export interface MobileNetOptions {
   alpha?: MobileNetAlpha;
 }
 
-export class MobileNet extends Model<ImageData, string, ClassifierResults> {
+export interface MobileNetInstance extends Instance {
+  x: ImageData;
+  y: string;
+}
+
+export class MobileNet extends Model<MobileNetInstance, ClassifierResults> {
   title = 'mobileNet';
 
   parameters = {};

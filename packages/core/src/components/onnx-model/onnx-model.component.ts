@@ -1,6 +1,6 @@
 import type { RegularArray } from '@tensorflow/tfjs-core/dist/types';
 import ort from 'onnxruntime-web';
-import { ClassifierResults, Model, Stream } from '../../core';
+import { ClassifierResults, Instance, Model, Stream } from '../../core';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './onnx-model.view.svelte';
 
@@ -36,10 +36,18 @@ export interface ONNXModelOptions<T, U> {
   inputShape: number[];
 }
 
+export interface ONNXInstance<InputType, OutputType> extends Instance {
+  x: InputType;
+  y: OutputType;
+}
+
 export class OnnxModel<
   InputType extends keyof InputTypes,
   TaskType extends keyof OutputTypes,
-> extends Model<InputTypes[InputType], OutputTypes[TaskType], PredictionTypes[TaskType]> {
+> extends Model<
+  ONNXInstance<InputTypes[InputType], OutputTypes[TaskType]>,
+  PredictionTypes[TaskType]
+> {
   title = 'onnx model';
 
   parameters = {};

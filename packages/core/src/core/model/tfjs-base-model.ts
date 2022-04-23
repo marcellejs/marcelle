@@ -1,5 +1,5 @@
 import { GraphModel, loadGraphModel } from '@tensorflow/tfjs-converter';
-import type { ObjectId, StoredModel } from '../types';
+import type { Instance, ObjectId, StoredModel } from '../types';
 import type { DataStore } from '../data-store';
 import { io, Tensor, tidy, zeros } from '@tensorflow/tfjs-core';
 import { LayersModel, loadLayersModel } from '@tensorflow/tfjs-layers';
@@ -10,9 +10,8 @@ import { toKebabCase } from '../../utils/string';
 import { Model } from './model';
 import { browserFiles, http } from './tfjs-io';
 
-export abstract class TFJSBaseModel<InputType, OutputType, PredictionType> extends Model<
-  InputType,
-  OutputType,
+export abstract class TFJSBaseModel<T extends Instance, PredictionType> extends Model<
+  T,
   PredictionType
 > {
   serviceName = 'tfjs-models';

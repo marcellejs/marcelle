@@ -17,12 +17,15 @@ export interface Parametrable {
 
 export type ObjectId = string;
 
-export interface Instance<InputType, OutputType> {
+export interface Instance {
   id?: ObjectId;
-  x: InputType;
-  y: OutputType;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  x: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  y: any;
   thumbnail?: string;
-  [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 }
 
 export interface TrainingStatus {

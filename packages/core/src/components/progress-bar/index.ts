@@ -1,4 +1,4 @@
-import type { Model } from '../../core';
+import type { Instance, Model } from '../../core';
 import type { ProgressType } from './progress-bar.component';
 import { ProgressBar } from './progress-bar.component';
 
@@ -6,7 +6,7 @@ export function progressBar(...args: ConstructorParameters<typeof ProgressBar>):
   return new ProgressBar(...args);
 }
 
-export function trainingProgress(m: Model<unknown, unknown, unknown>): ProgressBar {
+export function trainingProgress(m: Model<Instance, unknown>): ProgressBar {
   if (!m.$training) {
     throw new Error('The argument is not a valid MLP');
   }

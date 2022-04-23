@@ -1,8 +1,12 @@
 import { Component } from '../../core/component';
-import type { Dataset } from '../../core/dataset';
+import type { Dataset, Instance } from '../../core';
 import type { ObjectId } from '../../core/types';
 import { Stream } from '../../core/stream';
 import View from './dataset-browser.view.svelte';
+
+interface DBInstance extends Instance {
+  y: string;
+}
 
 interface DatasetBrowserOptions {
   batchSize: number;
@@ -10,13 +14,13 @@ interface DatasetBrowserOptions {
 export class DatasetBrowser extends Component {
   title = 'dataset browser';
 
-  #dataset: Dataset<unknown, string>;
+  #dataset: Dataset<DBInstance>;
   $selected: Stream<ObjectId[]> = new Stream([], true);
 
   batchSize: number;
 
   constructor(
-    dataset: Dataset<unknown, string>,
+    dataset: Dataset<DBInstance>,
     { batchSize = 6 }: Partial<DatasetBrowserOptions> = {},
   ) {
     super();

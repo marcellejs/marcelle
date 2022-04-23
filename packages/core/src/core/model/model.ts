@@ -8,7 +8,7 @@ import { Component } from '../component';
 import { logger } from '../logger';
 import { LazyIterable, throwError } from '../../utils';
 
-export abstract class Model<InputType, OutputType, PredictionType>
+export abstract class Model<T extends Instance, PredictionType>
   extends Component
   implements Parametrable
 {
@@ -36,12 +36,10 @@ export abstract class Model<InputType, OutputType, PredictionType>
   }
 
   abstract train(
-    dataset: Dataset<InputType, OutputType> | LazyIterable<Instance<InputType, OutputType>>,
-    validationDataset?:
-      | Dataset<InputType, OutputType>
-      | LazyIterable<Instance<InputType, OutputType>>,
+    dataset: Dataset<T> | LazyIterable<T>,
+    validationDataset?: Dataset<T> | LazyIterable<T>,
   ): void;
-  abstract predict(x: InputType): Promise<PredictionType>;
+  abstract predict(x: T['x']): Promise<PredictionType>;
 
   abstract save(
     store: DataStore,

@@ -13,7 +13,7 @@ import '@tensorflow/tfjs-core/dist/public/chained_ops/mul';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/expand_dims';
 import { loadGraphModel } from '@tensorflow/tfjs-converter';
 import { loadLayersModel } from '@tensorflow/tfjs-layers';
-import { ClassifierResults, TFJSBaseModel } from '../../core';
+import { ClassifierResults, Instance, TFJSBaseModel } from '../../core';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import { readJSONFile } from '../../utils/file-io';
 import Component from './tfjs-model.view.svelte';
@@ -56,10 +56,18 @@ export interface TFJSModelOptions<T, U> {
   };
 }
 
+export interface TFJSInstance<InputType, OutputType> extends Instance {
+  x: InputType;
+  y: OutputType;
+}
+
 export class TFJSModel<
   InputType extends keyof InputTypes,
   TaskType extends keyof OutputTypes,
-> extends TFJSBaseModel<InputTypes[InputType], OutputTypes[TaskType], PredictionTypes[TaskType]> {
+> extends TFJSBaseModel<
+  TFJSInstance<InputTypes[InputType], OutputTypes[TaskType]>,
+  PredictionTypes[TaskType]
+> {
   title = 'tfjs model';
 
   inputShape: number[];

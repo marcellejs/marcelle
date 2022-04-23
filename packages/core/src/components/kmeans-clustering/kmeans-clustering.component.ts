@@ -27,7 +27,12 @@ function euclideanDistance(a: number[], b: number[]): number {
   );
 }
 
-export class KMeansClustering extends Model<number[][], undefined, ClusteringResults> {
+export interface KMeansInstance extends Instance {
+  x: number[][];
+  y: undefined;
+}
+
+export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
   title = 'k-means clustering';
   serviceName = 'kmeans-models';
 
@@ -52,9 +57,7 @@ export class KMeansClustering extends Model<number[][], undefined, ClusteringRes
   }
 
   @Catch
-  async train(
-    dataset: Dataset<number[][], undefined> | LazyIterable<Instance<number[][], undefined>>,
-  ): Promise<void> {
+  async train(dataset: Dataset<KMeansInstance> | LazyIterable<KMeansInstance>): Promise<void> {
     this.$training.set({ status: 'start', epochs: 1 });
     const ds = isDataset(dataset) ? dataset.items() : dataset;
     for await (const { x } of ds) {
@@ -93,7 +96,7 @@ export class KMeansClustering extends Model<number[][], undefined, ClusteringRes
   }
 
   @Catch
-  async batchPredict(dataset: Dataset<number[][], undefined>): Promise<ClusteringResults[]> {
+  async batchPredict(dataset: Dataset<KMeansInstance>): Promise<ClusteringResults[]> {
     // const allInstances = await dataset.getAllInstances(['features']);
     const data: number[][][] = []; //allInstances.map((x) => x.features[0]);
     const ds = isDataset(dataset) ? dataset.items() : dataset;
