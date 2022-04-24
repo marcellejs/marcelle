@@ -1,5 +1,5 @@
-import type { Paginated, Service } from '@feathersjs/feathers';
-import type { DataStore } from '../../core/data-store';
+import type { Paginated } from '@feathersjs/feathers';
+import type { DataStore, Service } from '../../core';
 import {
   logger,
   Model,
@@ -57,7 +57,7 @@ export class TrainingHistory<T extends Instance, PredictionType> extends Compone
     this.ready = this.ready
       .then(() => this.dataStore.connect())
       .then(() => {
-        this.runService = this.dataStore.service('runs') as Service<TrainingRun>;
+        this.runService = this.dataStore.service('runs');
       })
       .catch(() => {
         logger.log('[dataset] dataStore connection failed');

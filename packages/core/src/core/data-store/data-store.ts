@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 import authentication from '@feathersjs/authentication-client';
-import feathers, { Application, Service } from '@feathersjs/feathers';
+import feathers, { Application } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio-client';
 import memoryService from 'feathers-memory';
 import localStorageService from 'feathers-localstorage';
@@ -10,6 +10,8 @@ import Login from './Login.svelte';
 import { throwError } from '../../utils/error-handling';
 import { Stream } from '../stream';
 import { noop } from '../../utils/misc';
+import { iterableFromService } from './service-iterable';
+import type { Service, User } from '../types';
 
 function isValidUrl(str: string) {
   try {
@@ -25,10 +27,6 @@ export enum DataStoreBackend {
   Memory,
   LocalStorage,
   Remote,
-}
-
-export interface User {
-  email: string;
 }
 
 export class DataStore {
@@ -203,12 +201,17 @@ export class DataStore {
     document.location.reload();
   }
 
-  service(name: string): Service<unknown> {
-    if (!Object.keys(this.feathers.services).includes(name)) {
+  service<T>(name: string): Service<T> {
+    const serviceExists = Object.keys(this.feathers.services).includes(name);
+    if (!serviceExists) {
       this.#createService(name);
       this.$services.set(Object.keys(this.feathers.services));
     }
-    return this.feathers.service(name);
+    const s = this.feathers.service(name);
+    if (!serviceExists) {
+      s.items = () => iterableFromService(s);
+    }
+    return s as Service<T>;
   }
 
   setupAppHooks(): void {

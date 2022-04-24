@@ -1,7 +1,14 @@
 /* eslint-disable no-underscore-dangle */
-import type { Paginated, Service } from '@feathersjs/feathers';
+import type { Paginated } from '@feathersjs/feathers';
 import type { Dataset } from '../dataset';
-import type { Instance, ObjectId, Parametrable, StoredModel, TrainingStatus } from '../types';
+import type {
+  Instance,
+  ObjectId,
+  Parametrable,
+  StoredModel,
+  TrainingStatus,
+  Service,
+} from '../types';
 import type { DataStore } from '../data-store';
 import { Stream } from '../stream';
 import { Component } from '../component';

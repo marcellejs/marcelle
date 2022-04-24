@@ -4,7 +4,6 @@ import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
 import type { ClassifierPrediction } from '../../core/types';
 import View from './confusion-matrix.view.svelte';
-import { iterableFromService } from '../../core/data-store/service-iterable';
 
 export type ConfusionMatrixT = Array<{
   x: string;
@@ -40,11 +39,12 @@ export class ConfusionMatrix extends Component {
         predictions.push(data as ClassifierPrediction);
         this.$progress.set(count / total);
       } else if (status === 'loaded') {
-        predictions = (await iterableFromService(this.#prediction.predictionService)
+        predictions = await this.#prediction.predictionService
+          .items()
           .query({
             $select: ['id', 'label', 'yTrue'],
           })
-          .toArray()) as ClassifierPrediction[];
+          .toArray();
         this.$progress.set(false);
       } else if (status === 'loading') {
         predictions = [];

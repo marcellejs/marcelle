@@ -1,15 +1,9 @@
-import type {
-  Paginated,
-  Service,
-  Params as FeathersParams,
-  Query,
-  HookContext,
-} from '@feathersjs/feathers';
-import type { Instance, ObjectId } from '../types';
+import type { Paginated, Params as FeathersParams, Query, HookContext } from '@feathersjs/feathers';
+import type { Instance, ObjectId, Service } from '../types';
 import { Stream } from '../stream';
 import { Component } from '../component';
 import { dataStore, DataStore } from '../data-store';
-import { iterableFromService, ServiceIterable } from '../data-store/service-iterable';
+import type { ServiceIterable } from '../data-store/service-iterable';
 import { throwError } from '../../utils/error-handling';
 import { readJSONFile, saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
@@ -193,7 +187,7 @@ export class Dataset<T extends Instance> extends Component {
   }
 
   items(): ServiceIterable<T> {
-    return iterableFromService(this.instanceService).query(this.query);
+    return this.instanceService.items().query(this.query);
   }
 
   async find(params?: FeathersParams): Promise<Paginated<T>> {

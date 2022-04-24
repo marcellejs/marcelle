@@ -1,11 +1,11 @@
-import type { Prediction, Instance } from '../../core/types';
-import type { Paginated, Service } from '@feathersjs/feathers';
+import type { Prediction, Instance, Service } from '../../core/types';
+import type { Paginated } from '@feathersjs/feathers';
+import type { ServiceIterable } from '../../core/data-store/service-iterable';
 import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
 import { DataStore } from '../../core/data-store/data-store';
 import { Dataset, isDataset } from '../../core/dataset';
 import { dataStore, Model } from '../../core';
-import { iterableFromService, ServiceIterable } from '../../core/data-store/service-iterable';
 import { toKebabCase } from '../../utils/string';
 import { LazyIterable, throwError } from '../../utils';
 
@@ -87,7 +87,7 @@ export class BatchPrediction extends Component {
   }
 
   items(): ServiceIterable<Prediction> {
-    return iterableFromService(this.predictionService);
+    return this.predictionService.items();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function

@@ -139,8 +139,8 @@
   let canvasElement: HTMLCanvasElement;
 
   function setup() {
-    // const t0 = performance.now();
-    let chartOptions: Partial<ChartConfiguration> = mergeDeep(defaultOptions, preset.global);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let chartOptions: Partial<ChartConfiguration> = mergeDeep(defaultOptions, preset.global) as any;
     chartOptions = mergeDeep(chartOptions, {
       data: transformDatasets(datasets, preset.datasets, chartOptions),
       options,
@@ -156,7 +156,7 @@
       });
     }
 
-    unSub = datasets.map(({ dataStream, options: localOptions, label }, i) =>
+    unSub = datasets.map(({ dataStream, options: localOptions }, i) =>
       dataStream.subscribe((values: Array<number> | Array<{ x: unknown; y: unknown }>) => {
         if (values && chart) {
           if (!localOptions.labels && i === 0 && values.length > 0) {
@@ -176,6 +176,7 @@
           try {
             chart.update();
           } catch (error) {
+            // eslint-disable-next-line no-console
             console.log(error);
           }
         }

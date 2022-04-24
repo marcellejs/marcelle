@@ -1,5 +1,7 @@
 import type { SvelteComponent } from 'svelte';
+import type { Service as FeathersService } from '@feathersjs/feathers';
 import type { Stream } from './stream';
+import type { ServiceIterable } from './data-store/service-iterable';
 
 export interface ComponentInternals {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,6 +18,12 @@ export interface Parametrable {
 }
 
 export type ObjectId = string;
+
+export type Service<T> = FeathersService<T> & { items: () => ServiceIterable<T> };
+
+export interface User {
+  email: string;
+}
 
 export interface Instance {
   id?: ObjectId;

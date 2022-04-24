@@ -23,5 +23,6 @@ export function dataset2tfjs<T extends Instance>(
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return generator<Partial<T>>(dataGenerator as any);
 }
