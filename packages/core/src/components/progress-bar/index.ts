@@ -13,7 +13,7 @@ export function trainingProgress(m: Model<Instance, unknown>): ProgressBar {
   const $stream = m.$training
     .map(({ status, epoch, epochs }): ProgressType => {
       let type: ProgressType['type'] = 'default';
-      let progress: ProgressType['progress'] = epochs > 0 ? (epoch + 1) / epochs : null;
+      let progress: ProgressType['progress'] = epochs > 0 ? epoch / epochs : null;
       if (status === 'error') {
         type = 'danger';
       }

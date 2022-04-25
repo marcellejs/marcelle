@@ -126,7 +126,7 @@ export abstract class TFJSCustomModel<T extends Instance, PredictionType> extend
           onEpochEnd: (epoch, logs) => {
             this.$training.set({
               status: 'epoch',
-              epoch,
+              epoch: epoch + 1,
               epochs: this.parameters.epochs.get(),
               data: transformEpochData(logs),
             });

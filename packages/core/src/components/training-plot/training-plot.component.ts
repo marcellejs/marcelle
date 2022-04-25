@@ -16,7 +16,7 @@ export class TrainingPlot extends Component {
     public model: Model<Instance, unknown>,
     logs: LogSpec = {
       loss: ['loss', 'lossVal'],
-      accuracy: ['accuracy', 'accuracyVal'],
+      accuracy: ['acc', 'accVal'],
     },
   ) {
     super();
@@ -40,7 +40,7 @@ export class TrainingPlot extends Component {
       processedLogs = processedLogs.reduce((x, y) => ({ ...x, [y]: y }), {});
     }
     const streams: {
-      [key: string]: Stream<number[]>;
+      [key: string]: Stream<{ x: number; y: number }[]>;
     } = {};
     for (const [key, val] of Object.entries(processedLogs)) {
       const x = Array.isArray(val) ? val : [val];
@@ -53,7 +53,7 @@ export class TrainingPlot extends Component {
       });
       for (const y of x) {
         if (!Object.keys(streams).includes(y)) {
-          streams[y] = new Stream<number[]>([], true);
+          streams[y] = new Stream<{ x: number; y: number }[]>([], true);
         }
         this.charts[key].addSeries(streams[y], y);
       }
@@ -74,9 +74,11 @@ export class TrainingPlot extends Component {
         for (const [key, val] of Object.entries(x.data)) {
           if (!Object.keys(streams).includes(key)) return;
           if (Array.isArray(val)) {
-            streams[key].set(val as number[]);
+            streams[key].set((val as number[]).map((y, j) => ({ x: j + 1, y })));
           } else {
-            streams[key].set(streams[key].get().concat([val as number]));
+            streams[key].set(
+              streams[key].get().concat([{ x: streams[key].get().length + 1, y: val as number }]),
+            );
           }
         }
       }

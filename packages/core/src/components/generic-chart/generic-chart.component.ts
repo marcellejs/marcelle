@@ -127,15 +127,17 @@ export class GenericChart extends Component {
   addSeries(
     series:
       | Stream<number[]>
-      | Stream<Array<{ x: unknown; y: unknown }>>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      | Stream<Array<{ x: any; y: any }>>
       | ServiceIterable<number>
-      | ServiceIterable<{ x: unknown; y: unknown }>,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      | ServiceIterable<{ x: any; y: any }>,
     label: string,
     options: Record<string, unknown> = {},
   ): void {
     if (isStream<number[]>(series)) {
       if (this.#presetName === 'line-fast') {
-        const throttledStream = series.throttle(100);
+        const throttledStream = series.debounce(10);
         throttledStream.value = series.get();
         this.#datasets.push({
           dataStream: throttledStream,

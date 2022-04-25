@@ -156,10 +156,13 @@
       });
     }
 
+    const pointsPerSeries = datasets.map(({ dataStream }) => dataStream.get()?.length || 0);
     unSub = datasets.map(({ dataStream, options: localOptions }, i) =>
       dataStream.subscribe((values: Array<number> | Array<{ x: unknown; y: unknown }>) => {
         if (values && chart) {
-          if (!localOptions.labels && i === 0 && values.length > 0) {
+          const prevMaxPoint = pointsPerSeries.reduce((m, x) => Math.max(m, x));
+          pointsPerSeries[i] = values.length;
+          if (!localOptions.labels && values.length > 0 && pointsPerSeries[i] > prevMaxPoint) {
             if (typeof values[0] === 'number') {
               chartOptions.data.labels = Array.from(Array(values.length), (_, j) => j.toString());
             } else {
