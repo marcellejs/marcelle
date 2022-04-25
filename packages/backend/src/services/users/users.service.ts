@@ -5,7 +5,6 @@ import { Users as UsersNeDB } from './users-nedb.class';
 import { Users as UsersMongoDB } from './users-mongodb.class';
 import createModel from '../../models/users-nedb.model';
 import hooks from './users.hooks';
-import { HookContext } from '@feathersjs/feathers';
 
 // Add this service to the service type index
 declare module '../../declarations' {

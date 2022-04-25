@@ -67,7 +67,7 @@
     "multer-gridfs-storage": "^5.0.2",
     "nedb": "^1.8.0",
     "serve-favicon": "^2.5.0",
-    "winston": "^3.0.0"
+    "winston": "^3.7.2"
   },
   "devDependencies": {
     "@types/compression": "^1.7.0",
