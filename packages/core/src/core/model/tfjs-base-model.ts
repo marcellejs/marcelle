@@ -68,6 +68,7 @@ export abstract class TFJSBaseModel<T extends Instance, PredictionType> extends 
     this.$training.set({
       status: 'loading',
     });
+    this.ready = false;
     try {
       const storedModel = await this.loadFromDatastore(store, idOrName);
       this.loadFn =
