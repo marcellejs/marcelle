@@ -33,9 +33,21 @@ function normalizeMongoIds(context: HookContext): HookContext {
   return context;
 }
 
+function convertDateQueries(context: HookContext): HookContext {
+  for (const op of ['$gt', '$gte', '$lt', '$lte']) {
+    if (context.params?.query?.createdAt && context.params.query.createdAt[op]) {
+      context.params.query.createdAt[op] = new Date(context.params.query.createdAt[op]);
+    }
+    if (context.params?.query?.updatedAt && context.params.query.updatedAt[op]) {
+      context.params.query.updatedAt[op] = new Date(context.params.query.updatedAt[op]);
+    }
+  }
+  return context;
+}
+
 export default {
   before: {
-    all: [normalizeMongoIds, trace()],
+    all: [normalizeMongoIds, convertDateQueries, trace()],
     find: [],
     get: [],
     create: [],
