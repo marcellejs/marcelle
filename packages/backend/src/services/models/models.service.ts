@@ -15,6 +15,14 @@ import genId from '../../utils/objectid';
 
 type ModelType = 'tfjs' | 'onnx';
 
+// Add this service to the service type index
+declare module '../../declarations' {
+  interface ServiceTypes {
+    'tfjs-models': ModelsMongoDB & ServiceAddons<any>;
+    'onnx-models': ModelsMongoDB & ServiceAddons<any>;
+  }
+}
+
 function fileFilterTFJS(req: Express.Request, file: Express.Multer.File, cb: FileFilterCallback) {
   const accept =
     ['model.json', 'model.weights.bin'].includes(file.fieldname) ||
@@ -39,7 +47,7 @@ function setupModelService(app: Application, modelType: ModelType, useGridfs: bo
     };
 
     // Initialize our service with any options it requires
-    app.use(`/${modelType}-models`, new ModelsNeDB(options, app));
+    app.declareService(`${modelType}-models`, new ModelsNeDB(options, app));
   } else if (app.get('database') === 'mongodb') {
     const options = {
       paginate: app.get('paginate'),
@@ -48,13 +56,13 @@ function setupModelService(app: Application, modelType: ModelType, useGridfs: bo
     };
 
     // Initialize our service with any options it requires
-    app.use(`/${modelType}-models`, new ModelsMongoDB(options, app, modelType));
+    app.declareService(`${modelType}-models`, new ModelsMongoDB(options, app, modelType));
   } else {
     throw new Error('Invalid database type: only "nedb" or "mongodb" are currently supported');
   }
 
   // Get our initialized service so that we can register hooks
-  const service = app.service(`${modelType}-models`) as ModelsNeDB & ServiceAddons<any>;
+  const service = app.getService(`${modelType}-models`);
 
   const h = hooks(app.get('authentication').enabled, modelType, useGridfs);
   service.hooks(h);
@@ -149,7 +157,8 @@ export default (modelType: ModelType): ((app: Application) => void) => {
     postMiddlewares.push(modelUpload);
     postMiddlewares.push(useGridfs ? gridfsPostResponse : diskPostResponse);
 
-    app.post(`/${modelType}-models/upload`, ...postMiddlewares);
+    const uploadPath = app.get('apiPrefix').replace(/\/$/, '') + `/${modelType}-models/upload`;
+    app.post(uploadPath, ...postMiddlewares);
 
     const getModelFileFromDisk = async (req: any, res: any) => {
       try {
@@ -216,8 +225,10 @@ export default (modelType: ModelType): ((app: Application) => void) => {
     }
     getMiddlewares.push(useGridfs ? getModelFileFromGridfs : getModelFileFromDisk);
 
+    const downloadPath =
+      app.get('apiPrefix').replace(/\/$/, '') + `/${modelType}-models/:id/:filename`;
     app.get(
-      `/${modelType}-models/:id/:filename`,
+      downloadPath,
       // TODO: add authorization
       ...getMiddlewares,
     );

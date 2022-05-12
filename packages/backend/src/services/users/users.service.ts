@@ -5,12 +5,11 @@ import { Users as UsersNeDB } from './users-nedb.class';
 import { Users as UsersMongoDB } from './users-mongodb.class';
 import createModel from '../../models/users-nedb.model';
 import hooks from './users.hooks';
-import { HookContext } from '@feathersjs/feathers';
 
 // Add this service to the service type index
 declare module '../../declarations' {
   interface ServiceTypes {
-    users: UsersNeDB & ServiceAddons<any>;
+    users: UsersMongoDB & ServiceAddons<any>;
   }
 }
 
@@ -24,7 +23,7 @@ export default function (app: Application): void {
     };
 
     // Initialize our service with any options it requires
-    app.use('/users', new UsersNeDB(options, app));
+    app.declareService('users', new UsersNeDB(options, app));
   } else if (app.get('database') === 'mongodb') {
     const options = {
       paginate: app.get('paginate'),
@@ -32,13 +31,13 @@ export default function (app: Application): void {
     };
 
     // Initialize our service with any options it requires
-    app.use('/users', new UsersMongoDB(options, app));
+    app.declareService('users', new UsersMongoDB(options, app));
   } else {
     throw new Error('Invalid database type: only "nedb" or "mongodb" are currently supported');
   }
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('users');
+  const service = app.getService('users');
 
   service.hooks(hooks);
 

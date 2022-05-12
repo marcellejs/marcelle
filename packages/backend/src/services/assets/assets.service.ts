@@ -3,13 +3,20 @@ import path from 'path';
 import multer, { FileFilterCallback } from 'multer';
 import type { Request } from 'express';
 import express from '@feathersjs/express';
-import { ServiceAddons } from '@feathersjs/feathers';
 import { Application } from '../../declarations';
 import { Assets as AssetsNeDB } from './assets-nedb.class';
 import { Assets as AssetsMongoDB } from './assets-mongodb.class';
 import createModel from '../../models/assets-nedb.model';
 import hooks from './assets.hooks';
 import genId from '../../utils/objectid';
+import { ServiceAddons } from '@feathersjs/feathers';
+
+// Add this service to the service type index
+declare module '../../declarations' {
+  interface ServiceTypes {
+    assets: AssetsMongoDB & ServiceAddons<any>;
+  }
+}
 
 export default function (app: Application): void {
   if (app.get('database') === 'nedb') {
@@ -21,7 +28,7 @@ export default function (app: Application): void {
     };
 
     // Initialize our service with any options it requires
-    app.use('/assets', new AssetsNeDB(options, app));
+    app.declareService('assets', new AssetsNeDB(options, app));
   } else if (app.get('database') === 'mongodb') {
     const options = {
       paginate: app.get('paginate'),
@@ -30,7 +37,7 @@ export default function (app: Application): void {
     };
 
     // Initialize our service with any options it requires
-    app.use('/assets', new AssetsMongoDB(options, app));
+    app.declareService('assets', new AssetsMongoDB(options, app));
   } else {
     throw new Error('Invalid database type: only "nedb" or "mongodb" are currently supported');
   }
@@ -46,7 +53,7 @@ export default function (app: Application): void {
   }
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('assets') as AssetsNeDB & ServiceAddons<any>;
+  const service = app.getService('assets');
 
   const h = hooks(app.get('authentication').enabled);
   service.hooks(h);
@@ -103,7 +110,8 @@ export default function (app: Application): void {
   postMiddlewares.push(assetUpload);
   postMiddlewares.push(diskPostResponse);
 
-  app.post('/assets/upload', ...postMiddlewares);
+  const uploadPath = app.get('apiPrefix').replace(/\/$/, '') + '/assets/upload';
+  app.post(uploadPath, ...postMiddlewares);
 
   const getAssetFileFromDisk = async (req: any, res: any) => {
     try {
@@ -130,5 +138,6 @@ export default function (app: Application): void {
   }
   getMiddlewares.push(getAssetFileFromDisk);
 
-  app.get('/assets/:id/:filename', ...getMiddlewares);
+  const downloadPath = app.get('apiPrefix').replace(/\/$/, '') + '/assets/:id/:filename';
+  app.get(downloadPath, ...getMiddlewares);
 }

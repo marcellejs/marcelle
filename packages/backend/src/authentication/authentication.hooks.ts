@@ -1,4 +1,5 @@
 import { HookContext } from '@feathersjs/feathers';
+import { Application } from '../declarations';
 import { defineAbilitiesFor } from './abilities';
 
 export default {
@@ -19,7 +20,7 @@ export default {
       (context: HookContext): HookContext => {
         const { user } = context.result;
         if (!user) return context;
-        const ability = defineAbilitiesFor(user, context.app);
+        const ability = defineAbilitiesFor(user, context.app as Application);
         context.result.ability = ability;
         context.result.rules = ability.rules;
 

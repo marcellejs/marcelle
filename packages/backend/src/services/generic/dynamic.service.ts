@@ -3,8 +3,16 @@ import { Generic as GenericNeDB } from './generic-nedb.class';
 import { Generic as GenericMongoDB } from './generic-mongodb.class';
 import createModel from '../../models/generic-nedb.model';
 import hooks from './generic.hooks';
-import { Id, NullableId, Paginated, Params } from '@feathersjs/feathers';
+import { Id, NullableId, Paginated, Params, ServiceAddons } from '@feathersjs/feathers';
 import { Forbidden } from '@feathersjs/errors';
+
+// Add this service to the service type index
+declare module '../../declarations' {
+  interface ServiceTypes {
+    ':serviceName': DynamicService & ServiceAddons<any>;
+    '*': GenericMongoDB & ServiceAddons<any>;
+  }
+}
 
 class DynamicService<T = any> {
   app?: Application;
@@ -50,7 +58,7 @@ class DynamicService<T = any> {
       throw new Forbidden('Service is unauthorized', name);
     }
     const app = this.app as unknown as Application;
-    if (!app.service(name)) {
+    if (!app.getService(name as '*')) {
       if (app.get('database') === 'nedb') {
         const options = {
           Model: createModel(app, name),
@@ -58,28 +66,28 @@ class DynamicService<T = any> {
           multi: true,
           whitelist: ['$not', '$and', '$distinct'],
         };
-        app.use(`/${name}`, new GenericNeDB(options, app));
+        app.declareService(name as '*', new GenericNeDB(options, app));
       } else if (app.get('database') === 'mongodb') {
         const options = {
           paginate: app.get('paginate'),
           multi: true,
           whitelist: ['$not', '$and', '$distinct'],
         };
-        app.use(`/${name}`, new GenericMongoDB(options, app, name));
+        app.declareService(name as '*', new GenericMongoDB(options, app, name));
       } else {
         throw new Error('Invalid database type: only "nedb" or "mongodb" are currently supported');
       }
 
-      const service = app.service(name) as any;
+      const service = app.getService(name as '*') as any;
 
       const h = hooks(app.get('database'), app.get('authentication').enabled);
       service.hooks(h);
     }
 
-    return app.service(name);
+    return app.getService(name as '*');
   }
 }
 
 export default function (app: Application): void {
-  app.use('/:serviceName', new DynamicService());
+  app.declareService(':serviceName', new DynamicService());
 }

@@ -36,6 +36,7 @@ export class DataStore {
 
   backend: DataStoreBackend;
   location: string;
+  apiPrefix = '';
 
   $services: Stream<string[]> = new Stream([], true);
 
@@ -50,16 +51,20 @@ export class DataStore {
     this.location = location;
     if (isValidUrl(location)) {
       this.backend = DataStoreBackend.Remote;
-      const socket = io(location, {
+      const locUrl = new URL(location);
+      const host = locUrl.host;
+      this.apiPrefix = locUrl.pathname.replace(/\/$/, '');
+      const socket = io(host, {
         transports: ['websocket'],
-        reconnectionAttempts: 3,
+        reconnectionAttempts: 5,
+        path: this.apiPrefix + '/socket.io',
       });
       this.feathers.configure(socketio(socket, { timeout: 5000 }));
       this.#initPromise = new Promise((resolve) => {
         this.feathers.io.on('init', ({ auth }: { auth: boolean }) => {
           this.requiresAuth = auth;
           if (auth) {
-            this.feathers.configure(authentication());
+            this.feathers.configure(authentication({ path: `${this.apiPrefix}/authentication` }));
           }
           resolve();
         });
@@ -187,7 +192,7 @@ export class DataStore {
 
   async signup(email: string, password: string): Promise<User> {
     try {
-      await this.feathers.service('users').create({ email, password });
+      await this.service('users').create({ email, password });
       await this.login(email, password);
       return this.user;
     } catch (error) {
@@ -207,7 +212,10 @@ export class DataStore {
       this.#createService(name);
       this.$services.set(Object.keys(this.feathers.services));
     }
-    const s = this.feathers.service(name);
+    const s =
+      this.backend === DataStoreBackend.Remote
+        ? this.feathers.service(`${this.apiPrefix}/${name}`)
+        : this.feathers.service(name);
     if (!serviceExists) {
       s.items = () => iterableFromService(s);
     }

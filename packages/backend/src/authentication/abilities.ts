@@ -1,6 +1,6 @@
 import { createAliasResolver, makeAbilityFromRules } from 'feathers-casl';
 import { AbilityBuilder, Ability } from '@casl/ability';
-import { Application } from '@feathersjs/feathers';
+import { Application } from '../declarations';
 
 // don't forget this, as `read` is used internally
 const resolveAction = createAliasResolver({
@@ -28,19 +28,20 @@ export const defineRulesFor = (user: User, app: Application) => {
   can('read', 'all', { public: true });
   can('manage', 'all', { userId: user._id });
 
+  const usersPath = app.getServicePath('users');
   if (app.get('authentication').allowSignup) {
-    can('create', 'users');
+    can('create', usersPath);
   } else {
-    cannot('create', 'users');
+    cannot('create', usersPath);
   }
 
-  can('read', 'users');
-  can('update', 'users', { _id: user._id });
-  cannot('update', 'users', ['role'], { _id: user._id });
-  cannot('delete', 'users', { _id: user._id });
+  can('read', usersPath);
+  can('update', usersPath, { _id: user._id });
+  cannot('update', usersPath, ['role'], { _id: user._id });
+  cannot('delete', usersPath, { _id: user._id });
 
   if (user.role === 'Admin') {
-    can('manage', 'users');
+    can('manage', usersPath);
   }
 
   return rules;
