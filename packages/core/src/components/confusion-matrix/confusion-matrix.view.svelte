@@ -28,7 +28,10 @@
           data: [],
           backgroundColor(context) {
             if (context.dataset.data.length > 0) {
-              if (context.dataIndex === selectedDataIndex) return 'green';
+              if (context.dataIndex === selectedDataIndex) {
+                const { x, y } = context.dataset.data[context.dataIndex];
+                return x === y ? 'green' : 'red';
+              }
               const value = context.dataset.data[context.dataIndex].v;
               return `rgba(54, 162, 235, ${value / maxCount})`;
             }
@@ -150,15 +153,6 @@
   {#if $accuracy !== undefined}
     <p class="m-2">Global Accuracy: {$accuracy.toFixed(2)}</p>
     <div class="confusion-container"><canvas use:setup /></div>
-    {#if $progress > 0 && $progress < 100}
-      <div class="overflow-hidden h-1 mb-2 text-xs flex rounded  bg-blue-200 text-blue-600">
-        <div
-          style="width:{$progress}%"
-          class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center
-        bg-blue-500"
-        />
-      </div>
-    {/if}
   {:else}
     <p class="m-2">Waiting for predictions...</p>
   {/if}
