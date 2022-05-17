@@ -4,7 +4,7 @@ import type { ObjectId } from '../../core/types';
 import { Stream } from '../../core/stream';
 import View from './dataset-browser.view.svelte';
 
-interface DBInstance extends Instance {
+export interface DBInstance extends Instance {
   y: string;
 }
 

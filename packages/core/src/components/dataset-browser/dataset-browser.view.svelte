@@ -1,16 +1,16 @@
 <script lang="ts">
+  import type { ObjectId, Stream } from '../../core';
+  import type { Dataset } from '../../core/dataset';
+  import type { DBInstance } from './dataset-browser.component';
   import { onMount } from 'svelte';
   import { scale } from 'svelte/transition';
-
-  import type { Instance, ObjectId, Stream } from '../../core';
   import { ViewContainer } from '@marcellejs/design-system';
   import { Button, PopMenu } from '@marcellejs/design-system';
-  import type { Dataset } from '../../core/dataset';
 
   export let title: string;
   export let batchSize: number;
   export let count: Stream<number>;
-  export let dataset: Dataset<unknown, string>;
+  export let dataset: Dataset<DBInstance>;
   export let selected: Stream<ObjectId[]>;
 
   let loading = false;
@@ -21,7 +21,7 @@
     {
       total: number;
       loaded: number;
-      instances: Partial<Instance<unknown, string>>[];
+      instances: Partial<DBInstance>[];
     }
   > = {};
 
@@ -191,6 +191,7 @@
       for (const { level, type, data } of changes) {
         if (level === 'dataset') {
           if (type === 'created') {
+            selectInstance();
             updateClassesFromDataset();
           }
         } else if (level === 'instance') {
