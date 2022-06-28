@@ -115,9 +115,7 @@ export class Dataset<T extends Instance> extends Component {
         ]);
       }
     } catch (error) {
-      if (isTargetValid) {
-        this.#updatedCreate.add(context.id as string);
-      }
+      this.#updatedCreate.add(context.id as string);
     }
   }
 
