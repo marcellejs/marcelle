@@ -18,12 +18,12 @@
   },
   "dependencies": {
     "@marcellejs/core": "workspace:^0.5.1",
-    "@tensorflow/tfjs-core": "^3.16.0",
+    "@tensorflow/tfjs-core": "^3.18.0",
     "xmmjs": "^0.0.3"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.42",
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.49",
     "svelte": "^3.48.0",
-    "vite": "^2.9.7"
+    "vite": "^2.9.13"
   }
 }

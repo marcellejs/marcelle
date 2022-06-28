@@ -12,8 +12,8 @@
     "@marcellejs/core": "workspace:^0.5.1"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.42",
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.49",
     "svelte": "^3.48.0",
-    "vite": "^2.9.7"
+    "vite": "^2.9.13"
   }
 }

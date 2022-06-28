@@ -64,7 +64,16 @@
       </div>
     </div>
     <div>
-      <Masonry items={showDemos} {minColWidth} {maxColWidth} {gap} let:item bind:width bind:height>
+      <Masonry
+        items={showDemos}
+        {minColWidth}
+        {maxColWidth}
+        {gap}
+        idKey="path"
+        let:item
+        bind:width
+        bind:height
+      >
         <Demo demo={item} />
       </Masonry>
     </div>
