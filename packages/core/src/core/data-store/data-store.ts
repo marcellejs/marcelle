@@ -59,7 +59,7 @@ export class DataStore {
         reconnectionAttempts: 5,
         path: this.apiPrefix + '/socket.io',
       });
-      this.feathers.configure(socketio(socket, { timeout: 5000 }));
+      this.feathers.configure(socketio(socket, { timeout: 15000 }));
       this.#initPromise = new Promise((resolve) => {
         this.feathers.io.on('init', ({ auth }: { auth: boolean }) => {
           this.requiresAuth = auth;
