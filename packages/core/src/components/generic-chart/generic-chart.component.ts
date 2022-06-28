@@ -147,6 +147,7 @@ export class GenericChart extends Component {
       } else {
         this.#datasets.push({ dataStream: series, label, options });
       }
+      this.updateView();
     } else {
       (series as ServiceIterable<number> | ServiceIterable<{ x: unknown; y: unknown }>)
         .toArray()
