@@ -16,7 +16,7 @@
     "strictPropertyInitialization": false,
     "noEmit": false,
     "lib": ["ESNext", "DOM"],
-    "types": ["node", "svelte"]
+    "types": ["svelte"]
   },
   "include": ["src"],
   "exclude": ["node_modules"]
