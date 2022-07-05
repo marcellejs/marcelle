@@ -1,0 +1,270 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+
+:root {
+  // brand colors
+  --c-brand: #F7770F;
+  --c-brand-light: #ff933a;
+
+  // background colors
+  --c-bg: #ffffff;
+  --c-bg-light: #f3f4f5;
+  --c-bg-lighter: #eeeeee;
+  --c-bg-navbar: var(--c-bg);
+  --c-bg-sidebar: var(--c-bg);
+  --c-bg-arrow: #cccccc;
+
+  // text colors
+  --c-text: #2c3e50;
+  --c-text-accent: var(--c-brand);
+  --c-text-light: #3a5169;
+  --c-text-lighter: #4e6e8e;
+  --c-text-lightest: #6a8bad;
+  --c-text-quote: #999999;
+
+  // border colors
+  --c-border: #eaecef;
+  --c-border-dark: #dfe2e5;
+
+  // custom container colors
+  --c-tip: #42b983;
+  --c-tip-bg: var(--c-bg-light);
+  --c-tip-title: var(--c-text);
+  --c-tip-text: var(--c-text);
+  --c-tip-text-accent: var(--c-text-accent);
+  --c-warning: #e7c000;
+  --c-warning-bg: #fffae3;
+  --c-warning-title: #ad9000;
+  --c-warning-text: #746000;
+  --c-warning-text-accent: var(--c-text);
+  --c-danger: #cc0000;
+  --c-danger-bg: #ffe0e0;
+  --c-danger-title: #990000;
+  --c-danger-text: #660000;
+  --c-danger-text-accent: var(--c-text);
+  --c-details-bg: #eeeeee;
+
+  // badge component colors
+  --c-badge-tip: var(--c-tip);
+  --c-badge-warning: var(--c-warning);
+  --c-badge-danger: var(--c-danger);
+
+  // transition vars
+  --t-color: 0.3s ease;
+  --t-transform: 0.3s ease;
+
+  // code blocks vars
+  --code-bg-color: #282c34;
+  --code-hl-bg-color: rgba(0, 0, 0, 0.66);
+  --code-ln-color: #9e9e9e;
+  --code-ln-wrapper-width: 3.5rem;
+
+  // font vars
+  --font-family: Poppins, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-family-code: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+
+  // layout vars
+  --navbar-height: 3.6rem;
+  --navbar-padding-v: 0.7rem;
+  --navbar-padding-h: 1.5rem;
+  --sidebar-width: 20rem;
+  --sidebar-width-mobile: calc(var(--sidebar-width) * 0.82);
+  --content-width: 740px;
+  --homepage-width: 960px;
+
+  div.language-tsx {
+    background: none;
+    background-color: #f3f5f7;
+    border-radius: 0;
+    &::before {
+      content: "";
+    }
+    &::after {
+      display: none;
+    }
+    pre.language-tsx{
+      padding: 8px 12px;
+      margin-left: 0;
+      code{
+        color: #476582;
+      }
+    }
+    .line-numbers {
+      display: none;
+    }
+  }
+
+  h2 + div.language-tsx {
+    border-top-width: 4px;
+    border-top-style: solid;
+    border-color: #476582;
+    font-size: 1.2em;
+    pre.language-tsx {
+      margin: 0;
+    }
+  }
+
+  div.language-ts::before {
+    content: 'ts';
+  }
+
+  .theme-default-content code {
+      padding: 0.125rem 0.25rem;
+  }
+
+  .sidebar > .sidebar-links > li:not(:first-child) {
+    margin-top: 0 !important;
+  }
+
+  .sidebar a.sidebar-link {
+    font-size: 0.95em;
+  }
+
+  // table
+  //   font-size: 0.85em
+  //   width: 100%
+  // thead
+  //   border-bottom: 1px solid #b1c1d0
+  //   background-color #f3f5f7
+  // th, td
+  //   border: none
+  //   padding: 0.3em 1em
+  //   text-align: left
+  //   line-height: 1.5em
+  // td:first-child
+  //   // width: 15%
+  //   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace
+  //   color: #476582
+  // td:nth-child(2)
+  //   // width: 25%
+  //   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace
+  //   color: #cc99cd
+  // td:nth-child(3)
+  //   // width: 55%
+  // td:last-child
+  //   // width: 10%
+  // tr
+  //   border: none
+
+  .home {
+    .blob {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+    .title {
+      font-size: 6rem;
+      font-weight: 300;
+      margin-top: 2rem;
+      margin-bottom: 0;
+      position: relative;
+      mix-blend-mode: multiply;
+    }
+    .subtitle {
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: #6a8bad;
+      position: relative;
+      mix-blend-mode: multiply;
+    }
+    .row {
+      position: relative;
+      display: flex;
+      margin: 3rem auto;
+      width: 100%;
+      @media (max-width: 900px) {
+        flex-direction: column-reverse
+      }
+      :first-child {
+        flex-shrink: 1;
+        max-width: 100%;
+        width: 340px;
+        margin-top: 1rem;
+      }
+      :last-child {
+        max-width: 500px;
+        margin-right: 0;
+        margin-left: auto;
+        font-size: 1.2rem;
+        line-height: 1.3rem;
+        flex-shrink: 0;
+      }
+    }
+    .intro {
+      justify-content: space-between;
+    }
+    .teaser {
+      margin: 3rem 0;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      width: 100%;
+      @media (max-width: 900px) {
+        flex-direction: column;
+      }
+      .teaser-title {
+        width: 350px;
+        max-width: 100%;
+        margin-right: -2rem;
+        margin-bottom: 2rem;
+        background: white;
+        opacity: 0.8;
+        color: var(--c-text);
+        padding: 1rem;
+        border: 1px solid #ffc9b2;
+        @media (max-width: 900px) {
+          margin: 0 auto
+        }
+      }
+      p {
+        img {
+          max-width: 100%;
+          width: 600px;
+        }
+      }
+      &.top {
+        align-items: flex-start
+      }
+      &.reversed {
+        flex-direction: row-reverse;
+        @media (max-width: 900px) {
+          flex-direction: column;
+        }
+        .teaser-title {
+          margin-left: -2rem;
+          margin-right: 0;
+        }
+      }
+    }
+    // .action-button {
+    //   box-sizing: border-box;
+    //   background-color: #FF6F61 !important;
+    //   border-color: #FF6151 !important;
+    //   color: white !important;
+    //   margin-bottom: 2rem;
+    // }
+    a.demos {
+      color: #FF6151 !important;
+      margin-left: 1rem;
+    }
+    .action {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      align-items: center;
+      font-size: 1.2rem;
+    }
+    .action a:hover {
+      text-decoration-line: none;
+    }
+    h2.centered {
+      text-align: center;
+      font-size: 3rem;
+      font-weight: 400;
+      border: none;
+    }
+    .feat {
+      text-align: left;
+    }
+  }
+}

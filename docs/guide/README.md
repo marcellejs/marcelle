@@ -4,7 +4,13 @@
 
 ![Marcelle Overview](./images/marcelle_overview.jpg)
 
-<div class="home" style="padding-top: 1rem"><div class="hero" ><p class="action" style="margin-top: 0"><a href="/guide/" class="nav-link action-button">Get Started →</a></p></div></div>
+<div class="home" style="padding-top: 1rem">
+  <div class="hero" >
+    <p class="action" style="margin-top: 0">
+      <a href="/guide/getting-started.html" class="action-button primary">Get Started →</a>
+    </p>
+  </div>
+</div>
 
 ::: warning ⚠️ Experimental
 Marcelle is still experimental and is currently under active development. Breaking changes are expected.
