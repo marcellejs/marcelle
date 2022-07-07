@@ -161,7 +161,7 @@ wiz
   .use([input, plotResults]);
 
 labelInput.$value.subscribe((label) => {
-  wizardButton.$value.set(`Record Examples (class ${label})`);
+  wizardButton.$text.set(`Record Examples (class ${label})`);
   const numExamples = countPerClass[label] || 0;
   wizardText.$value.set(
     numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
