@@ -245,10 +245,6 @@ myDashboard
   .use(plotTraining);
 ```
 
-Thus, after adding instances to the dataset, launching training is visualised as follows:
-
-![Screenshot](../guide/images/getting-started-training.png)
-
 ## Making Predictions
 
 Now that our model is trained, we can create another pipeline for prediction. With the same input webcam, we will make a prediction at every new drawing, using the trained model.
@@ -275,10 +271,6 @@ const predViz = marcelle.confidencePlot($predictions);
 
 myDashboard.page('Real-Time').sidebar(input).use(predViz);
 ```
-
-To give it a try, first train the model, then switch to the second page for testing!
-
-![Screenshot](../guide/images/getting-started-testing.png)
 
 ## Adding Sound
 
