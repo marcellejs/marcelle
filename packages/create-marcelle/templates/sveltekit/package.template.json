@@ -20,10 +20,10 @@
   "devDependencies": {
     "@marcellejs/design-system": "workspace:*",
     "@marcellejs/devtools": "workspace:*",
-    "@sveltejs/adapter-static": "^1.0.0-next.29",
+    "@sveltejs/adapter-static": "next",
     "@sveltejs/kit": "next",
-    "svelte": "^3.46.0",
-    "svelte-check": "^2.2.6",
-    "svelte-preprocess": "^4.10.1"
+    "svelte": "^3.50.1",
+    "svelte-check": "^2.9.1",
+    "svelte-preprocess": "^4.10.7"
   }
 }

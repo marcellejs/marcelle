@@ -15,7 +15,7 @@ export class Umap extends Component {
 
   async render() {
     const instances = await this.dataset.items().select(['x', 'y']).toArray();
-    const umapData = instances.reduce((d, { x }) => d.concat([x[0]]), []);
+    const umapData = instances.reduce((d, { x }) => d.concat([x]), []);
     const labels = instances.map((x) => x.y);
     this.$labels.set(labels);
     const umap = new UMAP({ nComponents: 2 });
