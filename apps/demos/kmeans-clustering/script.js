@@ -60,22 +60,28 @@ b.$click.subscribe(() => {
 // -----------------------------------------------------------
 // PLOT CLUSTERS
 // -----------------------------------------------------------
+const $features2d = new Stream([]);
 
-const featureStream = new Stream([]);
+async function resetScatterPlot() {
+  const allInstances = await trainingSet.items().select(['x']).toArray();
+  $features2d.set(allInstances.map((x) => [x.x[0], x.x[1]]));
+}
+
 trainingSet.$changes.subscribe(async (changes) => {
   for (const { level, type, data } of changes) {
     if (level === 'instance' && type === 'created') {
-      featureStream.set([[data.x[0], data.x[1]]]);
+      $features2d.set([[data.x[0], data.x[1]]]);
     } else if (level === 'instance' && type === 'removed') {
-      featureStream.set([[data.x[0], data.x[1]]]);
+      $features2d.set([[data.x[0], data.x[1]]]);
     } else {
-      const allInstances = await trainingSet.items().select(['x']).toArray();
-      featureStream.set(allInstances.map((x) => [x.x[0][0], x.x[0][1]]));
+      resetScatterPlot();
     }
   }
 });
 
-const clusteringScatterPlot = scatterPlot(featureStream, clusteringKMeans.$clusters);
+clusteringKMeans.$training.filter(({ status }) => status === 'success').subscribe(resetScatterPlot);
+
+const clusteringScatterPlot = scatterPlot($features2d, clusteringKMeans.$clusters);
 
 // -----------------------------------------------------------
 // REALTIME CLUSTER PREDICTION
@@ -114,6 +120,6 @@ dash
   .use(params, [b, tog])
   .use([clusteringScatterPlot, predPlot]);
 dash.page('Training').sidebar(input, featureExtractor).use(b);
-dash.settings.dataStores(store).datasets(trainingSet);
+dash.settings.dataStores(store).models(clusteringKMeans).datasets(trainingSet);
 
 dash.show();

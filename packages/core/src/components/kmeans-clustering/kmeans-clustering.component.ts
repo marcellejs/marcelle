@@ -28,7 +28,7 @@ function euclideanDistance(a: number[], b: number[]): number {
 }
 
 export interface KMeansInstance extends Instance {
-  x: number[][];
+  x: number[];
   y: undefined;
 }
 
@@ -61,7 +61,7 @@ export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
     this.$training.set({ status: 'start', epochs: 1 });
     const ds = isDataset(dataset) ? dataset.items() : dataset;
     for await (const { x } of ds) {
-      this.dataset.push(x[0]);
+      this.dataset.push(x);
     }
     const ans = kmeans(this.dataset, this.parameters.k.get());
     this.$centers.set(ans.centroids.map((x) => x.centroid));
@@ -70,13 +70,13 @@ export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
   }
 
   @Catch
-  async predict(x: number[][]): Promise<ClusteringResults> {
+  async predict(x: number[]): Promise<ClusteringResults> {
     let cluster = 0;
     let minDistance = 1000;
     const confidences: { [key: string]: number } = {};
     let distSum = 0;
     for (let i = 0; i < this.$centers.get().length; i++) {
-      const dist = euclideanDistance(this.$centers.get()[i], x[0]);
+      const dist = euclideanDistance(this.$centers.get()[i], x);
       if (dist < minDistance) {
         minDistance = dist;
         cluster = i;
@@ -98,7 +98,7 @@ export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
   @Catch
   async batchPredict(dataset: Dataset<KMeansInstance>): Promise<ClusteringResults[]> {
     // const allInstances = await dataset.getAllInstances(['features']);
-    const data: number[][][] = []; //allInstances.map((x) => x.features[0]);
+    const data: number[][] = []; //allInstances.map((x) => x.features[0]);
     const ds = isDataset(dataset) ? dataset.items() : dataset;
     for await (const { x } of ds) {
       data.push(x);
