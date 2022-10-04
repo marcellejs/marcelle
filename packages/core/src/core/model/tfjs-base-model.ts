@@ -10,6 +10,14 @@ import { toKebabCase } from '../../utils/string';
 import { Model } from './model';
 import { browserFiles, http } from './tfjs-io';
 
+interface MarcelleDownloadMetadata {
+  type: string;
+  tfjsModelFormat: string;
+  name: string;
+  labels: string[];
+  [key: string]: unknown;
+}
+
 export abstract class TFJSBaseModel<T extends Instance, PredictionType> extends Model<
   T,
   PredictionType
@@ -118,7 +126,7 @@ export abstract class TFJSBaseModel<T extends Instance, PredictionType> extends 
 
   async download(metadata?: Record<string, unknown>): Promise<void> {
     const name = toKebabCase(this.title);
-    const meta = {
+    const meta: MarcelleDownloadMetadata = {
       type: 'tfjs-model',
       tfjsModelFormat: this.model instanceof LayersModel ? 'layers-model' : 'graph-model',
       name,
@@ -153,16 +161,18 @@ export abstract class TFJSBaseModel<T extends Instance, PredictionType> extends 
     try {
       const jsonFiles = files.filter((x) => x.name.includes('.json'));
       const weightFiles = files.filter((x) => x.name.includes('.bin'));
-      const { marcelle: meta } = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const obj = JSON.parse(reader.result as string);
-          resolve(obj);
-        };
-        reader.onerror = (err) =>
-          reject(new Error(`The provided files are not a valid marcelle model ${err}`));
-        reader.readAsText(jsonFiles[0]);
-      });
+      const { marcelle: meta } = await new Promise<{ marcelle: MarcelleDownloadMetadata }>(
+        (resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const obj = JSON.parse(reader.result as string);
+            resolve(obj);
+          };
+          reader.onerror = (err) =>
+            reject(new Error(`The provided files are not a valid marcelle model ${err}`));
+          reader.readAsText(jsonFiles[0]);
+        },
+      );
       this.loadFn = meta.tfjsModelFormat === 'graph-model' ? loadGraphModel : loadLayersModel;
       if (jsonFiles.length === 1 && files.length) {
         const model = await this.loadFn(browserFiles([jsonFiles[0], ...weightFiles]));

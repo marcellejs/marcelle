@@ -13,10 +13,10 @@ export function isObject(item: unknown): boolean {
  * @param ...sources
  */
 export function mergeDeep<T, U>(target: T, ...sources: U[]): T & Partial<U> {
-  if (!sources.length) return target;
+  if (!sources.length) return target as T & Partial<U>;
   const source = sources.shift();
 
-  const result: T & Partial<U> = { ...target };
+  const result: T & Partial<U> = { ...target } as T & Partial<U>;
   if (isObject(target) && isObject(source)) {
     // eslint-disable-next-line no-restricted-syntax
     for (const key in source) {
