@@ -19,6 +19,7 @@ export * from './model-parameters';
 export * from './number';
 export * from './number-array';
 export * from './onnx-model';
+export * from './pose-detection';
 export * from './progress-bar';
 export * from './scatter-plot';
 export * from './select';

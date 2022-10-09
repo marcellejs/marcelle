@@ -27,6 +27,7 @@ const plugins = [
   svelte({
     emitCss: true,
     preprocess: preprocess({
+      typescript: true,
       postcss: true,
     }),
   }),

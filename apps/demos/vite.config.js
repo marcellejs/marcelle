@@ -49,6 +49,7 @@ export default {
   ],
   server: {
     force: true,
+    port: 3000,
   },
   build: {
     rollupOptions: {

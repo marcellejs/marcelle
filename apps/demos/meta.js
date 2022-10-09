@@ -155,4 +155,14 @@ export default [
     layout: ['custom'],
     hasPackage: true,
   },
+  {
+    name: 'Pose Classification',
+    path: 'pose-detection',
+    description: 'Simple posture classification from optical pose detection',
+    // glitch: 'https://glitch.com/edit/#!/remix/marcelle-v2-dashboard',
+    data: ['movement'],
+    training: ['browser'],
+    task: ['classification'],
+    layout: ['dashboard'],
+  },
 ];
