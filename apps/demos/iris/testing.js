@@ -1,6 +1,11 @@
-import { confidencePlot, slider } from '@marcellejs/core';
+import { confidencePlot, slider, text } from '@marcellejs/core';
 import { tst } from './data';
 import { classifier } from './training';
+
+const hint = text(
+  'Change slider values or select a data point in the table at the bottom',
+);
+hint.title = 'hint';
 
 const sepalLength = slider({ min: 0, max: 10, pips: true, step: 0.1, pipstep: 20 });
 sepalLength.title = 'Sepal Length (cm)';
@@ -30,18 +35,16 @@ const $predictions = sepalLength.$values
   .merge(petalWidth.$values)
   .filter(() => classifier.ready)
   .map(() => [
-    [
       sepalLength.$values.get()[0],
       sepalWidth.$values.get()[0],
       petalLength.$values.get()[0],
       petalWidth.$values.get()[0],
-    ],
-  ])
+    ])
   .map(classifier.predict)
   .awaitPromises();
 
 const predViz = confidencePlot($predictions);
 
 export function setup(dash) {
-  dash.page('Testing').use([sepalLength, sepalWidth, petalLength, petalWidth], predViz, tst);
+  dash.page('Testing').sidebar(hint).use([sepalLength, sepalWidth, petalLength, petalWidth], predViz, tst);
 }
