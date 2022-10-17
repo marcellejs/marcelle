@@ -1,6 +1,29 @@
-import { text } from '@marcellejs/core';
-import { testSetTable } from './data';
-import { $predictions } from './testing-sliders';
+import { modelParameters, Stream, text } from '@marcellejs/core';
+import { testSetTable, features } from './data';
+import { model } from './model';
+
+const parameters = Object.fromEntries(features.map((s) => [s, new Stream(0, true)]));
+const controls = modelParameters({ parameters });
+controls.title = 'Choose input values';
+
+testSetTable.$selection
+  .filter((x) => x.length === 1)
+  .subscribe(([x]) => {
+    for (const [key, val] of Object.entries(x)) {
+      if (key in parameters) {
+        parameters[key].set(val);
+      }
+    }
+  });
+  
+const $features = features.reduce((s, x) => {
+  return s.combine((vx, vs) => [...vs, vx], parameters[x]);
+}, new Stream([], true));
+
+const $predictions = $features
+  .filter(() => model.ready)
+  .map(model.predict)
+  .awaitPromises();
 
 const result = text('Waiting for predictions...');
 result.title = 'Prediction';
@@ -14,5 +37,5 @@ const hint = text(
 hint.title = 'hint';
 
 export function setup(dash) {
-  dash.page('Testing (Parameters)').sidebar(hint).use(result, testSetTable);
+  dash.page('Testing (Parameters)').sidebar(hint, controls).use(result, testSetTable);
 }
