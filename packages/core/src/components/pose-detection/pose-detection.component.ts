@@ -28,10 +28,6 @@ export interface PoseDetectionInstance extends Instance {
 }
 
 export { type Pose };
-// export interface PoseDetectionResult {
-//   score: number;
-//   keypoints: [];
-// }
 
 export class PoseDetection extends Model<PoseDetectionInstance, Pose[]> {
   title = 'Pose Detection';
@@ -70,7 +66,7 @@ export class PoseDetection extends Model<PoseDetectionInstance, Pose[]> {
     return results;
   }
 
-  postprocess(poses: Pose[], indices?: number[]) {
+  postprocess(poses: Pose[], indices?: number[]): number[] {
     const filt =
       indices && Array.isArray(indices) && indices.length > 0
         ? (_: unknown, i: number) => indices.includes(i)

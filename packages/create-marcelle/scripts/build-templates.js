@@ -62,6 +62,12 @@ async function generate_templates(shared) {
           }"`,
         );
         contents = contents.replace(
+          '"@marcellejs/design-system": "workspace:*"',
+          `"@marcellejs/design-system": "${
+            thisPkg.devDependencies['@marcellejs/design-system'].split('workspace:')[1]
+          }"`,
+        );
+        contents = contents.replace(
           '"@marcellejs/devtools": "workspace:*"',
           `"@marcellejs/devtools": "${
             thisPkg.devDependencies['@marcellejs/devtools'].split('workspace:')[1]
