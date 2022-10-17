@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "keywords": ["marcelle"],
   "main": "public/bundle.js",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build"
@@ -16,6 +17,7 @@
     "@marcellejs/devtools": "workspace:*",
     "@sveltejs/vite-plugin-svelte": "^1.0.9",
     "svelte": "^3.50.1",
+    "svelte-preprocess": "^4.10.7",
     "vite": "^3.1.8"
   }
 }
