@@ -23,7 +23,7 @@ const classifier = mlpClassifier({ layers: [64, 32], epochs: 20 }).sync(store, '
 
 // Additional widgets and visualizations
 const classLabel = textInput();
-const captureButton = button('Capture this drawing');
+const captureButton = button('Capture this drawing and retrain');
 
 const trainingSetBrowser = datasetBrowser(trainingSet);
 const progress = trainingProgress(classifier);

@@ -1,6 +1,6 @@
 import { modelParameters, Stream, text } from '@marcellejs/core';
 import { testSetTable, features } from './data';
-import { model, components } from './model';
+import { model } from './model';
 
 const parameters = Object.fromEntries(features.map((s) => [s, new Stream(0, true)]));
 const controls = modelParameters({ parameters });
