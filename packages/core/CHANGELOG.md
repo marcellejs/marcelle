@@ -1,5 +1,65 @@
 # Marcelle changelog
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- 259aec6: Authentication and authorization have been improved. @marcelle/backend now uses feathers-casl for authorization. Login management has also been improved, although documentation remains scarce.
+- 259aec6: Models have been refactored to facilitate the creation of custom TFJS models. The new architecture involves the following classes:
+
+  ```bash
+  Model<T extends Instance, PredictionType>
+  ├── TFJSBaseModel<T extends Instance, PredictionType>
+  │   └── TFJSCustomModel<T extends Instance, PredictionType>
+  │   └── TFJSCustomClassifier
+  ```
+
+- ee3dc04: To avoid errors with svelte>3.39, the `ViewContainer` component was moved to `@marcellejs/design-system`:
+
+  ```js
+  import { ViewContainer } from '@marcellejs/design-system';
+  ```
+
+- efb72b2: Data stores are no longer passed to the constructor of machine learning models for model synchronization. Instead, a data store must be passed explicitly to `.sync()`, `.save()` and `.load()`.
+- 0325b8f: The `DatasetBrowser` component was improved so that only a few instances per class are loaded by default, and a button is available to view more.
+  The number of images per batch can be specified with the new `batchSize` option.
+
+  The previous behavior is available by using:
+
+  ```js
+  datasetBrowser(trainingSet, { batchSize: 0 });
+  ```
+
+- df75185: The batch prediction component has been improved, along with the confusion matrix. There are breaking changes in their API.
+- 45e0200: A generic progress bar was introduced to refactor training-progress
+
+### Patch Changes
+
+- 259aec6: `genericChart` now supports dates for time series plotting
+- 514360e: New components:
+
+  - `textArea` widget
+  - `poseDetection` model for continuous pose estimation with Deep Learning, using Tensorflow.js
+
+- 06a4a7a: A new method `.get()` was added to streams, in order to avoid accessing `.value` directly, which was found confusing for beginners.
+  To update your code, replace `$<stream>.value` by `$<stream>.get()`, for example:
+
+  ```js
+  input.$images
+    .filter(() => capture.$pressed.get()) // instead of capture.$pressed.value
+    .map(async (img) => ({
+      x: await featureExtractor.process(img),
+      thumbnail: input.$thumbnails.get(), // instead of input.$thumbnails.value
+      y: label.$value.get(), // instead of label.$value.value
+    }));
+  ```
+
+- 45e0200: Datasets now include à `.sift()` method to filter their contents with a Feathers query. Sifting a dataset adds a filter on its data that affects all interactions with the dataset and its dependent.
+- 98fb655: Base UI components were moved to a separate package called `@marcellejs/design-system`
+- 259aec6: Services now have a method called `items()` to get a lazy iterable over service items
+- 259aec6: Models' `train` method now accepts a validation dataset as second argument
+- ad66e7d: Component methods are now automatically bound by default. It is not necessary to bind methods, for example to record instances: `$instances.subscribe(trainingSet.create);`
+
 ## v0.5.1
 
 - `confusionMatrix` had a few improvements (debounced to avoid UI hangs, axis titles, tooltip, `$selected` stream)

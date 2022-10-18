@@ -1,0 +1,35 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "marcelle": "0.0.1",
+    "demos": "0.5.0",
+    "marcelle-demo-mobilenet-tetris": "0.0.0",
+    "marcelle-demo-umap": "0.0.0",
+    "prototypes": "0.5.1",
+    "docs": "0.5.1",
+    "@marcellejs/backend": "0.0.5",
+    "@marcellejs/core": "0.5.1",
+    "create-marcelle": "0.0.1",
+    "@marcellejs/design-system": "0.5.1",
+    "@marcellejs/devtools": "0.0.1"
+  },
+  "changesets": [
+    "clean-books-learn",
+    "early-planets-wink",
+    "empty-buses-tell",
+    "fair-squids-crash",
+    "fifty-eagles-lie",
+    "gold-olives-learn",
+    "hip-adults-leave",
+    "hungry-dragons-turn",
+    "lemon-eagles-itch",
+    "rotten-coats-compare",
+    "shiny-walls-impress",
+    "silent-olives-rescue",
+    "six-owls-laugh",
+    "twelve-numbers-repeat",
+    "twenty-brooms-rescue",
+    "young-moons-hang"
+  ]
+}

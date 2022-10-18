@@ -1,7 +1,8 @@
 {
   "name": "marcelle-demo-mobilenet-tetris",
+  "private": true,
   "description": "A tetris game controlled from your webcam using image classification",
-  "version": "0.0.0",
+  "version": "0.0.1-next.0",
   "main": "public/bundle.js",
   "keywords": [
     "marcelle"
@@ -17,7 +18,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@marcellejs/core": "workspace:^0.5.1",
+    "@marcellejs/core": "workspace:^0.6.0-next.0",
     "@tensorflow/tfjs-core": "^3.21.0",
     "xmmjs": "^0.0.3"
   },
