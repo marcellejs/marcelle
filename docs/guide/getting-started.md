@@ -8,31 +8,37 @@ The best way to set up your application is by using the Marcelle's dedicated [CL
 
 To create a new project:
 
-<code-group>
-<code-block title="npm">
+<CodeGroup>
+<CodeGroupItem title="npm">
+
 ```bash
 npm init marcelle marcelle-tutorial
 cd marcelle-tutorial
 npm install
 ```
-</code-block>
 
-<code-block title="yarn">
+</CodeGroupItem>
+
+<CodeGroupItem title="yarn">
+
 ```bash
 yarn create marcelle marcelle-tutorial
 cd marcelle-tutorial
 yarn
 ```
-</code-block>
 
-<code-block title="pnpm">
+</CodeGroupItem>
+
+<CodeGroupItem title="pnpm">
+
 ```bash
 pnpm create marcelle marcelle-tutorial
 cd marcelle-tutorial
 pnpm i
 ```
-</code-block>
-</code-group>
+
+</CodeGroupItem>
+</CodeGroup>
 
 Several options are available to customize the project. If you don't know what to choose, just hit enter to select the defaults.
 

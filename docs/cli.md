@@ -4,37 +4,43 @@ sidebarDepth: 2
 
 # CLI
 
-Marcelle provides an application generate ([`create-marcelle`](https://github.com/marcellejs/marcelle/tree/master/packages/create-marcelle)) as well as a command line interface ([`@marcellejs/devtools`](https://github.com/marcellejs/marcelle/tree/master/packages/devtools)) for generating components and managing backends in Marcelle projects.
+Marcelle provides an application generator ([`create-marcelle`](https://github.com/marcellejs/marcelle/tree/master/packages/create-marcelle)) as well as a command line interface ([`@marcellejs/devtools`](https://github.com/marcellejs/marcelle/tree/master/packages/devtools)) for generating components and managing backends in Marcelle projects.
 
 ## Generating Marcelle Applications
 
 To create a new Marcelle project, just run:
 
-<code-group>
-<code-block title="npm">
+<CodeGroup>
+<CodeGroupItem title="npm">
+
 ```bash
 npm init marcelle marcelle-tutorial
 cd marcelle-tutorial
 npm install
 ```
-</code-block>
 
-<code-block title="yarn">
+</CodeGroupItem>
+
+<CodeGroupItem title="yarn">
+
 ```bash
 yarn create marcelle marcelle-tutorial
 cd marcelle-tutorial
 yarn
 ```
-</code-block>
 
-<code-block title="pnpm">
+</CodeGroupItem>
+
+<CodeGroupItem title="pnpm">
+
 ```bash
 pnpm create marcelle marcelle-tutorial
 cd marcelle-tutorial
 pnpm i
 ```
-</code-block>
-</code-group>
+
+</CodeGroupItem>
+</CodeGroup>
 
 Several options are available:
 
@@ -51,25 +57,31 @@ When generating a new Marcelle application, a CLI is installed as a development 
 
 To run the CLI from your project's root:
 
-<code-group>
-<code-block title="npm">
+<CodeGroup>
+<CodeGroupItem title="npm">
+
 ```bash
 npx marcelle
 ```
-</code-block>
 
-<code-block title="yarn">
+</CodeGroupItem>
+
+<CodeGroupItem title="yarn">
+
 ```bash
 yarn marcelle
 ```
-</code-block>
 
-<code-block title="pnpm">
+</CodeGroupItem>
+
+<CodeGroupItem title="pnpm">
+
 ```bash
 pnpx marcelle
 ```
-</code-block>
-</code-group>
+
+</CodeGroupItem>
+</CodeGroup>
 
 ### Generating a Component
 

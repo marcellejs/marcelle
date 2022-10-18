@@ -16,31 +16,38 @@ The details for the underlying mathematics can be found in the [following paper 
 
 Let's start by generating a new Marcelle application:
 
-<code-group>
-<code-block title="npm">
+<CodeGroup>
+<CodeGroupItem title="npm">
+
 ```bash
 npm init marcelle marcelle-umap
 cd marcelle-umap
 npm install
 ```
-</code-block>
 
-<code-block title="yarn">
+</CodeGroupItem>
+
+<CodeGroupItem title="yarn">
+
 ```bash
 yarn create marcelle marcelle-umap
 cd marcelle-umap
 yarn
 ```
-</code-block>
 
-<code-block title="pnpm">
+</CodeGroupItem>
+
+<CodeGroupItem title="pnpm">
+
 ```bash
 pnpm create marcelle marcelle-umap
 cd marcelle-umap
 pnpm i
 ```
-</code-block>
-</code-group>
+
+</CodeGroupItem>
+
+</CodeGroup>
 
 Select the default options of the CLI. Then, make sure the application works by running the development server:
 
@@ -123,25 +130,29 @@ You should obtain the following application:
 
 Components are essentially JavaScript objects exposing a set of streams for communicating with other Marcelle components, and optionally providing a view. The easiest way to generate a new component is using the [CLI](/cli):
 
-<code-group>
-<code-block title="npm">
+<CodeGroup>
+<CodeGroupItem title="npm">
+
 ```bash
 npx marcelle
 ```
-</code-block>
 
-<code-block title="yarn">
+</CodeGroupItem>
+<CodeGroupItem title="yarn">
+
 ```bash
 yarn marcelle
 ```
-</code-block>
 
-<code-block title="pnpm">
+</CodeGroupItem>
+<CodeGroupItem title="pnpm">
+
 ```bash
 pnpx marcelle
 ```
-</code-block>
-</code-group>
+
+</CodeGroupItem>
+</CodeGroup>
 
 Select 'Create a component', choose the name 'umap', the CLI will generate the following files:
 

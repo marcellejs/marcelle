@@ -285,7 +285,7 @@ Remove an instance from the dataset
 sift(query: Query = {}): void
 ```
 
-Filter the contents of the dataset from a [Feathers Query](https://docs.feathersjs.com/api/databases/querying.html).
+Filter the contents of the dataset from a [Feathers Query](https://docs.feathersjs.com/api/databases/querying.html). Sifting a dataset enforces that instances respect a given query. This affects all interactions with the dataset and dependent components. Note that it is possible to create several instances of datasets with different sift filters, that point to the same data store service (effectively creating different views on a given data collection).
 
 | Option | Type  | Description                                                                                              | Required |
 | ------ | ----- | -------------------------------------------------------------------------------------------------------- | :------: |
@@ -331,25 +331,31 @@ The backend package is under active development and is not yet stable. It is not
 
 A backend can be added to a Marcelle application using the [CLI](/cli.html):
 
-<code-group>
-<code-block title="npm">
+<CodeGroup>
+<CodeGroupItem title="npm">
+
 ```bash
 npx marcelle
 ```
-</code-block>
 
-<code-block title="yarn">
+</CodeGroupItem>
+
+<CodeGroupItem title="yarn">
+
 ```bash
 yarn marcelle
 ```
-</code-block>
 
-<code-block title="pnpm">
+</CodeGroupItem>
+
+<CodeGroupItem title="pnpm">
+
 ```bash
 pnpx marcelle
 ```
-</code-block>
-</code-group>
+
+</CodeGroupItem>
+</CodeGroup>
 
 Select 'Manage the backend', then 'Configure a backend'. this will install `@marcellejs/backend` as a dependency to your project and create configuration files.
 

@@ -1,7 +1,7 @@
-const { defaultTheme } = require('vuepress');
-const { searchPlugin } = require('@vuepress/plugin-search');
+import { defaultTheme } from 'vuepress';
+import { searchPlugin } from '@vuepress/plugin-search';
 
-module.exports = {
+export default {
   title: 'Marcelle',
   description: 'An Interactive Machine Learning Toolkit',
   head: [
