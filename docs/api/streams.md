@@ -66,7 +66,7 @@ $rnd.subscribe(console.log);
 ### .hold()
 
 ```tsx
-hold(): Stream<T>
+hold(h: boolean = true): Stream<T>
 ```
 
 Hold the stream values. When called, all new subscribers will receive the latest value at the time of subscription.
@@ -94,6 +94,18 @@ subscribe(run: (value: T) => void = dummySubscriber, invalidate = () => {}): () 
 ```
 
 The `subscribe` method must accept as its argument a subscription function. All of a streams's active subscription functions are synchronously called whenever a new event is emitted on the stream. If a stream is held, this subscription function must be immediately and synchronously called with the stream's current value upon calling `subscribe`.
+
+### .get()
+
+Get the value of the latest event on the stream, if it was created with `hold=true`. Otherwise, an error is thrown.
+
+### .set()
+
+```tsx
+set(value: T) => void;
+```
+
+Imperatively push an event on the stream with the given `value`
 
 ### .thru()
 

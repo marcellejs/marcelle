@@ -7,16 +7,21 @@ sidebarDepth: 3
 ## datasetBrowser
 
 ```tsx
-datasetBrowser(dataset: Dataset<InputType, string>): DatasetBrowser;
+datasetBrowser(
+  dataset: Dataset<InputType, string>,
+  options: {
+    batchSize: number;
+  }): DatasetBrowser;
 ```
 
 A Dataset browser provides an interface to visualize the contents of a dataset. It takes a dataset as argument, assuming that each instance contains a `thumbnail` property that can be displayed as an image (typically, a base64 dataURI).
 
 ### Parameters
 
-| Option  | Type    | Description              | Required |
-| ------- | ------- | ------------------------ | :------: |
-| dataset | Dataset | The dataset to visualize |    ✓     |
+| Option            | Type    | Description                                                                 | Required |
+| ----------------- | ------- | --------------------------------------------------------------------------- | :------: |
+| dataset           | Dataset | The dataset to visualize                                                    |    ✓     |
+| options.batchSize | number  | The number of images per batch. If 0, all images are loaded. Defaults to 6. |    ✓     |
 
 ### Screenshot
 

@@ -4,31 +4,47 @@ In this tutorial, you will learn how to build a simple Marcelle application that
 
 ## Setting up
 
-The best way to set up your application is by using the dedicated [Marcelle CLI tools](https://github.com/marcellejs/cli)). The CLI is an npm package that must be installed globally:
+The best way to set up your application is by using the Marcelle's dedicated [CLI tools](/cli). You will need a recent version of [Node.js](https://nodejs.org/) installed (v14 or later).
+
+To create a new project:
+
+<CodeGroup>
+<CodeGroupItem title="npm">
 
 ```bash
-npm install -g @marcellejs/cli
-```
-
-Once installed, the `marcelle` command should be available:
-
-```bash
-marcelle --version
-```
-
-Then, create a folder for the app and generate an application with the CLI:
-
-```bash
-mkdir marcelle-tutorial
+npm init marcelle marcelle-tutorial
 cd marcelle-tutorial
-marcelle generate app
+npm install
 ```
+
+</CodeGroupItem>
+
+<CodeGroupItem title="yarn">
+
+```bash
+yarn create marcelle marcelle-tutorial
+cd marcelle-tutorial
+yarn
+```
+
+</CodeGroupItem>
+
+<CodeGroupItem title="pnpm">
+
+```bash
+pnpm create marcelle marcelle-tutorial
+cd marcelle-tutorial
+pnpm i
+```
+
+</CodeGroupItem>
+</CodeGroup>
 
 Several options are available to customize the project. If you don't know what to choose, just hit enter to select the defaults.
 
 ![Screenshot of the CLI's options](../images/cli_app.png)
 
-This will scaffold a new Marcelle project with the following structure (it might vary according to the build tool, this example is for vite):
+This will scaffold a new Marcelle project with the following structure:
 
 ```bash
 .
@@ -155,7 +171,7 @@ const $instances = input.$images
   .map(async (img) => ({
     x: await featureExtractor.process(img),
     y: 'test',
-    thumbnail: input.$thumbnails.value,
+    thumbnail: input.$thumbnails.get(),
   }))
   .awaitPromises();
 ```
@@ -181,14 +197,14 @@ label.$value.subscribe((currentInput) => {
 });
 ```
 
-We can access the current value of a stream using its `.value` property. We use it to complement our stream of instances:
+We can access the current value of a stream using its `.get()` method. We use it to complement our stream of instances:
 
 ```js{4}
 const $instances = input.$images
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: label.$value.value,
-    thumbnail: input.$thumbnails.value,
+    y: label.$value.get(),
+    thumbnail: input.$thumbnails.get(),
   }))
   .awaitPromises();
 ```
@@ -201,7 +217,7 @@ Once the datastore has been instanciated, we declare a marcelle [dataset](../api
 const store = marcelle.dataStore('localStorage');
 const trainingSet = marcelle.dataset('TrainingSet', store);
 
-$instances.subscribe(trainingSet.create.bind(trainingSet));
+$instances.subscribe(trainingSet.create);
 ```
 
 To visualize our training dataset, we can use a component called [datasetBrowser](../api/components/data-displays.html#datasetbrowser) that provides an interface to visualize the dataset content.
@@ -235,8 +251,8 @@ const $instances = capture.$click
   .sample(input.$images)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: label.$value.value,
-    thumbnail: input.$thumbnails.value,
+    y: label.$value.get(),
+    thumbnail: input.$thumbnails.get(),
   }))
   .awaitPromises();
 ```
@@ -255,7 +271,7 @@ const classifier = marcelle.mlpClassifier({ layers: [32, 32], epochs: 20 });
 
 To start training, a button is added on the interface:
 
-```js{8}
+```js{1,8}
 const trainingButton = marcelle.button('Train');
 
 // ...
@@ -342,15 +358,15 @@ const $instances = capture.$click
   .sample(input.$images)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: label.$value.value,
-    thumbnail: input.$thumbnails.value,
+    y: label.$value.get(),
+    thumbnail: input.$thumbnails.get(),
   }))
   .awaitPromises();
 
 const store = marcelle.dataStore('localStorage');
 const trainingSet = marcelle.dataset('TrainingSet', store);
 
-$instances.subscribe(trainingSet.create.bind(trainingSet));
+$instances.subscribe(trainingSet.create);
 
 const trainingSetBrowser = marcelle.datasetBrowser(trainingSet);
 

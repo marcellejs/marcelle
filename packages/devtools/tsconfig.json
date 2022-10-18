@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "Node",
+    "allowJs": false,
+    "strict": true,
+    "strictNullChecks": false,
+    "importsNotUsedAsValues": "error",
+    "noUnusedLocals": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "removeComments": false,
+    "skipLibCheck": true,
+    "strictPropertyInitialization": false,
+    "noEmit": false,
+    "lib": ["ESNext", "DOM"],
+    "types": ["svelte"]
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

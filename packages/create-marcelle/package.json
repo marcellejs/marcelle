@@ -1,0 +1,46 @@
+{
+	"name": "create-marcelle",
+	"version": "0.1.0-next.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/marcellejs/marcelle",
+		"directory": "packages/create-marcelle"
+	},
+	"license": "MIT",
+	"homepage": "https://marcelle.dev",
+	"bin": "./bin.js",
+	"main": "./index.js",
+	"dependencies": {
+		"kleur": "^4.1.5",
+		"prompts": "^2.4.2"
+	},
+	"devDependencies": {
+		"@marcellejs/core": "workspace:^0.6.0-next.0",
+		"@marcellejs/design-system": "workspace:^0.6.0-next.0",
+		"@marcellejs/devtools": "workspace:^0.6.0-next.0",
+		"@types/gitignore-parser": "^0.0.0",
+		"@types/prettier": "^2.7.1",
+		"@types/prompts": "^2.4.1",
+		"gitignore-parser": "^0.0.2",
+		"prettier": "^2.7.1",
+		"prettier-plugin-svelte": "^2.8.0",
+		"sucrase": "^3.28.0",
+		"svelte": "^3.52.0",
+		"svelte-preprocess": "^4.10.7",
+		"tiny-glob": "^0.2.9"
+	},
+	"scripts": {
+		"build": "node scripts/build-templates",
+		"check": "tsc",
+		"lint": "eslint --ignore-path .gitignore --ignore-path ../../.gitignore \"./*.js\" && npm run check-format",
+		"format": "npm run check-format -- --write",
+		"check-format": "prettier --check . --config ../../.prettierrc --ignore-path ../../.gitignore --ignore-path .gitignore --plugin prettier-plugin-svelte --plugin-search-dir=."
+	},
+	"files": [
+		"index.js",
+		"dist",
+		"bin.js",
+		"utils.js"
+	],
+	"type": "module"
+}

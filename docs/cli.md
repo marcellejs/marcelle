@@ -4,67 +4,88 @@ sidebarDepth: 2
 
 # CLI
 
-Marcelle provides a command line interface, for generating applications, components and backends. The source code is available on [Github](https://github.com/marcellejs/cli).
+Marcelle provides an application generator ([`create-marcelle`](https://github.com/marcellejs/marcelle/tree/master/packages/create-marcelle)) as well as a command line interface ([`@marcellejs/devtools`](https://github.com/marcellejs/marcelle/tree/master/packages/devtools)) for generating components and managing backends in Marcelle projects.
 
-## Installation
+## Generating Marcelle Applications
 
-The CLI is an npm package that must be installed globally:
+To create a new Marcelle project, just run:
 
-```bash
-npm install -g @marcellejs/cli
-```
-
-Once installed, the `marcelle` command should be available:
+<CodeGroup>
+<CodeGroupItem title="npm">
 
 ```bash
-marcelle --version
+npm init marcelle marcelle-tutorial
+cd marcelle-tutorial
+npm install
 ```
 
-## Usage
+</CodeGroupItem>
 
-### Generating an Application
-
-To generate a new project:
+<CodeGroupItem title="yarn">
 
 ```bash
-mkdir myproject
-cd myproject
-marcelle generate app
+yarn create marcelle marcelle-tutorial
+cd marcelle-tutorial
+yarn
 ```
 
-Several options are available to customize the project. If you don't know what to chose, just hit enter to select the defaults.
+</CodeGroupItem>
+
+<CodeGroupItem title="pnpm">
+
+```bash
+pnpm create marcelle marcelle-tutorial
+cd marcelle-tutorial
+pnpm i
+```
+
+</CodeGroupItem>
+</CodeGroup>
+
+Several options are available:
+
+- Templates:
+  - **Empty Marcelle App (default)**: a minimalistic Vite application, perfect for prototyping dashboards
+  - **SvelteKit+Marcelle App**: a more elaborate template for multipage applications with a custom interface. It uses [SvelteKit](https://kit.svelte.dev/).
+- TypeScript: use [Typescript](https://www.typescriptlang.org/) for your Marcelle application (including for custom components)
 
 ![Screenshot of the CLI's options](./images/cli_app.png)
 
-This will scaffold a new Marcelle project with the following structure (it might vary according to the build tool, this example is for vite):
+## Development Tools (CLI)
+
+When generating a new Marcelle application, a CLI is installed as a development dependency (`@marcellejs/devtools`). It includes a number of useful tools for development.
+
+To run the CLI from your project's root:
+
+<CodeGroup>
+<CodeGroupItem title="npm">
 
 ```bash
-.
-├── README.md
-├── index.html     # The main HTML page for your application
-├── package.json
-├── src
-│   ├── index.js   # Main application script
-│   └── components    # Directory containing local components bundled with your application
-│       └── index.js
-└── vite.config.js # Build tool configuration file
+npx marcelle
 ```
 
-To run the application in development mode (with HMR), run:
+</CodeGroupItem>
+
+<CodeGroupItem title="yarn">
 
 ```bash
-npm run dev # or yarn dev
+yarn marcelle
 ```
+
+</CodeGroupItem>
+
+<CodeGroupItem title="pnpm">
+
+```bash
+pnpx marcelle
+```
+
+</CodeGroupItem>
+</CodeGroup>
 
 ### Generating a Component
 
-It is possible to use the generator to create new custom components for an application or a marcelle package.
-
-```bash
-marcelle generate component
-```
-
-Just enter your component's name (e.g. `my-component`) and the generator will create a template component that you can your in your script:
+It is possible to use the CLI to create new custom components for an application or a marcelle package. Run `npx marcelle`, then select 'Create a component' and enter your component's name (e.g. `my-component`). The generator will create a template component that you can use your in your script:
 
 ```js
 import { myComponent } from './components';
@@ -85,23 +106,27 @@ Components are stored in the `src/components` directory and provide a [Svelte](h
 │       └── index.js
 ```
 
-### Generating a Backend
+### Managing the Backend
 
-It is possible to use the generator to add server-side data storage (backend).
+The CLI offers two tools to manage persistent data in a server-side 'backend'.
 
-```bash
-marcelle generate backend
-```
+#### Configuring a backend
+
+To simply add a backend to your application, select 'Manage the backend', then 'Configure a backend'. this will install `@marcellejs/backend` as a dependency to your project and create configuration files.
 
 Two options are available for the backend:
 
 - The type of database: [NeDB](https://github.com/louischatriot/nedb) and [MongoDB](https://www.mongodb.com/) are currently supported.
 - Whether or not it should use authentication.
 
-To run the server:
+After reinstalling dependencies (`npm install` or `yarn` or `pnpm install`), you can run the server:
 
 ```bash
 npm run backend
 ```
 
 The backend configuration files are stored in `backend/configuration`.
+
+#### Exporting a backend (experimental)
+
+It is possible to export the source code for the backend in the './backend' directory in order to customize it.

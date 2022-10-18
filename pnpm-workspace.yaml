@@ -1,0 +1,6 @@
+packages:
+  - '.'
+  - 'docs'
+  - 'packages/*'
+  - 'apps/**'
+  - '!**/test/**'

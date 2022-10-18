@@ -1,0 +1,29 @@
+{
+  "name": "~TODO~",
+  "description": "A Marcelle Application with SvelteKit",
+  "version": "0.0.0",
+  "keywords": ["marcelle"],
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"lint": "prettier --plugin-search-dir . --check . && eslint .",
+		"format": "prettier --plugin-search-dir . --write ."
+  },
+  "dependencies": {
+    "@marcellejs/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@marcellejs/design-system": "workspace:*",
+    "@marcellejs/devtools": "workspace:*",
+    "@sveltejs/adapter-static": "next",
+    "@sveltejs/kit": "next",
+    "svelte": "^3.50.1",
+    "svelte-check": "^2.9.1",
+    "svelte-preprocess": "^4.10.7",
+    "vite": "^3.1.8"
+  }
+}

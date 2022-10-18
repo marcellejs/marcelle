@@ -20,6 +20,9 @@ module.exports = {
       processor: 'svelte3/svelte3',
     },
   ],
+  settings: {
+    'svelte3/typescript': () => require('typescript'),
+  },
   rules: {
     // Errors
     'no-console': 'warn',
@@ -77,7 +80,6 @@ module.exports = {
       },
     ],
     'no-proto': 'error',
-    'no-redeclare': 'error',
     'no-return-assign': ['error', 'always'],
     'no-return-await': 'error',
     'no-script-url': 'error',

@@ -1,6 +1,5 @@
 .DS_STORE
-node_modules
+.vscode
 dist
-types
-examples/dist
-.netlify
+node_modules
+package-lock.json

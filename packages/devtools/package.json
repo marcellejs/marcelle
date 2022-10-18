@@ -1,0 +1,40 @@
+{
+  "name": "@marcellejs/devtools",
+  "version": "0.6.0-next.0",
+  "description": "Some development tools for marcelle projects",
+  "main": "index.js",
+  "scripts": {
+    "build": "rm -rf dist && npm run build:lib && node scripts/build-templates",
+    "build:lib": "tsc --outDir dist"
+  },
+  "keywords": [
+    "marcelle"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bin": {
+    "marcelle": "./bin.js"
+  },
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@marcellejs/backend": "workspace:^0.6.0-next.0",
+    "@marcellejs/core": "workspace:^0.6.0-next.0",
+    "@types/prompts": "^2.4.1",
+    "sucrase": "^3.28.0",
+    "svelte": "^3.52.0",
+    "svelte-preprocess": "^4.10.7",
+    "tiny-glob": "^0.2.9",
+    "tslib": "^2.4.0",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "@octokit/rest": "^18.12.0",
+    "change-case": "^4.1.2",
+    "kleur": "^4.1.5",
+    "node-fetch": "^3.2.10",
+    "prompts": "^2.4.2"
+  }
+}

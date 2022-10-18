@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "marcelle-demo-sklearn-diabetes"
+version = "0.1.0"
+description = ""
+authors = ["Jules Françoise <me@julesfrancoise.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.8, <3.11"
+numpy = "^1.21.4"
+sklearn = "^0.0"
+onnx = "^1.10.2"
+skl2onnx = "^1.10.0"
+onnxruntime = "^1.9.0"
+pandas = "^1.3.4"
+matplotlib = "^3.5.0"
+
+
+[tool.poetry.dev-dependencies]
+jupyter = "^1.0.0"
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

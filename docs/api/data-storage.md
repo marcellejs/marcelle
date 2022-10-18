@@ -140,16 +140,28 @@ Removes the resource with `id`. The method should return with the removed data. 
 ## Dataset
 
 ```tsx
-marcelle.dataset(name: string, store: DataStore): Dataset;
+dataset<T extends Instance>(name: string, store?: DataStore): Dataset<T>
 ```
 
-A Dataset component allowing for capturing instances from a stream, storing them in a local or remote [data-store](/api/data-stores.html).
+A Dataset component allowing for capturing instances from a stream, storing them in a local or remote [data-store](/api/data-stores.html). Items of the datasets are called instances, and are JavaScript objects with arbitrary shape, although by convention the fields `x`, `y` and `thumbnail` are commonly used. When using TypeScript, it is possible to extend the specification of the `Instance` interface:
+
+```ts
+export interface Instance {
+  id?: ObjectId; // Object identifier in the database
+  x: any; // Typically, input data
+  y: any; // Typically, output data (for supervised learning)
+  thumbnail?: string; // Thumbnail used for display in components such as datasetBrowser
+  [key: string]: any;
+}
+```
+
+**Example:**
 
 ```js
-const store = marcelle.dataStore('localStorage');
-const trainingSet = marcelle.dataset('TrainingSet', store);
+const store = dataStore('localStorage');
+const trainingSet = dataset('TrainingSet', store);
 
-$instances.subscribe(trainingSet.create.bind(trainingSet));
+$instances.subscribe(trainingSet.create);
 ```
 
 ### Parameters
@@ -279,6 +291,18 @@ Remove an instance from the dataset
 | id     | ObjectId       | The instance's unique ID                                                                                 |    ✓     |
 | params | FeathersParams | Feathers Query parameters. See [Feathers docs](https://docs.feathersjs.com/api/databases/querying.html). |          |
 
+### .sift()
+
+```tsx
+sift(query: Query = {}): void
+```
+
+Filter the contents of the dataset from a [Feathers Query](https://docs.feathersjs.com/api/databases/querying.html). Sifting a dataset enforces that instances respect a given query. This affects all interactions with the dataset and dependent components. Note that it is possible to create several instances of datasets with different sift filters, that point to the same data store service (effectively creating different views on a given data collection).
+
+| Option | Type  | Description                                                                                              | Required |
+| ------ | ----- | -------------------------------------------------------------------------------------------------------- | :------: |
+| query  | Query | Feathers Query parameters. See [Feathers docs](https://docs.feathersjs.com/api/databases/querying.html). |          |
+
 ### .update()
 
 ```tsx
@@ -317,18 +341,42 @@ The backend package is under active development and is not yet stable. It is not
 
 ### Adding a backend to an existing application
 
-If you generated a Marcelle application using the CLI, adding a backend only requires one additional command:
+A backend can be added to a Marcelle application using the [CLI](/cli.html):
 
-```sh
-marcelle generate backend
+<CodeGroup>
+<CodeGroupItem title="npm">
+
+```bash
+npx marcelle
 ```
+
+</CodeGroupItem>
+
+<CodeGroupItem title="yarn">
+
+```bash
+yarn marcelle
+```
+
+</CodeGroupItem>
+
+<CodeGroupItem title="pnpm">
+
+```bash
+pnpx marcelle
+```
+
+</CodeGroupItem>
+</CodeGroup>
+
+Select 'Manage the backend', then 'Configure a backend'. this will install `@marcellejs/backend` as a dependency to your project and create configuration files.
 
 Two database systems are currently available for storing data:
 
 - [NeDb](https://github.com/louischatriot/nedb) - an embedded datastore with a MongoDB like API. NeDB can store data in-memory or on the filesystem which makes it useful as a persistent storage without a separate database server.
 - [MongoDb](https://www.mongodb.com/)
 
-The CLI will install `@marcellejs/core` and store configuration files in `backend/config`.
+The CLI will install `@marcellejs/backend` and store configuration files in `backend/config`.
 
 To run the backend locally:
 

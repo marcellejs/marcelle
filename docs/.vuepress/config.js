@@ -1,4 +1,7 @@
-module.exports = {
+import { defaultTheme } from 'vuepress';
+import { searchPlugin } from '@vuepress/plugin-search';
+
+export default {
   title: 'Marcelle',
   description: 'An Interactive Machine Learning Toolkit',
   head: [
@@ -8,10 +11,15 @@ module.exports = {
     // ['meta', { name: 'msapplication-TileImage', content: '/icons/msapplication-icon-144x144.png' }],
   ],
   serviceWorker: false,
-  themeConfig: {
+  plugins: [
+    searchPlugin({
+      // options
+    }),
+  ],
+  theme: defaultTheme({
     repo: 'marcellejs/marcelle',
     docsDir: 'docs',
-    nav: [
+    navbar: [
       {
         text: 'Guide',
         link: '/guide/',
@@ -32,35 +40,41 @@ module.exports = {
     sidebar: {
       '/api/': [
         {
-          title: 'Core',
+          text: 'Core',
           collapsable: false,
-          children: ['component', 'streams', 'data-storage', 'models', 'utilities'],
+          children: [
+            '/api/component',
+            '/api/streams',
+            '/api/data-storage',
+            '/api/models',
+            '/api/utilities',
+          ],
         },
         // 'components',
         {
-          title: 'Components',
+          text: 'Components',
           collapsable: false,
           children: [
-            'components/charts',
-            'components/data-sources',
-            'components/data-displays',
-            'components/model-interfaces',
-            'components/models',
-            'components/prediction-displays',
-            'components/widgets',
+            '/api/components/charts',
+            '/api/components/data-sources',
+            '/api/components/data-displays',
+            '/api/components/model-interfaces',
+            '/api/components/models',
+            '/api/components/prediction-displays',
+            '/api/components/widgets',
           ],
         },
         {
-          title: 'Layouts',
+          text: 'Layouts',
           collapsable: false,
-          children: ['dashboard', 'wizard'],
+          children: ['/api/dashboard', '/api/wizard'],
         },
-        'python',
+        '/api/python',
       ],
       '/': [
         '/installation',
         {
-          title: 'Guide',
+          text: 'Guide',
           collapsable: false,
           children: [
             '/guide/',
@@ -72,5 +86,5 @@ module.exports = {
         '/cli',
       ],
     },
-  },
+  }),
 };

@@ -1,0 +1,42 @@
+{
+  "host": "localhost",
+  "apiPrefix": "/",
+  "port": 3030,
+  "database": "nedb",
+  "nedb": "../data",
+  "uploads": "../uploads",
+  "mongodb": "mongodb://localhost:27017/marcelle_backend",
+  "gridfs": true,
+  "whitelist": {
+    "services": "*",
+    "assets": ["jpg", "jpeg", "png", "wav"]
+  },
+  "paginate": {
+    "default": 100,
+    "max": 1000
+  },
+  "authentication": {
+    "enabled": false,
+    "entity": "user",
+    "service": "users",
+    "allowSignup": false,
+    "secret": "ZjXdk3pXZLVpvcEMGGuh6LYdi9o=",
+    "authStrategies": [
+      "jwt",
+      "local"
+    ],
+    "jwtOptions": {
+      "header": {
+        "typ": "access"
+      },
+      "audience": "https://yourdomain.com",
+      "issuer": "feathers",
+      "algorithm": "HS256",
+      "expiresIn": "1d"
+    },
+    "local": {
+      "usernameField": "email",
+      "passwordField": "password"
+    }
+  }
+}

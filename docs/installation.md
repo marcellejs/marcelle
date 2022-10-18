@@ -10,35 +10,73 @@ There are several ways to start using Marcelle:
 Marcelle is still experimental and is currently under active development. Breaking changes are expected.
 :::
 
-## Using Marcelle CLI
+## Using create-marcelle
 
-Install the CLI globally:
+To create a new Marcelle project, just run:
 
-```bash
-npm install -g @marcellejs/cli
-```
-
-Generate a Marcelle application (if unsure about the options, just select the defaults):
+<CodeGroup>
+<CodeGroupItem title="npm">
 
 ```bash
-marcelle generate app
+npm init marcelle marcelle-tutorial
+cd marcelle-tutorial
+npm install
 ```
 
-See the [CLI's documentation](/cli.html)
+</CodeGroupItem>
+
+<CodeGroupItem title="yarn">
+
+```bash
+yarn create marcelle marcelle-tutorial
+cd marcelle-tutorial
+yarn
+```
+
+</CodeGroupItem>
+
+<CodeGroupItem title="pnpm">
+
+```bash
+pnpm create marcelle marcelle-tutorial
+cd marcelle-tutorial
+pnpm i
+```
+
+</CodeGroupItem>
+
+</CodeGroup>
+
+See the [CLI's documentation](/cli.html) for more information about available options.
 
 ## Using a package manager
 
-Using npm:
+<CodeGroup>
+<CodeGroupItem title="npm">
 
 ```bash
 npm install @marcellejs/core --save
 ```
 
-or yarn:
+</CodeGroupItem>
+
+<CodeGroupItem title="yarn">
 
 ```bash
 yarn add @marcellejs/core
 ```
+
+</CodeGroupItem>
+
+<CodeGroupItem title="pnpm">
+
+```bash
+pnpm add @marcellejs/core
+```
+
+</CodeGroupItem>
+
+</CodeGroup>
 
 ## Direct Download / CDN
 
@@ -56,7 +94,7 @@ The following HTML and JS snippets provide a template marcelle application.
     <title>Marcelle Example</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <link rel="stylesheet" href="https://unpkg.com/@marcellejs/core@0.3.2/dist/marcelle.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@marcellejs/core@latest/dist/marcelle.css" />
     <script defer type="module" src="script.js"></script>
   </head>
   <body>
@@ -71,10 +109,7 @@ The following HTML and JS snippets provide a template marcelle application.
 ```
 
 ```js
-import {
-  dashboard,
-  webcam,
-} from 'https://unpkg.com/@marcellejs/core@0.3.2/dist/marcelle.bundle.esm.js';
+import { dashboard, webcam } from 'https://unpkg.com/@marcellejs/core';
 
 const w = webcam();
 

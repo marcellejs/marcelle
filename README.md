@@ -12,66 +12,38 @@
 
 ## Status ⚠️
 
-Marcelle is still experimental and is currently under active development. Breaking changes are expected.
+Marcelle is still experimental and is currently under active development. Breaking changes are expected at every minor version.
 
 ## About
 
 Marcelle is a modular open source toolkit for programming interactive machine learning applications. Marcelle is built around components embedding computation and interaction that can be composed to form reactive machine learning pipelines and custom user interfaces. This architecture enables rapid prototyping and extension. Marcelle can be used to build interfaces to Python scripts, and it provides flexible data stores to facilitate collaboration between machine learning experts, designers and end users.
 
-## Installation
+## Getting started
 
-[See online documentation](https://marcelle.dev/installation.html)
-
-Using NPM:
+[See online documentation](https://marcelle.dev/guide/)
 
 ```bash
-npm install @marcellejs/core --save
-```
-
-Using Yarn:
-
-```bash
-yarn add @marcellejs/core
+npm init marcelle marcelle-tutorial
+cd marcelle-tutorial
+npm install
+npm run dev -- --open
 ```
 
 ## Usage
 
 See [Online Documentation](https://marcelle.dev)
 
-## 🛠 Developing
+## Contributing
 
-### Building the library
+See [CONTRIBUTING.md](./CONTRIBUTING.md)
 
-To build for production:
-
-```bash
-yarn build # OR npm run build
-```
-
-To build for development (watch mode):
-
-```bash
-yarn dev # OR npm run dev
-```
-
-To generate the typescript declaration files (useful for the rollup example), run `yarn build:types` in production, or `yarn dev:types` in development.
-
-### Setting up VSCode
-
-[Download VSCode](https://code.visualstudio.com/) and install the following extensions:
-
-- [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
-- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-- [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-- [Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
-
-## Credits
+## ✍️ Credits
 
 Marcelle is a research project led by [Jules Françoise](https://www.julesfrancoise.com/) (CNRS researcher at [LISN](https://www.lisn.upsaclay.fr/)) and [Baptiste Caramiaux](https://baptistecaramiaux.com/) (CNRS researcher at [ISIR](https://hci.isir.upmc.fr/)).
 
 This research was supported by the [ELEMENT project](https://element-project.ircam.fr/) (ANR-18-CE33-0002) from the French National Research Agency.
 
-### ✍️ Authors
+### Authors
 
 - [Jules Françoise](https://www.julesfrancoise.com/) (CNRS researcher at [LISN](https://www.lisn.upsaclay.fr/))
 - [Baptiste Caramiaux](https://baptistecaramiaux.com/) (CNRS researcher at [ISIR](https://hci.isir.upmc.fr/)).

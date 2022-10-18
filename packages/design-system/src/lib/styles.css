@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.marcelle {
+  box-sizing: border-box;
+  -moz-tab-size: 4;
+  tab-size: 4;
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji';
+}
+
+.marcelle *,
+.marcelle *::before,
+.marcelle *::after {
+  box-sizing: border-box;
+}
+
+.card {
+  @apply bg-white rounded-xl relative mx-1 my-2 p-3 flex flex-col shadow-sm overflow-hidden;
+}
+
+.card-title {
+  @apply block text-gray-700 mb-4 font-medium;
+}
