@@ -361,6 +361,64 @@ classifier.loadFromUrl();
 const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
 ```
 
+## poseDetection
+
+```tsx
+marcelle.poseDetection(
+  model: 'MoveNet' | 'BlazePose' | 'PoseNet' = 'MoveNet',
+  modelConfig?: ModelConfig
+): PoseDetection;
+```
+
+This component performs pose detection from images using deep learning. It is based on [Tensorflow.js's pose detection implementation](https://github.com/tensorflow/tfjs-models/tree/master/pose-detection/), that includes 3 models: PoseNet, MoveNet and BlazePose. For feature extraction, the `.postprocess()` method can be used to get arrays from the skeleton structure.
+
+### Parameters
+
+| Option  | Type                        | Description                                                                                                                                                                                                                                                        | Required |
+| ------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------: |
+| version | 1 \| 2                      | The MobileNet version number. Use 1 for [MobileNetV1](https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet_v1.md), and 2 for [MobileNetV2](https://github.com/tensorflow/models/tree/master/research/slim/nets/mobilenet). Defaults to 1. |          |
+| alpha   | 0.25 \| 0.50 \| 0.75 \| 1.0 | Controls the width of the network, trading accuracy for performance. A smaller alpha decreases accuracy and increases performance. 0.25 is only available for V1. Defaults to 1.0.                                                                                 |          |
+
+Since parameters are used to load a heavy model, they can only be used on when the component is created, and there are not reactive parameters.
+
+### Methods
+
+#### .predict()
+
+```tsx
+predict(image: ImageData): Promise<ClassifierResults>
+```
+
+Make a prediction from an input image `image` in ImageData format. The method is asynchronous and returns a promise that resolves with the results of the prediction. The results have the following signature:
+
+```ts
+interface ClassifierResults {
+  label: string;
+  confidences: { [key: string]: number };
+}
+```
+
+#### .process()
+
+```tsx
+process(image: ImageData): Promise<number[]>
+```
+
+Use mobilenet for feature extraction, for example to perform transfer learning. The method returns the embedding for the input image. The size of the embedding depends on the alpha (width) of the model.
+
+### Example
+
+```js
+const input = marcelle.webcam();
+const m = marcelle.mobileNet();
+
+// Extract features (embedding) from webcam images
+const $embedding = input.$images.map((img) => m.process(img)).awaitPromises();
+
+// Predict labels from webcam images (default mobilenet classification)
+const $prediction = input.$images.map((img) => m.predict(img)).awaitPromises();
+```
+
 ## tfjsModel
 
 ```tsx

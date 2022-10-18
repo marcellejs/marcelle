@@ -2,4 +2,7 @@
 '@marcellejs/core': patch
 ---
 
-New component: `textArea` widget
+New components:
+
+- `textArea` widget
+- `poseDetection` model for continuous pose estimation with Deep Learning, using Tensorflow.js

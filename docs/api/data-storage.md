@@ -140,14 +140,26 @@ Removes the resource with `id`. The method should return with the removed data. 
 ## Dataset
 
 ```tsx
-marcelle.dataset(name: string, store: DataStore): Dataset;
+dataset<T extends Instance>(name: string, store?: DataStore): Dataset<T>
 ```
 
-A Dataset component allowing for capturing instances from a stream, storing them in a local or remote [data-store](/api/data-stores.html).
+A Dataset component allowing for capturing instances from a stream, storing them in a local or remote [data-store](/api/data-stores.html). Items of the datasets are called instances, and are JavaScript objects with arbitrary shape, although by convention the fields `x`, `y` and `thumbnail` are commonly used. When using TypeScript, it is possible to extend the specification of the `Instance` interface:
+
+```ts
+export interface Instance {
+  id?: ObjectId; // Object identifier in the database
+  x: any; // Typically, input data
+  y: any; // Typically, output data (for supervised learning)
+  thumbnail?: string; // Thumbnail used for display in components such as datasetBrowser
+  [key: string]: any;
+}
+```
+
+**Example:**
 
 ```js
-const store = marcelle.dataStore('localStorage');
-const trainingSet = marcelle.dataset('TrainingSet', store);
+const store = dataStore('localStorage');
+const trainingSet = dataset('TrainingSet', store);
 
 $instances.subscribe(trainingSet.create);
 ```
