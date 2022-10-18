@@ -123,12 +123,16 @@ export class Dataset<T extends Instance> extends Component {
     const respectsQuery = sift(this.query);
     this.instanceService.on('created', (x: T) => {
       if (!respectsQuery(x)) return;
+      const instance = {
+        ...x,
+        id: x.id || x._id,
+      };
       this.$count.set(this.$count.get() + 1);
       this.$changes.set([
         {
           level: 'instance',
           type: 'created',
-          data: x,
+          data: instance,
         },
       ]);
     });
