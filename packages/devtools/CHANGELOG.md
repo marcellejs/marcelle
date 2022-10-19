@@ -1,5 +1,7 @@
 # @marcellejs/devtools
 
+## 0.6.0-next.1
+
 ## 0.6.0-next.0
 
 ### Minor Changes
