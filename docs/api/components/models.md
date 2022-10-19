@@ -58,7 +58,7 @@ const cocoPredictionStream = source.$images
 ## knnClassifier
 
 ```tsx
-marcelle.knnClassifier({ k?: number }): KNNClassifier;
+knnClassifier({ k?: number }): KNNClassifier;
 ```
 
 A K-Nearest Neighbors classifier based on [Tensorflow.js's implementation](https://github.com/tensorflow/tfjs-models/tree/master/knn-classifier).
@@ -132,14 +132,14 @@ const predictionStream = $featureStream // A stream of input features
 ## mlpClassifier
 
 ```tsx
-marcelle.mlpClassifier({
+mlpClassifier({
   layers?: number[],
   epochs?: number,
   batchSize?: number,
 }): MLPClassifier;
 ```
 
-A Multi-Layer Perceptron using Tensorflow.js. The configuration of the model (number of layers and number of hidden nodes per layer) can be configured.
+A Multi-Layer Perceptron classifier using Tensorflow.js. The configuration of the model (number of layers and number of hidden nodes per layer) can be configured.
 
 ### Parameters
 
@@ -196,14 +196,21 @@ interface ClassifierResults {
 
 ```tsx
 train(
-  dataset: Dataset<InputType, OutputType> | ServiceIterable<Instance<InputType, OutputType>>,
-  validationDataset?:
-    | Dataset<InputType, OutputType>
-    | ServiceIterable<Instance<InputType, OutputType>>,
-): void;
+    dataset: Dataset<ClassifierInstance> | LazyIterable<ClassifierInstance>,
+    validationDataset?: Dataset<ClassifierInstance> | LazyIterable<ClassifierInstance>,
+  ): Promise<void>
 ```
 
 Train the model from a given dataset, optionally passing a custom validation dataset. If no validation dataset is passed, a train/validation split will be created automatically based on the `validationSplit` parameter.
+
+Instances for TFJS classifiers are as follows:
+
+```ts
+interface ClassifierInstance extends Instance {
+  x: TensorLike;
+  y: string;
+}
+```
 
 ### Example
 
@@ -216,10 +223,97 @@ const predictionStream = $featureStream // A stream of input features
   .awaitPromises();
 ```
 
+## mlpRegressor
+
+```tsx
+mlpRegressor({
+  units?: number[],
+  epochs?: number,
+  batchSize?: number,
+}): MLPClassifier;
+```
+
+A Multi-Layer Perceptron for regression using Tensorflow.js. The configuration of the model (number of layers and number of hidden nodes per layer) can be configured.
+
+### Parameters
+
+| Option          | Type     | Description                                                                                                              | Required | Default  |
+| --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------ | :------: | -------- |
+| units           | number[] | The model configuration as an array of numbers, where each element defines a layer with the given number of hidden nodes |          | [64, 32] |
+| epochs          | number   | Number of epochs used for training                                                                                       |          | 20       |
+| batchSize       | number   | Training data batch size                                                                                                 |          | 8        |
+| validationSplit | number   | Proportion of data to use for validation                                                                                 |          | 0.2      |
+
+The set of reactive parameters has the following signature:
+
+```ts
+parameters {
+  units: Stream<number[]>;
+  epochs: Stream<number>;
+  batchSize: Stream<number>;
+  validationSplit: number;
+}
+```
+
+### Streams
+
+| Name       | Type                     | Description                                                                                                                                                                                               | Hold |
+| ---------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--: |
+| \$training | Stream\<TrainingStatus\> | Stream of training status events, containing the current status ('idle' / 'start' / 'epoch' / 'success' / 'error'), the current epoch and associated data (such as loss and accuracy) during the training |      |
+
+### Methods
+
+#### .clear()
+
+```tsx
+clear(): void
+```
+
+Clear the model, removing all instances
+
+#### .predict()
+
+```tsx
+predict(x: TensorLike): Promise<number | number[]>
+```
+
+Make a prediction from an input feature array `x`. The method is asynchronous and returns a promise that resolves with the results of the prediction. The results are either a number or an array of numbers, depending on the training data.
+
+#### .train()
+
+```tsx
+train(
+  dataset: Dataset<MLPRegressorInstance> | LazyIterable<MLPRegressorInstance>,
+  validationDataset?: Dataset<MLPRegressorInstance> | LazyIterable<MLPRegressorInstance>,
+): Promise<void>;
+```
+
+Train the model from a given dataset, optionally passing a custom validation dataset. If no validation dataset is passed, a train/validation split will be created automatically based on the `validationSplit` parameter.
+
+Instances for the MLPRegressor model are as follows:
+
+```ts
+interface MLPRegressorInstance extends Instance {
+  x: TensorLike;
+  y: number;
+}
+```
+
+### Example
+
+```js
+const regressor = marcelle.mlpRegressor({ units: [64, 32], epochs: 50 });
+regressor.train(trainingSet);
+
+const predictionStream = $featureStream // A stream of input features
+  .map(async (features) => regressor.predict(features));
+  .awaitPromises();
+```
+
 ## mobileNet
 
 ```tsx
-marcelle.mobileNet({
+mobileNet({
   version?: 1 | 2,
   alpha?: 0.25 | 0.50 | 0.75 | 1.0,
 }): MobileNet;
@@ -364,7 +458,7 @@ const predictionStream = source.$images.map(async (img) => classifier.predict(im
 ## poseDetection
 
 ```tsx
-marcelle.poseDetection(
+poseDetection(
   model: 'MoveNet' | 'BlazePose' | 'PoseNet' = 'MoveNet',
   modelConfig?: ModelConfig
 ): PoseDetection;

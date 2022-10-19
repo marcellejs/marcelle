@@ -14,6 +14,7 @@ export * from './image-upload';
 export * from './kmeans-clustering';
 export * from './knn-classifier';
 export * from './mlp-classifier';
+export * from './mlp-regressor';
 export * from './mobile-net';
 export * from './model-parameters';
 export * from './number';
