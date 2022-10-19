@@ -12,7 +12,7 @@
   ]],
   "linked": [],
   "access": "restricted",
-  "baseBranch": "master",
+  "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": ["marcelle"]
 }

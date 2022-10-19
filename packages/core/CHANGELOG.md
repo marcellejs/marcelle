@@ -1,5 +1,11 @@
 # Marcelle changelog
 
+## 0.6.0-next.1
+
+### Patch Changes
+
+- de0357c: Fixed bundling bug due to rollup plugin update
+
 ## 0.6.0-next.0
 
 ### Minor Changes
