@@ -1,5 +1,12 @@
 # demos
 
+## 0.6.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [de0357c]
+  - @marcellejs/core@0.6.0-next.1
+
 ## 0.6.0-next.0
 
 ### Patch Changes
