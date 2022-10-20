@@ -50,9 +50,69 @@ interface ObjectDetectorResults {
 const source = marcelle.imageUpload();
 const cocoClassifier = marcelle.cocoSsd();
 
-const cocoPredictionStream = source.$images
-  .map(async (img) => cocoClassifier.predict(img))
-  .awaitPromises();
+const cocoPredictionStream = source.$images.map(cocoClassifier.predict).awaitPromises();
+```
+
+## kmeansClustering
+
+```tsx
+kmeansClustering({ k?: number }): KMeansClustering;
+```
+
+A K-means clustering algorithm based on [ml-kmeans](https://github.com/mljs/kmeans).
+
+### Parameters
+
+| Option | Type   | Description                        | Required | default |
+| ------ | ------ | ---------------------------------- | :------: | ------- |
+| k      | number | Number of clusters. Defaults to 3. |          | 3       |
+
+The set of reactive parameters has the following signature:
+
+```ts
+parameters: {
+  k: Stream<number>;
+}
+```
+
+### Streams
+
+| Name       | Type                     | Description                                                           | Hold |
+| ---------- | ------------------------ | --------------------------------------------------------------------- | :--: |
+| \$training | Stream\<TrainingStatus\> | Stream of training status events (see above), with no additional data |      |
+| \$centers  | Stream\<number[][]\>     | Stream of cluster centers                                             |      |
+| \$clusters | Stream\<number[]\>       | Stream of cluster IDs of the training set's instances                 |      |
+
+### Methods
+
+#### .predict()
+
+```tsx
+predict(x: number[]): Promise<ClusteringResults>
+```
+
+Make a prediction from an input feature array `x`. The method is asynchronous and returns a promise that resolves with the results of the prediction. The results have the following signature:
+
+```ts
+interface ClusteringResults {
+  cluster: number;
+  confidences: { [key: number]: number };
+}
+```
+
+#### .train()
+
+```tsx
+train(dataset: Dataset<KMeansInstance> | LazyIterable<KMeansInstance>): Promise<void>
+```
+
+Train the model from a given dataset.
+
+### Example
+
+```js
+const clustering = marcelle.kmeansClustering({ k: 5 });
+clustering.train(trainingSet);
 ```
 
 ## knnClassifier
@@ -125,7 +185,7 @@ const classifier = marcelle.knnClassifier({ k: 5 });
 classifier.train(trainingSet);
 
 const predictionStream = $featureStream // A stream of input features
-  .map(async (features) => classifier.predict(features))
+  .map(classifier.predict)
   .awaitPromises();
 ```
 
@@ -219,7 +279,7 @@ const classifier = marcelle.mlpClassifier({ layers: [64, 32], epochs: 50 });
 classifier.train(trainingSet);
 
 const predictionStream = $featureStream // A stream of input features
-  .map(async (features) => classifier.predict(features));
+  .map(classifier.predict);
   .awaitPromises();
 ```
 
@@ -306,7 +366,7 @@ const regressor = marcelle.mlpRegressor({ units: [64, 32], epochs: 50 });
 regressor.train(trainingSet);
 
 const predictionStream = $featureStream // A stream of input features
-  .map(async (features) => regressor.predict(features));
+  .map(regressor.predict);
   .awaitPromises();
 ```
 
@@ -452,7 +512,67 @@ const classifier = tfjsModel({
 });
 classifier.loadFromUrl();
 
-const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
+const predictionStream = source.$images.map(classifier.predict).awaitPromises();
+```
+
+## pca
+
+```tsx
+pca(): PCA;
+```
+
+Principal Component Analysis (PCA) based on [ml-pca](https://github.com/mljs/pca).
+
+### Streams
+
+| Name       | Type                     | Description                                                                                                                                                                                               | Hold |
+| ---------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--: |
+| \$training | Stream\<TrainingStatus\> | Stream of training status events, containing the current status ('idle' / 'start' / 'epoch' / 'success' / 'error'), the current epoch and associated data (such as loss and accuracy) during the training |      |
+
+### Methods
+
+#### .clear()
+
+```tsx
+clear(): void
+```
+
+Clear the model
+
+#### .predict()
+
+```tsx
+predict(x: number[]): Promise<number[]>
+```
+
+Project a given data point into the PCA space. The method is asynchronous and returns a promise that resolves with the results of the prediction.
+
+#### .train()
+
+```tsx
+train(dataset: Dataset<PCAInstance> | LazyIterable<PCAInstance>): Promise<void>
+```
+
+Train the model from a given dataset.
+
+Instances for PCA model are as follows:
+
+```ts
+interface PCAInstance extends Instance {
+  x: number[];
+  y: undefined;
+}
+```
+
+### Example
+
+```js
+const projector = marcelle.pca();
+projector.train(trainingSet);
+
+const $projection = $featureStream // A stream of input features
+  .map(projector.predict);
+  .awaitPromises();
 ```
 
 ## poseDetection
@@ -598,5 +718,5 @@ const classifier = tfjsModel({
 });
 classifier.loadFromUrl();
 
-const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
+const predictionStream = source.$images.map(classifier.predict).awaitPromises();
 ```

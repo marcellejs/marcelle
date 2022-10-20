@@ -238,6 +238,7 @@ importers:
       lodash: ^4.17.21
       luxon: ^2.5.0
       ml-kmeans: ^5.0.0
+      ml-pca: ^4.0.2
       onnxruntime-web: ^1.12.1
       postcss: ^8.4.18
       postcss-load-config: ^3.1.4
@@ -291,6 +292,7 @@ importers:
       lodash: 4.17.21
       luxon: 2.5.0
       ml-kmeans: 5.0.0
+      ml-pca: 4.0.2
       onnxruntime-web: 1.12.1
       scatter-gl: 0.0.13
       seedrandom: 3.0.5
@@ -8564,6 +8566,12 @@ packages:
     resolution: {integrity: sha512-gMPwNm3eed59ewJYiCK/+wElWBfNoD6JizH965ePiQgCo0pvQL63w4YdZhLs5eUV0iWcq6brVMUBL6iMySHnqg==}
     dependencies:
       ml-distance-euclidean: 2.0.0
+    dev: false
+
+  /ml-pca/4.0.2:
+    resolution: {integrity: sha512-LNsEmk1yq6chYUdexk/YUkzzGv6auR3ERQlemT3AikGBY+l+76MfSqO7I+ngd23w/mwl8H+tng7aA8SvJOvDLg==}
+    dependencies:
+      ml-matrix: 6.10.2
     dev: false
 
   /ml-random/0.5.0:

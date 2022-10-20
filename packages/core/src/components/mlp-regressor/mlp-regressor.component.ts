@@ -1,4 +1,4 @@
-import { train,  tidy,type TensorLike, tensor, Tensor } from '@tensorflow/tfjs-core';
+import { train, tidy, type TensorLike, tensor, Tensor } from '@tensorflow/tfjs-core';
 import { sequential, layers as tfLayers, metrics } from '@tensorflow/tfjs-layers';
 import { Stream } from '../../core/stream';
 import { TFJSCustomModel, TFJSCustomModelOptions } from '../../core/model/tfjs-custom-model';
@@ -14,19 +14,12 @@ export interface MLPRegressorInstance extends Instance {
   y: number;
 }
 
-
-export class MLPRegressor extends TFJSCustomModel<
-MLPRegressorInstance,
-number|number[]
-> {
+export class MLPRegressor extends TFJSCustomModel<MLPRegressorInstance, number | number[]> {
   title = 'MLPRegressor';
 
   parameters: {
     units: Stream<number[]>;
-  } & TFJSCustomModel<
-  MLPRegressorInstance,
-  number|number[]
-  >['parameters'];
+  } & TFJSCustomModel<MLPRegressorInstance, number | number[]>['parameters'];
 
   constructor({ units = [64, 32], ...rest }: Partial<MLPRegressorOptions> = {}) {
     super(rest);
@@ -52,7 +45,7 @@ number|number[]
   buildModel(inputShape: Tensor['shape'], outputShape: Tensor['shape']) {
     const units = this.parameters.units.get();
     this.model = sequential();
-    this.model.add(tfLayers.inputLayer({ inputShape }))
+    this.model.add(tfLayers.inputLayer({ inputShape }));
     for (const u of units) {
       this.model.add(
         tfLayers.dense({
@@ -74,7 +67,7 @@ number|number[]
     });
   }
 
-  async predict(x:TensorLike) {
+  async predict(x: TensorLike) {
     if (!this.model) return null;
     return tidy(() => {
       const pred = this._predict(x).arraySync() as number[];
