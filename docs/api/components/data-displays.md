@@ -36,6 +36,52 @@ const trainingSetBrowser = marcelle.datasetBrowser(trainingSet);
 dashboard.page('Data Management').use(trainingSetBrowser);
 ```
 
+## datasetScatter
+
+```tsx
+datasetScatter<T extends Instance>(
+  dataset: Dataset<T>
+): DatasetScatter<T>;
+```
+
+Visualize the contents of a dataset using a scatter plot visualization. The mapping between the fields of dataset instances and the x, y position, as well as the label, can be specified using transformer functions.
+
+### Parameters
+
+| Option  | Type      | Description              | Required |
+| ------- | --------- | ------------------------ | :------: |
+| dataset | Dataset - | The dataset to visualize |    ✓     |
+
+### Methods
+
+#### .setTransforms()
+
+```tsx
+setTransforms(t: Partial<Transforms<T>>): void;
+```
+
+Set one or several data transformations for `xy` coordinates, and `label`. Transforms have the following signature:
+
+```ts
+interface Transforms<T extends Instance> {
+  xy: (value: T) => [number, number] | Promise<[number, number]>;
+  label: (value: T) => number | string | Promise<number | string>;
+}
+```
+
+### Screenshot
+
+<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
+  <img src="./images/dataset-scatter.png" alt="Screenshot of the datasetScatter component">
+</div>
+
+### Example
+
+```js
+const trainingScatter = marcelle.datasetScatter(trainingSet);
+dashboard.page('Data Management').use(trainingScatter);
+```
+
 ## datasetTable
 
 ```tsx

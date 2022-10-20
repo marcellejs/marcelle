@@ -50,15 +50,75 @@ interface ObjectDetectorResults {
 const source = marcelle.imageUpload();
 const cocoClassifier = marcelle.cocoSsd();
 
-const cocoPredictionStream = source.$images
-  .map(async (img) => cocoClassifier.predict(img))
-  .awaitPromises();
+const cocoPredictionStream = source.$images.map(cocoClassifier.predict).awaitPromises();
+```
+
+## kmeansClustering
+
+```tsx
+kmeansClustering({ k?: number }): KMeansClustering;
+```
+
+A K-means clustering algorithm based on [ml-kmeans](https://github.com/mljs/kmeans).
+
+### Parameters
+
+| Option | Type   | Description                        | Required | default |
+| ------ | ------ | ---------------------------------- | :------: | ------- |
+| k      | number | Number of clusters. Defaults to 3. |          | 3       |
+
+The set of reactive parameters has the following signature:
+
+```ts
+parameters: {
+  k: Stream<number>;
+}
+```
+
+### Streams
+
+| Name       | Type                     | Description                                                           | Hold |
+| ---------- | ------------------------ | --------------------------------------------------------------------- | :--: |
+| \$training | Stream\<TrainingStatus\> | Stream of training status events (see above), with no additional data |      |
+| \$centers  | Stream\<number[][]\>     | Stream of cluster centers                                             |      |
+| \$clusters | Stream\<number[]\>       | Stream of cluster IDs of the training set's instances                 |      |
+
+### Methods
+
+#### .predict()
+
+```tsx
+predict(x: number[]): Promise<ClusteringResults>
+```
+
+Make a prediction from an input feature array `x`. The method is asynchronous and returns a promise that resolves with the results of the prediction. The results have the following signature:
+
+```ts
+interface ClusteringResults {
+  cluster: number;
+  confidences: { [key: number]: number };
+}
+```
+
+#### .train()
+
+```tsx
+train(dataset: Dataset<KMeansInstance> | LazyIterable<KMeansInstance>): Promise<void>
+```
+
+Train the model from a given dataset.
+
+### Example
+
+```js
+const clustering = marcelle.kmeansClustering({ k: 5 });
+clustering.train(trainingSet);
 ```
 
 ## knnClassifier
 
 ```tsx
-marcelle.knnClassifier({ k?: number }): KNNClassifier;
+knnClassifier({ k?: number }): KNNClassifier;
 ```
 
 A K-Nearest Neighbors classifier based on [Tensorflow.js's implementation](https://github.com/tensorflow/tfjs-models/tree/master/knn-classifier).
@@ -125,21 +185,21 @@ const classifier = marcelle.knnClassifier({ k: 5 });
 classifier.train(trainingSet);
 
 const predictionStream = $featureStream // A stream of input features
-  .map(async (features) => classifier.predict(features))
+  .map(classifier.predict)
   .awaitPromises();
 ```
 
 ## mlpClassifier
 
 ```tsx
-marcelle.mlpClassifier({
+mlpClassifier({
   layers?: number[],
   epochs?: number,
   batchSize?: number,
 }): MLPClassifier;
 ```
 
-A Multi-Layer Perceptron using Tensorflow.js. The configuration of the model (number of layers and number of hidden nodes per layer) can be configured.
+A Multi-Layer Perceptron classifier using Tensorflow.js. The configuration of the model (number of layers and number of hidden nodes per layer) can be configured.
 
 ### Parameters
 
@@ -196,14 +256,21 @@ interface ClassifierResults {
 
 ```tsx
 train(
-  dataset: Dataset<InputType, OutputType> | ServiceIterable<Instance<InputType, OutputType>>,
-  validationDataset?:
-    | Dataset<InputType, OutputType>
-    | ServiceIterable<Instance<InputType, OutputType>>,
-): void;
+    dataset: Dataset<ClassifierInstance> | LazyIterable<ClassifierInstance>,
+    validationDataset?: Dataset<ClassifierInstance> | LazyIterable<ClassifierInstance>,
+  ): Promise<void>
 ```
 
 Train the model from a given dataset, optionally passing a custom validation dataset. If no validation dataset is passed, a train/validation split will be created automatically based on the `validationSplit` parameter.
+
+Instances for TFJS classifiers are as follows:
+
+```ts
+interface ClassifierInstance extends Instance {
+  x: TensorLike;
+  y: string;
+}
+```
 
 ### Example
 
@@ -212,14 +279,101 @@ const classifier = marcelle.mlpClassifier({ layers: [64, 32], epochs: 50 });
 classifier.train(trainingSet);
 
 const predictionStream = $featureStream // A stream of input features
-  .map(async (features) => classifier.predict(features));
+  .map(classifier.predict);
+  .awaitPromises();
+```
+
+## mlpRegressor
+
+```tsx
+mlpRegressor({
+  units?: number[],
+  epochs?: number,
+  batchSize?: number,
+}): MLPClassifier;
+```
+
+A Multi-Layer Perceptron for regression using Tensorflow.js. The configuration of the model (number of layers and number of hidden nodes per layer) can be configured.
+
+### Parameters
+
+| Option          | Type     | Description                                                                                                              | Required | Default  |
+| --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------ | :------: | -------- |
+| units           | number[] | The model configuration as an array of numbers, where each element defines a layer with the given number of hidden nodes |          | [64, 32] |
+| epochs          | number   | Number of epochs used for training                                                                                       |          | 20       |
+| batchSize       | number   | Training data batch size                                                                                                 |          | 8        |
+| validationSplit | number   | Proportion of data to use for validation                                                                                 |          | 0.2      |
+
+The set of reactive parameters has the following signature:
+
+```ts
+parameters {
+  units: Stream<number[]>;
+  epochs: Stream<number>;
+  batchSize: Stream<number>;
+  validationSplit: number;
+}
+```
+
+### Streams
+
+| Name       | Type                     | Description                                                                                                                                                                                               | Hold |
+| ---------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--: |
+| \$training | Stream\<TrainingStatus\> | Stream of training status events, containing the current status ('idle' / 'start' / 'epoch' / 'success' / 'error'), the current epoch and associated data (such as loss and accuracy) during the training |      |
+
+### Methods
+
+#### .clear()
+
+```tsx
+clear(): void
+```
+
+Clear the model, removing all instances
+
+#### .predict()
+
+```tsx
+predict(x: TensorLike): Promise<number | number[]>
+```
+
+Make a prediction from an input feature array `x`. The method is asynchronous and returns a promise that resolves with the results of the prediction. The results are either a number or an array of numbers, depending on the training data.
+
+#### .train()
+
+```tsx
+train(
+  dataset: Dataset<MLPRegressorInstance> | LazyIterable<MLPRegressorInstance>,
+  validationDataset?: Dataset<MLPRegressorInstance> | LazyIterable<MLPRegressorInstance>,
+): Promise<void>;
+```
+
+Train the model from a given dataset, optionally passing a custom validation dataset. If no validation dataset is passed, a train/validation split will be created automatically based on the `validationSplit` parameter.
+
+Instances for the MLPRegressor model are as follows:
+
+```ts
+interface MLPRegressorInstance extends Instance {
+  x: TensorLike;
+  y: number;
+}
+```
+
+### Example
+
+```js
+const regressor = marcelle.mlpRegressor({ units: [64, 32], epochs: 50 });
+regressor.train(trainingSet);
+
+const predictionStream = $featureStream // A stream of input features
+  .map(regressor.predict);
   .awaitPromises();
 ```
 
 ## mobileNet
 
 ```tsx
-marcelle.mobileNet({
+mobileNet({
   version?: 1 | 2,
   alpha?: 0.25 | 0.50 | 0.75 | 1.0,
 }): MobileNet;
@@ -358,13 +512,73 @@ const classifier = tfjsModel({
 });
 classifier.loadFromUrl();
 
-const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
+const predictionStream = source.$images.map(classifier.predict).awaitPromises();
+```
+
+## pca
+
+```tsx
+pca(): PCA;
+```
+
+Principal Component Analysis (PCA) based on [ml-pca](https://github.com/mljs/pca).
+
+### Streams
+
+| Name       | Type                     | Description                                                                                                                                                                                               | Hold |
+| ---------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--: |
+| \$training | Stream\<TrainingStatus\> | Stream of training status events, containing the current status ('idle' / 'start' / 'epoch' / 'success' / 'error'), the current epoch and associated data (such as loss and accuracy) during the training |      |
+
+### Methods
+
+#### .clear()
+
+```tsx
+clear(): void
+```
+
+Clear the model
+
+#### .predict()
+
+```tsx
+predict(x: number[]): Promise<number[]>
+```
+
+Project a given data point into the PCA space. The method is asynchronous and returns a promise that resolves with the results of the prediction.
+
+#### .train()
+
+```tsx
+train(dataset: Dataset<PCAInstance> | LazyIterable<PCAInstance>): Promise<void>
+```
+
+Train the model from a given dataset.
+
+Instances for PCA model are as follows:
+
+```ts
+interface PCAInstance extends Instance {
+  x: number[];
+  y: undefined;
+}
+```
+
+### Example
+
+```js
+const projector = marcelle.pca();
+projector.train(trainingSet);
+
+const $projection = $featureStream // A stream of input features
+  .map(projector.predict);
+  .awaitPromises();
 ```
 
 ## poseDetection
 
 ```tsx
-marcelle.poseDetection(
+poseDetection(
   model: 'MoveNet' | 'BlazePose' | 'PoseNet' = 'MoveNet',
   modelConfig?: ModelConfig
 ): PoseDetection;
@@ -504,5 +718,81 @@ const classifier = tfjsModel({
 });
 classifier.loadFromUrl();
 
-const predictionStream = source.$images.map(async (img) => classifier.predict(img)).awaitPromises();
+const predictionStream = source.$images.map(classifier.predict).awaitPromises();
+```
+
+## umap
+
+```tsx
+umap({
+  nComponents: number,
+  nNeighbors: number,
+  minDist: number,
+  spread: number,
+  supervised: boolean,
+}): Umap;
+```
+
+Uniform Manifold Approximation and Projection (UMAP) is a dimension reduction technique that can be used for visualisation similarly to t-SNE, but also for general non-linear dimension reduction. This component use the [umap-js]( use the umap-js library from the Google PAIR team) library from the Google PAIR team.
+
+### Parameters
+
+| Option      | Type    | Description                                                                                                                       | Required | Default |
+| ----------- | ------- | --------------------------------------------------------------------------------------------------------------------------------- | :------: | ------- |
+| nComponents | number  | The number of components (dimensions) to project the data to                                                                      |          | 2       |
+| nNeighbors  | number  | The number of nearest neighbors to construct the fuzzy manifold                                                                   |          | 15      |
+| minDist     | number  | The effective minimum distance between embedded points, used with spread to control the clumped/dispersed nature of the embedding |          | 0.1     |
+| spread      | number  | The effective scale of embedded points, used with minDist to control the clumped/dispersed nature of the embedding                |          | 1.0     |
+| supervised  | boolean | Whether or not to use labels to perform supervised projection                                                                     |          | false   |
+
+The set of reactive parameters has the following signature:
+
+```ts
+parameters: {
+  nComponents: Stream<number>;
+  nNeighbors: Stream<number>;
+  minDist: Stream<number>;
+  spread: Stream<number>;
+  supervised: Stream<boolean>;
+}
+```
+
+### Streams
+
+| Name       | Type                     | Description                                                                                                                                                                                | Hold |
+| ---------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--: |
+| \$training | Stream\<TrainingStatus\> | Stream of training status events, containing the current status ('idle' / 'start' / 'epoch' / 'success' / 'error'), the current epoch and associated data (embeddings) during the training |      |
+
+### Methods
+
+#### .predict()
+
+```tsx
+predict(x: number[]): Promise<number[]>
+```
+
+Project a given data point into the UMAP space. The method is asynchronous and returns a promise that resolves with the coordinates.
+
+#### .train()
+
+```tsx
+train(dataset: Dataset<UmapInstance> | LazyIterable<UmapInstance>): Promise<void>
+```
+
+Train the model from a given dataset.
+
+Instances for Umap are as follows:
+
+```ts
+interface UmapInstance extends Instance {
+  x: number[];
+  y: number;
+}
+```
+
+### Example
+
+```js
+const projector = marcelle.umap();
+projector.train(trainingSet);
 ```

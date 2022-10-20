@@ -1,6 +1,8 @@
 import { button, modelParameters, trainingPlot, trainingProgress } from '@marcellejs/core';
 import { store } from './common';
 import { regressor } from './components';
+// Note: the demo works with the built-in mlpRegressor component:
+// import { mlpRegressor as regressor } from '@marcellejs/core';
 import { features, trainingSet } from './data';
 
 export const model = regressor().sync(store, 'diabetes-tfjs-regressor');
