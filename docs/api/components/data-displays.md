@@ -60,12 +60,11 @@ Visualize the contents of a dataset using a scatter plot visualization. The mapp
 setTransforms(t: Partial<Transforms<T>>): void;
 ```
 
-Set one or several data transformations for `x`, `y`, and `label`. Transforms have the following signature:
+Set one or several data transformations for `xy` coordinates, and `label`. Transforms have the following signature:
 
 ```ts
 interface Transforms<T extends Instance> {
-  x: (value: T) => number | Promise<number>;
-  y: (value: T) => number | Promise<number>;
+  xy: (value: T) => [number, number] | Promise<[number, number]>;
   label: (value: T) => number | string | Promise<number | string>;
 }
 ```
@@ -73,7 +72,7 @@ interface Transforms<T extends Instance> {
 ### Screenshot
 
 <div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
-  <img src="./images/dataset-browser.png" alt="Screenshot of the datasetBrowser component">
+  <img src="./images/dataset-scatter.png" alt="Screenshot of the datasetScatter component">
 </div>
 
 ### Example

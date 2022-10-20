@@ -13,16 +13,14 @@ const defaultColors = [
 ];
 
 export interface Transforms<T extends Instance> {
-  x: (value: T) => number | Promise<number>;
-  y: (value: T) => number | Promise<number>;
+  xy: (value: T) => [number, number] | Promise<[number, number]>;
   label: (value: T) => number | string | Promise<number | string>;
 }
 
 export class DatasetScatter<T extends Instance> extends Component {
   title = 'Dataset ScatterPlot';
   transforms: Transforms<T> = {
-    x: (value: T) => value.x[0],
-    y: (value: T) => value.x[1],
+    xy: (value: T) => [value.x[0], value.x[1]],
     label: (value: T) => value.y,
   };
 
@@ -47,13 +45,17 @@ export class DatasetScatter<T extends Instance> extends Component {
     const values = await Promise.all(
       await this.dataset
         .items()
-        .map(async (instance) => ({
-          x: await this.transforms.x(instance),
-          y: await this.transforms.y(instance),
-          label: await this.transforms.label(instance),
-          id: instance.id,
-          thumbnail: instance.thumbnail,
-        }))
+        .map(async (instance) => {
+          const [x, y] = await this.transforms.xy(instance);
+          const label = await this.transforms.label(instance);
+          return {
+            x,
+            y,
+            label,
+            id: instance.id,
+            thumbnail: instance.thumbnail,
+          };
+        })
         .toArray(),
     );
     const labels = values.map((x) => x.label);
