@@ -1,12 +1,12 @@
 import '@marcellejs/core/dist/marcelle.css';
 import {
   datasetBrowser,
+  datasetScatter,
   button,
   dashboard,
   dataset,
   dataStore,
   mobileNet,
-  textInput,
   toggle,
   webcam,
   kmeansClustering,
@@ -15,6 +15,7 @@ import {
   throwError,
   confidencePlot,
   Stream,
+  pca,
 } from '@marcellejs/core';
 
 // -----------------------------------------------------------
@@ -24,24 +25,45 @@ import {
 const input = webcam();
 const featureExtractor = mobileNet();
 
-const label = textInput();
-label.title = 'Instance label';
 const capture = button('Hold to record instances');
 capture.title = 'Capture instances to the training set';
 
 const store = dataStore('localStorage');
 const trainingSet = dataset('TrainingSet', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
+const trainingSetScatter = datasetScatter(trainingSet);
+
+trainingSetScatter.$clicked.subscribe(console.log);
+trainingSetScatter.$hovered.subscribe(console.log);
 
 input.$images
   .filter(() => capture.$pressed.get())
   .map(async (img) => ({
     x: await featureExtractor.process(img),
+    y: '?',
     thumbnail: input.$thumbnails.get(),
-    y: label.$value.get(),
   }))
   .awaitPromises()
   .subscribe(trainingSet.create);
+
+// -----------------------------------------------------------
+// PCA
+// -----------------------------------------------------------
+
+const projector = pca();
+projector.$training.subscribe(({ status }) => {
+  if (status === 'success') {
+    trainingSetScatter.setTransforms({
+      x: (instance) => projector.predict(instance.x).then((res) => res[0]),
+      y: (instance) => projector.predict(instance.x).then((res) => res[1]),
+    });
+  }
+});
+
+const updatePCA = button('Update PCA');
+updatePCA.title = 'Update Visualization';
+
+updatePCA.$click.subscribe(() => projector.train(trainingSet));
 
 // -----------------------------------------------------------
 // TRAINING
@@ -50,12 +72,20 @@ input.$images
 const b = button('Train');
 b.title = 'Training k-means';
 
-const clusteringKMeans = kmeansClustering({ k: 3, dataStore: store });
+const clusteringKMeans = kmeansClustering({ k: 3 });
 const params = modelParameters(clusteringKMeans);
 
 b.$click.subscribe(() => {
   clusteringKMeans.train(trainingSet);
 });
+
+clusteringKMeans.$training
+  .filter(({ status }) => status === 'success')
+  .subscribe(() => {
+    trainingSetScatter.setTransforms({
+      label: (instance) => clusteringKMeans.predict(instance.x).then(({ cluster }) => cluster),
+    });
+  });
 
 // -----------------------------------------------------------
 // PLOT CLUSTERS
@@ -115,11 +145,11 @@ const dash = dashboard({
 
 dash
   .page('Data Management')
-  .sidebar(input, featureExtractor)
-  .use([label, capture], trainingSetBrowser)
-  .use(params, [b, tog])
-  .use([clusteringScatterPlot, predPlot]);
-dash.page('Training').sidebar(input, featureExtractor).use(b);
+  .sidebar(input, featureExtractor, capture, trainingSetBrowser)
+  .use(updatePCA, trainingSetScatter);
+
+dash.page('Training').sidebar(params, b).use(trainingSetScatter);
+// .use([clusteringScatterPlot, predPlot]);
 dash.settings.dataStores(store).models(clusteringKMeans).datasets(trainingSet);
 
 dash.show();

@@ -5,6 +5,7 @@ export * from './coco-ssd';
 export * from './confidence-plot';
 export * from './confusion-matrix';
 export * from './dataset-browser';
+export * from './dataset-scatter';
 export * from './dataset-table';
 export * from './detection-boxes';
 export * from './file-upload';
