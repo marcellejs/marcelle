@@ -1,5 +1,14 @@
 # Marcelle changelog
 
+## 0.6.0-next.2
+
+### Patch Changes
+
+- a9815cc: New component: `datasetScatter`
+- cde09ae: New component: `umap` model
+- ae31375: New component: `pca` model
+- 20934cd: New component: `mlpRegressor` model
+
 ## 0.6.0-next.1
 
 ### Patch Changes

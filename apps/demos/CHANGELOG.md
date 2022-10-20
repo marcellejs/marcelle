@@ -1,5 +1,15 @@
 # demos
 
+## 0.6.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [a9815cc]
+- Updated dependencies [cde09ae]
+- Updated dependencies [ae31375]
+- Updated dependencies [20934cd]
+  - @marcellejs/core@0.6.0-next.2
+
 ## 0.6.0-next.1
 
 ### Patch Changes
