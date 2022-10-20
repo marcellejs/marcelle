@@ -34,4 +34,5 @@ export * from './tfjs-model';
 export * from './toggle';
 export * from './training-history';
 export * from './training-plot';
+export * from './umap';
 export * from './webcam';

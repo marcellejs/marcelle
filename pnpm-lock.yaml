@@ -261,6 +261,7 @@ importers:
       tailwindcss: ^3.1.8
       tslib: ^2.4.0
       typescript: ^4.8.4
+      umap-js: ^1.3.3
     dependencies:
       '@feathersjs/authentication-client': 4.5.15
       '@feathersjs/feathers': 4.5.15
@@ -298,6 +299,7 @@ importers:
       seedrandom: 3.0.5
       sift: 16.0.0
       socket.io-client: 2.5.0
+      umap-js: 1.3.3
     devDependencies:
       '@marcellejs/design-system': link:../design-system
       '@most/types': 1.1.0

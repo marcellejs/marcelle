@@ -720,3 +720,79 @@ classifier.loadFromUrl();
 
 const predictionStream = source.$images.map(classifier.predict).awaitPromises();
 ```
+
+## umap
+
+```tsx
+umap({
+  nComponents: number,
+  nNeighbors: number,
+  minDist: number,
+  spread: number,
+  supervised: boolean,
+}): Umap;
+```
+
+Uniform Manifold Approximation and Projection (UMAP) is a dimension reduction technique that can be used for visualisation similarly to t-SNE, but also for general non-linear dimension reduction. This component use the [umap-js]( use the umap-js library from the Google PAIR team) library from the Google PAIR team.
+
+### Parameters
+
+| Option      | Type    | Description                                                                                                                       | Required | Default |
+| ----------- | ------- | --------------------------------------------------------------------------------------------------------------------------------- | :------: | ------- |
+| nComponents | number  | The number of components (dimensions) to project the data to                                                                      |          | 2       |
+| nNeighbors  | number  | The number of nearest neighbors to construct the fuzzy manifold                                                                   |          | 15      |
+| minDist     | number  | The effective minimum distance between embedded points, used with spread to control the clumped/dispersed nature of the embedding |          | 0.1     |
+| spread      | number  | The effective scale of embedded points, used with minDist to control the clumped/dispersed nature of the embedding                |          | 1.0     |
+| supervised  | boolean | Whether or not to use labels to perform supervised projection                                                                     |          | false   |
+
+The set of reactive parameters has the following signature:
+
+```ts
+parameters: {
+  nComponents: Stream<number>;
+  nNeighbors: Stream<number>;
+  minDist: Stream<number>;
+  spread: Stream<number>;
+  supervised: Stream<boolean>;
+}
+```
+
+### Streams
+
+| Name       | Type                     | Description                                                                                                                                                                                | Hold |
+| ---------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--: |
+| \$training | Stream\<TrainingStatus\> | Stream of training status events, containing the current status ('idle' / 'start' / 'epoch' / 'success' / 'error'), the current epoch and associated data (embeddings) during the training |      |
+
+### Methods
+
+#### .predict()
+
+```tsx
+predict(x: number[]): Promise<number[]>
+```
+
+Project a given data point into the UMAP space. The method is asynchronous and returns a promise that resolves with the coordinates.
+
+#### .train()
+
+```tsx
+train(dataset: Dataset<UmapInstance> | LazyIterable<UmapInstance>): Promise<void>
+```
+
+Train the model from a given dataset.
+
+Instances for Umap are as follows:
+
+```ts
+interface UmapInstance extends Instance {
+  x: number[];
+  y: number;
+}
+```
+
+### Example
+
+```js
+const projector = marcelle.umap();
+projector.train(trainingSet);
+```
