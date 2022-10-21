@@ -1,5 +1,11 @@
 # Marcelle changelog
 
+## 0.6.0
+
+### Minor Changes
+
+- 259aec6: Authentication and authorization have been improved. @marcelle/backend now uses feathers-casl for authorization. Login management has also been improved, although documentation remains scarce.
+
 ## 0.6.0-next.2
 
 ## 0.6.0-next.1
