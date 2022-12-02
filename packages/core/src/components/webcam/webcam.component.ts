@@ -67,6 +67,7 @@ export class Webcam extends Component {
     this.setupCapture();
     this.start();
     this.#videoElement.autoplay = true;
+    this.#videoElement.playsInline = true;
     this.#unsubActive = this.$active.subscribe((v) => {
       this.#stopStreaming();
       if (v) {
@@ -124,7 +125,7 @@ export class Webcam extends Component {
   async loadCameras(): Promise<void> {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' },
+        video: { facingMode: 'user' },
       });
       this.#webcamWidth = mediaStream.getVideoTracks()[0].getSettings().width;
       this.#webcamHeight = mediaStream.getVideoTracks()[0].getSettings().height;
@@ -137,7 +138,10 @@ export class Webcam extends Component {
   loadSrcStream(s: MediaStream): void {
     this.$mediastream.set(s);
     this.#videoElement.srcObject = s;
+    this.#videoElement.play();
     this.#videoElement.onloadedmetadata = () => {
+      this.#webcamWidth = this.#videoElement.videoWidth;
+      this.#webcamHeight = this.#videoElement.videoHeight;
       this.$ready.set(true);
     };
   }
