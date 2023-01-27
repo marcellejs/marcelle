@@ -156,6 +156,16 @@ export default [
     hasPackage: true,
   },
   {
+    name: 'Sentence Encoder',
+    path: 'sentence-encoder',
+    description: 'A tetris game controlled from your webcam using image classification',
+    data: [''],
+    training: ['browser'],
+    task: ['classification'],
+    layout: ['custom'],
+    hasPackage: true,
+  },
+  {
     name: 'Pose Classification',
     path: 'pose-detection',
     description: 'Simple posture classification from optical pose detection',

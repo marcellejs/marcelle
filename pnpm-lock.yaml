@@ -214,6 +214,7 @@ importers:
       '@tensorflow-models/knn-classifier': ^1.2.4
       '@tensorflow-models/mobilenet': ^2.1.0
       '@tensorflow-models/pose-detection': ^2.0.0
+      '@tensorflow-models/universal-sentence-encoder': ^1.3.3
       '@tensorflow/tfjs-backend-cpu': ^3.21.0
       '@tensorflow/tfjs-backend-wasm': ^3.13.0
       '@tensorflow/tfjs-backend-webgl': ^3.21.0
@@ -277,6 +278,7 @@ importers:
       '@tensorflow-models/knn-classifier': 1.2.4_lata63zp52qaiewazlfgdhudwi
       '@tensorflow-models/mobilenet': 2.1.0_x52aebctuczll7qp2nwystg33m
       '@tensorflow-models/pose-detection': 2.0.0_yc7ex5ogr4tgkssrtfcokz4iku
+      '@tensorflow-models/universal-sentence-encoder': 1.3.3_x52aebctuczll7qp2nwystg33m
       '@tensorflow/tfjs-backend-cpu': 3.21.0_aipmo6igpprgzt4umpaa3m6sn4
       '@tensorflow/tfjs-backend-wasm': 3.21.0_aipmo6igpprgzt4umpaa3m6sn4
       '@tensorflow/tfjs-backend-webgl': 3.21.0_aipmo6igpprgzt4umpaa3m6sn4
@@ -2080,6 +2082,16 @@ packages:
       '@tensorflow/tfjs-converter': 3.21.0_aipmo6igpprgzt4umpaa3m6sn4
       '@tensorflow/tfjs-core': 3.21.0
       rimraf: 3.0.2
+    dev: false
+
+  /@tensorflow-models/universal-sentence-encoder/1.3.3_x52aebctuczll7qp2nwystg33m:
+    resolution: {integrity: sha512-mipL7ad0CW6uQ68FUkNgkNj/zgA4qgBnNcnMMkNTdL9MUMnzCxu3AE8pWnx2ReKHwdqEG4e8IpaYKfH4B8bojg==}
+    peerDependencies:
+      '@tensorflow/tfjs-converter': ^3.6.0
+      '@tensorflow/tfjs-core': ^3.6.0
+    dependencies:
+      '@tensorflow/tfjs-converter': 3.21.0_aipmo6igpprgzt4umpaa3m6sn4
+      '@tensorflow/tfjs-core': 3.21.0
     dev: false
 
   /@tensorflow/tfjs-backend-cpu/3.21.0_aipmo6igpprgzt4umpaa3m6sn4:

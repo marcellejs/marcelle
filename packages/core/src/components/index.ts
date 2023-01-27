@@ -37,3 +37,4 @@ export * from './training-history';
 export * from './training-plot';
 export * from './umap';
 export * from './webcam';
+export * from './sentence-encoder';
