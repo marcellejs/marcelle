@@ -25,7 +25,7 @@ encodeBtn.$click.subscribe(async() => {
 const textAnswer = text('');
 const apikey = textArea();
 apikey.title = 'API token';
-const connectModel = button("load GPT2 model");
+const connectModel = button("load model");
 let model = huggingfaceModel({API_TOKEN: `${apikey.$value.get()}`, model: 'tuner007/pegasus_paraphrase'});
 connectModel.$click.subscribe(() => {
   model.setup(apikey.$value.get());
@@ -39,6 +39,6 @@ generateBtn.$click.subscribe(async() => {
 })
 
 dash.page("sentenceEncoder").sidebar(encoder, loadDataBtn, info, encodeBtn, results);
-dash.page("huggingface gpt2").sidebar(apikey,connectModel, model, textPrompt, generateBtn, textAnswer);
+dash.page("huggingface model").sidebar(apikey,connectModel, model, textPrompt, generateBtn, textAnswer);
 
 dash.show();
