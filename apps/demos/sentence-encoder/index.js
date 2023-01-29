@@ -1,21 +1,8 @@
 import { dash } from './common';
-import { button, dataset, datasetTable, text, logger } from '@marcellejs/core';
+import { button, text, logger, textArea } from '@marcellejs/core';
 import * as sentences from './sentences.json';
-// import { setup as setupData } from './data';
-// import { setup as setupScatter } from './scatterplot';
-// import { setup as setupCharts } from './charts';
-// import { setup as setupTraining } from './training';
-// import { setup as setupTesting } from './testing';
-// import { setup as setupBatch } from './batch-prediction';
-
-// setupData(dash);
-// setupScatter(dash);
-// setupCharts(dash);
-// setupTraining(dash);
-// setupTesting(dash);
-// setupBatch(dash);
-
-import { sentenceEncoder } from '../../../packages/core';
+import { sentenceEncoder, huggingfaceModel } from '../../../packages/core';
+import { similarity } from './helper';
 // import './testing';
 
 const encoder = sentenceEncoder();
@@ -24,17 +11,34 @@ const info = text('');
 // const result = text('')
 const s = sentences.default;
 loadDataBtn.$click.subscribe(() => {
-  // logger.log(i)
-  // console.log(sentences.default)
   s.forEach(i => info.$value.set(info.$value.get() + i));
 })
 
-const encodeBtn = button ('Get Embeddings');
+const encodeBtn = button ('Get Embeddings & Calc Similarity');
+const results = text('');
+results.title = "Sentences Similarity";
 encodeBtn.$click.subscribe(async() => {
   const res = await encoder.process(s);
-  logger.log(res);
+  results.$value.set(similarity(res[0], res[1]))
 })
 
-dash.page("sentenceEncoder").sidebar(encoder, loadDataBtn, info, encodeBtn);
+const textAnswer = text('');
+const apikey = textArea();
+apikey.title = 'API token';
+const connectModel = button("load GPT2 model");
+let model = huggingfaceModel({API_TOKEN: `${apikey.$value.get()}`, model: 'tuner007/pegasus_paraphrase'});
+connectModel.$click.subscribe(() => {
+  model.setup(apikey.$value.get());
+})
+
+const textPrompt = textArea();
+const generateBtn = button("Generate Text");
+generateBtn.$click.subscribe(async() => {
+  const res = await model.process({inputs: textPrompt.$value.get()});
+  textAnswer.$value.set(JSON.stringify(res));
+})
+
+dash.page("sentenceEncoder").sidebar(encoder, loadDataBtn, info, encodeBtn, results);
+dash.page("huggingface gpt2").sidebar(apikey,connectModel, model, textPrompt, generateBtn, textAnswer);
 
 dash.show();

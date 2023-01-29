@@ -1,14 +1,14 @@
 <script lang="ts">
   import { ViewContainer } from '@marcellejs/design-system';
-  import type { SentenceEncoderOptions } from './sentence-encoder.component';
+  import type { HuggingfaceModelOptions } from './huggingface-model.component';
 
   export let title: string;
-  export let options: SentenceEncoderOptions;
+  export let options: HuggingfaceModelOptions;
 </script>
 
 <ViewContainer {title}>
   <div>This is a <span class="my-color">custom</span> component with the following options:</div>
-  <p>{options ? JSON.stringify(options) : 'defualt 8k vocab: https://storage.googleapis.com/tfjs-models/savedmodel/universal_sentence_encoder/vocab.json'}</p>
+  <p>{JSON.stringify(options)}</p>
 </ViewContainer>
 
 <style>

@@ -38,3 +38,4 @@ export * from './training-plot';
 export * from './umap';
 export * from './webcam';
 export * from './sentence-encoder';
+export * from './huggingface-model';
