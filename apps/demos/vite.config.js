@@ -1,7 +1,9 @@
 /* eslint-env node */
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import mkcert from 'vite-plugin-mkcert';
 import { resolve } from 'path';
 import meta from './meta.js';
+import { readFileSync } from 'fs';
 
 const subpackages_path = ['mobilenet-tetris', 'umap', 'webcam2'];
 
@@ -38,6 +40,11 @@ const toCamelCase = (str) => {
   return s.slice(0, 1).toLowerCase() + s.slice(1);
 };
 
+const httpsOptions = {
+  key: readFileSync('localhost-key.pem'),
+  cert: readFileSync('localhost.pem'),
+};
+
 export default {
   plugins: [
     injectHtml({
@@ -46,10 +53,16 @@ export default {
       },
     }),
     svelte({ emitCss: false }),
+    // mkcert(),
   ],
   server: {
+    host: true,
     force: true,
     port: 3000,
+    https: httpsOptions,
+  },
+  preview: {
+    https: httpsOptions,
   },
   build: {
     rollupOptions: {

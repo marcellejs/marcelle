@@ -1,5 +1,14 @@
 export default [
   {
+    name: 'DeviceMotion',
+    path: 'devicemotion',
+    description: 'TODO',
+    data: ['accelerometer'],
+    training: ['browser'],
+    task: ['classification'],
+    layout: ['dashboard'],
+  },
+  {
     name: 'Webcam: Dashboard',
     path: 'webcam-dashboard',
     description: 'Simple dashboard for training an image classifier from the webcam',

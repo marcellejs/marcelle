@@ -19,6 +19,7 @@
     "svelte": "^3.52.0",
     "svelte-bricks": "^0.1.7",
     "svelte-select": "^4.4.3",
-    "vite": "^3.1.8"
+    "vite": "^3.1.8",
+    "vite-plugin-mkcert": "^1.10.1"
   }
 }
