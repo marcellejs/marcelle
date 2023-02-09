@@ -26,7 +26,7 @@
     <a
       class="btn code"
       target="_blank"
-      href="https://github.com/marcellejs/demos/tree/main/{demo.path}/"
+      href="https://github.com/marcellejs/marcelle/tree/main/apps/demos/{demo.path}/"
     >
       View Source
       <GithubLogo />
