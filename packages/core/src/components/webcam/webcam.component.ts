@@ -31,6 +31,7 @@ export interface WebcamOptions {
   width?: number;
   height?: number;
   period?: number;
+  facingMode?: 'user' | 'environment';
 }
 
 export class Webcam extends Component {
@@ -41,6 +42,7 @@ export class Webcam extends Component {
   $mediastream = new Stream<MediaStream>(undefined, true);
   $images = new Stream<ImageData>(never(), true);
   $thumbnails = new Stream<string>(never(), true);
+  $facingMode: Stream<WebcamOptions['facingMode']>;
 
   period: number;
 
@@ -51,24 +53,24 @@ export class Webcam extends Component {
   #webcamHeight: number;
   #videoElement = document.createElement('video');
   #thumbnailWidth = 60;
-  #unsubActive = noop;
   #stopStreaming = noop;
   #thumbnailCanvas: HTMLCanvasElement;
   #thumbnailCtx: CanvasRenderingContext2D;
   #captureCanvas: HTMLCanvasElement;
   #captureCtx: CanvasRenderingContext2D;
 
-  constructor({ width = 224, height = 224, period = 50 }: WebcamOptions = {}) {
+  constructor({ width = 224, height = 224, period = 50, facingMode = 'user' }: WebcamOptions = {}) {
     super();
     this.#width = width;
     this.#height = height;
     this.period = period;
 
+    this.$facingMode = new Stream(facingMode, true);
+
     this.setupCapture();
-    this.start();
     this.#videoElement.autoplay = true;
     this.#videoElement.playsInline = true;
-    this.#unsubActive = this.$active.subscribe((v) => {
+    const reload = (v: boolean) => {
       this.#stopStreaming();
       if (v) {
         this.loadCameras();
@@ -76,7 +78,10 @@ export class Webcam extends Component {
       } else {
         this.stopCamera();
       }
-    });
+    };
+    this.$active.subscribe(reload);
+    this.$facingMode.subscribe(() => this.$active.get() && reload(true));
+    this.start();
   }
 
   getWidth(): number {
@@ -93,6 +98,7 @@ export class Webcam extends Component {
         title: this.title,
         width: this.#width,
         height: this.#height,
+        facingMode: this.$facingMode,
         active: this.$active,
         mediaStream: this.$mediastream,
         ready: this.$ready,
@@ -103,7 +109,6 @@ export class Webcam extends Component {
   stop(): void {
     super.stop();
     this.#stopStreaming();
-    this.#unsubActive();
     if (this.$mediastream.get()) {
       for (const track of this.$mediastream.get().getTracks()) {
         track.stop();
@@ -125,7 +130,7 @@ export class Webcam extends Component {
   async loadCameras(): Promise<void> {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user' },
+        video: { facingMode: this.$facingMode.get() },
       });
       this.#webcamWidth = mediaStream.getVideoTracks()[0].getSettings().width;
       this.#webcamHeight = mediaStream.getVideoTracks()[0].getSettings().height;
