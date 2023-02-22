@@ -620,5 +620,5 @@ Finally, it is useful to visualize the images associated with each point in the 
 
 ## Final Result
 
-The source code for the example is available [on Github](https://github.com/marcellejs/demos/tree/main/umap), and the demo is [available online](https://demos.marcelle.dev/umap/).
+The source code for the example is available [on Github](https://github.com/marcellejs/marcelle/tree/main/apps/demos/umap), and the demo is [available online](https://demos.marcelle.dev/umap/).
 ````

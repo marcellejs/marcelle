@@ -22,13 +22,13 @@
   "type": "module",
   "exports": {
     ".": {
-      "default": "./dist/marcelle.esm.js",
       "browser": {
         "import": "./dist/marcelle.esm.js",
         "require": "./dist/marcelle.bundle.umd.js"
       },
       "import": "./dist/marcelle.esm.js",
-      "require": "./dist/marcelle.bundle.umd.js"
+      "require": "./dist/marcelle.bundle.umd.js",
+      "default": "./dist/marcelle.esm.js"
     },
     "./dist/marcelle.css": "./dist/marcelle.css"
   },
