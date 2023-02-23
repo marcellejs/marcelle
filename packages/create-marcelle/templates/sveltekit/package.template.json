@@ -19,11 +19,11 @@
   "devDependencies": {
     "@marcellejs/design-system": "workspace:*",
     "@marcellejs/devtools": "workspace:*",
-    "@sveltejs/adapter-static": "next",
-    "@sveltejs/kit": "next",
-    "svelte": "^3.50.1",
-    "svelte-check": "^2.9.1",
-    "svelte-preprocess": "^4.10.7",
-    "vite": "^3.1.8"
+    "@sveltejs/adapter-static": "^2.0.1",
+    "@sveltejs/kit": "^1.8.3",
+    "svelte": "^3.55.1",
+    "svelte-check": "^3.0.4",
+    "svelte-preprocess": "^5.0.1",
+    "vite": "^4.1.4"
   }
 }
