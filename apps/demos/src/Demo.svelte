@@ -27,12 +27,13 @@
       class="btn code"
       target="_blank"
       href="https://github.com/marcellejs/marcelle/tree/main/apps/demos/{demo.path}/"
+      rel="noreferrer"
     >
       View Source
       <GithubLogo />
     </a>
     {#if demo.glitch}
-      <a class="btn code" href={demo.glitch} target="_blank">
+      <a class="btn code" href={demo.glitch} target="_blank" rel="noreferrer">
         Remix on Glitch
         <GlitchLogo />
       </a>

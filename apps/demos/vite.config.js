@@ -1,4 +1,5 @@
 /* eslint-env node */
+import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { resolve } from 'path';
 import meta from './meta.js';
@@ -38,7 +39,7 @@ const toCamelCase = (str) => {
   return s.slice(0, 1).toLowerCase() + s.slice(1);
 };
 
-export default {
+export default defineConfig({
   plugins: [
     injectHtml({
       injectData: {
@@ -64,4 +65,4 @@ export default {
       ),
     },
   },
-};
+});
