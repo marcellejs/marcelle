@@ -1,4 +1,4 @@
-import { PCA as MLPCA, type IPCAModel } from 'ml-pca';
+import { PCA as MLPCA, type PCAModel } from 'ml-pca';
 import {
   type Dataset,
   type DataStore,
@@ -94,14 +94,14 @@ export class PCA extends Model<PCAInstance, number[]> {
       files: [],
       format: 'ml-pca',
       metadata: {
-        IPCAModel: this.model?.toJSON(),
+        PCAModel: this.model?.toJSON(),
         ...metadata,
       },
     };
   }
 
   private async read(s: StoredModel): Promise<void> {
-    const m = s.metadata.IPCAModel as IPCAModel;
+    const m = s.metadata.PCAModel as PCAModel;
     if (!m) return;
     this.model = MLPCA.load(m);
     this.$training.set({

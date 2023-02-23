@@ -259,7 +259,11 @@
       <p class="ml-3 mt-2">This dataset is empty.</p>
     {/if}
 
-    <div class="flex flex-wrap" on:click={() => selectInstance()}>
+    <div
+      class="flex flex-wrap"
+      on:click={() => selectInstance()}
+      on:keypress|preventDefault={(e) => e.key === 'Escape' && selectInstance()}
+    >
       {#each Object.entries(classes) as [label, { loaded, total, instances }]}
         <div class="browser-class">
           <div class="w-full">
@@ -289,6 +293,7 @@
 
             <div class="browser-class-body">
               {#each instances as { id, thumbnail } (id)}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <img
                   src={thumbnail}
                   alt="thumbnail"

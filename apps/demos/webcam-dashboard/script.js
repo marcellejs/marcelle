@@ -37,7 +37,12 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
   .filter(() => capture.$pressed.get())
-  .map((x) => ({ x, y: label.$value.get(), thumbnail: input.$thumbnails.get() }))
+  .map(async (img) => ({
+    x: await featureExtractor.process(img),
+    thumbnail: input.$thumbnails.get(),
+    y: label.$value.get(),
+  }))
+  .awaitPromises()
   .subscribe(trainingSet.create);
 
 // -----------------------------------------------------------
@@ -48,13 +53,7 @@ const b = button('Train');
 b.title = 'Training Launcher';
 const classifier = mlpClassifier({ layers: [64, 32], epochs: 20 }).sync(store, 'mlp-dashboard');
 
-b.$click.subscribe(() =>
-  classifier.train(
-    trainingSet
-      .items()
-      .map(async (instance) => ({ ...instance, x: await featureExtractor.process(instance.x) })),
-  ),
-);
+b.$click.subscribe(() => classifier.train(trainingSet));
 
 const params = modelParameters(classifier);
 const prog = trainingProgress(classifier);
@@ -73,12 +72,7 @@ predictButton.$click.subscribe(async () => {
     throwError(new Error('No classifier has been trained'));
   }
   await batchMLP.clear();
-  await batchMLP.predict(
-    classifier,
-    trainingSet
-      .items()
-      .map(async (instance) => ({ ...instance, x: await featureExtractor.process(instance.x) })),
-  );
+  await batchMLP.predict(classifier, trainingSet);
 });
 
 // -----------------------------------------------------------

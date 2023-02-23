@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte';
-  import type { Stream } from '../core';
   import { Button } from '@marcellejs/design-system';
   import WizardPageComponent from './WizardPage.svelte';
   import type { WizardPage } from './wizard_page';
+  import type { Stream } from '../../core';
 
   export let pages: WizardPage[];
   export let current: Stream<number>;
@@ -51,15 +51,15 @@
   export function quit(): void {
     dispatch('quit');
   }
-
-  function onOutsideClick() {
-    quit();
-  }
 </script>
 
 <div class="marcelle wizard">
   <div class="absolute min-h-screen inset-0 transition-opacity">
-    <div on:click={onOutsideClick} class="absolute inset-0 bg-gray-500 opacity-50" />
+    <div
+      on:click={quit}
+      on:keypress|preventDefault={(e) => e.key === 'Escape' && quit()}
+      class="absolute inset-0 bg-gray-500 opacity-50"
+    />
   </div>
   <div
     class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-3xl
