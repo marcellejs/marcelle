@@ -38,7 +38,7 @@
   {disabled}
   on:click
   on:mousedown={startDown}
-  on:touchstart={startDown}
+  on:touchstart|preventDefault={startDown}
 >
   <slot />
 </button>
