@@ -21,17 +21,17 @@
     "svelte": "^3.54.0"
   },
   "dependencies": {
-    "@feathersjs/feathers": "^4.5.15",
+    "@feathersjs/feathers": "^4.5.16",
     "date-fns": "^2.29.3"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^2.0.0",
-    "@sveltejs/kit": "^1.5.0",
+    "@sveltejs/kit": "^1.10.0",
     "@sveltejs/package": "^2.0.0",
     "autoprefixer": "^10.4.13",
     "postcss": "^8.4.21",
     "postcss-load-config": "^4.0.1",
-    "publint": "^0.1.9",
+    "publint": "^0.1.10",
     "svelte": "^3.55.1",
     "svelte-check": "^3.0.4",
     "svelte-preprocess": "^5.0.1",
