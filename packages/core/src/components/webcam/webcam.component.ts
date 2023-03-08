@@ -130,7 +130,7 @@ export class Webcam extends Component {
   async loadCameras(): Promise<void> {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: this.$facingMode.get() },
+        video: { facingMode: { ideal: this.$facingMode.get() } },
       });
       this.#webcamWidth = mediaStream.getVideoTracks()[0].getSettings().width;
       this.#webcamHeight = mediaStream.getVideoTracks()[0].getSettings().height;

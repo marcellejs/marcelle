@@ -17,12 +17,18 @@
   }
 
   function stopDown() {
-    pressed = false;
-    dispatch('pressed', pressed);
+    if (pressed) {
+      pressed = false;
+      dispatch('pressed', pressed);
+    }
+  }
+
+  function fireClick(e: Event) {
+    dispatch('click', e);
   }
 </script>
 
-<svelte:body on:mouseup={() => pressed && stopDown()} on:touchend={() => pressed && stopDown()} />
+<svelte:body on:mouseup={stopDown} on:touchend={stopDown} />
 
 <button
   class="marcelle"
@@ -39,6 +45,7 @@
   on:click
   on:mousedown={startDown}
   on:touchstart|preventDefault={startDown}
+  on:touchend={fireClick}
 >
   <slot />
 </button>
