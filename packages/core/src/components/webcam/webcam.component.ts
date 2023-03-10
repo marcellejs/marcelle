@@ -32,6 +32,7 @@ export interface WebcamOptions {
   height?: number;
   period?: number;
   facingMode?: 'user' | 'environment';
+  audio?: boolean;
 }
 
 export class Webcam extends Component {
@@ -58,17 +59,26 @@ export class Webcam extends Component {
   #thumbnailCtx: CanvasRenderingContext2D;
   #captureCanvas: HTMLCanvasElement;
   #captureCtx: CanvasRenderingContext2D;
+  #audio: boolean;
 
-  constructor({ width = 224, height = 224, period = 50, facingMode = 'user' }: WebcamOptions = {}) {
+  constructor({
+    width = 224,
+    height = 224,
+    period = 50,
+    facingMode = 'user',
+    audio = false,
+  }: WebcamOptions = {}) {
     super();
     this.#width = width;
     this.#height = height;
     this.period = period;
 
     this.$facingMode = new Stream(facingMode, true);
+    this.#audio = audio;
 
     this.setupCapture();
     this.#videoElement.autoplay = true;
+    this.#videoElement.muted = true;
     this.#videoElement.playsInline = true;
     const reload = (v: boolean) => {
       this.#stopStreaming();
@@ -131,6 +141,7 @@ export class Webcam extends Component {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: { ideal: this.$facingMode.get() } },
+        audio: this.#audio,
       });
       this.#webcamWidth = mediaStream.getVideoTracks()[0].getSettings().width;
       this.#webcamHeight = mediaStream.getVideoTracks()[0].getSettings().height;
