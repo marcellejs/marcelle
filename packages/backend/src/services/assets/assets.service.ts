@@ -117,19 +117,20 @@ export default function (app: Application): void {
     try {
       const filePath = path.join(app.get('uploads'), 'assets', req.params.id, req.params.filename);
       if (!fs.existsSync(filePath)) {
-        return res.end();
+        return res.status(404).json({
+          code: 404,
+          err: 'file does not exist',
+        });
       }
-      res.sendFile(filePath);
+      return res.sendFile(filePath);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log('asset download error', error);
-      return res.status(404).json({
-        err: 'file does not exist',
+      return res.status(500).json({
+        code: 500,
+        err: 'Internal Server Error',
       });
     }
-    return res.status(500).json({
-      err: 'Internal Server Error',
-    });
   };
 
   const getMiddlewares = [];
