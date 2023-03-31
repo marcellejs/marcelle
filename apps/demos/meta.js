@@ -165,4 +165,13 @@ export default [
     task: ['classification'],
     layout: ['dashboard'],
   },
+  {
+    name: 'Audio Classification',
+    path: 'audio-classification',
+    description: 'Speech Command classification??',
+    data: ['audio'],
+    training: ['browser'],
+    task: ['classification'],
+    layout: ['dashboard'],
+  },
 ];
