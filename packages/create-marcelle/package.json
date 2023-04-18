@@ -1,6 +1,6 @@
 {
 	"name": "create-marcelle",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/marcellejs/marcelle",
@@ -15,9 +15,9 @@
 		"prompts": "^2.4.2"
 	},
 	"devDependencies": {
-		"@marcellejs/core": "workspace:^0.6.0",
-		"@marcellejs/design-system": "workspace:^0.6.0",
-		"@marcellejs/devtools": "workspace:^0.6.0",
+		"@marcellejs/core": "workspace:^0.6.1",
+		"@marcellejs/design-system": "workspace:^0.6.1",
+		"@marcellejs/devtools": "workspace:^0.6.1",
 		"@types/gitignore-parser": "^0.0.0",
 		"@types/prettier": "^2.7.2",
 		"@types/prompts": "^2.4.4",

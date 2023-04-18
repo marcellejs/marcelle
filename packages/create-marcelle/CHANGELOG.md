@@ -1,5 +1,11 @@
 # create-marcelle
 
+## 0.1.1
+
+### Patch Changes
+
+- fb9ef1f: Application templates have been updated
+
 ## 0.1.0
 
 ### Minor Changes

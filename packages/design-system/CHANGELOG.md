@@ -1,5 +1,11 @@
 # @marcellejs/design-system
 
+## 0.6.1
+
+### Patch Changes
+
+- e0d0264: Improve mobile support in the webcam component and button widget
+
 ## 0.6.0
 
 ### Minor Changes
