@@ -201,9 +201,9 @@ setTimeout(() => {
 // Load audio files
 let numLoaded = 0;
 const sounds = [
-  'Trap Percussion FX Loop.mp3',
-  'Trap Loop Minimal 2.mp3',
-  'Trap Melody Full.mp3',
+  '/Trap Percussion FX Loop.mp3',
+  '/Trap Loop Minimal 2.mp3',
+  '/Trap Melody Full.mp3',
 ].map((x) => new Howl({ src: [x], loop: true, volume: 0 }));
 const onload = () => {
   numLoaded += 1;

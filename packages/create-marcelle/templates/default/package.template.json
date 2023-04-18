@@ -15,9 +15,9 @@
   "devDependencies": {
     "@marcellejs/design-system": "workspace:*",
     "@marcellejs/devtools": "workspace:*",
-    "@sveltejs/vite-plugin-svelte": "^1.0.9",
-    "svelte": "^3.50.1",
-    "svelte-preprocess": "^4.10.7",
-    "vite": "^3.1.8"
+    "@sveltejs/vite-plugin-svelte": "^2.0.3",
+    "svelte": "^3.55.1",
+    "svelte-preprocess": "^5.0.1",
+    "vite": "^4.1.4"
   }
 }

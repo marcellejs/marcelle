@@ -1,41 +1,45 @@
 {
   "name": "@marcellejs/design-system",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "svelte-kit sync && svelte-package && rm dist/package.json&& rm dist/README.md",
+    "build": "vite build && npm run package",
+    "preview": "vite preview",
+    "package": "svelte-kit sync && svelte-package && publint",
+    "prepublishOnly": "npm run package",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
     "format": "prettier --plugin-search-dir . --write .",
     "clean": "rm -rf dist"
   },
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "svelte": "^3.54.0"
+  },
   "dependencies": {
-    "@feathersjs/feathers": "^4.5.15",
-    "@fontsource/fira-mono": "^4.5.10",
-    "@lukeed/uuid": "^2.0.0",
-    "cookie": "^0.4.1",
+    "@feathersjs/feathers": "^4.5.16",
     "date-fns": "^2.29.3"
   },
   "devDependencies": {
-    "@sveltejs/adapter-static": "next",
-    "@sveltejs/kit": "next",
-    "@sveltejs/package": "next",
-    "autoprefixer": "^10.4.12",
-    "postcss": "^8.4.18",
-    "postcss-load-config": "^3.1.4",
-    "svelte": "^3.52.0",
-    "svelte-check": "^2.9.2",
-    "svelte-preprocess": "^4.10.7",
-    "svelte2tsx": "^0.4.8",
-    "tailwindcss": "^3.1.8",
-    "tslib": "^2.4.0",
-    "typescript": "^4.8.4",
-    "vite": "^3.1.8"
+    "@sveltejs/adapter-auto": "^2.0.0",
+    "@sveltejs/kit": "^1.15.5",
+    "@sveltejs/package": "^2.0.0",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.21",
+    "postcss-load-config": "^4.0.1",
+    "publint": "^0.1.11",
+    "svelte": "^3.58.0",
+    "svelte-check": "^3.2.0",
+    "svelte-preprocess": "^5.0.3",
+    "svelte2tsx": "^0.6.11",
+    "tailwindcss": "^3.3.1",
+    "tslib": "^2.5.0",
+    "typescript": "^4.9.5",
+    "vite": "^4.2.1"
   },
   "exports": {
     "./package.json": "./package.json",
@@ -59,13 +63,17 @@
     "./TableHeaderCell.svelte": "./dist/TableHeaderCell.svelte",
     "./Tabs.svelte": "./dist/Tabs.svelte",
     "./ViewContainer.svelte": "./dist/ViewContainer.svelte",
-    ".": "./dist/index.js",
     "./styles.css": "./dist/styles.css",
     "./table-abstract-provider": "./dist/table-abstract-provider.js",
     "./table-array-provider": "./dist/table-array-provider.js",
     "./table-service-provider": "./dist/table-service-provider.js",
     "./table-types": "./dist/table-types.js",
-    "./types": "./dist/types.js"
+    "./types": "./dist/types.js",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js"
+    }
   },
-  "svelte": "./dist/index.js"
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }

@@ -5,15 +5,15 @@
   export function quit(): void {
     dispatch('quit');
   }
-
-  function onOutsideClick() {
-    quit();
-  }
 </script>
 
 <div class="modal-container">
   <div class="overlay">
-    <div on:click={onOutsideClick} class="absolute inset-0 bg-gray-500 opacity-50" />
+    <div
+      on:click={quit}
+      class="absolute inset-0 bg-gray-500 opacity-50"
+      on:keypress|preventDefault={(e) => e.key === 'Escape' && quit()}
+    />
   </div>
   <div class="modal">
     <slot />

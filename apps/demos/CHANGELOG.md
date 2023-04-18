@@ -1,5 +1,13 @@
 # demos
 
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies [e0d0264]
+- Updated dependencies [fb9ef1f]
+  - @marcellejs/core@0.6.1
+
 ## 0.6.0
 
 ### Patch Changes

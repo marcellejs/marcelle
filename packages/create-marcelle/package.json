@@ -1,6 +1,6 @@
 {
 	"name": "create-marcelle",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/marcellejs/marcelle",
@@ -15,18 +15,18 @@
 		"prompts": "^2.4.2"
 	},
 	"devDependencies": {
-		"@marcellejs/core": "workspace:^0.6.0",
-		"@marcellejs/design-system": "workspace:^0.6.0",
-		"@marcellejs/devtools": "workspace:^0.6.0",
+		"@marcellejs/core": "workspace:^0.6.1",
+		"@marcellejs/design-system": "workspace:^0.6.1",
+		"@marcellejs/devtools": "workspace:^0.6.1",
 		"@types/gitignore-parser": "^0.0.0",
-		"@types/prettier": "^2.7.1",
-		"@types/prompts": "^2.4.1",
+		"@types/prettier": "^2.7.2",
+		"@types/prompts": "^2.4.4",
 		"gitignore-parser": "^0.0.2",
-		"prettier": "^2.7.1",
-		"prettier-plugin-svelte": "^2.8.0",
-		"sucrase": "^3.28.0",
-		"svelte": "^3.52.0",
-		"svelte-preprocess": "^4.10.7",
+		"prettier": "^2.8.7",
+		"prettier-plugin-svelte": "^2.10.0",
+		"sucrase": "^3.32.0",
+		"svelte": "^3.58.0",
+		"svelte-preprocess": "^5.0.3",
 		"tiny-glob": "^0.2.9"
 	},
 	"scripts": {

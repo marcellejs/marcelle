@@ -1,5 +1,11 @@
 # Marcelle changelog
 
+## 0.6.1
+
+### Patch Changes
+
+- fb9ef1f: The asset upload service was fixed
+
 ## 0.6.0
 
 ### Minor Changes
