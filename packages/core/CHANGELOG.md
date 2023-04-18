@@ -1,5 +1,12 @@
 # Marcelle changelog
 
+## 0.6.1
+
+### Patch Changes
+
+- e0d0264: Improve mobile support in the webcam component and button widget
+- fb9ef1f: an audio option was added to the webcam component
+
 ## 0.6.0
 
 ### Minor Changes
