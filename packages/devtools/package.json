@@ -4,7 +4,7 @@
   "description": "Some development tools for marcelle projects",
   "main": "index.js",
   "scripts": {
-    "build": "rm -rf dist && npm run build:lib && node scripts/build-templates",
+    "build": "rimraf dist && npm run build:lib && node scripts/build-templates",
     "build:lib": "tsc --outDir dist"
   },
   "keywords": [
