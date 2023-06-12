@@ -146,7 +146,11 @@ export abstract class TFJSBaseModel<T extends Instance, PredictionType> extends 
           ],
           marcelle: meta,
         };
-        await saveBlob(data.weightData, `${name}.weights.bin`, 'application/octet-stream');
+        await saveBlob(
+          data.weightData as ArrayBuffer,
+          `${name}.weights.bin`,
+          'application/octet-stream',
+        );
         await saveBlob(JSON.stringify(weightsManifest), `${name}.json`, 'text/plain');
         return { modelArtifactsInfo: { dateSaved, modelTopologyType: 'JSON' } };
       }),

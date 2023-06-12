@@ -24,14 +24,14 @@
     "@marcellejs/core": "workspace:^0.6.1",
     "@types/prompts": "^2.4.4",
     "sucrase": "^3.32.0",
-    "svelte": "^3.58.0",
-    "svelte-preprocess": "^5.0.3",
+    "svelte": "^3.59.1",
+    "svelte-preprocess": "^5.0.4",
     "tiny-glob": "^0.2.9",
-    "tslib": "^2.5.0",
+    "tslib": "^2.5.3",
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@octokit/rest": "^19.0.7",
+    "@octokit/rest": "^19.0.11",
     "change-case": "^4.1.2",
     "kleur": "^4.1.5",
     "node-fetch": "^3.3.1",
