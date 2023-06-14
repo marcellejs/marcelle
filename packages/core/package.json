@@ -42,7 +42,7 @@
     "types:dev": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir types --watch",
     "types:build": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir types",
     "lint": "eslint src",
-    "clean": "rm -rf dist types"
+    "clean": "rimraf dist types"
   },
   "devDependencies": {
     "@marcellejs/design-system": "workspace:^0.6.1",

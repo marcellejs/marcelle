@@ -29,7 +29,7 @@
   },
   "scripts": {
     "dev": "tsc-watch",
-    "build": "shx rm -rf lib/ && tsc",
+    "build": "rimraf lib/ && tsc",
     "test": "yarn run lint && yarn run build && yarn run jest",
     "lint": "eslint src/. test/. --ext .ts",
     "jest": "jest  --forceExit"

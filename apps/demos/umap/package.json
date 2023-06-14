@@ -15,7 +15,7 @@
   "scripts": {
     "dev": "vite --force",
     "build": "vite build",
-    "clean": "rm -rf dist"
+    "clean": "rimraf dist"
   },
   "dependencies": {
     "@marcellejs/core": "workspace:^0.6.0",
