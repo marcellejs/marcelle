@@ -1,12 +1,11 @@
 // import { existsSync, readdirSync } from 'fs';
 // import { extname, parse } from 'path';
-import { Collection, Db } from 'mongodb';
 import { Application } from '../declarations';
 
 export async function getRegisteredServices(app: Application): Promise<string[]> {
   // if (app.get('database') === 'mongodb') {
-  const db: Db = await app.get('mongoClient');
-  const collections: Array<Collection<any>> = await db.collections();
+  const db = await app.get('mongodbClient');
+  const collections = await db.collections();
   return collections.map((x) => x.collectionName).filter((x) => x !== 'authentication');
   // } else if (app.get('database') === 'nedb') {
   //   const dbPath = app.get('nedb');

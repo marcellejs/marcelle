@@ -20,7 +20,7 @@ export function mongodb(app: Application): void {
     // , {useNewUrlParser: true, useUnifiedTopology: true }
   ).then((client) => client.db(database));
 
-  app.set('mongoClient', mongoClient);
+  app.set('mongodbClient', mongoClient);
 
   // TODO:GRIDFS
   // Setup GridFS storage

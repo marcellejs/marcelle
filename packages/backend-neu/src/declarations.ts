@@ -7,7 +7,14 @@ export { NextFunction };
 
 // The types for app.get(name) and app.set(name)
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface Configuration extends ApplicationConfiguration {}
+export interface Configuration extends ApplicationConfiguration {
+  database: 'mongodb';
+  whitelist: {
+    services: '*' | string[];
+    assets: '*' | string[];
+  };
+  gridfs: boolean;
+}
 
 // A mapping of service names to types. Will be extended in service files.
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
