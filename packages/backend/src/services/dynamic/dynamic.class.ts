@@ -5,6 +5,7 @@ import { Forbidden } from '@feathersjs/errors';
 
 import type { Application } from '../../declarations';
 import { GenericService, getOptions as getGenericOptions } from './generic.class';
+import { genericHooks } from './generic.hooks';
 
 type Dynamic = any;
 type DynamicData = any;
@@ -93,25 +94,7 @@ export class DynamicService<ServiceParams extends DynamicParams = DynamicParams>
 
       const service = app.service(name as '*') as any;
       // Register our service on the Feathers application
-      service.hooks({
-        around: {
-          all: [],
-        },
-        before: {
-          all: [],
-          find: [],
-          get: [],
-          create: [],
-          patch: [],
-          remove: [],
-        },
-        after: {
-          all: [],
-        },
-        error: {
-          all: [],
-        },
-      });
+      service.hooks(genericHooks('mongodb', false));
 
       // const h = hooks(app.get('database'), app.get('authentication').enabled);
       // service.hooks(h);

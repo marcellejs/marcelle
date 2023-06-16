@@ -1,5 +1,5 @@
 import type { SvelteComponent } from 'svelte';
-import type { Service as FeathersService } from '@feathersjs/feathers';
+import type { FeathersService } from '@feathersjs/feathers';
 import type { Stream } from './stream';
 import type { ServiceIterable } from './data-store/service-iterable';
 

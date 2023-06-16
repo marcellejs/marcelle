@@ -55,8 +55,10 @@ export class Dataset<T extends Instance> extends Component {
 
   protected async setup(): Promise<void> {
     const instanceServiceName = toKebabCase(`instances-${this.name}`);
-    this.instanceService = this.#store.service(instanceServiceName) as Service<T>;
+    this.instanceService = this.#store.service(instanceServiceName);
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     if (this.instanceService.__hooks.before.find === undefined) {
       this.instanceService.hooks({
         before: {
@@ -72,7 +74,7 @@ export class Dataset<T extends Instance> extends Component {
           find: [dataURL2ImageData],
           get: [dataURL2ImageData],
         },
-      });
+      } as unknown);
     }
 
     this.instanceService.hooks({
@@ -80,7 +82,7 @@ export class Dataset<T extends Instance> extends Component {
         update: [this.checkUpdates],
         patch: [this.checkUpdates],
       },
-    });
+    } as unknown);
 
     await this.reset();
     this.watchChanges();

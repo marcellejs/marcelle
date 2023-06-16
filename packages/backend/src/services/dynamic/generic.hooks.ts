@@ -1,6 +1,9 @@
-import { HookContext, HooksObject, Paginated } from '@feathersjs/feathers';
+import { HookContext, Paginated } from '@feathersjs/feathers';
 import { setNow } from 'feathers-hooks-common';
-import { authWriteHooks, authReadHooks } from '../../utils/permission-hooks';
+import { Application } from '../../declarations';
+import { GenericService } from './generic.class';
+import { Collection } from 'mongodb';
+// import { authWriteHooks, authReadHooks } from '../../utils/permission-hooks';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const findDistinctNedb = async (context: HookContext) => {
@@ -26,15 +29,15 @@ const findDistinctNedb = async (context: HookContext) => {
   return context;
 };
 
-const findDistinctMongodb = async (context: HookContext) => {
+const findDistinctMongodb = async (context: HookContext<Application, GenericService>) => {
   if (!context.params?.query?.$distinct || context.type !== 'before' || context.method !== 'find') {
     return context;
   }
   const { $distinct, ...query } = context.params.query;
 
   try {
-    const res = await context.service.Model.distinct($distinct, query);
-    context.result = res;
+    const model = await context.service.options.Model;
+    context.result = await model.distinct($distinct, query);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.log('An error occurred while calling distinct:', error);
@@ -54,16 +57,32 @@ const findDistinct = (db: string) => {
   }
 };
 
-export default (dbType: string, requireAuth: boolean): HooksObject => {
+export const genericHooks = (dbType: string, requireAuth: boolean) => {
   return {
     before: {
       all: [],
-      find: [...authReadHooks(requireAuth), findDistinct(dbType)],
-      get: [...authReadHooks(requireAuth)],
-      create: [...authWriteHooks(requireAuth), setNow('createdAt', 'updatedAt')],
-      update: [...authWriteHooks(requireAuth), setNow('updatedAt')],
-      patch: [...authWriteHooks(requireAuth), setNow('updatedAt')],
-      remove: [...authWriteHooks(requireAuth)],
+      find: [
+        // ...authReadHooks(requireAuth)
+        findDistinct(dbType),
+      ],
+      get: [
+        // ...authReadHooks(requireAuth)
+      ],
+      create: [
+        // ...authWriteHooks(requireAuth)
+        setNow('createdAt', 'updatedAt'),
+      ],
+      update: [
+        // ...authWriteHooks(requireAuth)
+        setNow('updatedAt'),
+      ],
+      patch: [
+        // ...authWriteHooks(requireAuth)
+        setNow('updatedAt'),
+      ],
+      remove: [
+        // ...authWriteHooks(requireAuth)
+      ],
     },
 
     after: {

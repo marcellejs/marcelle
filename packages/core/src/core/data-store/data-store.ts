@@ -1,8 +1,8 @@
-import io from 'socket.io-client';
 import authentication from '@feathersjs/authentication-client';
-import feathers, { Application } from '@feathersjs/feathers';
+import { feathers, Application } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio-client';
-import memoryService from 'feathers-memory';
+import io from 'socket.io-client';
+import { MemoryService } from '@feathersjs/memory';
 import localStorageService from 'feathers-localstorage';
 import { addObjectId, renameIdField, createDate, updateDate, findDistinct } from './hooks';
 import { logger } from '../logger';
@@ -90,7 +90,7 @@ export class DataStore {
       this.#createService = (name: string) => {
         this.feathers.use(
           `/${name}`,
-          memoryService({
+          new MemoryService({
             id: '_id',
             paginate: {
               default: 100,
@@ -212,14 +212,15 @@ export class DataStore {
       this.#createService(name);
       this.$services.set(Object.keys(this.feathers.services));
     }
-    const s =
+    const s = (
       this.backend === DataStoreBackend.Remote
         ? this.feathers.service(`${this.apiPrefix}/${name}`)
-        : this.feathers.service(name);
+        : this.feathers.service(name)
+    ) as Service<T>;
     if (!serviceExists) {
       s.items = () => iterableFromService(s);
     }
-    return s as Service<T>;
+    return s;
   }
 
   setupAppHooks(): void {
