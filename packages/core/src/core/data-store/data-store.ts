@@ -3,7 +3,7 @@ import { feathers, Application } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio-client';
 import io from 'socket.io-client';
 import { MemoryService } from '@feathersjs/memory';
-import localStorageService from 'feathers-localstorage';
+import localStorageService from './feathers-localstorage';
 import { addObjectId, renameIdField, createDate, updateDate, findDistinct } from './hooks';
 import { logger } from '../logger';
 import Login from './Login.svelte';

@@ -75,6 +75,7 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
+    "@feathersjs/adapter-commons": "^5.0.6",
     "@feathersjs/authentication-client": "^5.0.6",
     "@feathersjs/feathers": "^5.0.6",
     "@feathersjs/memory": "^5.0.6",

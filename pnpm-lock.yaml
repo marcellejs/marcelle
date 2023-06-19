@@ -149,9 +149,6 @@ importers:
 
   packages/backend:
     dependencies:
-      '@feathersjs/adapter-commons':
-        specifier: ^5.0.6
-        version: 5.0.6
       '@feathersjs/authentication':
         specifier: ^5.0.6
         version: 5.0.6
@@ -231,6 +228,9 @@ importers:
 
   packages/core:
     dependencies:
+      '@feathersjs/adapter-commons':
+        specifier: ^5.0.6
+        version: 5.0.6
       '@feathersjs/authentication-client':
         specifier: ^5.0.6
         version: 5.0.6
