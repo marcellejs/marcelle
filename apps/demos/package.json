@@ -10,16 +10,16 @@
   },
   "dependencies": {
     "@marcellejs/core": "workspace:^0.6.1",
-    "@tensorflow/tfjs-core": "^4.7.0",
-    "@tensorflow/tfjs-layers": "^4.7.0"
+    "@tensorflow/tfjs-core": "^4.8.0",
+    "@tensorflow/tfjs-layers": "^4.8.0"
   },
   "devDependencies": {
     "@marcellejs/design-system": "workspace:^0.6.1",
     "@marcellejs/devtools": "workspace:^0.6.1",
-    "@sveltejs/vite-plugin-svelte": "^2.4.1",
-    "svelte": "^3.59.1",
-    "svelte-bricks": "^0.1.7",
-    "svelte-select": "^4.4.3",
+    "@sveltejs/vite-plugin-svelte": "^2.4.2",
+    "svelte": "^4.0.2",
+    "svelte-bricks": "^0.2.0",
+    "svelte-select": "^5.6.1",
     "vite": "^4.3.9"
   }
 }

@@ -7,7 +7,6 @@
     "allowJs": false,
     "strict": true,
     "strictNullChecks": false,
-    "importsNotUsedAsValues": "error",
     "noUnusedLocals": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
@@ -17,7 +16,7 @@
     "strictPropertyInitialization": false,
     "noEmit": false,
     "lib": ["ESNext", "DOM"],
-    "types": ["./declarations", "svelte"]
+    "types": ["svelte"]
   },
   "include": ["src"],
   "exclude": ["node_modules"]

@@ -1,5 +1,5 @@
 import type { LazyIterable } from '../../utils';
-import kmeans from 'ml-kmeans';
+import { kmeans } from 'ml-kmeans';
 import {
   Stream,
   Model,
@@ -63,8 +63,8 @@ export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
     for await (const { x } of ds) {
       this.dataset.push(x);
     }
-    const ans = kmeans(this.dataset, this.parameters.k.get());
-    this.$centers.set(ans.centroids.map((x) => x.centroid));
+    const ans = kmeans(this.dataset, this.parameters.k.get(), {});
+    this.$centers.set(ans.centroids);
     this.$clusters.set(ans.clusters);
     this.$training.set({ status: 'success' });
   }

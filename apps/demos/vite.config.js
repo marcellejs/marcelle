@@ -49,8 +49,10 @@ export default defineConfig({
     svelte({ emitCss: false }),
   ],
   server: {
-    force: true,
     port: 3000,
+  },
+  optimizeDeps: {
+    force: true,
   },
   build: {
     rollupOptions: {
