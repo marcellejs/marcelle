@@ -2,7 +2,7 @@ import { HookContext, Paginated } from '@feathersjs/feathers';
 import { setNow } from 'feathers-hooks-common';
 import { Application } from '../../declarations';
 import { GenericService } from './generic.class';
-import { Collection } from 'mongodb';
+// import { Collection } from 'mongodb';
 // import { authWriteHooks, authReadHooks } from '../../utils/permission-hooks';
 // Don't remove this comment. It's needed to format import lines nicely.
 
@@ -57,6 +57,7 @@ const findDistinct = (db: string) => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const genericHooks = (dbType: string, requireAuth: boolean) => {
   return {
     before: {

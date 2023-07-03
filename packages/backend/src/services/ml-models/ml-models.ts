@@ -21,6 +21,7 @@ import { MLModelUploadsService } from './ml-models.upload.class';
 import { ObjectId, type GridFSBucket } from 'mongodb';
 import { NotFound } from '@feathersjs/errors';
 import { deleteModelFiles } from './ml-models.hooks';
+import { setNow } from 'feathers-hooks-common';
 
 export type ModelType = 'tfjs' | 'onnx';
 export type ModelPath = `${ModelType}-models`;
@@ -58,16 +59,19 @@ export const mlModels = (modelType: ModelType) => (app: Application) => {
       create: [
         // schemaHooks.validateData(mlModelsDataValidator),
         // schemaHooks.resolveData(mlModelsDataResolver),
+        setNow('createdAt', 'updatedAt'),
       ],
       patch: [
         // schemaHooks.validateData(mlModelsPatchValidator),
         // schemaHooks.resolveData(mlModelsPatchResolver),
         deleteModelFiles,
+        setNow('updatedAt'),
       ],
       update: [
         // schemaHooks.validateData(mlModelsPatchValidator),
         // schemaHooks.resolveData(mlModelsPatchResolver),
         deleteModelFiles,
+        setNow('updatedAt'),
       ],
       remove: [],
     },
