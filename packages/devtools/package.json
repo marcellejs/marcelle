@@ -23,18 +23,18 @@
     "@marcellejs/backend": "workspace:^0.6.1",
     "@marcellejs/core": "workspace:^0.6.1",
     "@types/prompts": "^2.4.4",
-    "sucrase": "^3.32.0",
-    "svelte": "^4.0.2",
+    "sucrase": "^3.34.0",
+    "svelte": "^4.1.2",
     "svelte-preprocess": "^5.0.4",
     "tiny-glob": "^0.2.9",
-    "tslib": "^2.6.0",
+    "tslib": "^2.6.1",
     "typescript": "^5.1.6"
   },
   "dependencies": {
     "@octokit/rest": "^19.0.13",
     "change-case": "^4.1.2",
     "kleur": "^4.1.5",
-    "node-fetch": "^3.3.1",
+    "node-fetch": "^3.3.2",
     "prompts": "^2.4.2"
   }
 }

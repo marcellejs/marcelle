@@ -5,7 +5,7 @@ import {
   MobileNetVersion,
   MobileNetAlpha,
 } from '@tensorflow-models/mobilenet';
-import { io, tidy } from '@tensorflow/tfjs-core';
+import { io, ready, tidy } from '@tensorflow/tfjs-core';
 import { ClassifierResults, Instance, logger, Model } from '../../core';
 import { Stream } from '../../core/stream';
 import { Catch, TrainingError } from '../../utils/error-handling';
@@ -46,6 +46,7 @@ export class MobileNet extends Model<MobileNetInstance, ClassifierResults> {
   }
 
   async setup(): Promise<MobileNet> {
+    await ready();
     const cachedModels = await io.listModels();
     const cachedMobilenet = Object.keys(cachedModels).filter((x) => x.includes('mobileNet'));
     try {
