@@ -1,18 +1,4 @@
 // For more information about this file see https://dove.feathersjs.com/guides/cli/service.html
-
-import { hooks as schemaHooks } from '@feathersjs/schema';
-
-import {
-  // mlModelsDataValidator,
-  // mlModelsPatchValidator,
-  // mlModelsQueryValidator,
-  mlModelsResolver,
-  mlModelsExternalResolver,
-  // mlModelsDataResolver,
-  // mlModelsPatchResolver,
-  // mlModelsQueryResolver,
-} from './ml-models.schema';
-
 import type { Application } from '../../declarations';
 import { MlModelsService, getOptions } from './ml-models.class';
 import { bodyParser } from '@feathersjs/koa';
@@ -20,8 +6,7 @@ import { Params } from '@feathersjs/feathers';
 import { MLModelUploadsService } from './ml-models.upload.class';
 import { ObjectId, type GridFSBucket } from 'mongodb';
 import { NotFound } from '@feathersjs/errors';
-import { deleteModelFiles } from './ml-models.hooks';
-import { setNow } from 'feathers-hooks-common';
+import mlModelsHooks from './ml-models.hooks';
 
 export type ModelType = 'tfjs' | 'onnx';
 export type ModelPath = `${ModelType}-models`;
@@ -32,6 +17,7 @@ export * from './ml-models.schema';
 
 // A configure function that registers the service and its hooks via `app.configure`
 export const mlModels = (modelType: ModelType) => (app: Application) => {
+  const requireAuth = app.get('authentication').enabled;
   // Register our service on the Feathers application
   const mlModelsPath: ModelPath = `${modelType}-models`;
 
@@ -42,46 +28,7 @@ export const mlModels = (modelType: ModelType) => (app: Application) => {
     events: [],
   });
   // Initialize hooks
-  app.service(mlModelsPath).hooks({
-    around: {
-      all: [
-        schemaHooks.resolveExternal(mlModelsExternalResolver),
-        schemaHooks.resolveResult(mlModelsResolver),
-      ],
-    },
-    before: {
-      all: [
-        // schemaHooks.validateQuery(mlModelsQueryValidator),
-        // schemaHooks.resolveQuery(mlModelsQueryResolver),
-      ],
-      find: [],
-      get: [],
-      create: [
-        // schemaHooks.validateData(mlModelsDataValidator),
-        // schemaHooks.resolveData(mlModelsDataResolver),
-        setNow('createdAt', 'updatedAt'),
-      ],
-      patch: [
-        // schemaHooks.validateData(mlModelsPatchValidator),
-        // schemaHooks.resolveData(mlModelsPatchResolver),
-        deleteModelFiles,
-        setNow('updatedAt'),
-      ],
-      update: [
-        // schemaHooks.validateData(mlModelsPatchValidator),
-        // schemaHooks.resolveData(mlModelsPatchResolver),
-        deleteModelFiles,
-        setNow('updatedAt'),
-      ],
-      remove: [],
-    },
-    after: {
-      all: [],
-    },
-    error: {
-      all: [],
-    },
-  });
+  app.service(mlModelsPath).hooks(mlModelsHooks(requireAuth));
 
   const mlModelsService = app.service(mlModelsPath);
   app.use(

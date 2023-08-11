@@ -1,3 +1,4 @@
+import { user } from './users/users';
 import { mlModels } from './ml-models/ml-models';
 import { dynamic } from './dynamic/dynamic';
 import { info } from './info/info';
@@ -5,6 +6,9 @@ import { info } from './info/info';
 import type { Application } from '../declarations';
 
 export const services = (app: Application) => {
+  if (app.get('authentication').enabled) {
+    app.configure(user);
+  }
   app.configure(mlModels('tfjs'));
   app.configure(mlModels('onnx'));
   app.configure(dynamic);

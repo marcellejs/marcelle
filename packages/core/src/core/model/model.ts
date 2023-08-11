@@ -81,7 +81,7 @@ export abstract class Model<T extends Instance, PredictionType>
     const { data } = (await this.syncData.service.find({
       query: {
         name: this.syncData.name,
-        $select: ['id'],
+        $select: ['_id'],
         $limit: 1,
         $sort: {
           updatedAt: -1,

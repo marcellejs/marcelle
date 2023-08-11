@@ -34,8 +34,10 @@ export class GenericService<ServiceParams extends Params = GenericParams> extend
 export const getOptions = (app: Application, serviceName: string): MongoDBAdapterOptions => {
   return {
     paginate: app.get('paginate'),
-    multi: true,
-    whitelist: ['$not', '$and', '$distinct'],
     Model: app.get('mongodbClient').then((db) => db.collection(serviceName)),
+    multi: true,
+    // whitelist: ['$not', '$and', '$distinct'],
+    filters: { $nor: true, $distinct: true },
+    operators: ['$nor', '$distinct'],
   };
 };

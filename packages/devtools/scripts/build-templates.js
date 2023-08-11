@@ -53,7 +53,7 @@ async function generate_templates() {
         let contents = fs.readFileSync(path.join(cwd, name), 'utf8');
         if (lang === 'js') {
           if (name.endsWith('.ts')) {
-            contents = convert_typescript(contents);
+            contents = await convert_typescript(contents);
             name = name.replace('.ts', '.js');
           }
           if (name.endsWith('.svelte')) {

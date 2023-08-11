@@ -1,10 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 import parser from 'gitignore-parser';
-import prettier from 'prettier';
+import * as prettier from 'prettier';
 import { transform } from 'sucrase';
 import glob from 'tiny-glob/sync.js';
 import { mkdirp, rimraf } from '../utils.js';
+import { replaceAsync } from './utils.js';
 
 /** @param {string} typescript */
 function convert_typescript(typescript) {
@@ -47,7 +48,7 @@ async function generate_templates(shared) {
     /** @type {import('../types/internal.js').File[]} */
     const ts = [];
 
-    glob('**/*', { cwd, filesOnly: true, dot: true }).forEach((name) => {
+    for (const name of glob('**/*', { cwd, filesOnly: true, dot: true })) {
       // the package.template.json thing is a bit annoying — basically we want
       // to be able to develop and deploy the app from here, but have a different
       // package.json in newly created projects (based on package.template.json)
@@ -94,7 +95,7 @@ async function generate_templates(shared) {
         mkdirp(path.dirname(dest));
         fs.copyFileSync(path.join(cwd, name), dest);
       }
-    });
+    }
 
     /** @type {import('../types/internal.js').File[]} */
     const js = [];
@@ -112,7 +113,7 @@ async function generate_templates(shared) {
       } else if (file.name.endsWith('.ts')) {
         js.push({
           name: file.name.replace(/\.ts$/, '.js'),
-          contents: convert_typescript(file.contents),
+          contents: await convert_typescript(file.contents),
         });
       } else if (file.name.endsWith('.svelte')) {
         // we jump through some hoops, rather than just using svelte.preprocess,
@@ -120,9 +121,10 @@ async function generate_templates(shared) {
         // possible (e.g. preserving double line breaks). Sucrase is the best
         // tool for the job because it just removes the types; Prettier then
         // tidies up the end result
-        const contents = file.contents.replace(
+        const contents = replaceAsync(
+          file.contents,
           /<script([^>]+)>([\s\S]+?)<\/script>/g,
-          (m, attrs, typescript) => {
+          async (m, attrs, typescript) => {
             // Sucrase assumes 'unused' imports (which _are_ used, but only
             // in the markup) are type imports, and strips them. This step
             // prevents it from drawing that conclusion
@@ -143,7 +145,7 @@ async function generate_templates(shared) {
               transforms: ['typescript'],
             }).code.slice(0, -suffix.length);
 
-            const contents = prettier
+            const result = await prettier
               .format(transformed, {
                 parser: 'babel',
                 useTabs: true,
@@ -151,10 +153,9 @@ async function generate_templates(shared) {
                 trailingComma: 'none',
                 printWidth: 100,
               })
-              .trim()
-              .replace(/^(.)/gm, '\t$1');
+              .then((res) => res.trim().replace(/^(.)/gm, '\t$1'));
 
-            return `<script${attrs.replace(' lang="ts"', '')}>\n${contents}\n</script>`;
+            return `<script${attrs.replace(' lang="ts"', '')}>\n${result}\n</script>`;
           },
         );
 
@@ -182,8 +183,8 @@ async function generate_shared() {
   /** @type {Array<{ name: string, include: string[], exclude: string[], contents: string }>} */
   const files = [];
 
-  glob('**/*', { cwd, filesOnly: true, dot: true }).forEach((file) => {
-    if (file === '.DS_Store') return;
+  for (const file of glob('**/*', { cwd, filesOnly: true, dot: true })) {
+    if (file === '.DS_Store') return null;
     const contents = fs.readFileSync(path.join(cwd, file), 'utf8');
 
     /** @type {string[]} */
@@ -215,7 +216,7 @@ async function generate_shared() {
         name: js_name,
         include: [...include],
         exclude: [...exclude, 'typescript'],
-        contents: convert_typescript(contents),
+        contents: await convert_typescript(contents),
       });
 
       include.push('typescript');
@@ -224,7 +225,7 @@ async function generate_shared() {
     shared.add(name);
 
     files.push({ name, include, exclude, contents });
-  });
+  }
 
   files.sort((a, b) => a.include.length + a.exclude.length - (b.include.length + b.exclude.length));
 

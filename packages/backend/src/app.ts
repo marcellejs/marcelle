@@ -11,13 +11,15 @@ import {
   serveStatic,
 } from '@feathersjs/koa';
 import socketio from '@feathersjs/socketio';
+import { feathersCasl } from 'feathers-casl';
 
 import type { Application } from './declarations';
-import { logError } from './hooks/log-error';
 import { mongodb } from './mongodb';
+import { authentication } from './authentication';
 import { services } from './services/index';
 import { channels } from './channels';
 import { getRegisteredServices } from './utils/registered-services';
+import appHooks from './app.hooks';
 
 const app: Application = koa(feathers());
 
@@ -54,17 +56,14 @@ app.configure(
 );
 app.configure(channels);
 app.configure(mongodb);
+if (app.get('authentication').enabled) {
+  app.configure(authentication);
+  app.configure(feathersCasl());
+}
 app.configure(services);
 
 // Register hooks that run on all service methods
-app.hooks({
-  around: {
-    all: [logError],
-  },
-  before: {},
-  after: {},
-  error: {},
-});
+app.hooks(appHooks);
 // Register application setup and teardown hooks here
 app.hooks({
   setup: [],

@@ -15,8 +15,8 @@ export const mlModelsSchema = Type.Object(
     files: Type.Array(Type.Tuple([Type.String(), Type.String()])),
     format: Type.String(),
     metadata: Type.Record(Type.String(), Type.Unknown()),
-    // createdAt: Type.Date(),
-    // updatedAt: Type.Date(),
+    createdAt: Type.Number(),
+    updatedAt: Type.Number(),
   },
   { $id: 'MlModels', additionalProperties: true },
 );
@@ -53,8 +53,8 @@ export const mlModelsQueryProperties = Type.Pick(mlModelsSchema, [
   'files',
   'format',
   'metadata',
-  // 'createdAt',
-  // 'updatedAt',
+  'createdAt',
+  'updatedAt',
 ]);
 export const mlModelsQuerySchema = Type.Intersect(
   [
