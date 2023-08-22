@@ -17,7 +17,7 @@
     "@marcellejs/design-system": "workspace:^0.6.1",
     "@marcellejs/devtools": "workspace:^0.6.1",
     "@sveltejs/vite-plugin-svelte": "^2.4.5",
-    "svelte": "^4.1.2",
+    "svelte": "^4.2.0",
     "svelte-bricks": "^0.2.0",
     "svelte-select": "^5.6.1",
     "vite": "^4.4.9"

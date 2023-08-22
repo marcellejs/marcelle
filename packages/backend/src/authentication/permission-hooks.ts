@@ -10,12 +10,12 @@ export const authorizeHook = authorize({ adapter: '@feathersjs/mongodb' });
 
 function setAbilitiesForRestProvider(context: HookContext<Application>) {
   // TODO: Re-add the condition!!! Is it a bug with Feathers-casl?
-  // if (context.params.provider === 'rest') {
-  const { user } = context.params;
-  if (user) {
-    context.params.ability = defineAbilitiesFor(user as User, context.app as Application);
+  if (context.params.provider === 'rest') {
+    const { user } = context.params;
+    if (user) {
+      context.params.ability = defineAbilitiesFor(user as User, context.app as Application);
+    }
   }
-  // }
   return context;
 }
 
