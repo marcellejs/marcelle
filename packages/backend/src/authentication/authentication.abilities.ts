@@ -28,8 +28,7 @@ export const defineRulesFor = (user: User, app: Application) => {
   can('read', 'all', { public: true });
   can('manage', 'all', { userId: user._id });
 
-  // const usersPath = app.getServicePath('users');
-  const usersPath = app.get('authentication').service;
+  const usersPath = app.getServicePath(app.get('authentication').service as 'users');
   if (app.get('authentication').allowSignup) {
     can('create', usersPath);
   } else {

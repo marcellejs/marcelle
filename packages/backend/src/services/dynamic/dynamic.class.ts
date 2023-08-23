@@ -66,7 +66,7 @@ export class DynamicService<ServiceParams extends DynamicParams = DynamicParams>
     }
     const app = this.options.app;
     try {
-      app.service(name as '*');
+      app.getService(name as '*');
     } catch (error) {
       // if (app.get('database') === 'nedb') {
       //   const options = {
@@ -82,7 +82,7 @@ export class DynamicService<ServiceParams extends DynamicParams = DynamicParams>
       //   multi: true,
       //   whitelist: ['$not', '$and', '$distinct'],
       // };
-      app.use(name as '*', new GenericService(getGenericOptions(app, name)), {
+      app.declareService(name as '*', new GenericService(getGenericOptions(app, name)), {
         // A list of all methods this service exposes externally
         methods: genericMethods,
         // You can add additional custom events to be sent to clients here
@@ -92,12 +92,12 @@ export class DynamicService<ServiceParams extends DynamicParams = DynamicParams>
       //   throw new Error('Invalid database type: only "nedb" or "mongodb" are currently supported');
       // }
 
-      const service = app.service(name as '*') as any;
+      const service = app.getService(name as '*') as any;
       // Register our service on the Feathers application
       service.hooks(genericHooks(app.get('authentication').enabled, 'mongodb'));
     }
 
-    return app.service(name as '*');
+    return app.getService(name as '*');
   }
 }
 

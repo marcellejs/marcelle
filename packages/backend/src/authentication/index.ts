@@ -17,6 +17,6 @@ export const authentication = (app: Application) => {
   auth.register('jwt', new JWTStrategy());
   auth.register('local', new LocalStrategy());
 
-  app.use('authentication', auth);
-  app.service('authentication').hooks(authenticationHooks);
+  app.declareService('authentication', auth);
+  app.getService('authentication').hooks(authenticationHooks);
 };

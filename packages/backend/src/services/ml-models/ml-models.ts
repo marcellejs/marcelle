@@ -21,17 +21,17 @@ export const mlModels = (modelType: ModelType) => (app: Application) => {
   // Register our service on the Feathers application
   const mlModelsPath: ModelPath = `${modelType}-models`;
 
-  app.use(mlModelsPath, new MlModelsService(getOptions(app, modelType)), {
+  app.declareService(mlModelsPath, new MlModelsService(getOptions(app, modelType)), {
     // A list of all methods this service exposes externally
     methods: mlModelsMethods,
     // You can add additional custom events to be sent to clients here
     events: [],
   });
   // Initialize hooks
-  app.service(mlModelsPath).hooks(mlModelsHooks(requireAuth));
+  const mlModelsService = app.getService(mlModelsPath);
+  mlModelsService.hooks(mlModelsHooks(requireAuth));
 
-  const mlModelsService = app.service(mlModelsPath);
-  app.use(
+  app.declareService(
     `${mlModelsPath}/:id/:filename` as `${ModelPath}/:id/:filename`,
     {
       async find(params: Params): Promise<string> {
@@ -68,7 +68,7 @@ export const mlModels = (modelType: ModelType) => (app: Application) => {
   );
 
   const mlModelsUploadPath: `${ModelType}-models/upload` = `${modelType}-models/upload`;
-  app.use(
+  app.declareService(
     mlModelsUploadPath,
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     new MLModelUploadsService(),

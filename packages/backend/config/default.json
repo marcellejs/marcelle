@@ -1,5 +1,6 @@
 {
   "host": "localhost",
+  "apiPrefix": "/",
   "port": 3030,
   "public": "./public/",
   "origins": [

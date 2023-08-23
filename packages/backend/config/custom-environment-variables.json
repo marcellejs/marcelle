@@ -1,9 +1,15 @@
 {
+  "host": "HOSTNAME",
+  "apiPrefix": "/",
   "port": {
     "__name": "PORT",
     "__format": "number"
   },
-  "host": "HOSTNAME",
+  "mongodb": "MONGODB_URL",
+  "whitelist": {
+    "services": [],
+    "assets": ["jpg", "jpeg", "png", "wav"]
+  },
   "authentication": {
     "secret": "FEATHERS_SECRET"
   }
