@@ -59,6 +59,7 @@
       on:click={quit}
       on:keypress|preventDefault={(e) => e.key === 'Escape' && quit()}
       class="absolute inset-0 bg-gray-500 opacity-50"
+      role="none"
     />
   </div>
   <div

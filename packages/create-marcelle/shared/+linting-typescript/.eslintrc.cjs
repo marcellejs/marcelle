@@ -6,12 +6,12 @@ module.exports = {
   env: {
     browser: true,
   },
-  plugins: ['svelte3', 'prettier'],
-  extends: ['eslint:recommended', 'prettier'],
+  plugins: ['svelte', 'prettier'],
+  extends: ['eslint:recommended', 'plugin:svelte/recommended', 'prettier'],
   overrides: [
     {
       files: ['*.svelte'],
-      processor: 'svelte3/svelte3',
+      parser: 'svelte-eslint-parser',
     },
   ],
   rules: {

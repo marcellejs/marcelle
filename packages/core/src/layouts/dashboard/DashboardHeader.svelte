@@ -37,7 +37,7 @@
       <span class="mx-3 text-lg">{title}</span>
     </a>
     <nav class="flex items-stretch justify-start flex-wrap text-base grow mx-4">
-      {#each Object.entries(items) as [slug, name], index}
+      {#each Object.entries(items) as [slug, name]}
         <a
           href={`#${slug}`}
           class:active={!showSettings && current === name}

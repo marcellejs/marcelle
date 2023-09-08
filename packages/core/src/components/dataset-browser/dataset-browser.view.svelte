@@ -219,6 +219,7 @@
             );
             if (classes[originalLabel].total === 0) {
               delete classes[originalLabel];
+              // eslint-disable-next-line no-self-assign
               classes = classes;
             }
             if (!classes[data.y]) {
@@ -240,6 +241,7 @@
             );
             if (classes[data.y].total === 0) {
               delete classes[data.y];
+              // eslint-disable-next-line no-self-assign
               classes = classes;
             }
           }
@@ -259,6 +261,7 @@
       <p class="ml-3 mt-2">This dataset is empty.</p>
     {/if}
 
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
       class="flex flex-wrap"
       on:click={() => selectInstance()}
@@ -294,6 +297,7 @@
             <div class="browser-class-body">
               {#each instances as { id, thumbnail } (id)}
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
                 <img
                   src={thumbnail}
                   alt="thumbnail"

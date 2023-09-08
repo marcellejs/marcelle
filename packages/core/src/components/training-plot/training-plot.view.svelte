@@ -25,11 +25,10 @@
       chart.destroy();
     }
   });
-
 </script>
 
 <div bind:this={container} class="grid grid-cols-1 gap-1">
-  {#each Object.values(charts) as chart, i}
+  {#each Object.values(charts) as _, i}
     <div bind:this={refs[i]} class="card inner-card xl:flex-1" />
   {/each}
 </div>
@@ -38,5 +37,4 @@
   .inner-card {
     @apply shadow-none flex-none  w-full;
   }
-
 </style>

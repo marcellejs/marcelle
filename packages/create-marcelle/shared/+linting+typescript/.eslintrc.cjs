@@ -7,17 +7,22 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
-  plugins: ['svelte3', '@typescript-eslint', 'prettier'],
+  plugins: ['svelte', '@typescript-eslint', 'prettier'],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:svelte/recommended',
     'prettier',
   ],
   overrides: [
     {
       files: ['*.svelte'],
-      processor: 'svelte3/svelte3',
+      parser: 'svelte-eslint-parser',
+      // Parse the `<script>` in `.svelte` as TypeScript by adding the following configuration.
+      parserOptions: {
+        parser: '@typescript-eslint/parser',
+      },
     },
   ],
   rules: {
@@ -124,10 +129,6 @@ module.exports = {
     // https://eslint.org/docs/rules/dot-location
     // https://eslint.org/docs/rules/no-else-return
     // -------------
-  },
-  settings: {
-    // eslint-disable-next-line global-require
-    'svelte3/typescript': require('typescript'),
   },
   ignorePatterns: [
     'node_modules/*',

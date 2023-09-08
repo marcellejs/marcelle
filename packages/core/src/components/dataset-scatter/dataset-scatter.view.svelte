@@ -13,6 +13,7 @@
     Title,
     Tooltip,
     type ChartConfiguration,
+    TooltipModel,
   } from 'chart.js';
   import zoomPlugin from 'chartjs-plugin-zoom';
   import type { ObjectId } from '../../core';
@@ -35,7 +36,7 @@
   export let hovered: Stream<ObjectId[]>;
   export let clicked: Stream<ObjectId[]>;
 
-  const getOrCreateTooltip = (chart: any) => {
+  const getOrCreateTooltip = (chart: Chart) => {
     let tooltipEl = chart.canvas.parentNode.querySelector('div');
 
     if (!tooltipEl) {
@@ -43,7 +44,7 @@
       tooltipEl.style.background = 'transparent';
       tooltipEl.style.borderRadius = '3px';
       tooltipEl.style.color = 'white';
-      tooltipEl.style.opacity = 1;
+      tooltipEl.style.opacity = '1';
       tooltipEl.style.pointerEvents = 'none';
       tooltipEl.style.position = 'absolute';
       tooltipEl.style.transform = 'translate(-50%, 0)';
@@ -62,27 +63,32 @@
     return tooltipEl;
   };
 
-  export function externalTooltipHandler(context: any) {
+  export function externalTooltipHandler(context: {
+    chart: Chart;
+    tooltip: TooltipModel<'scatter'>;
+  }) {
     // Tooltip Element
     const { chart, tooltip } = context;
     const tooltipEl = getOrCreateTooltip(chart);
 
     // Hide if no tooltip
     if (tooltip.opacity === 0) {
-      tooltipEl.style.opacity = 0;
+      tooltipEl.style.opacity = '0';
       return;
     }
 
     const img = tooltipEl.querySelector('img');
-    img.src = tooltip.dataPoints[0].raw.thumbnail;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    img.src = (tooltip.dataPoints[0].raw as any).thumbnail;
 
     const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
 
     // Display, position, and set styles for font
-    tooltipEl.style.opacity = 1;
+    tooltipEl.style.opacity = '1';
     tooltipEl.style.left = positionX + tooltip.caretX + 70 + 'px';
     tooltipEl.style.top = positionY + tooltip.caretY + 20 + 'px';
-    tooltipEl.style.font = tooltip.options.bodyFont.string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    tooltipEl.style.font = (tooltip.options.bodyFont as any).string;
     tooltipEl.style.padding = tooltip.options.padding + 'px ' + tooltip.options.padding + 'px';
   }
 
@@ -133,11 +139,12 @@
         },
       },
       onClick(e, elts) {
-        clicked.set(elts.map(({ element }) => element));
+        clicked.set(elts.map(({ element }) => element as unknown as string));
         // clicked.set(elts.map(({ element }) => element?.$context?.raw?.id));
       },
       onHover(e, elts) {
-        const ids = elts.map(({ element }) => element?.$context?.raw?.id);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const ids = elts.map(({ element }) => (element as any)?.$context?.raw?.id);
         if (!dequal(ids, hovered.get())) hovered.set(ids);
       },
     },

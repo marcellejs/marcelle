@@ -93,6 +93,7 @@
     on:dragover={handleDragOver}
     on:drop={handleDragDrop}
     class="file-upload"
+    role="none"
   >
     <div
       class="border-dashed border-2 border-gray-300 py-8 flex flex-col justify-center items-center"
