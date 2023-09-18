@@ -1,7 +1,7 @@
 {
   "name": "@marcellejs/backend",
   "description": "",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "homepage": "",
   "main": "lib",
   "keywords": [
@@ -29,7 +29,7 @@
   },
   "scripts": {
     "dev": "tsc-watch",
-    "build": "shx rm -rf lib/ && tsc",
+    "build": "rimraf lib/ && tsc",
     "test": "yarn run lint && yarn run build && yarn run jest",
     "lint": "eslint src/. test/. --ext .ts",
     "jest": "jest  --forceExit"
@@ -67,7 +67,7 @@
     "multer-gridfs-storage": "^5.0.2",
     "nedb": "^1.8.0",
     "serve-favicon": "^2.5.0",
-    "winston": "^3.8.2"
+    "winston": "^3.9.0"
   },
   "devDependencies": {
     "@types/compression": "^1.7.0",
@@ -78,7 +78,7 @@
     "@types/mongodb": "^3.5.33",
     "@types/multer": "^1.4.4",
     "@types/nedb": "^1.8.13",
-    "@types/serve-favicon": "^2.5.1",
+    "@types/serve-favicon": "^2.5.4",
     "axios": "^0.21.0",
     "jest": "^26.6.3",
     "shx": "^0.3.3",

@@ -1,5 +1,11 @@
 # Marcelle changelog
 
+## 0.6.2
+
+### Patch Changes
+
+- 8c5bd35: Fixed errors with Tensorflow.js backend selection
+
 ## 0.6.1
 
 ### Patch Changes

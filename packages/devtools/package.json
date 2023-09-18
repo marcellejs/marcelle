@@ -1,10 +1,10 @@
 {
   "name": "@marcellejs/devtools",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Some development tools for marcelle projects",
   "main": "index.js",
   "scripts": {
-    "build": "rm -rf dist && npm run build:lib && node scripts/build-templates",
+    "build": "rimraf dist && npm run build:lib && node scripts/build-templates",
     "build:lib": "tsc --outDir dist"
   },
   "keywords": [
@@ -20,18 +20,18 @@
     "dist"
   ],
   "devDependencies": {
-    "@marcellejs/backend": "workspace:^0.6.1",
-    "@marcellejs/core": "workspace:^0.6.1",
+    "@marcellejs/backend": "workspace:^0.6.2",
+    "@marcellejs/core": "workspace:^0.6.2",
     "@types/prompts": "^2.4.4",
     "sucrase": "^3.32.0",
-    "svelte": "^3.58.0",
-    "svelte-preprocess": "^5.0.3",
+    "svelte": "^3.59.1",
+    "svelte-preprocess": "^5.0.4",
     "tiny-glob": "^0.2.9",
-    "tslib": "^2.5.0",
+    "tslib": "^2.5.3",
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@octokit/rest": "^19.0.7",
+    "@octokit/rest": "^19.0.11",
     "change-case": "^4.1.2",
     "kleur": "^4.1.5",
     "node-fetch": "^3.3.1",
