@@ -1,6 +1,6 @@
 {
   "name": "@marcellejs/devtools",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Some development tools for marcelle projects",
   "main": "index.js",
   "scripts": {
@@ -20,8 +20,8 @@
     "dist"
   ],
   "devDependencies": {
-    "@marcellejs/backend": "workspace:^0.6.1",
-    "@marcellejs/core": "workspace:^0.6.1",
+    "@marcellejs/backend": "workspace:^0.6.2",
+    "@marcellejs/core": "workspace:^0.6.2",
     "@types/prompts": "^2.4.4",
     "sucrase": "^3.34.0",
     "svelte": "^4.2.0",

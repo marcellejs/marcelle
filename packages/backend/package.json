@@ -1,13 +1,16 @@
 {
   "name": "@marcellejs/backend",
   "description": "A real-time server for Marcelle applications",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "homepage": "",
   "private": true,
   "keywords": [
     "feathers"
   ],
-  "author": {},
+  "author": {
+    "name": "Jules Françoise",
+    "email": "me@julesfrancoise.com"
+  },
   "contributors": [],
   "bugs": {},
   "engines": {
