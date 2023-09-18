@@ -1,5 +1,5 @@
 import { load, ObjectDetection, ObjectDetectionBaseModel } from '@tensorflow-models/coco-ssd';
-import { io } from '@tensorflow/tfjs-core';
+import { io, ready } from '@tensorflow/tfjs-core';
 import { type Instance, Model, ObjectDetectorResults } from '../../core';
 import { logger } from '../../core/logger';
 import { Stream } from '../../core/stream';
@@ -32,6 +32,7 @@ export class CocoSsd extends Model<CocoInstance, ObjectDetectorResults> {
   }
 
   async setup(): Promise<void> {
+    await ready();
     const cachedModels = await io.listModels();
     const cachedCoco = Object.keys(cachedModels).filter((x) => x.includes('cocossd'));
     try {
