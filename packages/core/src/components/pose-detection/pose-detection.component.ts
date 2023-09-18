@@ -13,6 +13,7 @@ import { Instance, logger, Model, Stream } from '../../core';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import { SkeletonRenderer } from './renderer';
 import View from './pose-detection.view.svelte';
+import { ready } from '@tensorflow/tfjs-core';
 
 export type PoseDetectionModel = keyof typeof SupportedModels;
 
@@ -51,6 +52,7 @@ export class PoseDetection extends Model<PoseDetectionInstance, Pose[]> {
   }
 
   async setup(model: PoseDetectionModel, modelConfig?: ModelConfig): Promise<void> {
+    await ready();
     this.#detector = await createDetector(SupportedModels[model], modelConfig);
     logger.info(`${model} loaded`);
     this.$loading.set(false);

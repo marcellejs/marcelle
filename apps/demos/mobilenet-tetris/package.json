@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@marcellejs/core": "workspace:^0.6.0",
-    "@tensorflow/tfjs-core": "^4.7.0",
+    "@tensorflow/tfjs-core": "^4.11.0",
     "xmmjs": "^0.0.3"
   },
   "devDependencies": {
