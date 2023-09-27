@@ -2,12 +2,12 @@ import type { Prediction, Instance, Service } from '../../core/types';
 import type { Paginated } from '@feathersjs/feathers';
 import type { ServiceIterable } from '../../core/data-store/service-iterable';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import { DataStore } from '../../core/data-store/data-store';
 import { Dataset, isDataset } from '../../core/dataset';
 import { dataStore, Model } from '../../core';
 import { toKebabCase } from '../../utils/string';
 import { LazyIterable, throwError } from '../../utils';
+import { BehaviorSubject } from 'rxjs';
 
 export interface BatchPredictionStatus {
   status: 'idle' | 'start' | 'running' | 'success' | 'error' | 'loaded' | 'loading';
@@ -23,14 +23,14 @@ export class BatchPrediction extends Component {
   #store: DataStore;
   predictionService: Service<Prediction>;
 
-  $status = new Stream<BatchPredictionStatus>({ status: 'loading' }, true);
+  $status = new BehaviorSubject<BatchPredictionStatus>({ status: 'loading' });
 
   constructor(name: string, store = dataStore()) {
     super();
     this.name = name;
     this.title = `batch prediction (${name})`;
     this.#store = store || new DataStore();
-    this.start();
+
     this.#store
       .connect()
       .then(() => {
@@ -50,7 +50,7 @@ export class BatchPrediction extends Component {
     const { total } = (await this.predictionService.find({
       query: { $limit: 1, $select: ['id'] },
     })) as Paginated<Prediction>;
-    this.$status.set({ status: total > 0 ? 'loaded' : 'idle' });
+    this.$status.next({ status: total > 0 ? 'loaded' : 'idle' });
   }
 
   async predict<T extends Instance, PredictionType>(
@@ -59,7 +59,7 @@ export class BatchPrediction extends Component {
   ): Promise<void> {
     try {
       const total = isDataset(dataset) ? dataset.$count.value : (await dataset.toArray()).length;
-      this.$status.set({ status: 'start' });
+      this.$status.next({ status: 'start' });
       const ds = isDataset(dataset) ? dataset.items() : dataset;
       let i = 0;
       for await (const { id, x, y } of ds) {
@@ -69,16 +69,16 @@ export class BatchPrediction extends Component {
           instanceId: id,
           yTrue: y,
         });
-        this.$status.set({
+        this.$status.next({
           status: 'running',
           count: ++i,
           total,
           data: storedPrediction as Prediction,
         });
       }
-      this.$status.set({ status: 'success', count: i, total });
+      this.$status.next({ status: 'success', count: i, total });
     } catch (error) {
-      this.$status.set({ status: 'error', data: { error } });
+      this.$status.next({ status: 'error', data: { error } });
     }
   }
 

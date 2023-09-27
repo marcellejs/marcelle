@@ -1,3 +1,4 @@
+import { BehaviorSubject } from 'rxjs';
 import { Tensor2D, Tensor, TensorLike, tensor, tidy } from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/gather';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/arg_max';
@@ -8,7 +9,6 @@ import { Dataset, isDataset } from '../../core/dataset';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import { dataset2tfjs, TFDataset } from '../../core/model/tfjs-utils';
 import { TFJSBaseModel } from './tfjs-base-model';
-import { Stream } from '../stream';
 import type { Instance } from '../types';
 import type { LazyIterable } from '../../utils';
 
@@ -39,8 +39,8 @@ export abstract class TFJSCustomModel<T extends Instance, PredictionType> extend
   validationSplit: number;
 
   parameters: {
-    epochs: Stream<number>;
-    batchSize: Stream<number>;
+    epochs: BehaviorSubject<number>;
+    batchSize: BehaviorSubject<number>;
   };
 
   constructor({
@@ -51,8 +51,8 @@ export abstract class TFJSCustomModel<T extends Instance, PredictionType> extend
     super();
     this.validationSplit = Math.max(Math.min(validationSplit, 1), 0);
     this.parameters = {
-      epochs: new Stream(epochs, true),
-      batchSize: new Stream(batchSize, true),
+      epochs: new BehaviorSubject(epochs),
+      batchSize: new BehaviorSubject(batchSize),
     };
   }
 
@@ -68,7 +68,7 @@ export abstract class TFJSCustomModel<T extends Instance, PredictionType> extend
     dataset: Dataset<T> | LazyIterable<T>,
     validationDataset?: Dataset<T> | LazyIterable<T>,
   ): Promise<void> {
-    this.$training.set({ status: 'start', epochs: this.parameters.epochs.get() });
+    this.$training.next({ status: 'start', epochs: this.parameters.epochs.getValue() });
 
     const isDs = isDataset(dataset);
     const count = isDs ? dataset.$count.value : (await dataset.toArray()).length;
@@ -119,28 +119,28 @@ export abstract class TFJSCustomModel<T extends Instance, PredictionType> extend
     dsVal: TFDataset<{ xs: Tensor; ys: Tensor }>,
   ): void {
     this.model
-      .fitDataset(dsTrain.batch(this.parameters.batchSize.get()), {
-        ...(dsVal ? { validationData: dsVal.batch(this.parameters.batchSize.get()) } : {}),
-        epochs: this.parameters.epochs.get(),
+      .fitDataset(dsTrain.batch(this.parameters.batchSize.getValue()), {
+        ...(dsVal ? { validationData: dsVal.batch(this.parameters.batchSize.getValue()) } : {}),
+        epochs: this.parameters.epochs.getValue(),
         callbacks: {
           onEpochEnd: (epoch, logs) => {
-            this.$training.set({
+            this.$training.next({
               status: 'epoch',
               epoch: epoch + 1,
-              epochs: this.parameters.epochs.get(),
+              epochs: this.parameters.epochs.getValue(),
               data: transformEpochData(logs),
             });
           },
         },
       })
       .then((results) => {
-        this.$training.set({
+        this.$training.next({
           status: 'success',
           data: transformEpochData(results.history),
         });
       })
       .catch((error) => {
-        this.$training.set({ status: 'error', data: error });
+        this.$training.next({ status: 'error', data: error });
         throw new TrainingError(error.message);
       });
   }

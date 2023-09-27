@@ -4,11 +4,11 @@ import feathers, { Application } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio-client';
 import memoryService from 'feathers-memory';
 import localStorageService from 'feathers-localstorage';
+import { BehaviorSubject } from 'rxjs';
 import { addObjectId, renameIdField, createDate, updateDate, findDistinct } from './hooks';
 import { logger } from '../logger';
 import Login from './Login.svelte';
 import { throwError } from '../../utils/error-handling';
-import { Stream } from '../stream';
 import { noop } from '../../utils/misc';
 import { iterableFromService } from './service-iterable';
 import type { Service, User } from '../types';
@@ -38,7 +38,7 @@ export class DataStore {
   location: string;
   apiPrefix = '';
 
-  $services: Stream<string[]> = new Stream([], true);
+  $services = new BehaviorSubject([]);
 
   #initPromise: Promise<void>;
   #connectPromise: Promise<void>;
@@ -179,10 +179,10 @@ export class DataStore {
       props: { dataStore: this },
     });
     return new Promise<User>((resolve, reject) => {
-      app.$on('terminate', (user: User) => {
+      app.$on('terminate', (user: CustomEvent<User>) => {
         app.$destroy();
-        if (user) {
-          resolve(user);
+        if (user?.detail) {
+          resolve(user.detail);
         } else {
           reject();
         }
@@ -210,7 +210,7 @@ export class DataStore {
     const serviceExists = Object.keys(this.feathers.services).includes(name);
     if (!serviceExists) {
       this.#createService(name);
-      this.$services.set(Object.keys(this.feathers.services));
+      this.$services.next(Object.keys(this.feathers.services));
     }
     const s =
       this.backend === DataStoreBackend.Remote

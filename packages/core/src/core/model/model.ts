@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import type { Paginated } from '@feathersjs/feathers';
+import { BehaviorSubject } from 'rxjs';
 import type { Dataset } from '../dataset';
 import type {
   Instance,
@@ -10,7 +11,6 @@ import type {
   Service,
 } from '../types';
 import type { DataStore } from '../data-store';
-import { Stream } from '../stream';
 import { Component } from '../component';
 import { logger } from '../logger';
 import { LazyIterable, throwError } from '../../utils';
@@ -30,11 +30,10 @@ export abstract class Model<T extends Instance, PredictionType>
     service?: Service<StoredModel>;
   };
 
-  $training = new Stream<TrainingStatus>({ status: 'idle' }, true);
+  $training = new BehaviorSubject<TrainingStatus>({ status: 'idle' });
 
   constructor() {
     super();
-    this.$training.start();
     this.$training.subscribe(({ status }) => {
       if (status === 'success' || status === 'loaded') {
         this.ready = true;

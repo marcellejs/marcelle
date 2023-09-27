@@ -1,17 +1,20 @@
-import { Component, Stream, ObjectDetectorResults } from '../../core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Component, ObjectDetectorResults } from '../../core';
 import View from './detection-boxes.view.svelte';
 
 export class DetectionBoxes extends Component {
   title = 'Visualize Object Detections';
 
-  $objectDetectionResults: Stream<ObjectDetectorResults>;
-  $imgStream: Stream<ImageData>;
+  $objectDetectionResults: BehaviorSubject<ObjectDetectorResults>;
+  $imgStream: BehaviorSubject<ImageData>;
 
-  constructor(imgStream: Stream<ImageData>, objDectectionRes: Stream<ObjectDetectorResults>) {
+  constructor(
+    imgStream: Observable<ImageData>,
+    objDectectionRes: Observable<ObjectDetectorResults>,
+  ) {
     super();
-    this.$imgStream = imgStream;
-    this.$objectDetectionResults = objDectectionRes;
-    this.start();
+    imgStream.subscribe(this.$imgStream);
+    objDectectionRes.subscribe(this.$objectDetectionResults);
   }
 
   mount(target?: HTMLElement): void {

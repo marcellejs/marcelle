@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Stream, TrainingRun } from '../../core';
+  import type { TrainingRun } from '../../core';
   import type { Column } from '@marcellejs/design-system';
   import type { Service } from '@feathersjs/feathers';
   import { createEventDispatcher, onMount, tick } from 'svelte';
@@ -14,12 +14,13 @@
   } from '@marcellejs/design-system';
   import RunMeta from './RunMeta.svelte';
   import RunGraphs from './RunGraphs.svelte';
+  import { BehaviorSubject } from 'rxjs';
 
   export let title: string;
   export let service: Service<TrainingRun>;
   export let metrics: string[];
   export let actions: Array<string | { name: string }>;
-  export let selection: Stream<TrainingRun[]>;
+  export let selection: BehaviorSubject<TrainingRun[]>;
 
   const dispatch = createEventDispatcher();
 
@@ -50,7 +51,7 @@
   });
 
   provider.data.subscribe(() => {
-    selection.set([]);
+    selection.next([]);
   });
 
   const columns: Column[] = [

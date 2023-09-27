@@ -1,7 +1,8 @@
 <script lang="ts">
-  import type { DataStore, User } from './data-store';
+  import type { DataStore } from './data-store';
   import { createEventDispatcher } from 'svelte';
   import { Modal } from '@marcellejs/design-system';
+  import type { User } from '../types';
 
   const dispatch = createEventDispatcher<{ terminate: User }>();
 

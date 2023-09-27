@@ -1,19 +1,20 @@
 <script lang="ts">
-  import type { Stream } from '../../core/stream';
   import { ViewContainer } from '@marcellejs/design-system';
   import ParamWrapper from './ParamWrapper.svelte';
+  import { BehaviorSubject, Subscription } from 'rxjs';
+  import { rxBind } from '../../utils/rxjs';
 
   export let title: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export let parameters: Record<string, Stream<any>>;
+  export let parameters: Record<string, BehaviorSubject<any>>;
   export let config: Record<string, { type: string; options?: string[] }> = {};
 
-  let unSub: Array<() => void> = [];
+  let sub: Array<Subscription> = [];
   $: {
-    for (const u of unSub) {
-      u();
+    for (const u of sub) {
+      u.unsubscribe();
     }
-    unSub = Object.values(parameters).map((s) => s.subscribe());
+    sub = Object.values(parameters).map((s) => s.subscribe());
   }
 </script>
 
@@ -23,9 +24,9 @@
       <div class="flex my-1 items-center">
         <p class="w-32 my-2">{key}</p>
         {#if key in config}
-          <ParamWrapper {stream} spec={config[key]} />
+          <ParamWrapper stream={rxBind(stream)} spec={config[key]} />
         {:else}
-          <ParamWrapper {stream} spec={{ type: 'auto' }} />
+          <ParamWrapper stream={rxBind(stream)} spec={{ type: 'auto' }} />
         {/if}
       </div>
     {/each}

@@ -1,27 +1,26 @@
 <script lang="ts">
   import { onMount, onDestroy, tick } from 'svelte';
-  import type { Stream } from '../../core';
   import { Button, ViewContainer } from '@marcellejs/design-system';
   import { Spinner, Switch } from '@marcellejs/design-system';
-  import { noop } from '../../utils/misc';
+  import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
   export let title: string;
   export let width: number;
   export let height: number;
-  export let facingMode: Stream<'user' | 'environment'>;
-  export let active: Stream<boolean>;
-  export let mediaStream: Stream<MediaStream>;
-  export let ready: Stream<boolean>;
+  export let facingMode: BehaviorSubject<'user' | 'environment'>;
+  export let active: Observable<boolean>;
+  export let mediaStream: Observable<MediaStream>;
+  export let ready: Observable<boolean>;
 
   let videoElement: HTMLVideoElement;
   let webcamContainerWidth: number;
 
   let numWebcams = 0;
-  let unSub = noop;
+  let sub: Subscription;
   onMount(async () => {
     await tick();
     await tick();
-    unSub = mediaStream.subscribe((s) => {
+    sub = mediaStream.subscribe((s) => {
       if (s) {
         videoElement.srcObject = s;
       }
@@ -41,7 +40,9 @@
   });
 
   onDestroy(() => {
-    unSub();
+    if (sub) {
+      sub.unsubscribe();
+    }
   });
 </script>
 
@@ -79,7 +80,8 @@
         <div class="absolute bottom-2 right-2 text-right">
           <Button
             round
-            on:click={() => facingMode.set(facingMode.get() === 'user' ? 'environment' : 'user')}
+            on:click={() =>
+              facingMode.next(facingMode.getValue() === 'user' ? 'environment' : 'user')}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

@@ -73,7 +73,7 @@ export abstract class TFJSBaseModel<T extends Instance, PredictionType> extends 
 
   async load(store: DataStore, idOrName: ObjectId | string): Promise<StoredModel> {
     if (!idOrName) return null;
-    this.$training.set({
+    this.$training.next({
       status: 'loading',
     });
     this.ready = false;
@@ -107,7 +107,7 @@ export abstract class TFJSBaseModel<T extends Instance, PredictionType> extends 
         // logger.log("Couldn't Find labels in the stored model's metadata");
         this.labels = undefined;
       }
-      this.$training.set({
+      this.$training.next({
         status: 'loaded',
         data: {
           source: 'datastore',
@@ -118,7 +118,7 @@ export abstract class TFJSBaseModel<T extends Instance, PredictionType> extends 
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log('[tfjs-model] Loading error', error);
-      this.$training.set({
+      this.$training.next({
         status: 'error',
       });
       throw error;
@@ -160,7 +160,7 @@ export abstract class TFJSBaseModel<T extends Instance, PredictionType> extends 
 
   @Catch
   async upload(...files: File[]): Promise<StoredModel> {
-    this.$training.set({
+    this.$training.next({
       status: 'loading',
     });
     try {
@@ -191,7 +191,7 @@ export abstract class TFJSBaseModel<T extends Instance, PredictionType> extends 
           // logger.log("Couldn't Find labels in the stored model's metadata");
           this.labels = null;
         }
-        this.$training.set({
+        this.$training.next({
           status: 'loaded',
           data: {
             source: 'file',
@@ -204,7 +204,7 @@ export abstract class TFJSBaseModel<T extends Instance, PredictionType> extends 
       e.name = 'File upload error';
       throw e;
     } catch (error) {
-      this.$training.set({
+      this.$training.next({
         status: 'error',
       });
       throw error;

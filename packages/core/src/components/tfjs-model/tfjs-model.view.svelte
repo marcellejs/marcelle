@@ -1,9 +1,10 @@
 <script lang="ts">
-  import type { Stream, TrainingStatus } from '../../core';
+  import type { BehaviorSubject } from 'rxjs';
+  import type { TrainingStatus } from '../../core';
   import { ViewContainer } from '@marcellejs/design-system';
 
   export let title: string;
-  export let training: Stream<TrainingStatus>;
+  export let training: BehaviorSubject<TrainingStatus>;
 
   $: status = $training.status;
   $: source = !$training.data?.source

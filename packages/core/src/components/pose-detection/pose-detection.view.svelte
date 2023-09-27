@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { Stream } from '../../core';
-  import { ViewContainer } from '@marcellejs/design-system';
   import type { PoseDetectionModel } from './pose-detection.component';
+  import type { Observable } from 'rxjs';
+  import { ViewContainer } from '@marcellejs/design-system';
 
   export let title: string;
-  export let loading: Stream<boolean>;
+  export let loading: Observable<boolean>;
   export let model: PoseDetectionModel;
 </script>
 

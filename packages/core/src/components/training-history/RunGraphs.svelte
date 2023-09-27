@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onDestroy } from 'svelte';
 
-  import type { Model, TrainingStatus } from '../../core';
-  import { Stream } from '../../core/stream';
+  import type { Instance, Model, TrainingStatus } from '../../core';
   import { TrainingPlot, trainingPlot } from '../training-plot';
+  import { BehaviorSubject } from 'rxjs';
 
   export let names: string[];
   export let logs: Record<string, unknown>[];
@@ -27,15 +27,15 @@
     }),
     {},
   );
-  let chart: TrainingPlot<unknown, unknown>;
+  let chart: TrainingPlot;
   $: {
     if (chart) {
       chart.destroy();
     }
     chart = trainingPlot(
       {
-        $training: new Stream<TrainingStatus>({ status: 'success', data: indexedLogs }, true),
-      } as Model<unknown, unknown>,
+        $training: new BehaviorSubject<TrainingStatus>({ status: 'success', data: indexedLogs }),
+      } as Model<Instance, unknown>,
       logSpec,
     );
     chart.mount(chartElt);

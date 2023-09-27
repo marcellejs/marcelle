@@ -1,11 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { ObjectDetectorResults, Stream } from '../../core';
+  import type { ObjectDetectorResults } from '../../core';
   import { ViewContainer } from '@marcellejs/design-system';
+  import type { Observable } from 'rxjs';
 
   export let title: string;
-  export let imageStream: Stream<ImageData>;
-  export let objectDetectionResults: Stream<ObjectDetectorResults>;
+  export let imageStream: Observable<ImageData>;
+  export let objectDetectionResults: Observable<ObjectDetectorResults>;
 
   onMount(() => {
     const mycan = document.getElementById('can') as HTMLCanvasElement;

@@ -1,20 +1,20 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
 
-  import { Model } from '../../core';
+  import type { Instance, Model } from '../../core';
   import { Button } from '@marcellejs/design-system';
   import { throwError } from '../../utils/error-handling';
 
-  export let model: Model<unknown, unknown>;
+  export let model: Model<Instance, unknown>;
 
   let uploadInput: HTMLInputElement;
 
-  type SaveableModel = Model<unknown, unknown> & {
+  type SaveableModel = Model<Instance, unknown> & {
     download(): void;
     upload(...files: File[]): Promise<void>;
   };
 
-  function isSaveable(m: Model<unknown, unknown>): m is SaveableModel {
+  function isSaveable(m: Model<Instance, unknown>): m is SaveableModel {
     return 'download' in m;
   }
 

@@ -1,14 +1,14 @@
 <script lang="ts">
-  import type { Stream } from '../../core';
   import { Select } from '@marcellejs/design-system';
   import { ViewContainer } from '@marcellejs/design-system';
+  import { BehaviorSubject } from 'rxjs';
 
   export let title: string;
-  export let options: Stream<string[]>;
-  export let value: Stream<string>;
+  export let options: BehaviorSubject<string[]>;
+  export let value: BehaviorSubject<string>;
 
   function updateStream({ detail }: CustomEvent) {
-    value.set(detail);
+    value.next(detail);
   }
 </script>
 

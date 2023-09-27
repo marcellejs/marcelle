@@ -1,17 +1,10 @@
 import type { Paginated } from '@feathersjs/feathers';
 import type { DataStore, Service } from '../../core';
-import {
-  logger,
-  Model,
-  Component,
-  Stream,
-  TrainingRun,
-  TrainingStatus,
-  Instance,
-} from '../../core';
+import { logger, Model, Component, TrainingRun, TrainingStatus, Instance } from '../../core';
 import { preventConcurrentCalls } from '../../utils/asynchronicity';
 import { noop } from '../../utils/misc';
 import View from './training-history.view.svelte';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 
 function appendLogs(logs: Record<string, unknown>, d: Record<string, unknown>) {
   const l = { ...logs };
@@ -34,15 +27,15 @@ const defaultOptions: TrainingHistoryOptions = {
 export class TrainingHistory<T extends Instance, PredictionType> extends Component {
   title = 'Training History';
 
-  $selection = new Stream<TrainingRun[]>([], true);
-  $actions = new Stream<{ name: string; data: TrainingRun }>(null).skip(1);
+  $selection = new BehaviorSubject<TrainingRun[]>([]);
+  $actions = new Subject<{ name: string; data: TrainingRun }>();
 
   runService: Service<TrainingRun>;
   options: TrainingHistoryOptions;
   model: Model<T, PredictionType>;
 
   protected ready = Promise.resolve();
-  protected stopTracking: () => void = noop;
+  protected trackSub: Subscription;
   protected crtRun: TrainingRun;
   protected modelName: string;
   protected nextIndex: number;
@@ -53,7 +46,6 @@ export class TrainingHistory<T extends Instance, PredictionType> extends Compone
     super();
     this.options = { ...defaultOptions, ...options };
     this.lock = this.lock.then(noop);
-    this.start();
     this.ready = this.ready
       .then(() => this.dataStore.connect())
       .then(() => {
@@ -67,7 +59,7 @@ export class TrainingHistory<T extends Instance, PredictionType> extends Compone
   track(model: Model<T, PredictionType>, basename = 'anonymous'): this {
     this.ready
       .then(() => {
-        this.stopTracking();
+        if (this.trackSub) this.trackSub.unsubscribe();
         this.model = model;
         this.modelName = basename;
         return this.runService.find({
@@ -90,9 +82,9 @@ export class TrainingHistory<T extends Instance, PredictionType> extends Compone
       .then((nextIndex) => {
         this.nextIndex = nextIndex;
         this.crtRun = null;
-        this.stopTracking = this.model
+        this.trackSub = this.model
           ? this.model.$training.subscribe(this.trackTrainingStream)
-          : noop;
+          : null;
       });
     return this;
   }
@@ -108,7 +100,7 @@ export class TrainingHistory<T extends Instance, PredictionType> extends Compone
         status: x.status,
         epochs: x.epochs,
         params: Object.entries(this.model.parameters)
-          .map(([key, s]) => ({ [key]: s.get() }))
+          .map(([key, s]) => ({ [key]: s.getValue() }))
           .reduce((o, y) => ({ ...o, ...y }), {}), // this.model.parameters
         logs: {},
       });
@@ -157,7 +149,7 @@ export class TrainingHistory<T extends Instance, PredictionType> extends Compone
       for (const action of this.options.actions) {
         const name = typeof action === 'string' ? action : action.name;
         this.$$.app.$on(name, ({ detail }) => {
-          this.$actions.set({ name, data: detail });
+          this.$actions.next({ name, data: detail });
         });
       }
     });

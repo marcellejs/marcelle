@@ -1,16 +1,16 @@
+import { BehaviorSubject } from 'rxjs';
 import WizardComponent from './Wizard.svelte';
-import { Stream } from '../../core/stream';
 import { WizardPage } from './wizard_page';
 
 export class Wizard {
   pages: WizardPage[] = [];
   app: WizardComponent | undefined = undefined;
 
-  $current = new Stream(0, true);
+  $current = new BehaviorSubject(0);
 
-  constructor() {
-    this.$current.start();
-  }
+  // constructor() {
+  //   this.$current.start();
+  // }
 
   page(): WizardPage {
     const s = new WizardPage(this.page.bind(this));

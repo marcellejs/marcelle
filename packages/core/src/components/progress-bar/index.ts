@@ -1,3 +1,4 @@
+import { map } from 'rxjs';
 import type { Instance, Model } from '../../core';
 import type { ProgressType } from './progress-bar.component';
 import { ProgressBar } from './progress-bar.component';
@@ -10,8 +11,8 @@ export function trainingProgress(m: Model<Instance, unknown>): ProgressBar {
   if (!m.$training) {
     throw new Error('The argument is not a valid MLP');
   }
-  const $stream = m.$training
-    .map(({ status, epoch, epochs }): ProgressType => {
+  const $stream = m.$training.pipe(
+    map(({ status, epoch, epochs }): ProgressType => {
       let type: ProgressType['type'] = 'default';
       let progress: ProgressType['progress'] = epochs > 0 ? epoch / epochs : null;
       if (status === 'error') {
@@ -33,8 +34,8 @@ export function trainingProgress(m: Model<Instance, unknown>): ProgressBar {
         progress,
         type,
       };
-    })
-    .hold();
+    }),
+  );
 
   const p = new ProgressBar($stream);
   p.title = 'Training Progress';

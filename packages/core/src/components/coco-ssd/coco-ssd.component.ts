@@ -2,9 +2,9 @@ import { load, ObjectDetection, ObjectDetectionBaseModel } from '@tensorflow-mod
 import { io, ready } from '@tensorflow/tfjs-core';
 import { type Instance, Model, ObjectDetectorResults } from '../../core';
 import { logger } from '../../core/logger';
-import { Stream } from '../../core/stream';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './coco-ssd.view.svelte';
+import { BehaviorSubject } from 'rxjs';
 
 export interface CocoSsdOptions {
   base?: ObjectDetectionBaseModel;
@@ -23,7 +23,7 @@ export class CocoSsd extends Model<CocoInstance, ObjectDetectorResults> {
 
   #coco: ObjectDetection;
   #base: ObjectDetectionBaseModel;
-  $loading: Stream<boolean> = new Stream(true as boolean, true);
+  $loading = new BehaviorSubject(true as boolean);
 
   constructor({ base = 'lite_mobilenet_v2' }: CocoSsdOptions = {}) {
     super();
@@ -46,8 +46,7 @@ export class CocoSsd extends Model<CocoInstance, ObjectDetectorResults> {
       await (this.#coco as any).model.save(`indexeddb://cocossd-${this.#base}`);
     }
     logger.info('COCO-SSD loaded with base `lite_mobilenet_v2`');
-    this.$loading.set(false);
-    this.start();
+    this.$loading.next(false);
   }
 
   @Catch

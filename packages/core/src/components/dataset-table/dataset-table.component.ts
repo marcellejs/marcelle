@@ -1,12 +1,13 @@
-import { Component, Dataset, Instance, Stream } from '../../core';
+import { BehaviorSubject } from 'rxjs';
+import { Component, Dataset, Instance } from '../../core';
 import View from './dataset-table.view.svelte';
 
 export class DatasetTable<T extends Instance> extends Component {
   title = 'dataset table';
 
   #dataset: Dataset<T>;
-  $columns: Stream<string[]>;
-  $selection: Stream<T[]> = new Stream([], true);
+  $columns: BehaviorSubject<string[]>;
+  $selection = new BehaviorSubject<T[]>([]);
 
   singleSelection = false;
 
@@ -14,14 +15,14 @@ export class DatasetTable<T extends Instance> extends Component {
     super();
     this.#dataset = dataset;
     this.singleSelection = singleSelection;
-    this.$columns = new Stream(columns || ['x', 'y', 'thumbnail', 'updatedAt'], true);
+    this.$columns = new BehaviorSubject(columns || ['x', 'y', 'thumbnail', 'updatedAt']);
     if (!columns) {
       this.#dataset.ready
         .then(() => this.#dataset.items().take(1).toArray())
         .then((res) => {
           if (res.length > 0) {
             const cols = Object.keys(res[0]);
-            this.$columns.set(cols);
+            this.$columns.next(cols);
           }
         })
         .catch((error) => {
@@ -29,7 +30,6 @@ export class DatasetTable<T extends Instance> extends Component {
           console.log('An error occured while fetching the first instance.', error);
         });
     }
-    this.start();
   }
 
   mount(target?: HTMLElement): void {
@@ -43,7 +43,8 @@ export class DatasetTable<T extends Instance> extends Component {
         dataset: this.#dataset,
         colNames: this.$columns,
         singleSelection: this.singleSelection,
-        selection: this.$selection,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        selection: this.$selection as any,
       },
     });
   }

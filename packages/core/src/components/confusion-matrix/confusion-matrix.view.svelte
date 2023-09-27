@@ -121,11 +121,11 @@
   };
 
   let chart;
-  let unSub = [];
+  let subs = [];
   function setup(canvasElement) {
     const ctx = canvasElement.getContext('2d');
     chart = new Chart(ctx, defaultOptions);
-    unSub.push(
+    subs.push(
       labels.subscribe((labs) => {
         nLabels = labs.length;
         defaultOptions.options.scales.x.labels = labs.sort();
@@ -133,7 +133,7 @@
         chart.update();
       }),
     );
-    unSub.push(
+    subs.push(
       confusion.subscribe((conf) => {
         maxCount = conf.reduce((m, { v }) => Math.max(m, v), 0);
         defaultOptions.data.datasets[0].data = conf;
@@ -143,8 +143,8 @@
   }
 
   onDestroy(() => {
-    for (const f of unSub) {
-      f();
+    for (const s of subs) {
+      s.unsubscribe();
     }
   });
 </script>

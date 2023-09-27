@@ -1,10 +1,10 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
 
-  import type { Dataset } from '../../dataset';
+  import type { Dataset, Instance } from '../../core';
   import { Button } from '@marcellejs/design-system';
 
-  export let dataset: Dataset<unknown, unknown>;
+  export let dataset: Dataset<Instance>;
 
   let uploadInput: HTMLInputElement;
 

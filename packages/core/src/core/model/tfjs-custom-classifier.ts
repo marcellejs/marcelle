@@ -36,7 +36,7 @@ export abstract class TFJSCustomClassifier extends TFJSCustomModel<
 
     if (this.labels.length === 0) {
       throwError(new TrainingError('This dataset is empty or is missing labels'));
-      this.$training.set({
+      this.$training.next({
         status: 'error',
       });
       return;
@@ -44,7 +44,7 @@ export abstract class TFJSCustomClassifier extends TFJSCustomModel<
 
     if (this.labels.length === 1) {
       throwError(new TrainingError('At least two classes are needed to train the classifier'));
-      this.$training.set({
+      this.$training.next({
         status: 'error',
       });
       return;

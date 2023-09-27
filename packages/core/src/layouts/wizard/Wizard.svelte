@@ -3,14 +3,14 @@
   import { Button } from '@marcellejs/design-system';
   import WizardPageComponent from './WizardPage.svelte';
   import type { WizardPage } from './wizard_page';
-  import type { Stream } from '../../core';
+  import { BehaviorSubject } from 'rxjs';
 
   export let pages: WizardPage[];
-  export let current: Stream<number>;
+  export let current: BehaviorSubject<number>;
 
   function goToPage(index: number) {
     if (index >= 0 && index <= pages.length - 1) {
-      for (const m of pages[current.get()].components) {
+      for (const m of pages[current.getValue()].components) {
         if (Array.isArray(m)) {
           for (const n of m) {
             n.destroy();
@@ -19,12 +19,12 @@
           m.destroy();
         }
       }
-      current.set(index);
+      current.next(index);
     }
   }
 
   afterUpdate(() => {
-    for (const m of pages[current.get()].components) {
+    for (const m of pages[current.getValue()].components) {
       if (Array.isArray(m)) {
         for (const n of m) {
           n.mount();
@@ -36,7 +36,7 @@
   });
 
   onDestroy(() => {
-    for (const m of pages[current.get()].components) {
+    for (const m of pages[current.getValue()].components) {
       if (Array.isArray(m)) {
         for (const n of m) {
           n.destroy();
@@ -91,7 +91,7 @@
           variant="filled"
           type={$current >= pages.length - 1 ? 'success' : 'default'}
           on:click={() => {
-            if (current.get() < pages.length - 1) {
+            if (current.getValue() < pages.length - 1) {
               goToPage($current + 1);
             } else {
               quit();

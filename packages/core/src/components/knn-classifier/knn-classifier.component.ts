@@ -7,20 +7,13 @@ import '@tensorflow/tfjs-core/dist/public/chained_ops/as1d';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/as2d';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/as_type';
 import { KNNClassifier as TfjsKNNClassifier } from '@tensorflow-models/knn-classifier';
-import {
-  Stream,
-  Model,
-  ClassifierResults,
-  StoredModel,
-  ObjectId,
-  Instance,
-  DataStore,
-} from '../../core';
+import { Model, ClassifierResults, StoredModel, ObjectId, Instance, DataStore } from '../../core';
 import { Dataset, isDataset } from '../../core/dataset';
 import { Catch } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
 import type { LazyIterable } from '../../utils';
+import { BehaviorSubject } from 'rxjs';
 
 export interface KNNClassifierOptions {
   k: number;
@@ -35,7 +28,7 @@ export class KNNClassifier extends Model<KNNInstance, ClassifierResults> {
   title = 'KNN classifier';
 
   parameters: {
-    k: Stream<number>;
+    k: BehaviorSubject<number>;
   };
   serviceName = 'knn-classifier-models';
 
@@ -45,7 +38,7 @@ export class KNNClassifier extends Model<KNNInstance, ClassifierResults> {
   constructor({ k = 3 }: Partial<KNNClassifierOptions> = {}) {
     super();
     this.parameters = {
-      k: new Stream(k, true),
+      k: new BehaviorSubject(k),
     };
   }
 
@@ -56,15 +49,15 @@ export class KNNClassifier extends Model<KNNInstance, ClassifierResults> {
       : (this.labels = Array.from(new Set(await dataset.map(({ y }) => y).toArray())));
     const ds = isDataset(dataset) ? dataset.items() : dataset;
     if (this.labels.length < 1) {
-      this.$training.set({ status: 'error' });
+      this.$training.next({ status: 'error' });
       throw new Error('Cannot train a kNN with no classes');
     }
-    this.$training.set({ status: 'start', epochs: 1 });
+    this.$training.next({ status: 'start', epochs: 1 });
     this.classifier.clearAllClasses();
     for await (const { x, y } of ds) {
       this.classifier.addExample(tensor(x), y);
     }
-    this.$training.set({ status: 'success' });
+    this.$training.next({ status: 'success' });
   }
 
   @Catch
@@ -74,7 +67,7 @@ export class KNNClassifier extends Model<KNNInstance, ClassifierResults> {
     }
     const { label, confidences } = await this.classifier.predictClass(
       tensor(x),
-      this.parameters.k.get(),
+      this.parameters.k.getValue(),
     );
     return { label, confidences };
   }
@@ -152,7 +145,7 @@ export class KNNClassifier extends Model<KNNInstance, ClassifierResults> {
 
     this.labels = s.metadata.labels as string[];
     this.classifier.setClassifierDataset(tensorObj);
-    this.$training.set({
+    this.$training.next({
       status: 'loaded',
     });
   }

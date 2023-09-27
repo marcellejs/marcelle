@@ -1,22 +1,21 @@
 <svelte:options accessors />
 
 <script lang="ts">
-  import type { Stream } from '../../core/stream';
   import { onDestroy, onMount, tick } from 'svelte';
   import { ViewContainer } from '@marcellejs/design-system';
-  import { noop } from '../../utils/misc';
+  import { Observable, Subscription } from 'rxjs';
 
   export let title: string;
-  export let imageStream: Stream<ImageData> | Stream<ImageData[]>;
+  export let imageStream: Observable<ImageData | ImageData[]>;
 
   let canvas: HTMLCanvasElement;
 
-  let unSub = noop;
+  let sub: Subscription;
   onMount(async () => {
     await tick();
     await tick();
     const ctx = canvas.getContext('2d');
-    unSub = imageStream.subscribe((img: ImageData | ImageData[]) => {
+    sub = imageStream.subscribe((img: ImageData | ImageData[]) => {
       if (Array.isArray(img) && img.length === 0) return;
       if (img instanceof ImageData) {
         canvas.width = img.width;
@@ -29,7 +28,7 @@
   });
 
   onDestroy(() => {
-    unSub();
+    if (sub) sub.unsubscribe();
   });
 </script>
 

@@ -1,17 +1,18 @@
 <script lang="ts">
-  import type { ObjectId, Stream } from '../../core';
+  import type { ObjectId } from '../../core';
   import type { Dataset } from '../../core/dataset';
   import type { DBInstance } from './dataset-browser.component';
   import { onMount } from 'svelte';
   import { scale } from 'svelte/transition';
   import { ViewContainer } from '@marcellejs/design-system';
   import { Button, PopMenu } from '@marcellejs/design-system';
+  import { BehaviorSubject } from 'rxjs';
 
   export let title: string;
   export let batchSize: number;
-  export let count: Stream<number>;
+  export let count: BehaviorSubject<number>;
   export let dataset: Dataset<DBInstance>;
-  export let selected: Stream<ObjectId[]>;
+  export let selected: BehaviorSubject<ObjectId[]>;
 
   let loading = false;
   let dataStoreError = false;
@@ -86,22 +87,22 @@
 
   async function deleteSelectedInstances() {
     let p: Promise<unknown> = Promise.resolve();
-    for (const id of selected.get()) {
+    for (const id of selected.getValue()) {
       // eslint-disable-next-line no-loop-func
       p = p.then(() => dataset.remove(id));
     }
     await p;
-    selected.set([]);
+    selected.next([]);
   }
 
   async function relabelSelectedInstances(newLabel: string) {
     let p: Promise<unknown> = Promise.resolve();
-    for (const id of selected.get()) {
+    for (const id of selected.getValue()) {
       // eslint-disable-next-line no-loop-func
       p = p.then(() => dataset.patch(id, { y: newLabel }));
     }
     await p;
-    selected.set([]);
+    selected.next([]);
   }
 
   let metaPressed = false;
@@ -127,10 +128,10 @@
   function selectInstance(id?: ObjectId) {
     if (metaPressed) {
       if (!id) return;
-      if (selected.get().includes(id)) {
-        selected.set(selected.get().filter((x) => x !== id));
+      if (selected.getValue().includes(id)) {
+        selected.next(selected.getValue().filter((x) => x !== id));
       } else {
-        selected.set(selected.get().concat([id]));
+        selected.next(selected.getValue().concat([id]));
       }
     } else if (shiftPressed) {
       if (!initialId || !id) return;
@@ -140,13 +141,13 @@
       const instances = classes[srcLabel].instances.map((x) => x.id);
       const srcIndex = instances.indexOf(initialId);
       const dstIndex = instances.indexOf(id);
-      selected.set(
+      selected.next(
         srcIndex < dstIndex
           ? instances.slice(srcIndex, dstIndex + 1)
           : instances.slice(dstIndex, srcIndex + 1),
       );
     } else {
-      selected.set(id ? [id] : []);
+      selected.next(id ? [id] : []);
       initialId = id;
     }
   }

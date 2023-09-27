@@ -1,12 +1,12 @@
 <script lang="ts">
-  import type { Stream } from '../../core';
   import { ViewContainer } from '@marcellejs/design-system';
   import { Switch } from '@marcellejs/design-system';
+  import { BehaviorSubject } from 'rxjs';
 
   export let title: string;
-  export let text: Stream<string>;
-  export let checked: Stream<boolean>;
-  export let disabled: Stream<boolean>;
+  export let text: BehaviorSubject<string>;
+  export let checked: BehaviorSubject<boolean>;
+  export let disabled: BehaviorSubject<boolean>;
 </script>
 
 <ViewContainer {title}>

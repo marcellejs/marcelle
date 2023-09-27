@@ -1,12 +1,12 @@
 <script lang="ts">
+  import type { Subject } from 'rxjs';
   import { onMount, createEventDispatcher, tick } from 'svelte';
-  import { Stream } from '../../core';
   import { ViewContainer } from '@marcellejs/design-system';
   import { Button } from '@marcellejs/design-system';
 
   export let title: string;
-  export let strokeStart: Stream<void>;
-  export let strokeEnd: Stream<void>;
+  export let strokeStart: Subject<void>;
+  export let strokeEnd: Subject<void>;
 
   let canvasElement: HTMLCanvasElement;
   let isDrawing = false;
@@ -55,13 +55,13 @@
       left: rect.left + document.body.scrollLeft,
     };
     draw(e);
-    strokeStart.set();
+    strokeStart.next();
     isDrawing = true;
   }
 
   function stopDrawing() {
     if (isDrawing) {
-      strokeEnd.set();
+      strokeEnd.next();
     }
     isDrawing = false;
   }

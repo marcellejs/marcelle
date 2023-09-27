@@ -1,8 +1,8 @@
 import { Component } from '../../core/component';
 import type { Dataset, Instance } from '../../core';
 import type { ObjectId } from '../../core/types';
-import { Stream } from '../../core/stream';
 import View from './dataset-browser.view.svelte';
+import { BehaviorSubject } from 'rxjs';
 
 export interface DBInstance extends Instance {
   y: string;
@@ -15,7 +15,7 @@ export class DatasetBrowser extends Component {
   title = 'dataset browser';
 
   #dataset: Dataset<DBInstance>;
-  $selected: Stream<ObjectId[]> = new Stream([], true);
+  $selected = new BehaviorSubject<ObjectId[]>([]);
 
   batchSize: number;
 
@@ -26,7 +26,6 @@ export class DatasetBrowser extends Component {
     super();
     this.#dataset = dataset;
     this.batchSize = batchSize;
-    this.start();
   }
 
   mount(target?: HTMLElement): void {

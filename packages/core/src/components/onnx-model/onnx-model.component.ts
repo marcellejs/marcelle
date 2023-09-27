@@ -1,8 +1,9 @@
 import type { RegularArray } from '@tensorflow/tfjs-core/dist/types';
 import ort from 'onnxruntime-web';
-import { ClassifierResults, Instance, Model, Stream } from '../../core';
+import { ClassifierResults, Instance, Model } from '../../core';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './onnx-model.view.svelte';
+import { BehaviorSubject } from 'rxjs';
 
 export interface InputTypes {
   image: ImageData;
@@ -53,8 +54,8 @@ export class OnnxModel<
   parameters = {};
   serviceName = 'onnx-models';
 
-  $loading: Stream<boolean> = new Stream(false as boolean, true);
-  $ready: Stream<boolean> = new Stream(false as boolean, true);
+  $loading = new BehaviorSubject(false);
+  $ready = new BehaviorSubject(false);
 
   inputType: InputType;
   taskType: TaskType;
@@ -71,7 +72,6 @@ export class OnnxModel<
     this.inputType = inputType;
     this.taskType = taskType;
     this.inputShape = inputShape;
-    this.start();
   }
 
   @Catch
@@ -82,7 +82,7 @@ export class OnnxModel<
 
   @Catch
   async predict(input: InputTypes[InputType]): Promise<PredictionTypes[TaskType]> {
-    if (!this.#session || !this.$ready.get()) {
+    if (!this.#session || !this.$ready.getValue()) {
       throw new Error('Model is not loaded');
     }
 
@@ -95,27 +95,27 @@ export class OnnxModel<
 
   @Catch
   async loadFromUrl(url: string): Promise<void> {
-    this.$training.set({
+    this.$training.next({
       status: 'loading',
     });
-    this.$ready.set(false);
-    this.$loading.set(true);
+    this.$ready.next(false);
+    this.$loading.next(true);
     try {
       await this.loadModel(url, url);
-      this.$training.set({
+      this.$training.next({
         status: 'loaded',
         data: {
           source: 'url',
           url,
         },
       });
-      this.$loading.set(false);
-      this.$ready.set(true);
+      this.$loading.next(false);
+      this.$ready.next(true);
     } catch (error) {
-      this.$training.set({
+      this.$training.next({
         status: 'error',
       });
-      this.$loading.set(false);
+      this.$loading.next(false);
       throw error;
     }
   }
@@ -123,11 +123,11 @@ export class OnnxModel<
   @Catch
   async loadFromFile(file: File): Promise<void> {
     if (!file) return;
-    this.$training.set({
+    this.$training.next({
       status: 'loading',
     });
-    this.$ready.set(false);
-    this.$loading.set(true);
+    this.$ready.next(false);
+    this.$loading.next(true);
     try {
       const buffer = await new Promise<ArrayBuffer>((resolve, reject) => {
         const reader = new FileReader();
@@ -141,19 +141,19 @@ export class OnnxModel<
         reader.readAsArrayBuffer(file);
       });
       await this.loadModel(buffer, file.name);
-      this.$training.set({
+      this.$training.next({
         status: 'loaded',
         data: {
           source: 'file',
         },
       });
-      this.$loading.set(false);
-      this.$ready.set(true);
+      this.$loading.next(false);
+      this.$ready.next(true);
     } catch (error) {
-      this.$training.set({
+      this.$training.next({
         status: 'error',
       });
-      this.$loading.set(false);
+      this.$loading.next(false);
       throw error;
     }
   }
