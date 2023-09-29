@@ -19,6 +19,7 @@ import {
   knnClassifier,
   text,
 } from '@marcellejs/core';
+import { filter, from, map, mergeMap, zip } from 'rxjs';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CAPTURE TO DATASET
@@ -36,15 +37,17 @@ const store = dataStore('localStorage');
 const trainingSet = dataset('training-set-mlp-vs-knn', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
-input.$images
-  .filter(() => capture.$pressed.get())
-  .map(async (img) => ({
+const $instances = zip(input.$images, input.$thumbnails).pipe(
+  filter(() => capture.$pressed.getValue()),
+  map(async ([img, thumbnail]) => ({
     x: await featureExtractor.process(img),
-    thumbnail: input.$thumbnails.get(),
-    y: label.$value.get(),
-  }))
-  .awaitPromises()
-  .subscribe(trainingSet.create);
+    y: label.$value.getValue(),
+    thumbnail,
+  })),
+  mergeMap((x) => from(x)),
+);
+
+$instances.subscribe(trainingSet.create);
 
 // -----------------------------------------------------------
 // TRAINING
@@ -103,21 +106,24 @@ predictButton.$click.subscribe(async () => {
 
 const tog = toggle('toggle prediction');
 
-const rtFeatureStream = input.$images
-  .filter(() => tog.$checked.get())
-  .map(async (img) => featureExtractor.process(img))
-  .awaitPromises();
+const $features = input.$images.pipe(
+  filter(() => tog.$checked.getValue()),
+  map(async (img) => featureExtractor.process(img)),
+  mergeMap((x) => from(x)),
+);
 
-const predictionStreamMLP = rtFeatureStream
-  .map(async (features) => classifierMLP.predict(features))
-  .awaitPromises();
-const predictionStreamKNN = rtFeatureStream
-  .map(async (features) => classifierKNN.predict(features))
-  .awaitPromises();
+const $predictionsMLP = $features.pipe(
+  map(classifierMLP.predict),
+  mergeMap((x) => from(x)),
+);
+const $predictionsKNN = $features.pipe(
+  map(classifierKNN.predict),
+  mergeMap((x) => from(x)),
+);
 
-const plotResultsMLP = confidencePlot(predictionStreamMLP);
+const plotResultsMLP = confidencePlot($predictionsMLP);
 plotResultsMLP.title = 'Predictions: MLP';
-const plotResultsKNN = confidencePlot(predictionStreamKNN);
+const plotResultsKNN = confidencePlot($predictionsKNN);
 plotResultsKNN.title = 'Predictions: KNN';
 
 // -----------------------------------------------------------

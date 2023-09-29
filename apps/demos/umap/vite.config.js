@@ -1,8 +1,9 @@
 /* eslint-env node */
+import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { resolve } from 'path';
 
-export default {
+export default defineConfig({
   plugins: [svelte({ emitCss: false })],
   build: {
     rollupOptions: {
@@ -12,7 +13,4 @@ export default {
       },
     },
   },
-  optimizeDeps: {
-    exclude: ['@marcellejs/backend'],
-  },
-};
+});

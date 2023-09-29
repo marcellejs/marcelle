@@ -5,8 +5,8 @@ import View from './detection-boxes.view.svelte';
 export class DetectionBoxes extends Component {
   title = 'Visualize Object Detections';
 
-  $objectDetectionResults: BehaviorSubject<ObjectDetectorResults>;
-  $imgStream: BehaviorSubject<ImageData>;
+  $objectDetectionResults = new BehaviorSubject<ObjectDetectorResults>(null);
+  $imgStream = new BehaviorSubject<ImageData>(null);
 
   constructor(
     imgStream: Observable<ImageData>,

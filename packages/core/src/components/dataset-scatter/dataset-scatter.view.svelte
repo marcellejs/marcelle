@@ -155,7 +155,7 @@
   async function setup() {
     if (sub) sub.unsubscribe();
     const chartOptions: Partial<ChartConfiguration> = { ...defaultOptions, data: data.getValue() };
-    sub = data.pipe(filter((x) => !!x)).subscribe((d) => {
+    sub = data.pipe(filter((x) => !!x && !!chart)).subscribe((d) => {
       chartOptions.data = d;
       chart.update();
       chart.resetZoom();

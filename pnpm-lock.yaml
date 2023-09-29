@@ -59,6 +59,9 @@ importers:
       '@tensorflow/tfjs-layers':
         specifier: ^4.11.0
         version: 4.11.0(@tensorflow/tfjs-core@4.11.0)
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
     devDependencies:
       '@marcellejs/design-system':
         specifier: workspace:^0.6.2
@@ -107,7 +110,7 @@ importers:
   apps/demos/umap:
     dependencies:
       '@marcellejs/core':
-        specifier: workspace:^0.6.0
+        specifier: workspace:^0.6.2
         version: link:../../../packages/core
       scatter-gl:
         specifier: ^0.0.13
@@ -1485,7 +1488,7 @@ packages:
       '@feathersjs/commons': 4.5.16
       '@feathersjs/errors': 4.5.16
       '@feathersjs/feathers': 4.5.16
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -1529,7 +1532,7 @@ packages:
       '@feathersjs/feathers': 4.5.16
       '@feathersjs/transport-commons': 4.5.16
       '@types/jsonwebtoken': 9.0.1
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@5.5.0)
       jsonwebtoken: 9.0.0
       lodash: 4.17.21
       long-timeout: 0.1.1
@@ -1563,7 +1566,7 @@ packages:
     resolution: {integrity: sha512-gurzlqdffsLIrzOcaS0CgNi1ND4hy4BTNGSmz/5IupkoH9Kbbvs3PXqFn/e4nNIYI750YNenuwrYcPtRTZozGw==}
     engines: {node: '>= 10'}
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -1588,7 +1591,7 @@ packages:
     engines: {node: '>= 10'}
     dependencies:
       '@feathersjs/commons': 4.5.16
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@5.5.0)
       events: 3.3.0
       uberproto: 2.0.6
     transitivePeerDependencies:
@@ -1626,7 +1629,7 @@ packages:
     dependencies:
       '@feathersjs/commons': 4.5.16
       '@feathersjs/errors': 4.5.16
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@5.5.0)
       lodash: 4.17.21
       radix-router: 3.0.1
     transitivePeerDependencies:
@@ -3619,7 +3622,7 @@ packages:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
     engines: {node: '>= 6.0.0'}
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -3628,7 +3631,7 @@ packages:
     resolution: {integrity: sha512-Zn4cw2NEqd+9fiSVWMscnjyQ1a8Yfoc5oBajLeo5w+YBHgDUcEBY2hS4YpTz6iN5f/2zQiktcuM6tS8x1p9dpA==}
     engines: {node: '>= 8.0.0'}
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@5.5.0)
       depd: 1.1.2
       humanize-ms: 1.2.1
     transitivePeerDependencies:
@@ -5056,17 +5059,6 @@ packages:
     dependencies:
       ms: 2.1.3
     dev: false
-
-  /debug@4.3.4:
-    resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
-    engines: {node: '>=6.0'}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
-    dependencies:
-      ms: 2.1.2
 
   /debug@4.3.4(supports-color@5.5.0):
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
@@ -6601,7 +6593,7 @@ packages:
     resolution: {integrity: sha512-KvWmsJP9INUEBdhCTvXPOfPt6iwKmPkdphe8b6OgQISEyslmvTSgY47tQGcAJh56/6vuAyiIwVr/fbSEshuCnQ==}
     engines: {node: '>= 6'}
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@5.5.0)
       feathers-memory: 4.1.0
     transitivePeerDependencies:
       - supports-color
@@ -7358,7 +7350,7 @@ packages:
     dependencies:
       '@tootallnate/once': 1.1.2
       agent-base: 6.0.2
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -7377,7 +7369,7 @@ packages:
     engines: {node: '>= 6'}
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -11772,7 +11764,7 @@ packages:
     engines: {node: '>= 10'}
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@5.5.0)
       socks: 2.7.1
     transitivePeerDependencies:
       - supports-color

@@ -18,6 +18,7 @@ import {
   webcam,
   throwError,
 } from '@marcellejs/core';
+import { filter, from, map, mergeMap, zip } from 'rxjs';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
@@ -35,15 +36,17 @@ const store = dataStore('localStorage');
 const trainingSet = dataset('training-set-dashboard', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
-input.$images
-  .filter(() => capture.$pressed.get())
-  .map(async (img) => ({
+const $instances = zip(input.$images, input.$thumbnails).pipe(
+  filter(() => capture.$pressed.getValue()),
+  map(async ([img, thumbnail]) => ({
     x: await featureExtractor.process(img),
-    thumbnail: input.$thumbnails.get(),
-    y: label.$value.get(),
-  }))
-  .awaitPromises()
-  .subscribe(trainingSet.create);
+    y: label.$value.getValue(),
+    thumbnail,
+  })),
+  mergeMap((x) => from(x)),
+);
+
+$instances.subscribe(trainingSet.create);
 
 // -----------------------------------------------------------
 // TRAINING
@@ -84,17 +87,18 @@ tog.$checked.subscribe((checked) => {
   if (checked && !classifier.ready) {
     throwError(new Error('No classifier has been trained'));
     setTimeout(() => {
-      tog.$checked.set(false);
+      tog.$checked.next(false);
     }, 500);
   }
 });
 
-const predictionStream = input.$images
-  .filter(() => tog.$checked.get() && classifier.ready)
-  .map(async (img) => classifier.predict(await featureExtractor.process(img)))
-  .awaitPromises();
+const $predictions = input.$images.pipe(
+  filter(() => tog.$checked.getValue() && classifier.ready),
+  map(async (img) => classifier.predict(await featureExtractor.process(img))),
+  mergeMap((x) => from(x)),
+);
 
-const plotResults = confidencePlot(predictionStream);
+const plotResults = confidencePlot($predictions);
 
 // -----------------------------------------------------------
 // DASHBOARDS

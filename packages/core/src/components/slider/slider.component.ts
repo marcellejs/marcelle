@@ -1,6 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { Component } from '../../core/component';
 import View from './slider.view.svelte';
+import { rxBind } from '../../utils/rxjs';
 
 export interface SliderOptions {
   values: number[];
@@ -82,7 +83,7 @@ export class Slider extends Component {
       target: t,
       props: {
         title: this.title,
-        values: this.$values,
+        values: rxBind(this.$values),
         min: this.$min,
         max: this.$max,
         step: this.$step,

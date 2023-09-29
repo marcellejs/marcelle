@@ -13,6 +13,7 @@ import {
   trainingProgress,
   notification,
 } from '@marcellejs/core';
+import { filter, from, map, mergeMap, mergeWith, sample, take, zip } from 'rxjs';
 
 // Main components
 const input = sketchPad();
@@ -29,14 +30,15 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 const progress = trainingProgress(classifier);
 
 // Dataset Pipeline
-const $instances = captureButton.$click
-  .sample(input.$images.zip((thumbnail, data) => ({ thumbnail, data }), input.$thumbnails))
-  .map(async ({ thumbnail, data }) => ({
-    x: await featureExtractor.process(data),
-    y: classLabel.$value.get(),
+const $instances = zip(input.$images, input.$thumbnails).pipe(
+  sample(captureButton.$click),
+  map(async ([img, thumbnail]) => ({
+    x: await featureExtractor.process(img),
+    y: classLabel.$value.getValue(),
     thumbnail,
-  }))
-  .awaitPromises();
+  })),
+  mergeMap((x) => from(x)),
+);
 
 $instances.subscribe(trainingSet.create);
 
@@ -51,7 +53,7 @@ trainingSet.$changes.subscribe(async (changes) => {
       message: 'You need to have at least two classes to train the model',
       duration: 5000,
     });
-  } else if (trainingSet.$count.get() < 4) {
+  } else if (trainingSet.$count.getValue() < 4) {
     notification({
       title: 'Tip',
       message: 'You need to have at least two example in each class',
@@ -63,19 +65,23 @@ trainingSet.$changes.subscribe(async (changes) => {
 });
 
 // Prediction Pipeline (Online)
-const $features = input.$images.map((imgData) => featureExtractor.process(imgData)).awaitPromises();
+const $features = input.$images.pipe(
+  map(featureExtractor.process),
+  mergeMap((x) => from(x)),
+);
 
-const $trainingSuccess = classifier.$training.filter((x) => x.status === 'success');
+const $trainingSuccess = classifier.$training.pipe(filter((x) => x.status === 'success'));
 
-const $predictions = $features
-  .merge($trainingSuccess.sample($features))
-  .map((features) => classifier.predict(features))
-  .awaitPromises();
+const $predictions = $features.pipe(
+  mergeWith($features.pipe(sample($trainingSuccess))),
+  map(classifier.predict),
+  mergeMap((x) => from(x)),
+);
 
 const predictionViz = confidencePlot($predictions);
 
 $predictions.subscribe(({ label }) => {
-  classLabel.$value.set(label);
+  classLabel.$value.next(label);
 });
 
 // Dashboard definition
@@ -93,8 +99,10 @@ myDashboard.show();
 // Help messages
 
 input.$images
-  .filter(() => trainingSet.$count.get() === 0 && !classifier.ready)
-  .take(1)
+  .pipe(
+    filter(() => trainingSet.$count.getValue() === 0 && !classifier.ready),
+    take(1),
+  )
   .subscribe(() => {
     notification({
       title: 'Tip',

@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
-import { Tensor2D, Tensor, TensorLike, tensor, tidy } from '@tensorflow/tfjs-core';
+import { Tensor2D, Tensor, TensorLike, tensor, tidy, ready } from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/gather';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/arg_max';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/squeeze';
@@ -68,6 +68,7 @@ export abstract class TFJSCustomModel<T extends Instance, PredictionType> extend
     dataset: Dataset<T> | LazyIterable<T>,
     validationDataset?: Dataset<T> | LazyIterable<T>,
   ): Promise<void> {
+    await ready();
     this.$training.next({ status: 'start', epochs: this.parameters.epochs.getValue() });
 
     const isDs = isDataset(dataset);

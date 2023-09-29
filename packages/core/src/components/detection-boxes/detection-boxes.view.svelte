@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import type { ObjectDetectorResults } from '../../core';
   import { ViewContainer } from '@marcellejs/design-system';
-  import type { Observable } from 'rxjs';
+  import { filter, type Observable } from 'rxjs';
 
   export let title: string;
   export let imageStream: Observable<ImageData>;
@@ -11,12 +11,12 @@
   onMount(() => {
     const mycan = document.getElementById('can') as HTMLCanvasElement;
     const ctx = mycan.getContext('2d');
-    imageStream.subscribe((img) => {
+    imageStream.pipe(filter((x) => !!x)).subscribe((img) => {
       mycan.height = img.height;
       mycan.width = img.width;
       ctx.putImageData(img, 0, 0);
     });
-    objectDetectionResults.subscribe(({ outputs }) => {
+    objectDetectionResults.pipe(filter((x) => !!x)).subscribe(({ outputs }) => {
       for (let i = 0; i < outputs.length; i++) {
         ctx.font = `${Math.floor(mycan.width / 60)}px sans-serif`;
         const msg = `${outputs[i].confidence.toFixed(3)} ${outputs[i].class}`;

@@ -9,6 +9,7 @@ import {
   webcam,
   notification,
 } from '@marcellejs/core';
+import { filter, from, interval, map, mergeMap, sample } from 'rxjs';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CLASSIFICATION
@@ -21,24 +22,24 @@ const cocoClassifier = cocoSsd();
 // SINGLE IMAGE PREDICTION
 // -----------------------------------------------------------
 
-const cocoPredictionStream = source.$images
-  .map(async (img) => cocoClassifier.predict(img))
-  .awaitPromises();
+const $cocoPredictions = source.$images.pipe(
+  map(cocoClassifier.predict),
+  mergeMap((x) => from(x)),
+);
 
-cocoPredictionStream
-  .filter(({ outputs }) => outputs.length === 0)
-  .subscribe(() => {
-    notification({ title: 'No object detected', message: 'try with another image' });
-  });
+$cocoPredictions.pipe(filter(({ outputs }) => outputs.length === 0)).subscribe(() => {
+  notification({ title: 'No object detected', message: 'try with another image' });
+});
 
-const cocoBetterPredictions = cocoPredictionStream
-  .filter(({ outputs }) => outputs.length > 0)
-  .map(({ outputs }) => ({
+const cocoBetterPredictions = $cocoPredictions.pipe(
+  filter(({ outputs }) => outputs.length > 0),
+  map(({ outputs }) => ({
     label: outputs[0].class,
     confidences: outputs.reduce((x, y) => ({ ...x, [y.class]: y.confidence }), {}),
-  }));
+  })),
+);
 
-const objDetectionVis = detectionBoxes(source.$images, cocoPredictionStream);
+const objDetectionVis = detectionBoxes(source.$images, $cocoPredictions);
 const cocoPlotResults = confidencePlot(cocoBetterPredictions);
 
 // -----------------------------------------------------------
@@ -46,23 +47,22 @@ const cocoPlotResults = confidencePlot(cocoBetterPredictions);
 // -----------------------------------------------------------
 
 const wc = webcam();
-const tog = toggle('toggle prediction');
+const $images = wc.$images.pipe(sample(interval(500)));
 
-const rtDetectStream = wc.$images
-  .filter(() => tog.$checked.get())
-  .map(async (img) => cocoClassifier.predict(img))
-  .awaitPromises();
+const $realTimeDetections = $images.pipe(
+  map(async (img) => cocoClassifier.predict(img)),
+  mergeMap((x) => from(x)),
+);
 
-const realtimePredictions = rtDetectStream
-  .filter(({ outputs }) => outputs.length > 0)
-  .map(({ outputs }) => ({
+const realtimePredictions = $realTimeDetections.pipe(
+  filter(({ outputs }) => outputs.length > 0),
+  map(({ outputs }) => ({
     label: outputs[0].class,
     confidences: outputs.reduce((x, y) => ({ ...x, [y.class]: y.confidence }), {}),
-  }));
+  })),
+);
 
-const imgStream = wc.$images.filter(() => tog.$checked.get());
-
-const rtObjDetectionVis = detectionBoxes(imgStream, rtDetectStream);
+const rtObjDetectionVis = detectionBoxes($images, $realTimeDetections);
 const rtPlotResults = confidencePlot(realtimePredictions);
 
 // -----------------------------------------------------------
@@ -82,7 +82,6 @@ dash
 dash
   .page('Video-based Detection')
   .sidebar(wc, cocoClassifier)
-  .use(tog)
   .use([rtObjDetectionVis, rtPlotResults]);
 
 dash.show();

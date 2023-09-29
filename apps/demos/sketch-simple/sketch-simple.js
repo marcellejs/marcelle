@@ -12,6 +12,7 @@ import {
   textInput,
   trainingProgress,
 } from '@marcellejs/core';
+import { from, map, mergeMap, sample, withLatestFrom, zip } from 'rxjs';
 
 // Main components
 const input = sketchPad();
@@ -31,14 +32,15 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 const progress = trainingProgress(classifier);
 
 // Dataset Pipeline
-const $instances = captureButton.$click
-  .sample(input.$images.zip((thumbnail, data) => ({ thumbnail, data }), input.$thumbnails))
-  .map(async ({ thumbnail, data }) => ({
-    x: await featureExtractor.process(data),
-    y: classLabel.$value.get(),
+const $instances = zip(input.$images, input.$thumbnails).pipe(
+  sample(captureButton.$click),
+  map(async ([img, thumbnail]) => ({
+    x: await featureExtractor.process(img),
+    y: classLabel.$value.getValue(),
     thumbnail,
-  }))
-  .awaitPromises();
+  })),
+  mergeMap((x) => from(x)),
+);
 
 $instances.subscribe(trainingSet.create);
 
@@ -46,13 +48,18 @@ $instances.subscribe(trainingSet.create);
 trainButton.$click.subscribe(() => classifier.train(trainingSet));
 
 // Prediction Pipeline
-const $features = predictButton.$click
-  .sample(input.$images)
-  .map((imgData) => featureExtractor.process(imgData))
-  .awaitPromises();
-//
-const $predictions = $features.map((features) => classifier.predict(features)).awaitPromises();
-//
+const $features = predictButton.$click.pipe(
+  withLatestFrom(input.$images),
+  map((x) => x[1]),
+  map((imgData) => featureExtractor.process(imgData)),
+  mergeMap((x) => from(x)),
+);
+
+const $predictions = $features.pipe(
+  map(classifier.predict),
+  mergeMap((x) => from(x)),
+);
+
 const predictionViz = confidencePlot($predictions);
 
 // Dashboard definition
