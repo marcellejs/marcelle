@@ -1,4 +1,4 @@
-import { Tensor2D, Tensor, TensorLike, tensor, tidy } from '@tensorflow/tfjs-core';
+import { Tensor2D, Tensor, TensorLike, tensor, tidy, ready } from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/gather';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/arg_max';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/squeeze';
@@ -69,6 +69,7 @@ export abstract class TFJSCustomModel<T extends Instance, PredictionType> extend
     validationDataset?: Dataset<T> | LazyIterable<T>,
   ): Promise<void> {
     this.$training.set({ status: 'start', epochs: this.parameters.epochs.get() });
+    await ready();
 
     const isDs = isDataset(dataset);
     const count = isDs ? dataset.$count.value : (await dataset.toArray()).length;
