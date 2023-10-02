@@ -8,6 +8,7 @@ import {
   Tensor3D,
   TensorLike,
   tidy,
+  ready,
 } from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/mul';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/expand_dims';
@@ -187,6 +188,7 @@ export class TFJSModel<
     this.$training.next({
       status: 'loading',
     });
+    await ready();
     try {
       const jsonFiles = files.filter((x) => x.name.includes('.json'));
       const weightFiles = files.filter((x) => x.name.includes('.bin'));
@@ -221,6 +223,7 @@ export class TFJSModel<
     this.$training.next({
       status: 'loading',
     });
+    await ready();
     try {
       const modelJson = await fetch(url).then((res) => res.json());
       this.loadFn = modelJson.format === 'graph-model' ? loadGraphModel : loadLayersModel;
