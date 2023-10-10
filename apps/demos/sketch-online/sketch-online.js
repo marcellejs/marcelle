@@ -13,7 +13,7 @@ import {
   trainingProgress,
   notification,
 } from '@marcellejs/core';
-import { filter, from, map, mergeMap, mergeWith, sample, take, zip } from 'rxjs';
+import { filter, from, map, mergeMap, mergeWith, withLatestFrom, take, zip } from 'rxjs';
 
 // Main components
 const input = sketchPad();
@@ -30,8 +30,9 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 const progress = trainingProgress(classifier);
 
 // Dataset Pipeline
-const $instances = zip(input.$images, input.$thumbnails).pipe(
-  sample(captureButton.$click),
+const $instances = predictButton.$click.pipe(
+  withLatestFrom(input.$images),
+  map((x) => x[1]),
   map(async ([img, thumbnail]) => ({
     x: await featureExtractor.process(img),
     y: classLabel.$value.getValue(),
@@ -73,7 +74,7 @@ const $features = input.$images.pipe(
 const $trainingSuccess = classifier.$training.pipe(filter((x) => x.status === 'success'));
 
 const $predictions = $features.pipe(
-  mergeWith($features.pipe(sample($trainingSuccess))),
+  mergeWith($trainingSuccess.pipe(withLatestFrom($features))),
   map(classifier.predict),
   mergeMap((x) => from(x)),
 );

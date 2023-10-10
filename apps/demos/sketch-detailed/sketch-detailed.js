@@ -18,7 +18,7 @@ import {
   confusionMatrix,
   throwError,
 } from '@marcellejs/core';
-import { filter, from, map, mergeMap, sample, zip } from 'rxjs';
+import { filter, from, map, mergeMap, tap, withLatestFrom, zip } from 'rxjs';
 
 // Main components
 const input = sketchPad();
@@ -42,8 +42,9 @@ const lossCurves = trainingPlot(classifier);
 const confusion = confusionMatrix(batchResults);
 
 // Dataset Pipeline
-const $instances = zip(input.$images, input.$thumbnails).pipe(
-  sample(captureButton.$click),
+const $instances = captureButton.$click.pipe(
+  withLatestFrom(zip(input.$images, input.$thumbnails)),
+  map((x) => x[1]),
   map(async ([img, thumbnail]) => ({
     x: await featureExtractor.process(img),
     y: classLabel.$value.getValue(),

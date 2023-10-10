@@ -7,6 +7,7 @@ import {
   imageDisplay,
   tfjsModel,
 } from '@marcellejs/core';
+import { from, map, merge, mergeMap, withLatestFrom } from 'rxjs';
 import { gradcam } from './components';
 import imagenet_labs from './imagenet_class_index.json';
 import { preprocessImage } from './preprocess_image';
@@ -35,13 +36,13 @@ classifier.$training.subscribe(({ status }) => {
 });
 
 const topK = 10;
-const $inputStream = input.$images
-  .map(preprocessImage({ preset: 'keras:mobilenet_v2' }))
-  .awaitPromises();
-const $predictions = $inputStream
-  .map(async (img) => classifier.predict(img))
-  .awaitPromises()
-  .map(({ label, confidences }) => {
+const $inputStream = input.$images.pipe(
+  map(preprocessImage({ preset: 'keras:mobilenet_v2' })),
+  mergeMap((x) => from(x)),
+);
+const $predictions = $inputStream.pipe(
+  mergeMap((img) => from(classifier.predict(img))),
+  map(({ label, confidences }) => {
     const conf = Object.entries(confidences)
       .sort((a, b) => b[1] - a[1])
       .slice(0, topK);
@@ -49,24 +50,31 @@ const $predictions = $inputStream
       label: labels[parseInt(label, 10)],
       confidences: conf.reduce((x, y) => ({ ...x, [labels[parseInt(y[0])]]: y[1] }), {}),
     };
-  });
+  }),
+);
 
 const selectClass = select(labels);
 $predictions.subscribe(({ label, confidences }) => {
-  selectClass.$options.set(Object.keys(confidences));
-  selectClass.$value.set(label);
+  selectClass.$options.next(Object.keys(confidences));
+  selectClass.$value.next(label);
 });
 
 const plotResults = confidencePlot($predictions);
 
+$inputStream.subscribe((x) => console.log('$inputStream', x));
+merge($predictions, selectClass.$value).subscribe((x) => console.log('merge', x));
+merge($predictions, selectClass.$value)
+  .pipe(withLatestFrom($inputStream))
+  .subscribe((x) => console.log('withLatestFrom', x));
+
 const gcDisplay = [
   imageDisplay(input.$images),
   imageDisplay(
-    $predictions
-      .merge(selectClass.$value)
-      .sample($inputStream)
-      .map((img) => gc.explain(img, labels.indexOf(selectClass.$value.get())))
-      .awaitPromises(),
+    merge($predictions, selectClass.$value).pipe(
+      withLatestFrom($inputStream),
+      map(([, img]) => gc.explain(img, labels.indexOf(selectClass.$value.getValue()))),
+      mergeMap((x) => from(x)),
+    ),
   ),
 ];
 

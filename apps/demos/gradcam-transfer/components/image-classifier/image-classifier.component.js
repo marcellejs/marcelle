@@ -7,6 +7,7 @@ import {
   keep,
   image,
   browser,
+  ready,
 } from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/concat';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/gather';
@@ -14,7 +15,8 @@ import '@tensorflow/tfjs-core/dist/public/chained_ops/arg_max';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/div';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/sub';
 import { loadLayersModel, layers as tfLayers, model as tfModel } from '@tensorflow/tfjs-layers';
-import { Stream, logger, TFJSBaseModel, isDataset, throwError } from '@marcellejs/core';
+import { logger, TFJSBaseModel, isDataset, throwError } from '@marcellejs/core';
+import { BehaviorSubject } from 'rxjs';
 
 function shuffleArray(a) {
   const b = a.slice();
@@ -84,21 +86,22 @@ export class ImageClassifier extends TFJSBaseModel {
     this.mobilenet = undefined;
     this.model = undefined;
     this.parameters = {
-      layers: new Stream(layers, true),
-      epochs: new Stream(epochs, true),
-      batchSize: new Stream(batchSize, true),
+      layers: new BehaviorSubject(layers),
+      epochs: new BehaviorSubject(epochs),
+      batchSize: new BehaviorSubject(batchSize),
     };
-    this.start();
     this.ready = false;
-    loadLayersModel('/mobilenet_v2/model.json').then((m) => {
-      this.mobilenet = m;
-      this.mobilenet.trainable = false;
-      for (const l of this.mobilenet.layers) {
-        l.trainable = false;
-      }
-      this.ready = true;
-      console.log('this.mobilenet', this.mobilenet);
-    });
+    ready()
+      .then(() => loadLayersModel('/mobilenet_v2/model.json'))
+      .then((m) => {
+        this.mobilenet = m;
+        this.mobilenet.trainable = false;
+        for (const l of this.mobilenet.layers) {
+          l.trainable = false;
+        }
+        this.ready = true;
+        console.log('this.mobilenet', this.mobilenet);
+      });
   }
 
   async train(dataset) {
@@ -107,10 +110,10 @@ export class ImageClassifier extends TFJSBaseModel {
       : // eslint-disable-next-line no-undef
         (this.labels = Array.from(new Set(await dataset.map(({ y }) => y).toArray())));
     const ds = isDataset(dataset) ? dataset.items() : dataset;
-    this.$training.set({ status: 'start', epochs: this.parameters.epochs.get() });
+    this.$training.next({ status: 'start', epochs: this.parameters.epochs.getValue() });
     if (this.labels.length === 0) {
       throwError(new Error('This dataset is empty or is missing labels'));
-      this.$training.set({
+      this.$training.next({
         status: 'error',
       });
       return;
@@ -144,7 +147,7 @@ export class ImageClassifier extends TFJSBaseModel {
 
   buildModel(inputDim, numClasses) {
     let previousOutput = this.mobilenet.layers[this.mobilenet.layers.length - 2].output;
-    for (const [i, units] of this.parameters.layers.get().entries()) {
+    for (const [i, units] of this.parameters.layers.getValue().entries()) {
       const layerParams = {
         units,
         activation: 'relu', // potentially add kernel init
@@ -172,19 +175,19 @@ export class ImageClassifier extends TFJSBaseModel {
   }
 
   fit(data, epochs = -1) {
-    const numEpochs = epochs > 0 ? epochs : this.parameters.epochs.get();
+    const numEpochs = epochs > 0 ? epochs : this.parameters.epochs.getValue();
     this.model
       .fit(data.training_x, data.training_y, {
-        batchSize: this.parameters.batchSize.get(),
+        batchSize: this.parameters.batchSize.getValue(),
         validationData: [data.validation_x, data.validation_y],
         epochs: numEpochs,
         shuffle: true,
         callbacks: {
           onEpochEnd: (epoch, logs) => {
-            this.$training.set({
+            this.$training.next({
               status: 'epoch',
               epoch,
-              epochs: this.parameters.epochs.get(),
+              epochs: this.parameters.epochs.getValue(),
               data: {
                 accuracy: logs.acc,
                 loss: logs.loss,
@@ -197,7 +200,7 @@ export class ImageClassifier extends TFJSBaseModel {
       })
       .then((results) => {
         logger.debug('[MLP] Training has ended with results:', results);
-        this.$training.set({
+        this.$training.next({
           status: 'success',
           data: {
             accuracy: results.history.acc,
@@ -208,7 +211,7 @@ export class ImageClassifier extends TFJSBaseModel {
         });
       })
       .catch((error) => {
-        this.$training.set({ status: 'error', data: error });
+        this.$training.next({ status: 'error', data: error });
         throw new Error(error.message);
       })
       .finally(() => {

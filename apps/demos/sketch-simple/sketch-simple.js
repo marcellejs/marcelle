@@ -12,7 +12,7 @@ import {
   textInput,
   trainingProgress,
 } from '@marcellejs/core';
-import { from, map, mergeMap, sample, withLatestFrom, zip } from 'rxjs';
+import { from, map, mergeMap, withLatestFrom, zip } from 'rxjs';
 
 // Main components
 const input = sketchPad();
@@ -32,8 +32,9 @@ const trainingSetBrowser = datasetBrowser(trainingSet);
 const progress = trainingProgress(classifier);
 
 // Dataset Pipeline
-const $instances = zip(input.$images, input.$thumbnails).pipe(
-  sample(captureButton.$click),
+const $instances = captureButton.$click.pipe(
+  withLatestFrom(zip(input.$images, input.$thumbnails)),
+  map((x) => x[1]),
   map(async ([img, thumbnail]) => ({
     x: await featureExtractor.process(img),
     y: classLabel.$value.getValue(),

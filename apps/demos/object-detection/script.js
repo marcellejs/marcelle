@@ -9,7 +9,7 @@ import {
   webcam,
   notification,
 } from '@marcellejs/core';
-import { filter, from, interval, map, mergeMap, sample } from 'rxjs';
+import { filter, from, interval, map, mergeMap, withLatestFrom } from 'rxjs';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CLASSIFICATION
@@ -47,7 +47,10 @@ const cocoPlotResults = confidencePlot(cocoBetterPredictions);
 // -----------------------------------------------------------
 
 const wc = webcam();
-const $images = wc.$images.pipe(sample(interval(500)));
+const $images = interval(500).pipe(
+  withLatestFrom(wc.$images),
+  map((x) => x[1]),
+);
 
 const $realTimeDetections = $images.pipe(
   map(async (img) => cocoClassifier.predict(img)),
