@@ -93,7 +93,7 @@ Please cite the following publication when refering to Marcelle in academic publ
 ## 🔨 Built Using
 
 - [TypeScript](https://www.typescriptlang.org/)
-- [Most](https://github.com/mostjs/core)
+- [RxJS](https://github.com/ReactiveX/rxjs)
 - [Svelte](https://svelte.dev/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Tensorflow.js](https://js.tensorflow.org/)
