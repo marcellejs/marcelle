@@ -107,7 +107,7 @@
 
 <style type="text/postcss">
   .notification-container {
-    @apply fixed top-0 right-0 m-2 z-20 max-w-md justify-end flex flex-col items-end;
+    @apply fixed top-0 right-0 m-2 z-50 max-w-md justify-end flex flex-col items-end;
   }
 
   .notification-card {

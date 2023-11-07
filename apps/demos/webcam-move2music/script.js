@@ -22,6 +22,18 @@ import {
 } from '@marcellejs/core';
 
 // -----------------------------------------------------------
+// SOUNDS
+// -----------------------------------------------------------
+
+const soundFiles = {
+  A: '/Trap Percussion FX Loop.mp3',
+  B: '/Trap Loop Minimal 2.mp3',
+  C: '/Trap Melody Full.mp3',
+};
+
+const playMode = 'loop'; // or 'trigger'
+
+// -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
 // -----------------------------------------------------------
 
@@ -38,24 +50,22 @@ const trainingSet = dataset('TrainingSet-move2audio', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
 input.$images
-  .filter(() => capture.$pressed.get())
+  .filter(() => capture.$pressed.value)
   .map(async (img) => ({
     x: await featureExtractor.process(img),
-    y: labelInput.$value.get(),
-    thumbnail: input.$thumbnails.get(),
+    y: labelInput.$value.value,
+    thumbnail: input.$thumbnails.value,
   }))
   .awaitPromises()
-  .subscribe(trainingSet.create);
+  .subscribe(trainingSet.create.bind(trainingSet));
 
 // -----------------------------------------------------------
 // TRAINING
 // -----------------------------------------------------------
 
 const b = button('Train');
-const classifier = mlpClassifier({ layers: [64, 32], epochs: 20 }).sync(
-  store,
-  'move2audio-classifier',
-);
+const classifier = mlpClassifier({ layers: [64, 32], epochs: 20 });
+classifier.sync(store, 'move2audio-classifier');
 b.$click.subscribe(() => classifier.train(trainingSet));
 
 const params = modelParameters(classifier);
@@ -66,7 +76,7 @@ const plotTraining = trainingPlot(classifier);
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchMLP = batchPrediction('mlp', store);
+const batchMLP = batchPrediction({ name: 'mlp', dataStore: store });
 const confMat = confusionMatrix(batchMLP);
 
 const predictButton = button('Update predictions');
@@ -82,7 +92,7 @@ predictButton.$click.subscribe(async () => {
 const tog = toggle('toggle prediction');
 
 const $predictions = input.$images
-  .filter(() => tog.$checked.get())
+  .filter(() => tog.$checked.value)
   .map(async (img) => classifier.predict(await featureExtractor.process(img)))
   .awaitPromises();
 
@@ -131,7 +141,7 @@ trainingSet.$changes.subscribe(async (changes) => {
       }
     }
   }
-  const label = labelInput.$value.get();
+  const label = labelInput.$value.value;
   const numExamples = countPerClass[label] || 0;
   wizardText.$value.set(
     numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
@@ -200,20 +210,26 @@ setTimeout(() => {
 
 // Load audio files
 let numLoaded = 0;
-const sounds = [
-  'Trap Percussion FX Loop.mp3',
-  'Trap Loop Minimal 2.mp3',
-  'Trap Melody Full.mp3',
-].map((x) => new Howl({ src: [x], loop: true, volume: 0 }));
+const sounds = Object.entries(soundFiles).reduce(
+  (res, [label, src]) => ({
+    ...res,
+    [label]: new Howl({
+      src: [src],
+      loop: playMode === 'loop',
+      volume: playMode === 'trigger' ? 1 : 0,
+    }),
+  }),
+  {},
+);
 const onload = () => {
   numLoaded += 1;
-  if (numLoaded === 3) {
-    for (const x of sounds) {
+  if (numLoaded === 3 && playMode === 'loop') {
+    for (const x of Object.values(sounds)) {
       x.play();
     }
   }
 };
-for (const s of sounds) {
+for (const s of Object.values(sounds)) {
   s.once('load', onload);
 }
 
@@ -233,9 +249,15 @@ $predictions.subscribe(async ({ label, confidences }) => {
       resultImg.src = 'https://media.giphy.com/media/hWpgTWoWkqi2NmFeks/giphy.gif';
     }
     PrevLabel = label;
+    if (playMode === 'trigger' && label in sounds) {
+      sounds[label].volume(confidences[label] || 0);
+      sounds[label].playing() ? sounds[label].seek(0) : sounds[label].play();
+    }
   }
-  for (const [i, x] of ['A', 'B', 'C'].entries()) {
-    sounds[i].volume(confidences[x] || 0);
+  if (playMode === 'loop') {
+    for (const [key, x] of Object.entries(confidences)) {
+      key in sounds && sounds[key].volume(x || 0);
+    }
   }
 });
 
