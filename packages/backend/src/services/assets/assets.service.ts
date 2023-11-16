@@ -134,9 +134,9 @@ export default function (app: Application): void {
   };
 
   const getMiddlewares = [];
-  if (app.get('authentication').enabled) {
-    getMiddlewares.push(express.authenticate('jwt'));
-  }
+  // if (app.get('authentication').enabled) {
+  //   getMiddlewares.push(express.authenticate('jwt'));
+  // }
   getMiddlewares.push(getAssetFileFromDisk);
 
   const downloadPath = app.get('apiPrefix').replace(/\/$/, '') + '/assets/:id/:filename';
