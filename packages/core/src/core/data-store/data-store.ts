@@ -69,6 +69,22 @@ export class DataStore {
           resolve();
         });
       });
+
+      this.#connectPromise = new Promise<void>((resolve, reject) => {
+        this.feathers.io.on('connect', () => {
+          logger.log(`Connected to backend ${this.location}!`);
+          resolve();
+        });
+        this.feathers.io.on('reconnect_failed', () => {
+          const e =
+            new Error(`Cannot reach backend at location ${this.location}. Is the server running?
+          If using locally, run 'npm run backend'`);
+          e.name = 'DataStore connection error';
+          reject();
+          throwError(e, { duration: 0 });
+        });
+      });
+      logger.log(`Connecting to backend ${this.location}`);
     } else if (location === 'localStorage') {
       this.backend = DataStoreBackend.LocalStorage;
       const storageService = (name: string) =>
@@ -108,24 +124,6 @@ export class DataStore {
   async connect(): Promise<User> {
     if (this.backend !== DataStoreBackend.Remote) {
       return { email: null };
-    }
-
-    if (!this.#connectPromise) {
-      logger.log(`Connecting to backend ${this.location}...`);
-      this.#connectPromise = new Promise<void>((resolve, reject) => {
-        this.feathers.io.on('connect', () => {
-          logger.log(`Connected to backend ${this.location}!`);
-          resolve();
-        });
-        this.feathers.io.on('reconnect_failed', () => {
-          const e =
-            new Error(`Cannot reach backend at location ${this.location}. Is the server running?
-          If using locally, run 'npm run backend'`);
-          e.name = 'DataStore connection error';
-          reject();
-          throwError(e, { duration: 0 });
-        });
-      });
     }
     await this.#initPromise;
     await this.#connectPromise;
