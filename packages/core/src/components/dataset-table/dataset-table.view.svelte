@@ -6,11 +6,11 @@
 
   export let title: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export let dataset: Dataset<any, any>;
+  export let dataset: Dataset<Instance>;
   export let colNames: Stream<string[]>;
   export let singleSelection = false;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export let selection: Stream<Instance<any, any>[]>;
+  export let selection: Stream<Instance[]>;
 
   let columns: Column[] = [
     { name: 'x' },
@@ -76,7 +76,7 @@
 <ViewContainer {title}>
   {#await dataset.ready}
     <Spinner />
-  {:then _}
+  {:then}
     {#if provider}
       <Table
         {provider}

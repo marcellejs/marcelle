@@ -1,6 +1,7 @@
 import '@marcellejs/core/dist/marcelle.css';
 import {
   dashboard,
+  webcam,
   mediaRecorder,
   videoPlayer,
   microphone,
@@ -8,13 +9,15 @@ import {
   dataStore,
   dataset,
   datasetTable,
+  text,
 } from '@marcellejs/core';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
 // -----------------------------------------------------------
 
-const input = microphone();
+// const input = microphone();
+const input = webcam({ audio: true });
 const recorder = mediaRecorder();
 recorder.$mediaStream = input.$mediastream;
 
@@ -49,6 +52,7 @@ upload.$click.subscribe(async () => {
 });
 
 const player = videoPlayer();
+player.$src.set('http://localhost:3030/assets/65533254bbcc10126bd44ad3/asset.webm');
 
 const loadVideo = button('Load Selected Video');
 dst.$selection
@@ -78,7 +82,9 @@ const dash = dashboard({
   author: 'Marcelle Pirates Crew',
 });
 
-dash.page('Data Management').sidebar(input, recorder).use(player, upload);
+const hint = text('You need a local backend running');
+hint.title = 'hint';
+dash.page('Data Management').sidebar(input, recorder, hint).use(player, upload);
 dash.page('My Data').use(dst, loadVideo, player);
 
 dash.show();

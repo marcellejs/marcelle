@@ -173,5 +173,16 @@ export default [
     training: ['browser'],
     task: ['classification'],
     layout: ['dashboard'],
+    draft: true,
+  },
+  {
+    name: 'Video Upload',
+    path: 'video-upload',
+    description: 'Testing Stuff',
+    data: ['video'],
+    training: ['none'],
+    task: ['misc'],
+    layout: ['dashboard'],
+    draft: true,
   },
 ];
