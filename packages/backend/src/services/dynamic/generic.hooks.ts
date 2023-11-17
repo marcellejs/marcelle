@@ -1,7 +1,11 @@
 import { HookContext, Paginated } from '@feathersjs/feathers';
 import { setNow } from 'feathers-hooks-common';
 import { Application } from '../../declarations';
-import { authReadHooks, authWriteHooks } from '../../authentication/permission-hooks';
+import {
+  authAfterHooks,
+  authReadHooks,
+  authWriteHooks,
+} from '../../authentication/permission-hooks';
 import { GenericService } from './generic.class';
 // Don't remove this comment. It's needed to format import lines nicely.
 
@@ -71,7 +75,7 @@ export default (requireAuth: boolean, dbType: 'mongodb' | 'nedb' = 'mongodb') =>
     remove: [...authWriteHooks(requireAuth)],
   },
   after: {
-    all: [],
+    all: [...authAfterHooks(requireAuth)],
   },
   error: {
     all: [],

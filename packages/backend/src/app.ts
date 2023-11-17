@@ -98,9 +98,13 @@ app.configure(
 app.configure(channels);
 app.configure(mongodb);
 if (app.get('authentication').enabled) {
+  console.log('Configuring authentication');
   app.configure(authentication);
   app.configure(feathersCasl());
+} else {
+  console.log('Warning: This application does not require authentication');
 }
+console.log('Configuring services');
 app.configure(services);
 
 // Register hooks that run on all service methods

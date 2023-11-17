@@ -5,9 +5,9 @@ import { ObjectId, type GridFSBucket } from 'mongodb';
 import { hooks as schemaHooks } from '@feathersjs/schema';
 import { iff, setNow } from 'feathers-hooks-common';
 import {
+  authAfterHooks,
   authReadHooks,
   authWriteHooks,
-  authorizeHook,
 } from '../../authentication/permission-hooks';
 import {
   mlModelsDataValidator,
@@ -70,7 +70,7 @@ export default (requireAuth: boolean): HookMap<Application, MlModelsService> => 
     remove: [...authWriteHooks(requireAuth), deleteModelFiles],
   },
   after: {
-    all: [authorizeHook],
+    all: [...authAfterHooks(requireAuth)],
   },
   error: {
     all: [],

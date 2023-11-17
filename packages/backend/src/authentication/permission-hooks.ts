@@ -37,3 +37,10 @@ export const authWriteHooks = (requireAuth: boolean) => {
   }
   return [];
 };
+
+export const authAfterHooks = (requireAuth: boolean) => {
+  if (requireAuth) {
+    return [authorizeHook];
+  }
+  return [];
+};
