@@ -20,7 +20,7 @@ export async function getBlobMeta(blob: Blob): Promise<[number, string]> {
         duration = tempVideoEl.duration;
       }
       // Get Thumbnail
-      const cb = (x) => {
+      const cb = () => {
         canvas.width = thumbnailWidth;
         canvas.height = (thumbnailWidth * tempVideoEl.videoHeight) / tempVideoEl.videoWidth;
 
