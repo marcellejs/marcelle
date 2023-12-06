@@ -40,8 +40,6 @@ const toCamelCase = (str) => {
 };
 
 const demos = process.env.NODE_ENV === 'production' ? meta.filter((x) => !x.draft) : meta;
-console.log('process.env.NODE_ENV', process.env.NODE_ENV);
-console.log('demos', demos);
 
 export default defineConfig({
   plugins: [

@@ -10,12 +10,37 @@ import createModel from '../../models/assets-nedb.model';
 import hooks from './assets.hooks';
 import genId from '../../utils/objectid';
 import { ServiceAddons } from '@feathersjs/feathers';
+import { GridFile, GridFsStorage } from 'multer-gridfs-storage';
+import { GridFSBucket, ObjectId } from 'mongodb';
 
 // Add this service to the service type index
 declare module '../../declarations' {
   interface ServiceTypes {
     assets: AssetsMongoDB & ServiceAddons<any>;
   }
+}
+
+function setupDiskStorage(app: Application) {
+  if (!fs.existsSync(app.get('uploads'))) {
+    fs.mkdirSync(app.get('uploads'), { recursive: true });
+  }
+  if (!fs.existsSync(path.join(app.get('uploads'), 'assets'))) {
+    fs.mkdirSync(path.join(app.get('uploads'), 'assets'), { recursive: true });
+  }
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, path.join(app.get('uploads'), 'assets'));
+    },
+    filename: function (req: Request & { id?: string }, file, cb) {
+      cb(null, `${req.id}/${file.fieldname}`);
+    },
+  });
+  return storage;
+}
+
+function setupGridFsStorage(app: Application) {
+  const storage = new GridFsStorage({ db: app.get('mongoClient') });
+  return storage;
 }
 
 export default function (app: Application): void {
@@ -53,27 +78,13 @@ export default function (app: Application): void {
   }
 
   // Get our initialized service so that we can register hooks
+  const useGridfs = app.get('database') === 'mongodb' && app.get('gridfs');
   const service = app.getService('assets');
 
   const h = hooks(app.get('authentication').enabled);
   service.hooks(h);
 
-  // Setup Model File upload
-  if (!fs.existsSync(app.get('uploads'))) {
-    fs.mkdirSync(app.get('uploads'), { recursive: true });
-  }
-  if (!fs.existsSync(path.join(app.get('uploads'), 'assets'))) {
-    fs.mkdirSync(path.join(app.get('uploads'), 'assets'), { recursive: true });
-  }
-  const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, path.join(app.get('uploads'), 'assets'));
-    },
-    filename: function (req: Request & { id?: string }, file, cb) {
-      cb(null, `${req.id}/${file.fieldname}`);
-    },
-  });
-
+  const storage = useGridfs ? setupGridFsStorage(app) : setupDiskStorage(app);
   const upload = multer({ storage, fileFilter });
   const assetUpload = upload.any();
 
@@ -102,13 +113,35 @@ export default function (app: Application): void {
     res.json(response);
   };
 
+  const gridfsPostResponse = function (req: Express.Request, res: any) {
+    const response: Record<string, string> = {};
+    if (Array.isArray(req.files)) {
+      const reqFiles = req.files as (Express.Multer.File & GridFile)[];
+      reqFiles.forEach(({ originalname, id, fieldname }) => {
+        response[originalname] = `${id}/${fieldname}`;
+      });
+    } else {
+      const reqFiles = req.files as
+        | {
+            [fieldname: string]: (Express.Multer.File & GridFile)[];
+          }
+        | undefined;
+      Object.entries(reqFiles || []).forEach(([name, x]) => {
+        response[name] = `${x[0].id}/${x[0].fieldname}`;
+      });
+    }
+    res.json(response);
+  };
+
   const postMiddlewares = [];
   if (app.get('authentication').enabled) {
     postMiddlewares.push(express.authenticate('jwt'));
   }
-  postMiddlewares.push(diskPostPrepare);
+  if (!useGridfs) {
+    postMiddlewares.push(diskPostPrepare);
+  }
   postMiddlewares.push(assetUpload);
-  postMiddlewares.push(diskPostResponse);
+  postMiddlewares.push(useGridfs ? gridfsPostResponse : diskPostResponse);
 
   const uploadPath = app.get('apiPrefix').replace(/\/$/, '') + '/assets/upload';
   app.post(uploadPath, ...postMiddlewares);
@@ -133,11 +166,30 @@ export default function (app: Application): void {
     }
   };
 
+  // eslint-disable-next-line consistent-return
+  const getAssetFileFromGridfs = async (req: any, res: any) => {
+    try {
+      const bucket = app.get('mongoBucket') as GridFSBucket;
+      bucket.find({ _id: new ObjectId(req.params.id) }).toArray((err, files) => {
+        if (err || !files || files.length === 0) {
+          return res.status(404).json({
+            err: 'file does not exist',
+          });
+        }
+        return bucket.openDownloadStream(files[0]._id).pipe(res);
+      });
+    } catch (error) {
+      return res.status(404).json({
+        err: 'file does not exist',
+      });
+    }
+  };
+
   const getMiddlewares = [];
   // if (app.get('authentication').enabled) {
   //   getMiddlewares.push(express.authenticate('jwt'));
   // }
-  getMiddlewares.push(getAssetFileFromDisk);
+  getMiddlewares.push(useGridfs ? getAssetFileFromGridfs : getAssetFileFromDisk);
 
   const downloadPath = app.get('apiPrefix').replace(/\/$/, '') + '/assets/:id/:filename';
   app.get(downloadPath, ...getMiddlewares);
