@@ -55,6 +55,14 @@ Get the Feathers service instance with the given `name`. If the service does not
 
 The method returnsa Feathers Service instance, which API is documented on [Feathers' wesite](https://docs.feathersjs.com/api/services.html#service-methods). The interface exposes `find`, `get`, `create`, `update`, `patch` and `remove` methods for manipulating the data.
 
+### .uploadAsset()
+
+```tsx
+async uploadAsset(blob: Blob, filename = ''): Promise<string>
+```
+
+Upload an asset to a remote backend from a Blob, with an optional filename. The method returns the path of the file on the backend server.
+
 ### .signup()
 
 ```tsx

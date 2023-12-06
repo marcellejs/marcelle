@@ -52,7 +52,6 @@ upload.$click.subscribe(async () => {
 });
 
 const player = videoPlayer();
-player.$src.set('http://localhost:3030/assets/65533254bbcc10126bd44ad3/asset.webm');
 
 const loadVideo = button('Load Selected Video');
 dst.$selection
@@ -73,7 +72,6 @@ loadVideo.$click
 recorder.$recordings
   .map(({ blob }) => URL.createObjectURL(blob))
   .subscribe((x) => {
-    console.log('x', x);
     player.$src.set(x);
   });
 
