@@ -25,6 +25,7 @@
 
   let player: MediaPlayerElement;
 
+  let allowProgressControl = true;
   onMount(() => {
     /**
      * You can add these tracks using HTML as well.
@@ -40,7 +41,9 @@
     // for (const track of textTracks) player.textTracks.add(track);
 
     progress.subscribe((p) => {
-      player.currentTime = p;
+      if (allowProgressControl && player) {
+        player.currentTime = p;
+      }
     });
 
     // Subscribe to state updates.
@@ -48,7 +51,9 @@
       if (state.paused !== paused.get()) {
         paused.set(state.paused);
       }
+      allowProgressControl = false;
       progress.set(state.currentTime);
+      allowProgressControl = true;
     });
   });
 

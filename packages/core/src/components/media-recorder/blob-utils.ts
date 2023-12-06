@@ -3,28 +3,26 @@ const canvas = document.createElement('canvas');
 const thumbnailWidth = 100;
 
 export async function getBlobMeta(blob: Blob): Promise<[number, string]> {
-  console.log("Let's party", blob.size);
   let duration = await new Promise<number>((resolve, reject) => {
     tempVideoEl.addEventListener('loadedmetadata', () => {
       resolve(tempVideoEl.duration);
     });
     tempVideoEl.src = window.URL.createObjectURL(blob);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tempVideoEl.onerror = (event: any) => reject(event.target.error);
   });
-  console.log('BIBI', duration);
   if (duration === Infinity) {
     tempVideoEl.currentTime = Number.MAX_SAFE_INTEGER;
     duration = await new Promise<number>((resolve, reject) => {
       tempVideoEl.ontimeupdate = () => {
-        console.log('ontimeupdate', tempVideoEl.duration);
         tempVideoEl.ontimeupdate = null;
         tempVideoEl.currentTime = 0;
         resolve(tempVideoEl.duration);
       };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       tempVideoEl.onerror = (event: any) => reject(event.target.error);
     });
   }
-  console.log('Yo, blob duration', duration);
   const thumbnail = await new Promise<string>((resolve, reject) => {
     // Get Thumbnail
     const cb = () => {
@@ -49,7 +47,6 @@ export async function getBlobMeta(blob: Blob): Promise<[number, string]> {
     tempVideoEl.addEventListener('timeupdate', cb);
     tempVideoEl.currentTime = duration / 2;
   });
-  console.log('Yo, thumbnail', thumbnail);
 
   return [duration, thumbnail];
 }
