@@ -43,7 +43,8 @@ export class DatasetTable<T extends Instance> extends Component {
         dataset: this.#dataset,
         colNames: this.$columns,
         singleSelection: this.singleSelection,
-        selection: this.$selection,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        selection: this.$selection as any,
       },
     });
   }

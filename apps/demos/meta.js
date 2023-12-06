@@ -165,4 +165,14 @@ export default [
     task: ['classification'],
     layout: ['dashboard'],
   },
+  {
+    name: 'Video Upload',
+    path: 'video-upload',
+    description: 'Testing Video Upload',
+    data: ['video'],
+    training: ['none'],
+    task: ['misc'],
+    layout: ['dashboard'],
+    draft: true,
+  },
 ];

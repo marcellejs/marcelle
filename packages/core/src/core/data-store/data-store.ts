@@ -69,6 +69,22 @@ export class DataStore {
           resolve();
         });
       });
+
+      this.#connectPromise = new Promise<void>((resolve, reject) => {
+        this.feathers.io.on('connect', () => {
+          logger.log(`Connected to backend ${this.location}!`);
+          resolve();
+        });
+        this.feathers.io.on('reconnect_failed', () => {
+          const e =
+            new Error(`Cannot reach backend at location ${this.location}. Is the server running?
+          If using locally, run 'npm run backend'`);
+          e.name = 'DataStore connection error';
+          reject();
+          throwError(e, { duration: 0 });
+        });
+      });
+      logger.log(`Connecting to backend ${this.location}`);
     } else if (location === 'localStorage') {
       this.backend = DataStoreBackend.LocalStorage;
       const storageService = (name: string) =>
@@ -108,24 +124,6 @@ export class DataStore {
   async connect(): Promise<User> {
     if (this.backend !== DataStoreBackend.Remote) {
       return { email: null };
-    }
-
-    if (!this.#connectPromise) {
-      logger.log(`Connecting to backend ${this.location}...`);
-      this.#connectPromise = new Promise<void>((resolve, reject) => {
-        this.feathers.io.on('connect', () => {
-          logger.log(`Connected to backend ${this.location}!`);
-          resolve();
-        });
-        this.feathers.io.on('reconnect_failed', () => {
-          const e =
-            new Error(`Cannot reach backend at location ${this.location}. Is the server running?
-          If using locally, run 'npm run backend'`);
-          e.name = 'DataStore connection error';
-          reject();
-          throwError(e, { duration: 0 });
-        });
-      });
     }
     await this.#initPromise;
     await this.#connectPromise;
@@ -220,6 +218,34 @@ export class DataStore {
       s.items = () => iterableFromService(s);
     }
     return s as Service<T>;
+  }
+
+  async uploadAsset(blob: Blob, filename = ''): Promise<string> {
+    if (this.backend !== DataStoreBackend.Remote) {
+      throwError(new Error('LocalStorage Backend does not yet support upload'));
+    }
+    // try {
+    const ext = blob.type.split(';')[0].split('/')[1];
+    const name = filename || `asset.${ext}`;
+    const fd = new FormData();
+    fd.append(name, blob);
+    const fetchOptions: RequestInit = { method: 'POST', body: fd };
+    if (this.requiresAuth) {
+      const jwt = await this.feathers.authentication.getAccessToken();
+      const headers = new Headers({ Authorization: `Bearer ${jwt}` });
+      fetchOptions.headers = headers;
+    }
+    const res = await fetch(`${this.location}/assets/upload`, fetchOptions);
+
+    const resData = await res.json();
+    // TODO: Create asset document so that it can be removed
+    // this.service('assets').create({url: resData.blob})
+    const filePath = `/assets/${resData.blob}`;
+
+    return filePath;
+    // } catch (err) {
+    //   console.error(err);
+    // }
   }
 
   setupAppHooks(): void {

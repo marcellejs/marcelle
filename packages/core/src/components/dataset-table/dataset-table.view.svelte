@@ -6,11 +6,11 @@
 
   export let title: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export let dataset: Dataset<any, any>;
+  export let dataset: Dataset<Instance>;
   export let colNames: Stream<string[]>;
   export let singleSelection = false;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export let selection: Stream<Instance<any, any>[]>;
+  export let selection: Stream<Instance[]>;
 
   let columns: Column[] = [
     { name: 'x' },
@@ -49,19 +49,22 @@
     colNames.subscribe(async (cols) => {
       columns = cols.map((name) => ({ name }));
       if (dataset.$count.get() > 0) {
-        const [firstInstance] = await dataset.items().take(1).toArray();
+        const [firstInstance] = await dataset.items().query(dataset.query).take(1).toArray();
         columns = columns.map(({ name }) => ({
           name,
           type: getType(firstInstance[name]),
           sortable: isSortable(firstInstance[name]),
         }));
       }
+      for (const [key, v] of Object.entries(dataset.query)) {
+        provider.query[key] = v;
+      }
       provider.query.$select = columns.map((x) => x.name).concat(['id']);
       provider.update();
     });
     const unSub = dataset.$count.subscribe(async (c) => {
       if (c > 0) {
-        const [firstInstance] = await dataset.items().take(1).toArray();
+        const [firstInstance] = await dataset.items().query(dataset.query).take(1).toArray();
         columns = columns.map(({ name }) => ({
           name,
           type: getType(firstInstance[name]),
@@ -76,7 +79,7 @@
 <ViewContainer {title}>
   {#await dataset.ready}
     <Spinner />
-  {:then _}
+  {:then}
     {#if provider}
       <Table
         {provider}
