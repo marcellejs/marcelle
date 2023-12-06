@@ -3,24 +3,32 @@ const canvas = document.createElement('canvas');
 const thumbnailWidth = 100;
 
 export async function getBlobMeta(blob: Blob): Promise<[number, string]> {
-  const durationP = new Promise<[number, string]>((resolve, reject) => {
+  console.log("Let's party", blob.size);
+  let duration = await new Promise<number>((resolve, reject) => {
     tempVideoEl.addEventListener('loadedmetadata', () => {
-      let duration: number;
-      // Chrome bug: https://bugs.chromium.org/p/chromium/issues/detail?id=642012
-      if (tempVideoEl.duration === Infinity) {
-        tempVideoEl.currentTime = Number.MAX_SAFE_INTEGER;
-        tempVideoEl.ontimeupdate = () => {
-          tempVideoEl.ontimeupdate = null;
-          duration = tempVideoEl.duration;
-          tempVideoEl.currentTime = 0;
-        };
-      }
-      // Normal behavior
-      else {
-        duration = tempVideoEl.duration;
-      }
-      // Get Thumbnail
-      const cb = () => {
+      resolve(tempVideoEl.duration);
+    });
+    tempVideoEl.src = window.URL.createObjectURL(blob);
+    tempVideoEl.onerror = (event: any) => reject(event.target.error);
+  });
+  console.log('BIBI', duration);
+  if (duration === Infinity) {
+    tempVideoEl.currentTime = Number.MAX_SAFE_INTEGER;
+    duration = await new Promise<number>((resolve, reject) => {
+      tempVideoEl.ontimeupdate = () => {
+        console.log('ontimeupdate', tempVideoEl.duration);
+        tempVideoEl.ontimeupdate = null;
+        tempVideoEl.currentTime = 0;
+        resolve(tempVideoEl.duration);
+      };
+      tempVideoEl.onerror = (event: any) => reject(event.target.error);
+    });
+  }
+  console.log('Yo, blob duration', duration);
+  const thumbnail = await new Promise<string>((resolve, reject) => {
+    // Get Thumbnail
+    const cb = () => {
+      try {
         canvas.width = thumbnailWidth;
         canvas.height = (thumbnailWidth * tempVideoEl.videoHeight) / tempVideoEl.videoWidth;
 
@@ -33,15 +41,15 @@ export async function getBlobMeta(blob: Blob): Promise<[number, string]> {
         const thumb = canvas.toDataURL('image/jpeg');
         tempVideoEl.pause();
         tempVideoEl.removeEventListener('timeupdate', cb);
-        resolve([duration, thumb]);
-      };
-      tempVideoEl.addEventListener('timeupdate', cb);
-      tempVideoEl.currentTime = duration / 2;
-    });
-    tempVideoEl.onerror = (event: any) => reject(event.target.error);
+        resolve(thumb);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    tempVideoEl.addEventListener('timeupdate', cb);
+    tempVideoEl.currentTime = duration / 2;
   });
+  console.log('Yo, thumbnail', thumbnail);
 
-  tempVideoEl.src = window.URL.createObjectURL(blob);
-
-  return durationP;
+  return [duration, thumbnail];
 }

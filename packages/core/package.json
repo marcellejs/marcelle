@@ -106,6 +106,7 @@
     "dequal": "^2.0.3",
     "feathers-localstorage": "^5.2.1",
     "feathers-memory": "^4.1.0",
+    "fix-webm-duration": "^1.0.5",
     "luxon": "^3.4.3",
     "ml-kmeans": "^5.0.0",
     "ml-pca": "^4.1.1",

@@ -372,6 +372,9 @@ importers:
       feathers-memory:
         specifier: ^4.1.0
         version: 4.1.0
+      fix-webm-duration:
+        specifier: ^1.0.5
+        version: 1.0.5
       luxon:
         specifier: ^3.4.3
         version: 3.4.3
@@ -6776,6 +6779,10 @@ packages:
       micromatch: 4.0.5
       pkg-dir: 4.2.0
     dev: true
+
+  /fix-webm-duration@1.0.5:
+    resolution: {integrity: sha512-b6oula3OfSknx0aWoLsxvp4DVIYbwsf+UAkr6EDAK3iuMYk/OSNKzmeSI61GXK0MmFTEuzle19BPvTxMIKjkZg==}
+    dev: false
 
   /flat-cache@3.0.4:
     resolution: {integrity: sha512-dm9s5Pw7Jc0GvMYbshN6zchCA9RgQlzzEZX3vylR9IqFfS8XciblUXOKfW6SiuJ0e13eDYZoZV5wdrev7P3Nwg==}

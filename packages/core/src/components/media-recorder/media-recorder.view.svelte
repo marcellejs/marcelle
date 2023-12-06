@@ -4,6 +4,7 @@
   import { ViewContainer } from '@marcellejs/design-system';
   import { throwError } from '../../utils';
   import { getBlobMeta } from './blob-utils';
+  import fixWebmDuration from 'fix-webm-duration';
 
   export let title: string;
   export let mediaStream: Stream<MediaStream>;
@@ -53,10 +54,13 @@
     return stopped
       .then(() => {
         clearInterval(intvId);
-        const recordedBlob = new Blob(data, { type: data[0].type });
+        const recordedBlob = new Blob(data, { type: data[0].type.split(';')[0] });
         return Promise.all([recordedBlob, getBlobMeta(recordedBlob)]);
       })
       .then(([blob, [duration, thumb]]) => {
+        return Promise.all([fixWebmDuration(blob, duration, { logger: false }), duration, thumb]);
+      })
+      .then(([blob, duration, thumb]) => {
         thumbnail = thumb;
         recordings.set({
           blob: blob,
