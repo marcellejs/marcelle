@@ -1,5 +1,11 @@
 # docs
 
+## 0.6.3
+
+### Patch Changes
+
+- c9a770e: Add a method for asset uploading on the dataStore interface
+
 ## 0.6.2
 
 ## 0.6.1
