@@ -51,7 +51,7 @@ importers:
   apps/demos:
     dependencies:
       '@marcellejs/core':
-        specifier: workspace:^0.6.2
+        specifier: workspace:^0.6.3
         version: link:../../packages/core
       '@tensorflow/tfjs-core':
         specifier: ^4.11.0
@@ -61,10 +61,10 @@ importers:
         version: 4.11.0(@tensorflow/tfjs-core@4.11.0)
     devDependencies:
       '@marcellejs/design-system':
-        specifier: workspace:^0.6.2
+        specifier: workspace:^0.6.3
         version: link:../../packages/design-system
       '@marcellejs/devtools':
-        specifier: workspace:^0.6.2
+        specifier: workspace:^0.6.3
         version: link:../../packages/devtools
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.4.1
@@ -407,7 +407,7 @@ importers:
         version: 1.5.5
     devDependencies:
       '@marcellejs/design-system':
-        specifier: workspace:^0.6.2
+        specifier: workspace:^0.6.3
         version: link:../design-system
       '@most/types':
         specifier: ^1.1.0
@@ -614,10 +614,10 @@ importers:
         version: 2.4.2
     devDependencies:
       '@marcellejs/backend':
-        specifier: workspace:^0.6.2
+        specifier: workspace:^0.6.3
         version: link:../backend
       '@marcellejs/core':
-        specifier: workspace:^0.6.2
+        specifier: workspace:^0.6.3
         version: link:../core
       '@types/prompts':
         specifier: ^2.4.4

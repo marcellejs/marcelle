@@ -1,5 +1,13 @@
 # Marcelle changelog
 
+## 0.6.3
+
+### Patch Changes
+
+- 6073dab: New components: mediaRecorder and videoPlayer
+- c9a770e: Add a method for asset uploading on the dataStore interface
+- c9a770e: Fixed websocket connection issues with data stores
+
 ## 0.6.2
 
 ### Patch Changes
