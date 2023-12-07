@@ -142,3 +142,30 @@ const source = imageUpload({ width: 224, height: 224 });
 const instanceViewer = marcelle.imageDisplay(source.$images);
 dashboard.page('Data').use(instanceViewer);
 ```
+
+## videoPlayer
+
+```tsx
+marcelle.videoPlayer(src: string): VideoPlayer;
+```
+
+A simple video player.
+
+### Parameters
+
+| Option | Type   | Description  | Required |
+| ------ | ------ | ------------ | :------: |
+| src    | string | Video source |          |
+
+### Screenshot
+
+<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
+  <img src="./images/video-player.png" alt="Screenshot of the videoPlayer component">
+</div>
+
+### Example
+
+```js
+const player = videoPlayer();
+player.$src.set('http://localhost:3030/assets/65533254bbcc10126bd44ad3/asset.webm');
+```

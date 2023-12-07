@@ -39,11 +39,13 @@ const toCamelCase = (str) => {
   return s.slice(0, 1).toLowerCase() + s.slice(1);
 };
 
+const demos = process.env.NODE_ENV === 'production' ? meta.filter((x) => !x.draft) : meta;
+
 export default defineConfig({
   plugins: [
     injectHtml({
       injectData: {
-        demos: meta,
+        demos,
       },
     }),
     svelte({ emitCss: false }),
@@ -54,7 +56,7 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      input: meta.reduce(
+      input: demos.reduce(
         (o, x) => ({
           ...o,
           [toCamelCase(x.path)]: resolve(__dirname, x.path, 'index.html'),

@@ -51,7 +51,7 @@ importers:
   apps/demos:
     dependencies:
       '@marcellejs/core':
-        specifier: workspace:^0.6.2
+        specifier: workspace:^0.6.3
         version: link:../../packages/core
       '@tensorflow/tfjs-core':
         specifier: ^4.11.0
@@ -61,10 +61,10 @@ importers:
         version: 4.11.0(@tensorflow/tfjs-core@4.11.0)
     devDependencies:
       '@marcellejs/design-system':
-        specifier: workspace:^0.6.2
+        specifier: workspace:^0.6.3
         version: link:../../packages/design-system
       '@marcellejs/devtools':
-        specifier: workspace:^0.6.2
+        specifier: workspace:^0.6.3
         version: link:../../packages/devtools
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.4.1
@@ -349,17 +349,17 @@ importers:
         specifier: ^5.14.0
         version: 5.16.0
       chart.js:
-        specifier: ~4.2.1
-        version: 4.2.1
+        specifier: ^4.4.0
+        version: 4.4.0
       chartjs-adapter-luxon:
         specifier: ^1.3.1
-        version: 1.3.1(chart.js@4.2.1)(luxon@3.4.3)
+        version: 1.3.1(chart.js@4.4.0)(luxon@3.4.3)
       chartjs-chart-matrix:
         specifier: ^2.0.1
-        version: 2.0.1(chart.js@4.2.1)
+        version: 2.0.1(chart.js@4.4.0)
       chartjs-plugin-zoom:
         specifier: ^2.0.1
-        version: 2.0.1(chart.js@4.2.1)
+        version: 2.0.1(chart.js@4.4.0)
       date-fns:
         specifier: ^2.30.0
         version: 2.30.0
@@ -372,9 +372,9 @@ importers:
       feathers-memory:
         specifier: ^4.1.0
         version: 4.1.0
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
+      fix-webm-duration:
+        specifier: ^1.0.5
+        version: 1.0.5
       luxon:
         specifier: ^3.4.3
         version: 3.4.3
@@ -402,9 +402,12 @@ importers:
       umap-js:
         specifier: ^1.3.3
         version: 1.3.3
+      vidstack:
+        specifier: ^1.5.5
+        version: 1.5.5
     devDependencies:
       '@marcellejs/design-system':
-        specifier: workspace:^0.6.2
+        specifier: workspace:^0.6.3
         version: link:../design-system
       '@most/types':
         specifier: ^1.1.0
@@ -611,10 +614,10 @@ importers:
         version: 2.4.2
     devDependencies:
       '@marcellejs/backend':
-        specifier: workspace:^0.6.2
+        specifier: workspace:^0.6.3
         version: link:../backend
       '@marcellejs/core':
-        specifier: workspace:^0.6.2
+        specifier: workspace:^0.6.3
         version: link:../core
       '@types/prompts':
         specifier: ^2.4.4
@@ -4493,37 +4496,37 @@ packages:
     resolution: {integrity: sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==}
     dev: true
 
-  /chart.js@4.2.1:
-    resolution: {integrity: sha512-6YbpQ0nt3NovAgOzbkSSeeAQu/3za1319dPUQTXn9WcOpywM8rGKxJHrhS8V8xEkAlk8YhEfjbuAPfUyp6jIsw==}
-    engines: {pnpm: ^7.0.0}
+  /chart.js@4.4.0:
+    resolution: {integrity: sha512-vQEj6d+z0dcsKLlQvbKIMYFHd3t8W/7L2vfJIbYcfyPcRx92CsHqECpueN8qVGNlKyDcr5wBrYAYKnfu/9Q1hQ==}
+    engines: {pnpm: '>=7'}
     dependencies:
       '@kurkle/color': 0.3.2
     dev: false
 
-  /chartjs-adapter-luxon@1.3.1(chart.js@4.2.1)(luxon@3.4.3):
+  /chartjs-adapter-luxon@1.3.1(chart.js@4.4.0)(luxon@3.4.3):
     resolution: {integrity: sha512-yxHov3X8y+reIibl1o+j18xzrcdddCLqsXhriV2+aQ4hCR66IYFchlRXUvrJVoxglJ380pgytU7YWtoqdIgqhg==}
     peerDependencies:
       chart.js: '>=3.0.0'
       luxon: '>=1.0.0'
     dependencies:
-      chart.js: 4.2.1
+      chart.js: 4.4.0
       luxon: 3.4.3
     dev: false
 
-  /chartjs-chart-matrix@2.0.1(chart.js@4.2.1):
+  /chartjs-chart-matrix@2.0.1(chart.js@4.4.0):
     resolution: {integrity: sha512-BGfeY+/PHnITyDlc7WfnKJ1RyOfgOzIqWp/gxzzl7pUjyoGzHDcw51qd2xJF9gdT9Def7ZwOnOMm8GJUXDxI0w==}
     peerDependencies:
       chart.js: '>=3.0.0'
     dependencies:
-      chart.js: 4.2.1
+      chart.js: 4.4.0
     dev: false
 
-  /chartjs-plugin-zoom@2.0.1(chart.js@4.2.1):
+  /chartjs-plugin-zoom@2.0.1(chart.js@4.4.0):
     resolution: {integrity: sha512-ogOmLu6e+Q7E1XWOCOz9YwybMslz9qNfGV2a+qjfmqJYpsw5ZMoRHZBUyW+NGhkpQ5PwwPA/+rikHpBZb7PZuA==}
     peerDependencies:
       chart.js: '>=3.2.0'
     dependencies:
-      chart.js: 4.2.1
+      chart.js: 4.4.0
       hammerjs: 2.0.8
     dev: false
 
@@ -6777,6 +6780,10 @@ packages:
       pkg-dir: 4.2.0
     dev: true
 
+  /fix-webm-duration@1.0.5:
+    resolution: {integrity: sha512-b6oula3OfSknx0aWoLsxvp4DVIYbwsf+UAkr6EDAK3iuMYk/OSNKzmeSI61GXK0MmFTEuzle19BPvTxMIKjkZg==}
+    dev: false
+
   /flat-cache@3.0.4:
     resolution: {integrity: sha512-dm9s5Pw7Jc0GvMYbshN6zchCA9RgQlzzEZX3vylR9IqFfS8XciblUXOKfW6SiuJ0e13eDYZoZV5wdrev7P3Nwg==}
     engines: {node: ^10.12.0 || >=12.0.0}
@@ -8999,6 +9006,11 @@ packages:
   /mdurl@1.0.1:
     resolution: {integrity: sha512-/sKlQJCBYVY9Ers9hqzKou4H6V5UWc/M59TH2dvkt+84itfnq7uFOMLpOiOS4ujvHP4etln18fmIxA5R5fll0g==}
     dev: true
+
+  /media-captions@1.0.1:
+    resolution: {integrity: sha512-vicgtBYqNLvZStIPOpxHJxg/T7sVFVyi6A43PQLl5jMjblvRWhZ8V/LVBboeBxddSlPYnLWUQQI41Uv6V0tQRQ==}
+    engines: {node: '>=16'}
+    dev: false
 
   /media-typer@0.3.0:
     resolution: {integrity: sha1-hxDXrwqmJvj/+hzgAWhUUmMlV0g=}
@@ -13116,6 +13128,13 @@ packages:
       core-util-is: 1.0.2
       extsprintf: 1.3.0
     dev: true
+
+  /vidstack@1.5.5:
+    resolution: {integrity: sha512-fNPMRXdrB4/0dgMipkKj+tmvKfnIo7SbBHOGviK3ckkr6vVefvuKX1suSBkFeIW/6b+Oe3d4HYQDH0BufaUaDQ==}
+    engines: {node: '>=18'}
+    dependencies:
+      media-captions: 1.0.1
+    dev: false
 
   /vite@3.0.9:
     resolution: {integrity: sha512-waYABTM+G6DBTCpYAxvevpG50UOlZuynR0ckTK5PawNVt7ebX6X7wNXHaGIO6wYYFXSM7/WcuFuO2QzhBB6aMw==}

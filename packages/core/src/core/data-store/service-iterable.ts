@@ -1,5 +1,4 @@
 import type { Paginated, Params, Service } from '@feathersjs/feathers';
-import { cloneDeep } from 'lodash';
 import { mergeDeep } from '../../utils';
 import { LazyIterable } from '../../utils/lazy-iterable/lazy-iterable';
 
@@ -64,7 +63,8 @@ export class ServiceIterable<T> extends LazyIterable<T> {
   }
 
   select(fields: string[]): ServiceIterable<T> {
-    const p = cloneDeep(this.params);
+    const p = structuredClone(this.params);
+    // const p = cloneDeep(this.params); !!! Initially from LODASH
     p.query.$select = fields;
     return new ServiceIterable(this.service, p);
   }

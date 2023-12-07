@@ -56,6 +56,7 @@ const esBuild = {
       file: pkg.module,
       format: 'es',
       sourcemap: true,
+      inlineDynamicImports: true,
     },
   ],
 };
@@ -72,12 +73,14 @@ const browserBuild = {
       file: pkg.main,
       format: 'es',
       sourcemap: true,
+      inlineDynamicImports: true,
     },
     production && {
       file: pkg.browser,
       format: 'umd',
       name: 'marcelle',
       sourcemap: true,
+      inlineDynamicImports: true,
     },
   ],
   onwarn(warning, warn) {
