@@ -58,7 +58,7 @@ class DynamicService<T = any> {
       throw new Forbidden('Service is unauthorized', name);
     }
     const app = this.app as unknown as Application;
-    if (!app.getService(name as '*')) {
+    if (!app.service(name as '*')) {
       if (app.get('database') === 'nedb') {
         const options = {
           Model: createModel(app, name),
@@ -66,28 +66,28 @@ class DynamicService<T = any> {
           multi: true,
           whitelist: ['$not', '$and', '$distinct'],
         };
-        app.declareService(name as '*', new GenericNeDB(options, app));
+        app.use(`/${name}` as '*', new GenericNeDB(options, app));
       } else if (app.get('database') === 'mongodb') {
         const options = {
           paginate: app.get('paginate'),
           multi: true,
           whitelist: ['$not', '$and', '$distinct'],
         };
-        app.declareService(name as '*', new GenericMongoDB(options, app, name));
+        app.use(`/${name}` as '*', new GenericMongoDB(options, app, name));
       } else {
         throw new Error('Invalid database type: only "nedb" or "mongodb" are currently supported');
       }
 
-      const service = app.getService(name as '*') as any;
+      const service = app.service(name as '*') as any;
 
       const h = hooks(app.get('database'), app.get('authentication').enabled);
       service.hooks(h);
     }
 
-    return app.getService(name as '*');
+    return app.service(name as '*');
   }
 }
 
 export default function (app: Application): void {
-  app.declareService(':serviceName', new DynamicService());
+  app.use('/:serviceName', new DynamicService());
 }

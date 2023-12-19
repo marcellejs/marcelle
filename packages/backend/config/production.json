@@ -1,6 +1,5 @@
 {
   "host": "marcelle-backend.com",
-  "apiPrefix": "/",
   "port": "PORT",
   "mongodb": "MONGODB_URL",
   "whitelist": {

@@ -23,7 +23,7 @@ export default function (app: Application): void {
     };
 
     // Initialize our service with any options it requires
-    app.declareService('users', new UsersNeDB(options, app));
+    app.use('/users', new UsersNeDB(options, app));
   } else if (app.get('database') === 'mongodb') {
     const options = {
       paginate: app.get('paginate'),
@@ -31,13 +31,13 @@ export default function (app: Application): void {
     };
 
     // Initialize our service with any options it requires
-    app.declareService('users', new UsersMongoDB(options, app));
+    app.use('/users', new UsersMongoDB(options, app));
   } else {
     throw new Error('Invalid database type: only "nedb" or "mongodb" are currently supported');
   }
 
   // Get our initialized service so that we can register hooks
-  const service = app.getService('users');
+  const service = app.service('users');
 
   service.hooks(hooks);
 

@@ -53,7 +53,7 @@ export default function (app: Application): void {
     };
 
     // Initialize our service with any options it requires
-    app.declareService('assets', new AssetsNeDB(options, app));
+    app.use('/assets', new AssetsNeDB(options, app));
   } else if (app.get('database') === 'mongodb') {
     const options = {
       paginate: app.get('paginate'),
@@ -62,7 +62,7 @@ export default function (app: Application): void {
     };
 
     // Initialize our service with any options it requires
-    app.declareService('assets', new AssetsMongoDB(options, app));
+    app.use('/assets', new AssetsMongoDB(options, app));
   } else {
     throw new Error('Invalid database type: only "nedb" or "mongodb" are currently supported');
   }
@@ -79,7 +79,7 @@ export default function (app: Application): void {
 
   // Get our initialized service so that we can register hooks
   const useGridfs = app.get('database') === 'mongodb' && app.get('gridfs');
-  const service = app.getService('assets');
+  const service = app.service('assets');
 
   const h = hooks(app.get('authentication').enabled);
   service.hooks(h);
@@ -143,8 +143,7 @@ export default function (app: Application): void {
   postMiddlewares.push(assetUpload);
   postMiddlewares.push(useGridfs ? gridfsPostResponse : diskPostResponse);
 
-  const uploadPath = app.get('apiPrefix').replace(/\/$/, '') + '/assets/upload';
-  app.post(uploadPath, ...postMiddlewares);
+  app.post('/assets/upload', ...postMiddlewares);
 
   const getAssetFileFromDisk = async (req: any, res: any) => {
     try {
@@ -191,6 +190,5 @@ export default function (app: Application): void {
   // }
   getMiddlewares.push(useGridfs ? getAssetFileFromGridfs : getAssetFileFromDisk);
 
-  const downloadPath = app.get('apiPrefix').replace(/\/$/, '') + '/assets/:id/:filename';
-  app.get(downloadPath, ...getMiddlewares);
+  app.get('/assets/:id/:filename', ...getMiddlewares);
 }

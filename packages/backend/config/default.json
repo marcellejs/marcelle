@@ -1,6 +1,5 @@
 {
   "host": "localhost",
-  "apiPrefix": "/",
   "port": 3030,
   "database": "nedb",
   "nedb": "../data",
@@ -38,5 +37,10 @@
       "usernameField": "email",
       "passwordField": "password"
     }
+  },
+  "permissions": {
+    "Editor": [
+      { "action": "manage", "subject": "team-things", "conditions": { "team": "A" } }
+    ]
   }
 }
