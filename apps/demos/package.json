@@ -1,7 +1,7 @@
 {
   "name": "demos",
   "private": true,
-  "version": "0.6.3",
+  "version": "0.6.4",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,13 +9,13 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@marcellejs/core": "workspace:^0.6.3",
+    "@marcellejs/core": "workspace:^0.6.4",
     "@tensorflow/tfjs-core": "^4.11.0",
     "@tensorflow/tfjs-layers": "^4.11.0"
   },
   "devDependencies": {
-    "@marcellejs/design-system": "workspace:^0.6.3",
-    "@marcellejs/devtools": "workspace:^0.6.3",
+    "@marcellejs/design-system": "workspace:^0.6.4",
+    "@marcellejs/devtools": "workspace:^0.6.4",
     "@sveltejs/vite-plugin-svelte": "^2.4.1",
     "svelte": "^3.59.1",
     "svelte-bricks": "^0.1.7",

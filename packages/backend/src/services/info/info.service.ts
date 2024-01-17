@@ -20,5 +20,5 @@ declare module '../../declarations' {
 }
 
 export default function (app: Application): void {
-  app.declareService('info', new InfoService(app));
+  app.use('/info', new InfoService(app));
 }

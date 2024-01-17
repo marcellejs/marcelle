@@ -64,7 +64,10 @@ export class DataStore {
         this.feathers.io.on('init', ({ auth }: { auth: boolean }) => {
           this.requiresAuth = auth;
           if (auth) {
-            this.feathers.configure(authentication({ path: `${this.apiPrefix}/authentication` }));
+            this.feathers.configure(
+              authentication(),
+              //{ path: `${this.apiPrefix}/authentication` }
+            );
           }
           resolve();
         });
@@ -210,10 +213,11 @@ export class DataStore {
       this.#createService(name);
       this.$services.set(Object.keys(this.feathers.services));
     }
-    const s =
-      this.backend === DataStoreBackend.Remote
-        ? this.feathers.service(`${this.apiPrefix}/${name}`)
-        : this.feathers.service(name);
+    // const s =
+    //   this.backend === DataStoreBackend.Remote
+    //     ? this.feathers.service(`${this.apiPrefix}/${name}`)
+    //     : this.feathers.service(name);
+    const s = this.feathers.service(name);
     if (!serviceExists) {
       s.items = () => iterableFromService(s);
     }

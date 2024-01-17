@@ -47,7 +47,7 @@ function setupModelService(app: Application, modelType: ModelType, useGridfs: bo
     };
 
     // Initialize our service with any options it requires
-    app.declareService(`${modelType}-models`, new ModelsNeDB(options, app));
+    app.use(`/${modelType}-models`, new ModelsNeDB(options, app));
   } else if (app.get('database') === 'mongodb') {
     const options = {
       paginate: app.get('paginate'),
@@ -56,13 +56,13 @@ function setupModelService(app: Application, modelType: ModelType, useGridfs: bo
     };
 
     // Initialize our service with any options it requires
-    app.declareService(`${modelType}-models`, new ModelsMongoDB(options, app, modelType));
+    app.use(`/${modelType}-models`, new ModelsMongoDB(options, app, modelType));
   } else {
     throw new Error('Invalid database type: only "nedb" or "mongodb" are currently supported');
   }
 
   // Get our initialized service so that we can register hooks
-  const service = app.getService(`${modelType}-models`);
+  const service = app.service(`${modelType}-models`);
 
   const h = hooks(app.get('authentication').enabled, modelType, useGridfs);
   service.hooks(h);
@@ -157,8 +157,7 @@ export default (modelType: ModelType): ((app: Application) => void) => {
     postMiddlewares.push(modelUpload);
     postMiddlewares.push(useGridfs ? gridfsPostResponse : diskPostResponse);
 
-    const uploadPath = app.get('apiPrefix').replace(/\/$/, '') + `/${modelType}-models/upload`;
-    app.post(uploadPath, ...postMiddlewares);
+    app.post(`/${modelType}-models/upload`, ...postMiddlewares);
 
     const getModelFileFromDisk = async (req: any, res: any) => {
       try {
@@ -225,10 +224,8 @@ export default (modelType: ModelType): ((app: Application) => void) => {
     }
     getMiddlewares.push(useGridfs ? getModelFileFromGridfs : getModelFileFromDisk);
 
-    const downloadPath =
-      app.get('apiPrefix').replace(/\/$/, '') + `/${modelType}-models/:id/:filename`;
     app.get(
-      downloadPath,
+      `/${modelType}-models/:id/:filename`,
       // TODO: add authorization
       ...getMiddlewares,
     );
