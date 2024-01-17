@@ -1,5 +1,11 @@
 # Marcelle changelog
 
+## 0.6.4
+
+### Patch Changes
+
+- 1dd0d82: Remove the API Prefix configuration in favor of Nginx configuration
+
 ## 0.6.3
 
 ### Patch Changes
