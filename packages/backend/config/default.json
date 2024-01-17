@@ -39,8 +39,20 @@
     }
   },
   "permissions": {
-    "Editor": [
-      { "action": "manage", "subject": "team-things", "conditions": { "team": "A" } }
+    "superadmin": [
+      {"action": "manage", "subject": "all"}
+    ],
+    "admin": [
+      { "action": "manage", "subject": "all", "conditions": { "userId": "${user._id}" } },
+      { "action": "manage", "subject": "all", "conditions": { "public": "${true}" } },
+      { "action": "manage", "subject": "users" }
+    ],
+    "editor": [
+      { "action": "manage", "subject": "all", "conditions": { "userId": "${user._id}" } },
+      { "action": "manage", "subject": "all", "conditions": { "public": "${true}" } },
+      { "action": "read", "subject": "users" },
+      { "action": "update", "subject": "users", "conditions": { "_id": "${user._id}" } },
+      { "action": "delete", "subject": "users", "conditions": { "_id": "${user._id}" }, "inverted": "true" }
     ]
   }
 }
