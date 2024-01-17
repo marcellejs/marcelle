@@ -9,7 +9,7 @@ import express from '@feathersjs/express';
 import socketio from '@feathersjs/socketio';
 import casl from 'feathers-casl';
 
-import { Application, ServiceTypes } from './declarations';
+import { Application } from './declarations';
 import logger from './logger';
 import middleware from './middleware';
 import services from './services';
@@ -20,29 +20,7 @@ import mongodb from './mongodb';
 import { getRegisteredServices } from './utils/registered-services';
 // Don't remove this comment. It's needed to format import lines nicely.
 
-function createApp(): Application {
-  const a = express(feathers()) as any;
-
-  a.getService = function <L extends keyof ServiceTypes>(location: L): ServiceTypes[L] {
-    return a.service(a.get('apiPrefix').replace(/\/$/, '') + '/' + location);
-  };
-
-  a.getServicePath = function <L extends keyof ServiceTypes>(location: L): string {
-    return a.get('apiPrefix').replace(/^\/|\/$/g, '') + '/' + location;
-  };
-
-  a.declareService = function <L extends keyof ServiceTypes>(location: L, service: any) {
-    const path = a.get('apiPrefix').replace(/\/$/, '') + '/' + location;
-    // Initialize our service
-    a.use(path, service);
-
-    return (a as Application).getService(location);
-  };
-
-  return a as Application;
-}
-
-const app: Application = createApp();
+const app: Application = express(feathers());
 
 // Load app configuration
 app.configure(configuration());
@@ -63,20 +41,15 @@ app.use(express.urlencoded({ extended: true }));
 // Set up Plugins and providers
 app.configure(express.rest());
 app.configure(
-  socketio(
-    {
-      path: app.get('apiPrefix').replace(/\/$/, '') + '/socket.io',
-    },
-    function (io) {
-      io.on('connection', async (socket) => {
-        const registeredServices = await getRegisteredServices(app);
-        socket.emit('init', {
-          auth: app.get('authentication').enabled,
-          services: registeredServices,
-        });
+  socketio(function (io) {
+    io.on('connection', async (socket) => {
+      const registeredServices = await getRegisteredServices(app);
+      socket.emit('init', {
+        auth: app.get('authentication').enabled,
+        services: registeredServices,
       });
-    },
-  ),
+    });
+  }),
 );
 
 if (app.get('database') === 'mongodb') {

@@ -416,3 +416,29 @@ Backends can be configured through two JSON files located in the `backend/config
 | paginate.default       | number           | 100                                          | The default number of items per page for all requests                                                                                        |
 | paginate.max           | number           | 1000                                         | The maximum number of items per page for all requests                                                                                        |
 | authentication.enabled | boolean          | false                                        | Whether or not to enable authentication                                                                                                      |
+
+### Permissions
+
+It is possible to specify the permissions for a particular project in the configuration file. The `permissions` field of the config file accepts a record associating the role name ("editor" by default) to an array of [CASL](https://casl.js.org/v6/en/) Rules.
+
+The following example specifies a default set of permissions:
+
+```json
+  "permissions": {
+    "superadmin": [
+      {"action": "manage", "subject": "all"}
+    ],
+    "admin": [
+      { "action": "manage", "subject": "all", "conditions": { "userId": "${user._id}" } },
+      { "action": "manage", "subject": "all", "conditions": { "public": "${true}" } },
+      { "action": "manage", "subject": "users" }
+    ],
+    "editor": [
+      { "action": "manage", "subject": "all", "conditions": { "userId": "${user._id}" } },
+      { "action": "manage", "subject": "all", "conditions": { "public": "${true}" } },
+      { "action": "read", "subject": "users" },
+      { "action": "update", "subject": "users", "conditions": { "_id": "${user._id}" } },
+      { "action": "delete", "subject": "users", "conditions": { "_id": "${user._id}" }, "inverted": "true" }
+    ]
+  }
+```

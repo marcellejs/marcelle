@@ -14,7 +14,7 @@ async function setRole(context: HookContext): Promise<HookContext> {
   // const { type, data, service } = context;
   // const { total } = await service.find({ query: { $limit: 0 } });
   // const role = total > 0 ? 'Editor' : 'Admin';
-  const role = 'Editor';
+  const role = 'editor';
 
   if (type !== 'before') {
     throw new Error('The "setField" hook should only be used as a "before" hook.');
@@ -63,11 +63,19 @@ export default {
     update: [
       hashPassword('password'),
       authenticate('jwt'),
+      (context: HookContext) => {
+        const { user } = context.params;
+        console.log('authWriteHooks [update]', user?._id, context.id);
+      },
       authorize({ adapter: 'feathers-mongodb' }),
     ],
     patch: [
       hashPassword('password'),
       authenticate('jwt'),
+      (context: HookContext) => {
+        const { user } = context.params;
+        console.log('authWriteHooks [patch]', user?._id, context.id);
+      },
       authorize({ adapter: 'feathers-mongodb' }),
     ],
     remove: [authenticate('jwt'), authorize({ adapter: 'feathers-mongodb' })],
