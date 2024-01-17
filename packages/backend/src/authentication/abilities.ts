@@ -51,27 +51,24 @@ export const defineRulesFor = (user: User, app: Application) => {
   const { can, cannot, rules } = new AbilityBuilder(Ability);
 
   const permissions = app.get('permissions');
-  console.log('DEFINE ABILITIES', user);
-  if (user.role && Object.keys(permissions).includes(user.role)) {
-    try {
-      const xx = interpolate(JSON.stringify(permissions[user.role]), {
-        user,
-        true: true,
-        false: false,
-      });
-      console.log('xx', xx);
-      const abs = new Ability(xx);
-      console.log('HERE', abs.rules);
-      return abs.rules;
-    } catch (error) {
-      console.log(error);
+  console.log('permissions', permissions);
+  if (permissions) {
+    if (user.role && Object.keys(permissions).includes(user.role)) {
+      try {
+        const xx = interpolate(JSON.stringify(permissions[user.role]), {
+          user,
+          true: true,
+          false: false,
+        });
+        const abs = new Ability(xx);
+        return abs.rules;
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      return [];
     }
-  } else {
-    return [];
   }
-  const abs = new Ability(app.get('permissions').editor);
-  console.log('Permissions', app.get('permissions'));
-  console.log('abs.rules', abs.rules);
 
   if (user.role === 'superadmin') {
     // SuperAdmin can do evil

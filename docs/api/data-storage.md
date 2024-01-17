@@ -419,7 +419,7 @@ Backends can be configured through two JSON files located in the `backend/config
 
 ### Permissions
 
-It is possible to specify the permissions for a particular project in the configuration file. The `permissions` field of the config file accepts a record associating the role name ("editor" by default) to an array of CASL Rules
+It is possible to specify the permissions for a particular project in the configuration file. The `permissions` field of the config file accepts a record associating the role name ("editor" by default) to an array of [CASL](https://casl.js.org/v6/en/) Rules.
 
 The following example specifies a default set of permissions:
 
