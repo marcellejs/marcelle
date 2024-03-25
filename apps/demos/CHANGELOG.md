@@ -1,5 +1,11 @@
 # demos
 
+## 0.6.5
+
+### Patch Changes
+
+- @marcellejs/core@0.6.5
+
 ## 0.6.4
 
 ### Patch Changes

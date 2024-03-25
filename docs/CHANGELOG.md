@@ -1,5 +1,11 @@
 # docs
 
+## 0.6.5
+
+### Patch Changes
+
+- Add iterator documentation
+
 ## 0.6.4
 
 ## 0.6.3
