@@ -11,6 +11,9 @@ export class ConfidencePlot extends Component {
   #plotConfidences: GenericChart;
   #displayLabel: Text;
 
+  #divLab?: HTMLElement;
+  #divConf?: HTMLElement;
+
   constructor(predictionStream: Stream<ClassifierResults>) {
     super();
     this.$confidenceStream = predictionStream.map(({ confidences }: ClassifierResults) =>
@@ -51,25 +54,32 @@ export class ConfidencePlot extends Component {
 
   mount(target?: HTMLElement): void {
     const t = target || document.querySelector(`#${this.id}`);
-    if (!t) return;
-    const divLab = document.createElement('div');
-    divLab.id = `${t.id}-${this.#displayLabel.id}`;
-    const divConf = document.createElement('div');
-    divConf.id = `${t.id}-${this.#plotConfidences.id}`;
-    t.appendChild(divLab);
-    t.appendChild(divConf);
+    if (!t) {
+      console.warn(`ConfidencePlot: Failed to mount because the target element was not found.`);
+      return;
+    }
+
+
+    // Dynamically create and append elements for display
+    this.#divLab = document.createElement('div');
+    this.#divLab.id = `${t.id}-${this.#displayLabel.id}`;
+    this.#divConf = document.createElement('div');
+    this.#divConf.id = `${t.id}-${this.#plotConfidences.id}`;
+    t.appendChild(this.#divLab);
+    t.appendChild(this.#divConf);
+
+    // Mount subcomponents
     this.#displayLabel.title = this.title;
-    this.#displayLabel.mount(divLab);
-    this.#plotConfidences.mount(divConf);
-    this.destroy = () => {
-      divLab.parentElement.removeChild(divLab);
-      divConf.parentElement.removeChild(divConf);
-      this.#displayLabel.destroy();
-      this.#plotConfidences.destroy();
-    };
+    this.#displayLabel.mount(this.#divLab);
+    this.#plotConfidences.mount(this.#divConf);
   }
 
   destroy(): void {
+    // Cleanup dynamically created DOM elements
+    this.#divLab?.parentElement?.removeChild(this.#divLab);
+    this.#divConf?.parentElement?.removeChild(this.#divConf);
+
+    // Destroy subcomponents
     this.#displayLabel.destroy();
     this.#plotConfidences.destroy();
   }
