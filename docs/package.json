@@ -14,8 +14,8 @@
     "@vuepress/client": "2.0.0-beta.51",
     "@vuepress/plugin-search": "2.0.0-beta.51",
     "add": "^2.0.6",
-    "pnpm": "^8.6.2",
-    "vue": "^3.3.4",
+    "pnpm": "^8.15.7",
+    "vue": "^3.4.22",
     "vuepress": "2.0.0-beta.51"
   }
 }
