@@ -14,6 +14,7 @@
   class:selected={$selectedTab === tab}
   role="tab"
   on:click={() => selectTab(tab)}
+  tabindex="0"
 >
   <slot />
 </div>

@@ -1,7 +1,7 @@
 {
   "name": "@marcellejs/backend",
   "description": "A real-time server for Marcelle applications",
-  "version": "0.6.2",
+  "version": "0.6.5",
   "homepage": "",
   "private": true,
   "keywords": [

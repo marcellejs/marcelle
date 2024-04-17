@@ -1,5 +1,21 @@
 # Marcelle changelog
 
+## 0.6.5
+
+## 0.6.4
+
+### Patch Changes
+
+- 1dd0d82: Remove the API Prefix configuration in favor of Nginx configuration
+
+## 0.6.3
+
+### Patch Changes
+
+- 6073dab: New components: mediaRecorder and videoPlayer
+- c9a770e: Add a method for asset uploading on the dataStore interface
+- c9a770e: Fixed websocket connection issues with data stores
+
 ## 0.6.2
 
 ### Patch Changes

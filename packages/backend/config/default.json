@@ -1,6 +1,5 @@
 {
   "host": "localhost",
-  "apiPrefix": "/",
   "port": 3030,
   "public": "./public/",
   "origins": [
@@ -33,5 +32,22 @@
       "usernameField": "email",
       "passwordField": "password"
     }
+  },
+  "permissions": {
+    "superadmin": [
+      {"action": "manage", "subject": "all"}
+    ],
+    "admin": [
+      { "action": "manage", "subject": "all", "conditions": { "userId": "${user._id}" } },
+      { "action": "manage", "subject": "all", "conditions": { "public": "${true}" } },
+      { "action": "manage", "subject": "users" }
+    ],
+    "editor": [
+      { "action": "manage", "subject": "all", "conditions": { "userId": "${user._id}" } },
+      { "action": "manage", "subject": "all", "conditions": { "public": "${true}" } },
+      { "action": "read", "subject": "users" },
+      { "action": "update", "subject": "users", "conditions": { "_id": "${user._id}" } },
+      { "action": "delete", "subject": "users", "conditions": { "_id": "${user._id}" }, "inverted": "true" }
+    ]
   }
 }

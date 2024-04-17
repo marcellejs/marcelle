@@ -1,5 +1,15 @@
 # @marcellejs/design-system
 
+## 0.6.5
+
+### Patch Changes
+
+- Fix teailwind compilation in dependent svelkit app
+
+## 0.6.4
+
+## 0.6.3
+
 ## 0.6.2
 
 ## 0.6.1

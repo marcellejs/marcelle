@@ -53,7 +53,15 @@ service(name: string): Service<unknown>
 
 Get the Feathers service instance with the given `name`. If the service does not exist yet, it will be automatically created. Note that the name of the service determines the name of the collection in the data store. It is important to choose name to avoid potential conflicts between collections.
 
-The method returnsa Feathers Service instance, which API is documented on [Feathers' wesite](https://docs.feathersjs.com/api/services.html#service-methods). The interface exposes `find`, `get`, `create`, `update`, `patch` and `remove` methods for manipulating the data.
+The method returnsa Feathers Service instance, which API is documented on [Feathers' wesite](https://crow.docs.feathersjs.com/api/services.html#service-methods). The interface exposes `find`, `get`, `create`, `update`, `patch` and `remove` methods for manipulating the data.
+
+### .uploadAsset()
+
+```tsx
+async uploadAsset(blob: Blob, filename = ''): Promise<string>
+```
+
+Upload an asset to a remote backend from a Blob, with an optional filename. The method returns the path of the file on the backend server.
 
 ### .signup()
 
@@ -63,7 +71,7 @@ async signup(email: string, password: string): Promise<User>
 
 ## Service
 
-Data Services are instances of Feathers Services. For details, refer to [Feather's documentation](https://docs.feathersjs.com/api/services.html). From Feathers:
+Data Services are instances of Feathers Services. For details, refer to [Feather's documentation](https://crow.docs.feathersjs.com/api/services.html). From Feathers:
 
 > Service methods are pre-defined [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) methods that your service object can implement (or that have already been implemented by one of the [database adapters](./databases/common.md)). Below is an example of a Feathers service using [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) as a [JavaScript class](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Classes):
 
@@ -87,7 +95,7 @@ Service methods must use [async/await](https://developer.mozilla.org/en-US/docs/
 
 - `id` — The identifier for the resource. A resource is the data identified by a unique id.
 - `data` — The resource data.
-- `params` - Additional parameters for the method call (see [Feathers Docs](https://docs.feathersjs.com/api/services.html#params))
+- `params` - Additional parameters for the method call (see [Feathers Docs](https://crow.docs.feathersjs.com/api/services.html#params))
 
 ### .find()
 
@@ -136,6 +144,77 @@ Service<T>.remove(id: string, params: Params): Promise<T>
 ```
 
 Removes the resource with `id`. The method should return with the removed data. `id` can also be `null`, which indicates the deletion of multiple resources, with `params.query` containing the query criteria.
+
+## ServiceIterable
+
+A `ServiceIterable` is a lazy iterable data collection over a data store service. This allows to execute processing of the data of a service in a lazy manner, on demand. A Service Iterable can be created using the following factory function:
+
+```tsx
+function iterableFromService<T>(service: Service<T>): ServiceIterable<T>;
+```
+
+This function returns an iterable, that has the following API:
+
+```ts
+export class ServiceIterable<T> extends LazyIterable<T> {
+  skip(n: number): ServiceIterable<T>;
+  take(n: number): ServiceIterable<T>;
+  select(fields: string[]): ServiceIterable<T>;
+  query(q: Params['query']): ServiceIterable<T>;
+}
+```
+
+The LazyIterable class is documented in [utilities](/api/utilities.html#lazyiterable). There are a few additional methods specific to data store services that are meant to improve performance. These methods relate to querying the datastore (which is backed by Feathers.js). They can be chained like other LazyIterable methods, but they **must be used before other LazyIterable methods**.
+
+**Example:**
+
+```ts
+// We want to get service items that have the field 'team' equal to 'A'. We skip 3 items
+// and keep the next 5, and select a few fields to be returned.
+const myIterable = iterableFromService(store.service('things))
+  .query({ team: 'A' })
+  .skip(3)
+  .take(5)
+  .select(['_id', 'x', 'y', 'label']);
+  // The iterable is created, but the processing won't be executed until we iterate on it:
+for await (const x of myIterable) {
+  console.log(x)
+}
+  // Or if we convert it to an array:
+const myThings = await myIterable.toArray();
+```
+
+### .skip()
+
+```tsx
+skip(n: number): ServiceIterable<T>;
+```
+
+Skip n elements from the service
+
+### .take()
+
+```tsx
+take(n: number): ServiceIterable<T>;
+```
+
+Take only n elements from the service
+
+### .select()
+
+```tsx
+select(fields: string[]): ServiceIterable<T>;
+```
+
+Select the fields to be returned for each item in the service. This can be used to optimize bandwidth and speed, by limiting the query to only the necessary fields.
+
+### .query()
+
+```tsx
+query(q: Params['query']): ServiceIterable<T>;
+```
+
+Query items from the service using Feather.js's query syntax. See [Feathers docs](https://crow.docs.feathersjs.com/api/databases/querying.html)
 
 ## Dataset
 
@@ -204,10 +283,10 @@ async create(instance: Instance<InputType, OutputType>, params?: FeathersParams)
 
 Create an instance in the dataset
 
-| Option   | Type                              | Description                                                                                              | Required |
-| -------- | --------------------------------- | -------------------------------------------------------------------------------------------------------- | :------: |
-| instance | Instance\<InputType, OutputType\> | The instance data                                                                                        |    ✓     |
-| params   | FeathersParams                    | Feathers Query parameters. See [Feathers docs](https://docs.feathersjs.com/api/databases/querying.html). |          |
+| Option   | Type                              | Description                                                                                                   | Required |
+| -------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------- | :------: |
+| instance | Instance\<InputType, OutputType\> | The instance data                                                                                             |    ✓     |
+| params   | FeathersParams                    | Feathers Query parameters. See [Feathers docs](https://crow.docs.feathersjs.com/api/databases/querying.html). |          |
 
 ### .download()
 
@@ -225,9 +304,9 @@ async find(params?: FeathersParams): Promise<Paginated<Instance<InputType, Outpu
 
 Get instances from the dataset, optionally passing Feathers parameters. Results are paginated, using the same format as services.
 
-| Option | Type           | Description                                                                                              | Required |
-| ------ | -------------- | -------------------------------------------------------------------------------------------------------- | :------: |
-| params | FeathersParams | Feathers Query parameters. See [Feathers docs](https://docs.feathersjs.com/api/databases/querying.html). |          |
+| Option | Type           | Description                                                                                                   | Required |
+| ------ | -------------- | ------------------------------------------------------------------------------------------------------------- | :------: |
+| params | FeathersParams | Feathers Query parameters. See [Feathers docs](https://crow.docs.feathersjs.com/api/databases/querying.html). |          |
 
 ### .get()
 
@@ -237,10 +316,10 @@ async get(id: ObjectId, params?: FeathersParams): Promise<Instance<InputType, Ou
 
 Get an instance from the dataset by ID, optionally passing Feathers parameters.
 
-| Option | Type           | Description                                                                                              | Required |
-| ------ | -------------- | -------------------------------------------------------------------------------------------------------- | :------: |
-| id     | ObjectId       | The instance's unique ID                                                                                 |    ✓     |
-| params | FeathersParams | Feathers Query parameters. See [Feathers docs](https://docs.feathersjs.com/api/databases/querying.html). |          |
+| Option | Type           | Description                                                                                                   | Required |
+| ------ | -------------- | ------------------------------------------------------------------------------------------------------------- | :------: |
+| id     | ObjectId       | The instance's unique ID                                                                                      |    ✓     |
+| params | FeathersParams | Feathers Query parameters. See [Feathers docs](https://crow.docs.feathersjs.com/api/databases/querying.html). |          |
 
 ### .items()
 
@@ -248,11 +327,7 @@ Get an instance from the dataset by ID, optionally passing Feathers parameters.
 items(): ServiceIterable<Instance<InputType, OutputType>>
 ```
 
-Get a lazy service iterable to iterate over the dataset.
-
-::: warning TODO
-Document lazy iterables and service iterables in data stores?
-:::
+Get a lazy [service iterable](#serviceiterable) to iterate over the dataset.
 
 Example:
 
@@ -272,11 +347,11 @@ patch(id: ObjectId, changes: Partial<Instance>, params?: FeathersParams): Promis
 
 Patch an instance in the dataset
 
-| Option  | Type                | Description                                                                                              | Required |
-| ------- | ------------------- | -------------------------------------------------------------------------------------------------------- | :------: |
-| id      | ObjectId            | The instance's unique ID                                                                                 |    ✓     |
-| changes | Partial\<Instance\> | The instance data                                                                                        |    ✓     |
-| params  | FeathersParams      | Feathers Query parameters. See [Feathers docs](https://docs.feathersjs.com/api/databases/querying.html). |          |
+| Option  | Type                | Description                                                                                                   | Required |
+| ------- | ------------------- | ------------------------------------------------------------------------------------------------------------- | :------: |
+| id      | ObjectId            | The instance's unique ID                                                                                      |    ✓     |
+| changes | Partial\<Instance\> | The instance data                                                                                             |    ✓     |
+| params  | FeathersParams      | Feathers Query parameters. See [Feathers docs](https://crow.docs.feathersjs.com/api/databases/querying.html). |          |
 
 ### .remove()
 
@@ -286,10 +361,10 @@ remove(id: ObjectId, params?: FeathersParams): Promise<Instance>
 
 Remove an instance from the dataset
 
-| Option | Type           | Description                                                                                              | Required |
-| ------ | -------------- | -------------------------------------------------------------------------------------------------------- | :------: |
-| id     | ObjectId       | The instance's unique ID                                                                                 |    ✓     |
-| params | FeathersParams | Feathers Query parameters. See [Feathers docs](https://docs.feathersjs.com/api/databases/querying.html). |          |
+| Option | Type           | Description                                                                                                   | Required |
+| ------ | -------------- | ------------------------------------------------------------------------------------------------------------- | :------: |
+| id     | ObjectId       | The instance's unique ID                                                                                      |    ✓     |
+| params | FeathersParams | Feathers Query parameters. See [Feathers docs](https://crow.docs.feathersjs.com/api/databases/querying.html). |          |
 
 ### .sift()
 
@@ -297,11 +372,11 @@ Remove an instance from the dataset
 sift(query: Query = {}): void
 ```
 
-Filter the contents of the dataset from a [Feathers Query](https://docs.feathersjs.com/api/databases/querying.html). Sifting a dataset enforces that instances respect a given query. This affects all interactions with the dataset and dependent components. Note that it is possible to create several instances of datasets with different sift filters, that point to the same data store service (effectively creating different views on a given data collection).
+Filter the contents of the dataset from a [Feathers Query](https://crow.docs.feathersjs.com/api/databases/querying.html). Sifting a dataset enforces that instances respect a given query. This affects all interactions with the dataset and dependent components. Note that it is possible to create several instances of datasets with different sift filters, that point to the same data store service (effectively creating different views on a given data collection).
 
-| Option | Type  | Description                                                                                              | Required |
-| ------ | ----- | -------------------------------------------------------------------------------------------------------- | :------: |
-| query  | Query | Feathers Query parameters. See [Feathers docs](https://docs.feathersjs.com/api/databases/querying.html). |          |
+| Option | Type  | Description                                                                                                   | Required |
+| ------ | ----- | ------------------------------------------------------------------------------------------------------------- | :------: |
+| query  | Query | Feathers Query parameters. See [Feathers docs](https://crow.docs.feathersjs.com/api/databases/querying.html). |          |
 
 ### .update()
 
@@ -311,11 +386,11 @@ update(id: ObjectId, instance: Instance<InputType, OutputType>, params?: Feather
 
 Update an instance in the dataset
 
-| Option   | Type                              | Description                                                                                              | Required |
-| -------- | --------------------------------- | -------------------------------------------------------------------------------------------------------- | :------: |
-| id       | ObjectId                          | The instance's unique ID                                                                                 |    ✓     |
-| instance | Instance\<InputType, OutputType\> | The instance data                                                                                        |    ✓     |
-| params   | FeathersParams                    | Feathers Query parameters. See [Feathers docs](https://docs.feathersjs.com/api/databases/querying.html). |          |
+| Option   | Type                              | Description                                                                                                   | Required |
+| -------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------- | :------: |
+| id       | ObjectId                          | The instance's unique ID                                                                                      |    ✓     |
+| instance | Instance\<InputType, OutputType\> | The instance data                                                                                             |    ✓     |
+| params   | FeathersParams                    | Feathers Query parameters. See [Feathers docs](https://crow.docs.feathersjs.com/api/databases/querying.html). |          |
 
 ### .upload()
 
@@ -333,7 +408,7 @@ Upload a dataset from files.
 
 Marcelle provides a dedicated package for server-side data storage: [`@marcellejs/backend`](https://www.npmjs.com/package/@marcellejs/backend). It can easily be integrated into existing Marcelle applications using the CLI, and only require minimal configuration for local use.
 
-Marcelle backends are [FeathersJS](https://docs.feathersjs.com/) applications, that provide persistent data storage with either NeDb or MongoDb.
+Marcelle backends are [FeathersJS](https://crow.docs.feathersjs.com/) applications, that provide persistent data storage with either NeDb or MongoDb.
 
 ::: warning Disclaimer
 The backend package is under active development and is not yet stable. It is not production-ready.
@@ -392,7 +467,7 @@ const store = dataStore('http://localhost:3030');
 
 ### Configuration
 
-Backends can be configured through two JSON files located in the `backend/config` directory, for development of production. Please refer to [Feather's documentation](https://docs.feathersjs.com/api/configuration.html) for general information about Feathers configuration. In this section, we detail Marcelle-specific configuration only.
+Backends can be configured through two JSON files located in the `backend/config` directory, for development of production. Please refer to [Feather's documentation](https://crow.docs.feathersjs.com/api/configuration.html) for general information about Feathers configuration. In this section, we detail Marcelle-specific configuration only.
 
 | name                   | type             | default                                      | description                                                                                                                                  |
 | ---------------------- | ---------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -408,3 +483,29 @@ Backends can be configured through two JSON files located in the `backend/config
 | paginate.default       | number           | 100                                          | The default number of items per page for all requests                                                                                        |
 | paginate.max           | number           | 1000                                         | The maximum number of items per page for all requests                                                                                        |
 | authentication.enabled | boolean          | false                                        | Whether or not to enable authentication                                                                                                      |
+
+### Permissions
+
+It is possible to specify the permissions for a particular project in the configuration file. The `permissions` field of the config file accepts a record associating the role name ("editor" by default) to an array of [CASL](https://casl.js.org/v6/en/) Rules.
+
+The following example specifies a default set of permissions:
+
+```json
+  "permissions": {
+    "superadmin": [
+      {"action": "manage", "subject": "all"}
+    ],
+    "admin": [
+      { "action": "manage", "subject": "all", "conditions": { "userId": "${user._id}" } },
+      { "action": "manage", "subject": "all", "conditions": { "public": "${true}" } },
+      { "action": "manage", "subject": "users" }
+    ],
+    "editor": [
+      { "action": "manage", "subject": "all", "conditions": { "userId": "${user._id}" } },
+      { "action": "manage", "subject": "all", "conditions": { "public": "${true}" } },
+      { "action": "read", "subject": "users" },
+      { "action": "update", "subject": "users", "conditions": { "_id": "${user._id}" } },
+      { "action": "delete", "subject": "users", "conditions": { "_id": "${user._id}" }, "inverted": "true" }
+    ]
+  }
+```

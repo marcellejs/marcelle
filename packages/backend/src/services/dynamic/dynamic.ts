@@ -12,14 +12,14 @@ export * from './dynamic.class';
 // A configure function that registers the service and its hooks via `app.configure`
 export const dynamic = (app: Application) => {
   // Register our service on the Feathers application
-  app.declareService(dynamicPath, new DynamicService(getOptions(app)), {
+  app.use(dynamicPath, new DynamicService(getOptions(app)), {
     // A list of all methods this service exposes externally
     methods: dynamicMethods,
     // You can add additional custom events to be sent to clients here
     events: [],
   });
   // Initialize hooks
-  app.getService(dynamicPath).hooks({
+  app.service(dynamicPath).hooks({
     around: {
       all: [],
     },

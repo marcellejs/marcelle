@@ -1,5 +1,16 @@
 # Marcelle changelog
 
+## 0.6.5
+
+## 0.6.4
+
+### Patch Changes
+
+- 1dd0d82: Remove the API Prefix configuration in favor of Nginx configuration
+- f3644e6: Setup permission configuration in backend configs files, using CASL
+
+## 0.6.3
+
 ## 0.6.2
 
 ## 0.6.1

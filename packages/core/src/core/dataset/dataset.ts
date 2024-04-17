@@ -89,7 +89,9 @@ export class Dataset<T extends Instance> extends Component {
   }
 
   protected async reset(): Promise<void> {
-    const { total } = (await this.find({ query: { $limit: 0 } })) as Paginated<Partial<T>>;
+    const { total } = (await this.find({ query: { ...this.query, $limit: 0 } })) as Paginated<
+      Partial<T>
+    >;
     this.$count.set(total);
     this.$changes.set([
       {

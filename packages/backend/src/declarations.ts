@@ -1,11 +1,5 @@
 // For more information about this file see https://dove.feathersjs.com/guides/cli/typescript.html
-import {
-  HookContext as FeathersHookContext,
-  FeathersService,
-  NextFunction,
-  ServiceInterface,
-  ServiceOptions,
-} from '@feathersjs/feathers';
+import { HookContext as FeathersHookContext, NextFunction } from '@feathersjs/feathers';
 import { Application as FeathersApplication } from '@feathersjs/koa';
 
 import { User } from './services/users/users';
@@ -49,6 +43,7 @@ export interface Configuration {
       passwordField: string;
     };
   };
+  permissions: Record<string, unknown>;
 }
 
 // A mapping of service names to types. Will be extended in service files.
@@ -56,19 +51,7 @@ export interface Configuration {
 export interface ServiceTypes {}
 
 // The application instance type that will be used everywhere else
-export type Application = FeathersApplication<ServiceTypes, Configuration> & {
-  getService<L extends keyof ServiceTypes>(
-    location: L,
-  ): FeathersService<Application, ServiceTypes[L]>;
-  getServicePath<L extends keyof ServiceTypes>(location: L): string;
-  declareService<L extends keyof ServiceTypes>(
-    location: L,
-    service: keyof any extends keyof ServiceTypes
-      ? ServiceInterface | Application
-      : ServiceTypes[L],
-    options?: ServiceOptions<keyof any extends keyof ServiceTypes ? string : keyof ServiceTypes[L]>,
-  ): Application;
-};
+export type Application = FeathersApplication<ServiceTypes, Configuration>;
 
 // The context for hook functions - can be typed with a service class
 export type HookContext<S = any> = FeathersHookContext<Application, S>;
