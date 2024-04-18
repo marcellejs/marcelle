@@ -21,8 +21,8 @@
     "svelte": "^3.54.0"
   },
   "dependencies": {
-    "@feathersjs/feathers": "^5.0.8",
-    "date-fns": "^2.30.0"
+    "@feathersjs/feathers": "^5.0.24",
+    "date-fns": "^3.6.0"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^2.1.1",
@@ -30,16 +30,16 @@
     "@sveltejs/package": "^2.3.1",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
-    "postcss-load-config": "^4.0.2",
-    "publint": "^0.2.2",
-    "svelte": "^4.2.0",
+    "postcss-load-config": "^5.0.3",
+    "publint": "^0.2.7",
+    "svelte": "^4.2.15",
     "svelte-check": "^3.6.9",
     "svelte-preprocess": "^5.1.3",
-    "svelte2tsx": "^0.6.27",
+    "svelte2tsx": "^0.7.6",
     "tailwindcss": "^3.4.3",
     "tslib": "^2.6.2",
-    "typescript": "^5.2.2",
-    "vite": "^4.5.3"
+    "typescript": "^5.4.5",
+    "vite": "^5.2.9"
   },
   "exports": {
     "./package.json": "./package.json",
