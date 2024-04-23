@@ -49,6 +49,7 @@ async function generate_templates(shared) {
     const ts = [];
 
     for (const name of glob('**/*', { cwd, filesOnly: true, dot: true })) {
+      console.log('name', name);
       // the package.template.json thing is a bit annoying — basically we want
       // to be able to develop and deploy the app from here, but have a different
       // package.json in newly created projects (based on package.template.json)
@@ -75,14 +76,14 @@ async function generate_templates(shared) {
           }"`,
         );
         fs.writeFileSync(`${dir}/package.json`, contents);
-        return;
+        continue;
       }
 
       // ignore files that are written conditionally
-      if (shared.has(name)) return;
+      if (shared.has(name)) continue;
 
       // ignore contents of .gitignore or .ignore
-      if (!gitignore.accepts(name) || !ignore.accepts(name) || name === '.ignore') return;
+      if (!gitignore.accepts(name) || !ignore.accepts(name) || name === '.ignore') continue;
 
       if (/\.(js|ts|html|svelte|svelte\.md)$/.test(name)) {
         const contents = fs.readFileSync(path.join(cwd, name), 'utf8');
