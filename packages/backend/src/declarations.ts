@@ -10,7 +10,6 @@ export { NextFunction };
 export interface Configuration {
   host: string;
   port: number;
-  apiPrefix: string;
   database: 'mongodb';
   whitelist: {
     services: '*' | string[];

@@ -217,11 +217,11 @@ export class DataStore {
     //   this.backend === DataStoreBackend.Remote
     //     ? this.feathers.service(`${this.apiPrefix}/${name}`)
     //     : this.feathers.service(name);
-    const s:Service<T> = this.feathers.service(name)as Service<T>;
+    const s: Service<T> = this.feathers.service(name) as Service<T>;
     if (!serviceExists) {
       s.items = () => iterableFromService(s);
     }
-    return s ;
+    return s;
   }
 
   async uploadAsset(blob: Blob, filename = ''): Promise<string> {
