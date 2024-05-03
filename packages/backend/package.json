@@ -3,9 +3,9 @@
   "description": "A real-time server for Marcelle applications",
   "version": "0.6.5",
   "homepage": "",
-  "private": true,
   "keywords": [
-    "feathers"
+    "feathers",
+    "marcelle"
   ],
   "author": {
     "name": "Jules Françoise",
@@ -67,7 +67,7 @@
     "@feathersjs/rest-client": "^5.0.24",
     "@feathersjs/typebox": "^5.0.24",
     "@types/mocha": "^10.0.6",
-    "@types/node": "^20.12.7",
+    "@types/node": "^20.12.8",
     "axios": "^1.6.8",
     "cross-env": "^7.0.3",
     "mocha": "^10.4.0",

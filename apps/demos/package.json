@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@marcellejs/core": "workspace:^0.6.5",
-    "@tensorflow/tfjs-core": "^4.18.0",
-    "@tensorflow/tfjs-layers": "^4.18.0"
+    "@tensorflow/tfjs-core": "^4.19.0",
+    "@tensorflow/tfjs-layers": "^4.19.0"
   },
   "devDependencies": {
     "@marcellejs/design-system": "workspace:^0.6.5",
@@ -20,6 +20,6 @@
     "svelte": "^4.2.15",
     "svelte-bricks": "^0.2.1",
     "svelte-select": "^5.8.3",
-    "vite": "^5.2.9"
+    "vite": "^5.2.11"
   }
 }
