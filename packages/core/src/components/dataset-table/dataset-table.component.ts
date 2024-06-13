@@ -6,7 +6,7 @@ export class DatasetTable<T extends Instance> extends Component {
 
   #dataset: Dataset<T>;
   $columns: Stream<string[]>;
-  $selection: Stream<T[]> = new Stream([], true);
+  $selection = new Stream<T[]>([], true);
 
   singleSelection = false;
 

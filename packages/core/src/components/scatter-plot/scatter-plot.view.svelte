@@ -4,7 +4,7 @@
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
   import { ViewContainer } from '@marcellejs/design-system';
-  import { Stream } from '../../core/stream';
+  import type { Stream } from '../../core/stream';
 
   export let title: string;
   export let embedding: Stream<number[][]>;
@@ -31,7 +31,7 @@
           labs = labels.get();
         }
 
-        const dataset = new ScatterGL.Dataset(points as [number, number][]);
+        const dataset = new ScatterGL.Dataset(points as Array<[number, number]>);
         scatterGL.render(dataset);
 
         const classIndices = Array.from(new Set(labs));

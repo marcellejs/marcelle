@@ -23,7 +23,7 @@ export class CocoSsd extends Model<CocoInstance, ObjectDetectorResults> {
 
   #coco: ObjectDetection;
   #base: ObjectDetectionBaseModel;
-  $loading: Stream<boolean> = new Stream(true as boolean, true);
+  $loading = new Stream<boolean>(true, true);
 
   constructor({ base = 'lite_mobilenet_v2' }: CocoSsdOptions = {}) {
     super();

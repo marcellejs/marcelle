@@ -3,7 +3,7 @@
   import { Button } from '@marcellejs/design-system';
 
   export let title: string;
-  export let items: { [slug: string]: string };
+  export let items: Record<string, string>;
   export let current: string;
   export let closable: boolean;
   export let showSettings = false;

@@ -2,7 +2,7 @@
   import { onDestroy, onMount, tick } from 'svelte';
   import type { GenericChart } from '../generic-chart';
 
-  export let charts: { [key: string]: GenericChart };
+  export let charts: Record<string, GenericChart>;
 
   let container: HTMLElement;
   let refs: HTMLDivElement[] = [];
@@ -28,6 +28,7 @@
 </script>
 
 <div bind:this={container} class="grid grid-cols-1 gap-1">
+  <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
   {#each Object.values(charts) as _, i}
     <div bind:this={refs[i]} class="card inner-card xl:flex-1" />
   {/each}

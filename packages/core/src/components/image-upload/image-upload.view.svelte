@@ -78,7 +78,7 @@
     // const imgPromises = [];
     let p = Promise.resolve();
     for (let i = 0; i < f.length; i++) {
-      const file = f[i];
+      const file = f.item(i);
       const isImage = file.type.match('image.*');
       if (isImage) {
         p = p.then(() => processImageFile(file));

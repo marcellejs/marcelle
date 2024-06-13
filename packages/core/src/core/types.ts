@@ -11,10 +11,8 @@ export interface ComponentInternals {
 }
 
 export interface Parametrable {
-  parameters: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [name: string]: Stream<any>;
-  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  parameters: Record<string, Stream<any>>;
 }
 
 export type ObjectId = string;
@@ -69,7 +67,7 @@ export interface TrainingRun {
   epochs?: number;
   params?: Record<string, unknown>;
   logs?: TrainingStatus['data'];
-  checkpoints?: Array<ModelCheckpoint>;
+  checkpoints?: ModelCheckpoint[];
   model?: {
     summary?: string;
     [key: string]: unknown;

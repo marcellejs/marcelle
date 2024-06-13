@@ -25,8 +25,8 @@ export class DatasetScatter<T extends Instance> extends Component {
   };
 
   $data = new Stream<ChartConfiguration['data']>(undefined, true);
-  $hovered: Stream<ObjectId[]> = new Stream([], true);
-  $clicked: Stream<ObjectId[]> = new Stream([], true);
+  $hovered = new Stream<ObjectId[]>([], true);
+  $clicked = new Stream<ObjectId[]>([], true);
 
   constructor(private dataset: Dataset<T>) {
     super();

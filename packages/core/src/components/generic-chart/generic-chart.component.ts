@@ -110,7 +110,7 @@ export class GenericChart extends Component {
 
   #presetName: string;
   #preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };
-  #datasets: Array<ChartDataset> = [];
+  #datasets: ChartDataset[] = [];
   options: ChartJsOptions & { xlabel?: string; ylabel?: string };
 
   constructor({ preset = 'line', options = {} }: GenericChartOptions = {}) {

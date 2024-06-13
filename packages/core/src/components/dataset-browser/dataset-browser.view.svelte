@@ -21,7 +21,7 @@
     {
       total: number;
       loaded: number;
-      instances: Partial<DBInstance>[];
+      instances: Array<Partial<DBInstance>>;
     }
   > = {};
 
@@ -218,8 +218,8 @@
               ({ id }) => id !== data.id,
             );
             if (classes[originalLabel].total === 0) {
+              // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
               delete classes[originalLabel];
-              // eslint-disable-next-line no-self-assign
               classes = classes;
             }
             if (!classes[data.y]) {
@@ -240,8 +240,8 @@
               ({ id }) => id !== data.id,
             );
             if (classes[data.y].total === 0) {
+              // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
               delete classes[data.y];
-              // eslint-disable-next-line no-self-assign
               classes = classes;
             }
           }

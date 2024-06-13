@@ -41,7 +41,7 @@
   function processFiles(f: FileList) {
     const files: File[] = [];
     for (let i = 0; i < f.length; i++) {
-      files.push(f[i]);
+      files.push(f.item(i));
     }
     fileStream.set(files);
   }

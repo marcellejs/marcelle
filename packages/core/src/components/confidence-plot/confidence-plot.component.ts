@@ -7,7 +7,7 @@ import { text, Text } from '../text';
 export class ConfidencePlot extends Component {
   title = 'confidence plot';
 
-  $confidenceStream: Stream<{ x: string; y: number }[]>;
+  $confidenceStream: Stream<Array<{ x: string; y: number }>>;
   #plotConfidences: GenericChart;
   #displayLabel: Text;
 

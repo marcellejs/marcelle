@@ -75,6 +75,7 @@
     <div class="bg-white border-t border-gray-300 px-4 py-2 grid grid-cols-3">
       <div><Button type="danger" on:click={quit}>Close</Button></div>
       <div class="text-center">
+        <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
         {#each Array(pages.length) as _, i}
           <button on:click={() => goToPage(i)} class="page-button" class:current={$current === i} />
         {/each}

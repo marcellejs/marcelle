@@ -1,7 +1,10 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable max-classes-per-file */
 // Simple router inspired by Routie: https://github.com/jgallen23/routie
-type RoutieKey = { name: string; optional: boolean };
+interface RoutieKey {
+  name: string;
+  optional: boolean;
+}
 type RoutieParams = unknown[];
 type RoutieCallback = (...params: RoutieParams) => void;
 
@@ -46,7 +49,10 @@ class Route {
   params: Record<string, string> = {};
   regex: RegExp;
 
-  constructor(public path: string, public name: string) {
+  constructor(
+    public path: string,
+    public name: string,
+  ) {
     this.regex = pathToRegexp(this.path, this.keys, false, false);
   }
 
@@ -122,8 +128,7 @@ export default class Router {
 
   reload(): void {
     const hash = window.location.hash.substring(1);
-    for (let i = 0; i < this.routes.length; i++) {
-      const route = this.routes[i];
+    for (const route of this.routes) {
       if (checkRoute(hash, route)) {
         return;
       }

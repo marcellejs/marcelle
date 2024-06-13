@@ -38,7 +38,7 @@ export class DataStore {
   location: string;
   apiPrefix = '';
 
-  $services: Stream<string[]> = new Stream([], true);
+  $services = new Stream<string[]>([], true);
 
   #initPromise: Promise<void>;
   #connectPromise: Promise<void>;
@@ -180,10 +180,10 @@ export class DataStore {
       props: { dataStore: this },
     });
     return new Promise<User>((resolve, reject) => {
-      app.$on('terminate', (user: User) => {
+      app.$on('terminate', (e: CustomEvent<User>) => {
         app.$destroy();
-        if (user) {
-          resolve(user);
+        if (e.detail) {
+          resolve(e.detail);
         } else {
           reject();
         }

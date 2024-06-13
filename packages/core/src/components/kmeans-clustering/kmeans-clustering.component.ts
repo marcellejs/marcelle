@@ -42,7 +42,7 @@ export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
 
   $centers: Stream<number[][]>;
   $clusters: Stream<number[]>;
-  extremes: { min: number; max: number }[];
+  extremes: Array<{ min: number; max: number }>;
   dataset: number[][];
 
   constructor({ k = 3 }: Partial<KMeansClusteringOptions> = {}) {
@@ -73,7 +73,7 @@ export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
   async predict(x: number[]): Promise<ClusteringResults> {
     let cluster = 0;
     let minDistance = 1000;
-    const confidences: { [key: string]: number } = {};
+    const confidences: Record<string, number> = {};
     let distSum = 0;
     for (let i = 0; i < this.$centers.get().length; i++) {
       const dist = euclideanDistance(this.$centers.get()[i], x);
@@ -104,8 +104,8 @@ export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
       data.push(x);
     }
     const resPromises: ClusteringResults[] = [];
-    for (let i = 0; i < data.length; i++) {
-      this.predict(data[i]).then((result) => resPromises.push(result));
+    for (const x of data) {
+      this.predict(x).then((result) => resPromises.push(result));
     }
     if (this.$centers.get().length === 0) {
       const e = new Error('KMeans is not trained');

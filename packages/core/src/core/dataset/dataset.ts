@@ -30,8 +30,8 @@ export class Dataset<T extends Instance> extends Component {
   query: Query = {};
   #updatedCreate = new Set<string>();
 
-  $count: Stream<number> = new Stream(0, true);
-  $changes: Stream<DatasetChange[]> = new Stream([]);
+  $count = new Stream<number>(0, true);
+  $changes = new Stream<DatasetChange[]>([]);
 
   constructor(name: string, store = dataStore()) {
     super();
@@ -230,9 +230,9 @@ export class Dataset<T extends Instance> extends Component {
     await this.remove(null, { query: {} });
   }
 
-  async distinct(field: string): Promise<T['y'][]> {
+  async distinct(field: string): Promise<Array<T['y']>> {
     const query = { $distinct: field, ...this.query };
-    return this.instanceService.find({ query }) as Promise<T['y'][]>;
+    return this.instanceService.find({ query }) as Promise<Array<T['y']>>;
   }
 
   async download(): Promise<void> {
