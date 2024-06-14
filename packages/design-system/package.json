@@ -18,7 +18,7 @@
     "dist"
   ],
   "peerDependencies": {
-    "svelte": "^3.54.0"
+    "svelte": "^4.2.18"
   },
   "dependencies": {
     "@feathersjs/feathers": "^5.0.26",
