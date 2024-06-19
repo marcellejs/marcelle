@@ -4,6 +4,17 @@ import { logger } from '../logger';
 
 export const logError = async (context: HookContext, next: NextFunction) => {
   try {
+    let msg = `${context.method} called on '${context.path}'`;
+    if (context.id) {
+      msg += ` (id: ${context.id})`;
+    }
+    if (context.params.query && Object.keys(context.params.query).length > 0) {
+      msg += `, with query ${JSON.stringify(context.params.query)}`;
+    }
+    if (context.data) {
+      msg += `, with data fields [${Object.keys(context.data).join(', ')}]`;
+    }
+    logger.debug(msg);
     await next();
   } catch (error: any) {
     logger.error(error.stack);

@@ -14,6 +14,7 @@ import {
   userPatchResolver,
   userQueryResolver,
 } from './users.schema';
+import { logger } from '../../logger';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const authorizeHook = authorize({ adapter: '@feathersjs/mongodb' });
@@ -98,6 +99,13 @@ export default {
 
   after: {
     all: [],
+    create: [
+      (context: HookContext): HookContext => {
+        const user = context.data;
+        logger.debug(`created user ${user.id} with role '${user.role}'`);
+        return context;
+      },
+    ],
   },
   error: {
     all: [],
