@@ -7,7 +7,7 @@ import { logError } from './hooks/log-error';
 
 function normalizeMongoIds(context: HookContext<Application>): HookContext<Application> {
   if (
-    context.app.get('database') !== 'mongodb' ||
+    // context.app.get('database') !== 'mongodb' ||
     ['authentication', 'feathers-debugger'].includes(context.path) ||
     !context.params?.query ||
     context.type !== 'before'
@@ -18,10 +18,10 @@ function normalizeMongoIds(context: HookContext<Application>): HookContext<Appli
   const { query } = context.params;
   if (Object.keys(query).includes('_id')) {
     if (typeof query._id === 'string') {
-      context.params.query._id = new ObjectId(query._id);
+      context.params.query._id = new ObjectId(query._id as string);
     }
     if (typeof query._id === 'object' && query._id.$ne) {
-      context.params.query._id.$ne = new ObjectId(query._id.$ne);
+      context.params.query._id.$ne = new ObjectId(query._id.$ne as string);
     }
     if (typeof query._id === 'object' && query._id.$in) {
       context.params.query._id.$in = query._id.$in.map((x: string) => new ObjectId(x));
