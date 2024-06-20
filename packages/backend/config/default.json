@@ -22,7 +22,8 @@
     "secret": "QnksTHWnxvIcN74yeDHf18sMYGr8565j",
     "authStrategies": [
       "jwt",
-      "local"
+      "local",
+      "anonymous"
     ],
     "jwtOptions": {
       "header": {

@@ -29,7 +29,7 @@ export const channels = (app: Application) => {
     }
   });
 
-  // TODO:CASL
+  // TODO: CASL
   const caslOptions = makeChannelOptions(app);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

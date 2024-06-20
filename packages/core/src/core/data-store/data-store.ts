@@ -235,28 +235,32 @@ export class DataStore {
     if (this.backend !== DataStoreBackend.Remote) {
       throwError(new Error('LocalStorage Backend does not yet support upload'));
     }
-    // try {
-    const ext = blob.type.split(';')[0].split('/')[1];
-    const name = filename || `asset.${ext}`;
-    const fd = new FormData();
-    fd.append(name, blob);
-    const fetchOptions: RequestInit = { method: 'POST', body: fd };
-    if (this.requiresAuth) {
-      const jwt = await this.feathers.authentication.getAccessToken();
-      const headers = new Headers({ Authorization: `Bearer ${jwt}` });
-      fetchOptions.headers = headers;
+
+    try {
+      const ext = blob.type.split(';')[0].split('/')[1];
+      const name = filename || `asset.${ext}`;
+      const fd = new FormData();
+      fd.append(name, blob);
+
+      const fetchOptions: RequestInit = { method: 'POST', body: fd };
+      if (this.requiresAuth) {
+        const jwt = await this.feathers.authentication.getAccessToken();
+        const headers = new Headers({ Authorization: `Bearer ${jwt}` });
+        fetchOptions.headers = headers;
+      }
+      const res = await fetch(`${this.location}/assets`, fetchOptions);
+      const resData = await res.json();
+
+      if (res.status === 403) {
+        const e = new Error(resData.message);
+        e.name = resData.name;
+        throw e;
+      }
+
+      return resData;
+    } catch (error) {
+      throwError(error as Error);
     }
-    const res = await fetch(`${this.location}/assets/upload`, fetchOptions);
-
-    const resData = await res.json();
-    // TODO: Create asset document so that it can be removed
-    // this.service('assets').create({url: resData.blob})
-    const filePath = `/assets/${resData.blob}`;
-
-    return filePath;
-    // } catch (err) {
-    //   console.error(err);
-    // }
   }
 
   setupAppHooks(): void {

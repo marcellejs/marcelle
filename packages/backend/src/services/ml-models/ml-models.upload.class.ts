@@ -5,7 +5,9 @@ import type { Id, NullableId, Params, ServiceInterface } from '@feathersjs/feath
 import type { Application } from '../../declarations';
 
 type MLModelUploads = Array<[string, string]>;
-type MLModelUploadsData = { files: MLModelUploads };
+interface MLModelUploadsData {
+  files: MLModelUploads;
+}
 type MLModelUploadsPatch = never;
 type MLModelUploadsQuery = never;
 
