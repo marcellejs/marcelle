@@ -17,7 +17,10 @@ import {
 import { logger } from '../../logger';
 // Don't remove this comment. It's needed to format import lines nicely.
 
-const authorizeHook = authorize({ adapter: '@feathersjs/mongodb' });
+const authorizeHook = authorize({
+  adapter: '@feathersjs/mongodb',
+  availableFields: ['email', 'role'],
+});
 
 export async function setRole(context: HookContext): Promise<HookContext> {
   const { type, data, service } = context;
@@ -25,12 +28,9 @@ export async function setRole(context: HookContext): Promise<HookContext> {
     throw new Error('The "setRole" hook should only be used as a "before" hook.');
   }
 
-  // const { type, data } = context;
-  // const role = 'Editor';
-
   const { total } = await service.find({ query: { $limit: 0 } });
   // Set first user to Admin
-  const role = total > 0 ? 'Editor' : 'Admin';
+  const role = total > 0 ? 'editor' : 'admin';
 
   const addRole = (d: Record<string, unknown>) => {
     if (!d) {
@@ -87,7 +87,12 @@ export default {
         return context;
       },
     ],
-    update: [authenticate('jwt'), authorizeHook],
+    update: [
+      authenticate('jwt'),
+      authorizeHook,
+      schemaHooks.validateData(userDataValidator),
+      schemaHooks.resolveData(userDataResolver),
+    ],
     patch: [
       authenticate('jwt'),
       authorizeHook,

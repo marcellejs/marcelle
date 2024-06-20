@@ -148,10 +148,17 @@ export class DataStore {
       return new Promise<void>((resolve, reject) => {
         this.feathers
           .reAuthenticate()
+          .catch(() => {
+            return this.feathers.authenticate({ strategy: 'anonymous' });
+          })
           .then(({ user }) => {
             this.#authenticating = false;
             this.user = user;
-            logger.log(`Authenticated as ${user.email}`);
+            if (user.role === 'anonymous') {
+              logger.log(`Accessing DataStore Anonymously.`);
+            } else {
+              logger.log(`Authenticated as ${user.email}.`);
+            }
             resolve();
           })
           .catch((err) => {

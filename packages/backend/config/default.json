@@ -45,9 +45,12 @@
     "editor": [
       { "action": "manage", "subject": "all", "conditions": { "userId": "${user._id}" } },
       { "action": "manage", "subject": "all", "conditions": { "public": "${true}" } },
-      { "action": "read", "subject": "users" },
+      { "action": "read", "subject": "users", "conditions": { "_id": "${user._id}" } },
       { "action": "update", "subject": "users", "conditions": { "_id": "${user._id}" } },
       { "action": "delete", "subject": "users", "conditions": { "_id": "${user._id}" }, "inverted": "true" }
+    ],
+    "anonymous": [
+      { "action": "read", "subject": "all", "conditions": { "public": "${true}" } }
     ]
   }
 }

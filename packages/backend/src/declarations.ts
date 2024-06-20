@@ -28,7 +28,7 @@ export interface Configuration {
     entity: string;
     service: string;
     secret: string;
-    authStrategies: Array<'jwt' | 'local'>;
+    authStrategies: Array<'jwt' | 'local' | 'anonymous'>;
     jwtOptions: {
       header: {
         typ: 'access';

@@ -21,6 +21,7 @@ export type Service<T> = FeathersService<T> & { items: () => ServiceIterable<T> 
 
 export interface User {
   email: string;
+  role?: string;
 }
 
 export interface Instance {

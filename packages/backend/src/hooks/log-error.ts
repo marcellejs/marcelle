@@ -4,7 +4,7 @@ import { logger } from '../logger';
 
 export const logError = async (context: HookContext, next: NextFunction) => {
   try {
-    let msg = `${context.method} called on '${context.path}'`;
+    let msg = `${context.params.provider || 'internal'}:${context.method} called on '${context.path}'`;
     if (context.id) {
       msg += ` (id: ${context.id})`;
     }

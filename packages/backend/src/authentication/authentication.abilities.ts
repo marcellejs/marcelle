@@ -51,7 +51,7 @@ export const defineRulesFor = (user: User, app: Application) => {
   const { can, cannot, rules } = new AbilityBuilder(createMongoAbility);
 
   const permissions = app.get('permissions');
-  console.log('permissions', permissions);
+
   if (permissions) {
     if (user.role && Object.keys(permissions).includes(user.role)) {
       try {
@@ -77,26 +77,29 @@ export const defineRulesFor = (user: User, app: Application) => {
   }
 
   can('read', 'all', { public: true });
+
+  if (user.role === 'anonymous') {
+    return rules;
+  }
+
   can('manage', 'all', { userId: user._id });
 
-  const usersPath = '/users';
   if (app.get('authentication').allowSignup) {
-    can('create', usersPath);
+    can('create', 'users');
   } else {
-    cannot('create', usersPath);
+    cannot('create', 'users');
   }
 
-  can('read', usersPath);
-  can(
-    'update',
-    usersPath, //, { _id: user._id }
-  );
-  // cannot('update', usersPath, ['role'], { _id: user._id });
-  cannot('delete', usersPath, { _id: user._id });
+  can('read', 'users', { _id: user._id });
+  can('update', 'users', { _id: user._id });
+  cannot('update', 'users', ['role'], { _id: user._id });
+  cannot('delete', 'users', { _id: user._id });
 
   if (user.role === 'admin') {
-    can('manage', usersPath);
+    can('manage', 'users');
   }
+
+  console.log(rules);
 
   return rules;
 };

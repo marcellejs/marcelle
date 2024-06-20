@@ -24,5 +24,7 @@ export const getOptions = (app: Application): MongoDBAdapterOptions => {
   return {
     paginate: app.get('paginate'),
     Model: app.get('mongodbClient').then((db) => db.collection('users')),
+    filters: { $nor: true },
+    operators: ['$nor'],
   };
 };
