@@ -34,7 +34,7 @@
   export let title: string;
   export let preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };
   export let options: ChartJsOptions & { xlabel?: string; ylabel?: string };
-  export let datasets: Array<ChartDataset>;
+  export let datasets: ChartDataset[];
 
   // Note: typings are very dirty here...
 
@@ -158,7 +158,7 @@
 
     const pointsPerSeries = datasets.map(({ dataStream }) => dataStream.get()?.length || 0);
     unSub = datasets.map(({ dataStream, options: localOptions }, i) =>
-      dataStream.subscribe((values: Array<number> | Array<{ x: unknown; y: unknown }>) => {
+      dataStream.subscribe((values: number[] | Array<{ x: unknown; y: unknown }>) => {
         if (values && chart) {
           const prevMaxPoint = pointsPerSeries.reduce((m, x) => Math.max(m, x));
           pointsPerSeries[i] = values.length;

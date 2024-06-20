@@ -88,7 +88,7 @@
 
 {#if showApp}
   <div
-    class="marcelle fixed h-screen w-full max-w-full overflow-y-scroll overflow-x-hidden top-0 left-0 z-50"
+    class="marcelle fixed h-screen w-full max-w-full overflow-y-scroll overflow-x-hidden top-0 left-0 z-40"
   >
     <div class="app-container" transition:blur={{ amount: 10, duration: closable ? 400 : 0 }}>
       <DashboardHeader

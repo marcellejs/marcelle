@@ -3,7 +3,7 @@
   import { Button } from '@marcellejs/design-system';
 
   export let title: string;
-  export let items: { [slug: string]: string };
+  export let items: Record<string, string>;
   export let current: string;
   export let closable: boolean;
   export let showSettings = false;
@@ -37,7 +37,7 @@
       <span class="mx-3 text-lg">{title}</span>
     </a>
     <nav class="flex items-stretch justify-start flex-wrap text-base grow mx-4">
-      {#each Object.entries(items) as [slug, name], index}
+      {#each Object.entries(items) as [slug, name]}
         <a
           href={`#${slug}`}
           class:active={!showSettings && current === name}

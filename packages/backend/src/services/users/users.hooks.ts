@@ -1,24 +1,36 @@
-import * as feathersAuthentication from '@feathersjs/authentication';
-import * as local from '@feathersjs/authentication-local';
 import { HookContext } from '@feathersjs/feathers';
-import { authorize } from 'feathers-casl/dist/hooks';
-import { defineAbilitiesFor } from '../../authentication/abilities';
+import { authorize } from 'feathers-casl';
+import { defineAbilitiesFor } from '../../authentication/authentication.abilities';
 import { Application } from '../../declarations';
+import { authenticate } from '@feathersjs/authentication';
+import { hooks as schemaHooks } from '@feathersjs/schema';
+import {
+  userDataValidator,
+  userPatchValidator,
+  userQueryValidator,
+  userResolver,
+  userExternalResolver,
+  userDataResolver,
+  userPatchResolver,
+  userQueryResolver,
+} from './users.schema';
+import { logger } from '../../logger';
 // Don't remove this comment. It's needed to format import lines nicely.
 
-const { authenticate } = feathersAuthentication.hooks;
-const { hashPassword, protect } = local.hooks;
+const authorizeHook = authorize({
+  adapter: '@feathersjs/mongodb',
+  availableFields: ['email', 'role'],
+});
 
-async function setRole(context: HookContext): Promise<HookContext> {
-  const { type, data } = context;
-  // const { type, data, service } = context;
-  // const { total } = await service.find({ query: { $limit: 0 } });
-  // const role = total > 0 ? 'Editor' : 'Admin';
-  const role = 'editor';
-
+export async function setRole(context: HookContext): Promise<HookContext> {
+  const { type, data, service } = context;
   if (type !== 'before') {
-    throw new Error('The "setField" hook should only be used as a "before" hook.');
+    throw new Error('The "setRole" hook should only be used as a "before" hook.');
   }
+
+  const { total } = await service.find({ query: { $limit: 0 } });
+  // Set first user to Admin
+  const role = total > 0 ? 'editor' : 'admin';
 
   const addRole = (d: Record<string, unknown>) => {
     if (!d) {
@@ -32,24 +44,39 @@ async function setRole(context: HookContext): Promise<HookContext> {
   return context;
 }
 
-function authenticateIfNecessary(context: HookContext): Promise<HookContext> {
+export function authenticateIfNecessary(context: HookContext): Promise<HookContext> {
   if (!context.app.get('authentication').allowSignup) {
-    return authenticate('jwt')(context).then((c) => authorize({ adapter: 'feathers-mongodb' })(c));
+    return authenticate('jwt')(context).then((c) => authorizeHook(c));
   }
   return Promise.resolve(context);
 }
 
 export default {
+  around: {
+    all: [
+      schemaHooks.resolveExternal(userExternalResolver),
+      schemaHooks.resolveResult(userResolver),
+    ],
+    find: [authenticate('jwt')],
+    get: [authenticate('jwt')],
+    create: [],
+    update: [authenticate('jwt')],
+    patch: [authenticate('jwt')],
+    remove: [authenticate('jwt')],
+  },
   before: {
-    all: [],
-    find: [authenticate('jwt'), authorize({ adapter: 'feathers-mongodb' })],
+    all: [
+      schemaHooks.validateQuery(userQueryValidator),
+      schemaHooks.resolveQuery(userQueryResolver),
+    ],
+    find: [authorizeHook],
     get: [
-      authenticate('jwt'),
-      //authorize({ adapter: 'feathers-mongodb' })
+      //authorizeHook
     ],
     create: [
       authenticateIfNecessary,
-      hashPassword('password'),
+      schemaHooks.validateData(userDataValidator),
+      schemaHooks.resolveData(userDataResolver),
       setRole,
       (context: HookContext): HookContext => {
         const user = context.data;
@@ -61,48 +88,31 @@ export default {
       },
     ],
     update: [
-      hashPassword('password'),
       authenticate('jwt'),
-      (context: HookContext) => {
-        const { user } = context.params;
-        console.log('authWriteHooks [update]', user?._id, context.id);
-      },
-      authorize({ adapter: 'feathers-mongodb' }),
+      authorizeHook,
+      schemaHooks.validateData(userDataValidator),
+      schemaHooks.resolveData(userDataResolver),
     ],
     patch: [
-      hashPassword('password'),
       authenticate('jwt'),
-      (context: HookContext) => {
-        const { user } = context.params;
-        console.log('authWriteHooks [patch]', user?._id, context.id);
-      },
-      authorize({ adapter: 'feathers-mongodb' }),
+      authorizeHook,
+      schemaHooks.validateData(userPatchValidator),
+      schemaHooks.resolveData(userPatchResolver),
     ],
-    remove: [authenticate('jwt'), authorize({ adapter: 'feathers-mongodb' })],
+    remove: [authenticate('jwt'), authorizeHook],
   },
 
   after: {
-    all: [
-      // Make sure the password field is never sent to the client
-      // Always must be the last hook
-      protect('password'),
-      // authorize({ adapter: 'feathers-mongodb' }),
+    all: [],
+    create: [
+      (context: HookContext): HookContext => {
+        const user = context.data;
+        logger.debug(`created user ${user.id} with role '${user.role}'`);
+        return context;
+      },
     ],
-    find: [],
-    get: [],
-    create: [],
-    update: [],
-    patch: [],
-    remove: [],
   },
-
   error: {
     all: [],
-    find: [],
-    get: [],
-    create: [],
-    update: [],
-    patch: [],
-    remove: [],
   },
 };

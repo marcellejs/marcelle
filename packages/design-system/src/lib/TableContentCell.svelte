@@ -33,14 +33,12 @@
   {#if type === 'image'}
     <img alt="thumbnail" src={value} width="30" height="30" class="rounded-md" />
   {:else if type === 'link'}
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <sl-button
-      type="text"
+    <Button
       size="small"
       on:click={() => {
         // eslint-disable-next-line no-console
         console.log('GOTO:', value.href);
-      }}>{value.text}</sl-button
+      }}>{value.text}</Button
     >
   {:else if type === 'action'}
     <Button size="small" on:click={() => dispatch('action', value)}>{value}</Button>

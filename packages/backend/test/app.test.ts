@@ -1,69 +1,40 @@
-// import assert from 'assert';
-import { Server } from 'http';
-import url from 'url';
+// For more information about this file see https://dove.feathersjs.com/guides/cli/app.test.html
+import assert from 'assert';
 import axios from 'axios';
+import type { Server } from 'http';
+import { app } from '../src/app';
 
-import app from '../src/app';
+const port = app.get('port');
+const appUrl = `http://${app.get('host')}:${port}`;
 
-const port = app.get('port') || 8998;
-const getUrl = (pathname?: string): string => url.format({
-  hostname: app.get('host') || 'localhost',
-  protocol: 'http',
-  port,
-  pathname
-});
-
-describe('Feathers application tests (with jest)', () => {
+describe('Feathers application tests', () => {
   let server: Server;
 
-  beforeAll(done => {
-    server = app.listen(port);
-    server.once('listening', () => done());
+  before(async () => {
+    server = await app.listen(port);
   });
 
-  afterAll(done => {
-    server.close(done);
+  after(async () => {
+    await app.teardown();
   });
 
   it('starts and shows the index page', async () => {
-    expect.assertions(1);
+    const { data } = await axios.get<string>(appUrl);
 
-    const { data } = await axios.get(getUrl());
-
-    expect(data.indexOf('<html lang="en">')).not.toBe(-1);
+    assert.ok(data.indexOf('<html lang="en">') !== -1);
   });
 
-  describe('404', () => {
-    it('shows a 404 HTML page', async () => {
-      expect.assertions(2);
-
-      try {
-        await axios.get(getUrl('path/to/nowhere'), {
-          headers: {
-            'Accept': 'text/html'
-          }
-        });
-      } catch (error) {
-        const { response } = error;
-
-        expect(response.status).toBe(404);
-        expect(response.data.indexOf('<html>')).not.toBe(-1);
-      }
-    });
-
-    it('shows a 404 JSON error without stack trace', async () => {
-      expect.assertions(4);
-
-      try {
-        await axios.get(getUrl('path/to/nowhere'));
-      } catch (error) {
-        const { response } = error;
-
-        expect(response.status).toBe(404);
-        expect(response.data.code).toBe(404);
-        expect(response.data.message).toBe('Page not found');
-        expect(response.data.name).toBe('NotFound');
-      }
-    });
+  it('shows a 404 JSON error', async () => {
+    try {
+      await axios.get(`${appUrl}/path/to/nowhere`, {
+        responseType: 'json',
+      });
+      assert.fail('should never get here');
+    } catch (error: any) {
+      const { response } = error;
+      assert.strictEqual(response?.status, 404);
+      assert.strictEqual(response?.data?.code, 404);
+      assert.strictEqual(response?.data?.name, 'NotFound');
+    }
   });
 });

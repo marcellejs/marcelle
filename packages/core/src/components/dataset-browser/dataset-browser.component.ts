@@ -15,7 +15,7 @@ export class DatasetBrowser extends Component {
   title = 'dataset browser';
 
   #dataset: Dataset<DBInstance>;
-  $selected: Stream<ObjectId[]> = new Stream([], true);
+  $selected = new Stream<ObjectId[]>([], true);
 
   batchSize: number;
 

@@ -7,7 +7,6 @@
     "allowJs": false,
     "strict": true,
     "strictNullChecks": false,
-    "importsNotUsedAsValues": "error",
     "noUnusedLocals": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,

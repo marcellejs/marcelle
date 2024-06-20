@@ -8,11 +8,11 @@ import { zip } from './combinators';
 import { reduce } from './reducers';
 
 export function isIterable<T>(item: unknown): item is Iterable<T> {
-  return typeof (<Iterable<T>>item)[Symbol.iterator] === 'function';
+  return typeof (item as Iterable<T>)[Symbol.iterator] === 'function';
 }
 
 export function isAsyncIterable<T>(item: unknown): item is AsyncIterable<T> {
-  return typeof (<AsyncIterable<T>>item)[Symbol.asyncIterator] === 'function';
+  return typeof (item as AsyncIterable<T>)[Symbol.asyncIterator] === 'function';
 }
 
 export class LazyIterable<T> implements AsyncIterable<T> {
@@ -23,7 +23,7 @@ export class LazyIterable<T> implements AsyncIterable<T> {
   }
 
   entries(): LazyIterable<[number, T]> {
-    return new LazyIterable(map(this.source, (elem, idx) => <[number, T]>[idx, elem]));
+    return new LazyIterable(map(this.source, (elem, idx) => [idx, elem]));
   }
 
   keys(): LazyIterable<number> {

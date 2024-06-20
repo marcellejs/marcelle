@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { bold, green } from 'kleur/colors';
 import prompts from 'prompts';
-import { paramCase, camelCase, pascalCase } from 'change-case';
+import { kebabCase, camelCase, pascalCase } from 'change-case';
 import { dist, mkdirp } from './utils.js';
 
 const onCancel = () => {
@@ -66,7 +66,7 @@ export async function generateComponent(cwd: string): Promise<void> {
 
   const lang = typescript ? 'ts' : 'js';
 
-  const dstComp = path.join(dst, paramCase(name));
+  const dstComp = path.join(dst, kebabCase(name));
   if (fs.existsSync(dstComp)) {
     const { confirm } = await prompts(
       [
@@ -89,15 +89,15 @@ export async function generateComponent(cwd: string): Promise<void> {
   const files = fs.readdirSync(dir).filter((x) => x !== '.DS_Store');
   for (const srcname of files) {
     let contents = fs.readFileSync(path.join(dir, srcname), 'utf-8');
-    contents = contents.replaceAll('/todo', `/${paramCase(name)}`);
+    contents = contents.replaceAll('/todo', `/${kebabCase(name)}`);
     contents = contents.replaceAll('Todo', pascalCase(name));
     contents = contents.replaceAll('todo', camelCase(name));
-    const dstName = srcname.replace('todo', paramCase(name));
+    const dstName = srcname.replace('todo', kebabCase(name));
     fs.writeFileSync(path.join(dstComp, dstName), contents);
     console.log(`\tadded: ${green('src/components/' + dstName)}`);
   }
   let contents = fs.readFileSync(path.join(dst, `index.${lang}`), 'utf-8').trim();
-  const exportLine = `export * from './${paramCase(name)}';`;
+  const exportLine = `export * from './${kebabCase(name)}';`;
   contents = `${contents}${contents ? '\n' : ''}${exportLine}\n`;
   fs.writeFileSync(path.join(dst, `index.${lang}`), contents);
   console.log(`\tmodified: ${green('src/components/index.' + lang)}`);

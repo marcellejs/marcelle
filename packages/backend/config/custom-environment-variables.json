@@ -1,0 +1,15 @@
+{
+  "host": "HOSTNAME",
+  "port": {
+    "__name": "PORT",
+    "__format": "number"
+  },
+  "mongodb": "MONGODB_URL",
+  "whitelist": {
+    "services": [],
+    "assets": ["jpg", "jpeg", "png", "wav"]
+  },
+  "authentication": {
+    "secret": "FEATHERS_SECRET"
+  }
+}

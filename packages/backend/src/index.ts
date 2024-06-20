@@ -1,15 +1,13 @@
-import logger from './logger';
-import app from './app';
+import { app } from './app';
+import { logger } from './logger';
 
 export default function runBackend(): void {
   const port = app.get('port');
-  const server = app.listen(port);
+  const host = app.get('host');
 
-  process.on('unhandledRejection', (reason, p) =>
-    logger.error('Unhandled Rejection at: Promise ', p, reason),
-  );
+  process.on('unhandledRejection', (reason) => logger.error('Unhandled Rejection %O', reason));
 
-  server.on('listening', () => {
-    logger.info('Marcelle Backend application started on http://%s:%d', app.get('host'), port);
+  app.listen(port).then(() => {
+    logger.info(`Marcelle Backend application started on http://${host}:${port}`);
   });
 }

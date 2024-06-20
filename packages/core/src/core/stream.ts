@@ -115,10 +115,9 @@ export class Stream<T> {
   async start(): Promise<void> {
     if (!this.#running) {
       Stream.numActive++;
-      // console.log('active streams: ', Stream.numActive);
+
       most.runEffects(this.stream, scheduler).then(() => {
         Stream.numActive--;
-        // console.log('active streams: ', Stream.numActive);
       });
       this.#running = true;
       this.#startPromise = new Promise<void>((resolve, reject) => {

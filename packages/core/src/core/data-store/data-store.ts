@@ -1,9 +1,9 @@
-import io from 'socket.io-client';
 import authentication from '@feathersjs/authentication-client';
-import feathers, { Application } from '@feathersjs/feathers';
+import { feathers, Application } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio-client';
-import memoryService from 'feathers-memory';
-import localStorageService from 'feathers-localstorage';
+import io from 'socket.io-client';
+import { MemoryService } from '@feathersjs/memory';
+import localStorageService from './feathers-localstorage';
 import { addObjectId, renameIdField, createDate, updateDate, findDistinct } from './hooks';
 import { logger } from '../logger';
 import Login from './Login.svelte';
@@ -38,7 +38,7 @@ export class DataStore {
   location: string;
   apiPrefix = '';
 
-  $services: Stream<string[]> = new Stream([], true);
+  $services = new Stream<string[]>([], true);
 
   #initPromise: Promise<void>;
   #connectPromise: Promise<void>;
@@ -109,7 +109,7 @@ export class DataStore {
       this.#createService = (name: string) => {
         this.feathers.use(
           `/${name}`,
-          memoryService({
+          new MemoryService({
             id: '_id',
             paginate: {
               default: 100,
@@ -148,10 +148,17 @@ export class DataStore {
       return new Promise<void>((resolve, reject) => {
         this.feathers
           .reAuthenticate()
+          .catch(() => {
+            return this.feathers.authenticate({ strategy: 'anonymous' });
+          })
           .then(({ user }) => {
             this.#authenticating = false;
             this.user = user;
-            logger.log(`Authenticated as ${user.email}`);
+            if (user.role === 'anonymous') {
+              logger.log(`Accessing DataStore Anonymously.`);
+            } else {
+              logger.log(`Authenticated as ${user.email}.`);
+            }
             resolve();
           })
           .catch((err) => {
@@ -180,10 +187,10 @@ export class DataStore {
       props: { dataStore: this },
     });
     return new Promise<User>((resolve, reject) => {
-      app.$on('terminate', (user: User) => {
+      app.$on('terminate', (e: CustomEvent<User>) => {
         app.$destroy();
-        if (user) {
-          resolve(user);
+        if (e.detail) {
+          resolve(e.detail);
         } else {
           reject();
         }
@@ -217,11 +224,11 @@ export class DataStore {
     //   this.backend === DataStoreBackend.Remote
     //     ? this.feathers.service(`${this.apiPrefix}/${name}`)
     //     : this.feathers.service(name);
-    const s = this.feathers.service(name);
+    const s: Service<T> = this.feathers.service(name) as Service<T>;
     if (!serviceExists) {
       s.items = () => iterableFromService(s);
     }
-    return s as Service<T>;
+    return s;
   }
 
   async uploadAsset(blob: Blob, filename = ''): Promise<string> {

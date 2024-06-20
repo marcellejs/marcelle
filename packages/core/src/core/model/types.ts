@@ -1,17 +1,17 @@
 export interface ClassifierResults {
   label: string;
-  confidences: { [key: string]: number };
+  confidences: Record<string, number>;
 }
 
 export interface ObjectDetectorResults {
-  outputs: {
+  outputs: Array<{
     bbox: [number, number, number, number];
     class: string;
     confidence: number;
-  }[];
+  }>;
 }
 
 export interface ClusteringResults {
   cluster: number;
-  confidences: { [key: number]: number };
+  confidences: Record<number, number>;
 }

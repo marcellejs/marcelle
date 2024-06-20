@@ -5,7 +5,7 @@ import View from './number-array.view.svelte';
 export class NumberArray extends Component {
   title = 'number array';
 
-  $value: Stream<number[]> = new Stream([], true);
+  $value = new Stream<number[]>([], true);
   $disabled: Stream<boolean> = new Stream<boolean>(false, true);
 
   constructor(defaultValue?: number[]) {

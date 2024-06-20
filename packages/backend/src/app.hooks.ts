@@ -1,12 +1,13 @@
 // Application hooks that run for every service
 // Don't remove this comment. It's needed to format import lines nicely.
 import { HookContext } from '@feathersjs/feathers';
-import { trace } from 'feathers-debugger-service';
 import { ObjectId } from 'mongodb';
+import { Application } from './declarations';
+import { logError } from './hooks/log-error';
 
-function normalizeMongoIds(context: HookContext): HookContext {
+function normalizeMongoIds(context: HookContext<Application>): HookContext<Application> {
   if (
-    context.app.get('database') !== 'mongodb' ||
+    // context.app.get('database') !== 'mongodb' ||
     ['authentication', 'feathers-debugger'].includes(context.path) ||
     !context.params?.query ||
     context.type !== 'before'
@@ -17,16 +18,16 @@ function normalizeMongoIds(context: HookContext): HookContext {
   const { query } = context.params;
   if (Object.keys(query).includes('_id')) {
     if (typeof query._id === 'string') {
-      context.params.query._id = ObjectId(query._id);
+      context.params.query._id = new ObjectId(query._id as string);
     }
     if (typeof query._id === 'object' && query._id.$ne) {
-      context.params.query._id.$ne = ObjectId(query._id.$ne);
+      context.params.query._id.$ne = new ObjectId(query._id.$ne as string);
     }
     if (typeof query._id === 'object' && query._id.$in) {
-      context.params.query._id.$in = query._id.$in.map((x: string) => ObjectId(x));
+      context.params.query._id.$in = query._id.$in.map((x: string) => new ObjectId(x));
     }
     if (typeof query._id === 'object' && query._id.$nin) {
-      context.params.query._id.$nin = query._id.$nin.map((x: string) => ObjectId(x));
+      context.params.query._id.$nin = query._id.$nin.map((x: string) => new ObjectId(x));
     }
   }
 
@@ -46,43 +47,12 @@ function convertDateQueries(context: HookContext): HookContext {
 }
 
 export default {
+  around: {
+    all: [logError],
+  },
   before: {
-    all: [normalizeMongoIds, convertDateQueries, trace()],
-    find: [],
-    get: [],
-    create: [],
-    update: [],
-    patch: [],
-    remove: [],
+    all: [normalizeMongoIds, convertDateQueries],
   },
-
-  after: {
-    all: [],
-    find: [],
-    get: [],
-    create: [],
-    update: [],
-    patch: [],
-    remove: [],
-  },
-
-  error: {
-    all: [],
-    find: [],
-    get: [],
-    create: [],
-    update: [],
-    patch: [],
-    remove: [],
-  },
-
-  finally: {
-    all: [trace()],
-    find: [],
-    get: [],
-    create: [],
-    update: [],
-    patch: [],
-    remove: [],
-  },
+  after: {},
+  error: {},
 };

@@ -4,7 +4,6 @@
   export let author: string;
 
   const logStream = getLogStream();
-
 </script>
 
 <footer
@@ -48,5 +47,4 @@
     position: absolute;
     content: '>';
   }
-
 </style>

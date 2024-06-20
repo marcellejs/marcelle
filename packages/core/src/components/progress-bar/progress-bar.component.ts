@@ -2,11 +2,11 @@ import type { Stream } from '../../core/stream';
 import { Component } from '../../core/component';
 import View from './progress-bar.view.svelte';
 
-export type ProgressType = {
+export interface ProgressType {
   message: string;
   progress: number;
   type: 'default' | 'idle' | 'success' | 'danger';
-};
+}
 
 export class ProgressBar extends Component {
   title = 'progress bar';

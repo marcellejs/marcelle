@@ -16,7 +16,7 @@ export interface OutputTypes {
 
 export interface PredictionTypes {
   classification: ClassifierResults;
-  generic: Record<string, Array<number>>;
+  generic: Record<string, number[]>;
 }
 
 function isInputType<T extends keyof InputTypes>(t: keyof InputTypes, tt: T): t is T {
@@ -53,8 +53,8 @@ export class OnnxModel<
   parameters = {};
   serviceName = 'onnx-models';
 
-  $loading: Stream<boolean> = new Stream(false as boolean, true);
-  $ready: Stream<boolean> = new Stream(false as boolean, true);
+  $loading = new Stream<boolean>(false as boolean, true);
+  $ready = new Stream<boolean>(false as boolean, true);
 
   inputType: InputType;
   taskType: TaskType;
@@ -220,7 +220,7 @@ export class OnnxModel<
     }
 
     if (isPredictionType(this.taskType, 'generic')) {
-      const res: Record<string, Array<number>> = {};
+      const res: Record<string, number[]> = {};
       for (const name of this.#session.outputNames) {
         res[name] = Array.from(outputs[name].data as Float32Array);
       }

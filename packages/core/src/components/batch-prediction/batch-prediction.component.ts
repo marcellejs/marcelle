@@ -6,7 +6,7 @@ import { Stream } from '../../core/stream';
 import { DataStore } from '../../core/data-store/data-store';
 import { Dataset, isDataset } from '../../core/dataset';
 import { dataStore, Model } from '../../core';
-import { toKebabCase } from '../../utils/string';
+import { toKebabCase } from '../../utils/string'; // TODO: replace with change-case's kebabCase
 import { LazyIterable, throwError } from '../../utils';
 
 export interface BatchPredictionStatus {
