@@ -2,6 +2,7 @@
 import { GridFSBucket, MongoClient } from 'mongodb';
 import type { Db } from 'mongodb';
 import type { Application } from './declarations';
+import { logger } from './logger';
 
 declare module './declarations' {
   interface Configuration {
@@ -14,6 +15,7 @@ declare module './declarations' {
 export function mongodb(app: Application): void {
   const connection = app.get('mongodb');
   const database = new URL(connection).pathname.substring(1);
+  logger.debug(`MongoDb connection: ${connection}`);
   const mongoClient = MongoClient.connect(
     connection,
     // , {useNewUrlParser: true, useUnifiedTopology: true }
