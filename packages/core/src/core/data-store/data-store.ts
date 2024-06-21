@@ -39,6 +39,7 @@ export class DataStore {
   apiPrefix = '';
 
   $services = new Stream<string[]>([], true);
+  $status = new Stream<'init' | 'connecting' | 'connected'>('init', true);
 
   #initPromise: Promise<void>;
   #connectPromise: Promise<void>;
@@ -125,8 +126,11 @@ export class DataStore {
   }
 
   async connect(): Promise<User> {
+    if (this.$status.get() === 'connected') return this.user;
     if (this.backend !== DataStoreBackend.Remote) {
-      return { email: null };
+      this.$status.set('connected');
+      this.user = { email: null, role: 'anonymous' };
+      return this.user;
     }
     await this.#initPromise;
     await this.#connectPromise;
@@ -134,13 +138,21 @@ export class DataStore {
   }
 
   async authenticate(): Promise<User> {
+    if (this.$status.get() === 'connected') return this.user;
+
     if (!this.requiresAuth) {
-      this.user = { email: null };
+      this.user = { email: null, role: 'anonymous' };
+      this.$status.set('connected');
       return this.user;
     }
 
     if (this.user) {
+      this.$status.set('connected');
       return this.user;
+    }
+
+    if (this.$status.get() !== 'connecting') {
+      this.$status.set('connecting');
     }
 
     const doAuth = () => {
@@ -172,16 +184,22 @@ export class DataStore {
       this.#authenticating ? null : doAuth(),
     );
 
-    return this.#authenticationPromise.then(() => this.user);
+    return this.#authenticationPromise.then(() => {
+      this.$status.set('connected');
+      return this.user;
+    });
   }
 
   async login(email: string, password: string): Promise<User> {
+    this.$status.set('connecting');
     const res = await this.feathers.authenticate({ strategy: 'local', email, password });
     this.user = res.user;
+    this.$status.set('connected');
     return this.user;
   }
 
   async loginWithUI(): Promise<User> {
+    this.$status.set('connecting');
     const app = new Login({
       target: document.body,
       props: { dataStore: this },
@@ -190,6 +208,7 @@ export class DataStore {
       app.$on('terminate', (e: CustomEvent<User>) => {
         app.$destroy();
         if (e.detail) {
+          this.$status.set('connected');
           resolve(e.detail);
         } else {
           reject();
@@ -198,14 +217,21 @@ export class DataStore {
     });
   }
 
-  async signup(email: string, password: string): Promise<User> {
+  async signup(options: {
+    email: string;
+    password: string;
+    [key: string]: unknown;
+  }): Promise<User> {
     try {
-      await this.service('users').create({ email, password });
-      await this.login(email, password);
+      this.$status.set('connecting');
+      await this.service('users').create(options);
+      await this.login(options.email, options.password);
+      this.$status.set('connected');
       return this.user;
     } catch (error) {
       logger.error('An error occurred during signup', error);
-      return { email: null };
+      throw error;
+      // return { email: null, role: 'anonymous' };
     }
   }
 
