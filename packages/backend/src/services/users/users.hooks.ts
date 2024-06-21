@@ -78,14 +78,6 @@ export default {
       schemaHooks.validateData(userDataValidator),
       schemaHooks.resolveData(userDataResolver),
       setRole,
-      (context: HookContext): HookContext => {
-        const user = context.data;
-        if (!user) return context;
-        const ability = defineAbilitiesFor(user, context.app as Application);
-        context.params.ability = ability;
-        context.params.rules = ability.rules;
-        return context;
-      },
     ],
     update: [
       authenticate('jwt'),
@@ -107,6 +99,14 @@ export default {
     create: [
       (context: HookContext): HookContext => {
         const user = context.data;
+        if (!user) return context;
+        const ability = defineAbilitiesFor(user, context.app as Application);
+        context.params.ability = ability;
+        context.params.rules = ability.rules;
+        return context;
+      },
+      (context: HookContext): HookContext => {
+        const user = context.data;
         logger.debug(`created user ${user.id} with role '${user.role}'`);
         return context;
       },
@@ -114,5 +114,16 @@ export default {
   },
   error: {
     all: [],
+    create: [
+      (context: HookContext): HookContext => {
+        const { data } = context.error;
+        if (data?.code === 11000) {
+          context.error.code = 409;
+          context.error.name = 'Conflict';
+          context.error.message = `A user with this ${Object.keys(data?.keyValue)[0]} already exists.`;
+        }
+        return context;
+      },
+    ],
   },
 };

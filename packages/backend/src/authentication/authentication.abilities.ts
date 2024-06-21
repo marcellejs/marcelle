@@ -99,8 +99,6 @@ export const defineRulesFor = (user: User, app: Application) => {
     can('manage', 'users');
   }
 
-  console.log(rules);
-
   return rules;
 };
 

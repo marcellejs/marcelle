@@ -57,7 +57,7 @@ if (app.get('authentication').enabled) {
   app.configure(authentication);
   app.configure(feathersCasl());
 } else {
-  console.log('Warning: This application does not require authentication');
+  console.log('Warning: This application does not have authentication enabled');
 }
 app.configure(services);
 

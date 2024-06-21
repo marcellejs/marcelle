@@ -42,7 +42,6 @@ export const assets = (app: Application) => {
           },
         }),
         async (ctx, next) => {
-          // console.log('ctx.method', ctx.method, 'ctx.url', ctx.url);
           if (ctx.method === 'POST') {
             const response: Record<string, ObjectId> = {};
             if (Array.isArray(ctx.request.files)) {

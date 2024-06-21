@@ -23,7 +23,14 @@ export class UserService<ServiceParams extends Params = UserParams> extends Mong
 export const getOptions = (app: Application): MongoDBAdapterOptions => {
   return {
     paginate: app.get('paginate'),
-    Model: app.get('mongodbClient').then((db) => db.collection('users')),
+    Model: app
+      .get('mongodbClient')
+      .then((db) => db.collection('users'))
+      .then((collection) => {
+        collection.createIndex({ email: 1 }, { unique: true });
+        collection.createIndex({ username: 1 }, { unique: true });
+        return collection;
+      }),
     filters: { $nor: true },
     operators: ['$nor'],
   };
