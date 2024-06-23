@@ -2,17 +2,19 @@ import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
 import View from './media-recorder.view.svelte';
 
+export interface MediaRecording {
+  duration: number;
+  blob: Blob;
+  type: string;
+  thumbnail: string;
+}
+
 export class MediaRecorder extends Component {
   title = 'Media Recorder';
 
   $mediaStream: Stream<MediaStream>;
   $active = new Stream(false, true);
-  $recordings: Stream<{
-    duration: number;
-    blob: Blob;
-    type: string;
-    thumbnail: string;
-  }> = new Stream(undefined).skip(1);
+  $recordings: Stream<MediaRecording> = new Stream(undefined).skip(1);
 
   constructor(mediaStream: MediaStream) {
     super();

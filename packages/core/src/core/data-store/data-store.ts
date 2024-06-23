@@ -12,6 +12,7 @@ import { Stream } from '../stream';
 import { noop } from '../../utils/misc';
 import { iterableFromService } from './service-iterable';
 import type { Service, User } from '../types';
+import type { ObjectId } from '@marcellejs/design-system';
 
 function isValidUrl(str: string) {
   try {
@@ -257,7 +258,10 @@ export class DataStore {
     return s;
   }
 
-  async uploadAsset(blob: Blob, filename = ''): Promise<string> {
+  async uploadAsset(
+    blob: Blob,
+    filename = '',
+  ): Promise<{ _id: ObjectId; files: Record<string, ObjectId> }> {
     if (this.backend !== DataStoreBackend.Remote) {
       throwError(new Error('LocalStorage Backend does not yet support upload'));
     }

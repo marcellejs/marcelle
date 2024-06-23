@@ -3,7 +3,7 @@ import View from './video-player.view.svelte';
 
 export class VideoPlayer extends Component {
   title = 'Video Player';
-  $src: Stream<string>;
+  $src: Stream<string | MediaStream>;
   // $ready = new Stream(false, true);
   $paused = new Stream(true, true);
   $progress = new Stream(0, true);
@@ -11,7 +11,7 @@ export class VideoPlayer extends Component {
 
   constructor(src = '') {
     super();
-    this.$src = new Stream(src, true);
+    this.$src = new Stream<string | MediaStream>(src, true);
   }
 
   mount(target?: HTMLElement): void {

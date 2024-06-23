@@ -41,4 +41,4 @@ export function trainingProgress(m: Model<Instance, unknown>): ProgressBar {
   return p;
 }
 
-export type { ProgressBar };
+export type { ProgressBar, ProgressType };
