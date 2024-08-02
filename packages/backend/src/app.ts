@@ -39,6 +39,7 @@ app.configure(
       cors: {
         origin: app.get('origins'),
       },
+      maxHttpBufferSize: 1e8,
     },
     (io) => {
       io.on('connection', async (socket) => {

@@ -80,6 +80,13 @@ export class DataStore {
           logger.log(`Connected to backend ${this.location}!`);
           resolve();
         });
+        this.feathers.io.on('disconnect', (reason: string, details: unknown) => {
+          logger.log(`Disconnected from backend ${this.location}! Reason: "${reason}"`);
+          console.log('Details', details);
+        });
+        this.feathers.io.on('connect_error', (e: Error) => {
+          logger.log(`Socket.io error: ${e.name}: ${e.message}`);
+        });
         this.feathers.io.on('reconnect_failed', () => {
           const e =
             new Error(`Cannot reach backend at location ${this.location}. Is the server running?
