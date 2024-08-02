@@ -94,7 +94,7 @@ export class DynamicService<ServiceParams extends DynamicParams = DynamicParams>
 
       const service = app.service(name as '*') as any;
       // Register our service on the Feathers application
-      service.hooks(genericHooks(app.get('authentication').enabled, 'mongodb'));
+      service.hooks(genericHooks(app.get('authentication').enabled));
     }
 
     return app.service(name as '*');

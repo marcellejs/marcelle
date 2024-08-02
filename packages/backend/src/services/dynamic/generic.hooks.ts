@@ -1,38 +1,15 @@
-import { HookContext, Paginated } from '@feathersjs/feathers';
 import { setNow } from 'feathers-hooks-common';
-import { Application } from '../../declarations';
 import {
   authAfterHooks,
   authReadHooks,
   authWriteHooks,
 } from '../../authentication/permission-hooks';
 import { GenericService } from './generic.class';
+import { Application, HookContext } from '../../declarations';
+import { HookMap } from '@feathersjs/feathers';
 // Don't remove this comment. It's needed to format import lines nicely.
 
-const findDistinctNedb = async (context: HookContext<Application, GenericService>) => {
-  if (!context.params?.query?.$distinct || context.type !== 'before' || context.method !== 'find') {
-    return context;
-  }
-  const { $distinct, ...query } = context.params.query;
-
-  query.$select = [$distinct];
-  query.$limit = 0;
-
-  const { total } = (await await context.service.find({ ...context.params, query })) as Paginated<
-    Record<string, unknown>
-  >;
-  query.$limit = total;
-  const { data } = (await context.service.find({ ...context.params, query })) as Paginated<
-    Record<string, unknown>
-  >;
-
-  const res = Array.from(new Set(data.map((item) => item[$distinct])));
-  context.result = res;
-
-  return context;
-};
-
-const findDistinctMongodb = async (context: HookContext<Application, GenericService>) => {
+const findDistinct = async (context: HookContext<GenericService>) => {
   if (!context.params?.query?.$distinct || context.type !== 'before' || context.method !== 'find') {
     return context;
   }
@@ -50,24 +27,14 @@ const findDistinctMongodb = async (context: HookContext<Application, GenericServ
   return context;
 };
 
-const findDistinct = (db: string) => {
-  if (db === 'nedb') {
-    return findDistinctNedb;
-  } else if (db === 'mongodb') {
-    return findDistinctMongodb;
-  } else {
-    throw new Error('Invalid database type: only "nedb" or "mongodb" are currently supported');
-  }
-};
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default (requireAuth: boolean, dbType: 'mongodb' | 'nedb' = 'mongodb') => ({
+export default (requireAuth: boolean): HookMap<Application, GenericService> => ({
   around: {
     all: [],
   },
   before: {
     all: [],
-    find: [...authReadHooks(requireAuth), findDistinct(dbType)],
+    find: [...authReadHooks(requireAuth), findDistinct],
     get: [...authReadHooks(requireAuth)],
     create: [...authWriteHooks(requireAuth), setNow('createdAt', 'updatedAt')],
     update: [...authWriteHooks(requireAuth), setNow('updatedAt')],
