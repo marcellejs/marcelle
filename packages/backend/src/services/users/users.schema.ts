@@ -15,8 +15,8 @@ export const userSchema = Type.Object(
     email: Type.String({ format: 'email' }),
     username: Type.Optional(Type.String()),
     password: Type.Optional(Type.String({ minLength: 8 })),
-    // createdAt: Type.Number(),
-    // updatedAt: Type.Number(),
+    createdAt: Type.Number(),
+    updatedAt: Type.Number(),
   },
   { $id: 'User', additionalProperties: true },
 );
@@ -30,7 +30,7 @@ export const userExternalResolver = resolve<User, HookContext>({
 });
 
 // Schema for creating new entries
-export const userDataSchema = Type.Pick(userSchema, ['email', 'password'], {
+export const userDataSchema = Type.Pick(userSchema, ['email', 'username', 'password'], {
   $id: 'UserData',
 });
 export type UserData = Static<typeof userDataSchema>;
@@ -50,7 +50,7 @@ export const userPatchResolver = resolve<User, HookContext>({
 });
 
 // Schema for allowed query properties
-export const userQueryProperties = Type.Pick(userSchema, ['_id', 'email']);
+export const userQueryProperties = Type.Pick(userSchema, ['_id', 'email', 'username']);
 export const userQuerySchema = Type.Intersect(
   [
     querySyntax(userQueryProperties),
