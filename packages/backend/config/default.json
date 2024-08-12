@@ -1,7 +1,7 @@
 {
   "host": "localhost",
   "port": 3030,
-  "public": "./public/",
+  "public": "./backend/public/",
   "origins": [
     "http://localhost:3030"
   ],

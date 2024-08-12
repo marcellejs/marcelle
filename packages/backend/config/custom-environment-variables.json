@@ -6,8 +6,8 @@
   },
   "mongodb": "MONGODB_URL",
   "whitelist": {
-    "services": [],
-    "assets": ["jpg", "jpeg", "png", "wav"]
+    "services": "WHITELIST_SERVICES",
+    "assets": "WHITELIST_ASSETS"
   },
   "authentication": {
     "secret": "FEATHERS_SECRET"
