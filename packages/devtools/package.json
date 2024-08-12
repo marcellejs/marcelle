@@ -28,7 +28,7 @@
     "svelte-preprocess": "^5.1.4",
     "tiny-glob": "^0.2.9",
     "tslib": "^2.6.3",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.4"
   },
   "dependencies": {
     "@octokit/rest": "^20.1.1",
