@@ -7,7 +7,7 @@ sidebarDepth: 3
 ## modelParameters
 
 ```tsx
-marcelle.modelParameters(p: Parametrable): ModelParameters;
+function modelParameters(p: Parametrable): ModelParameters;
 ```
 
 This component provides an GUI for visualizing and adjusting parameters. It takes a `Parametrable` object as argument, which is an object (typically a model) carrying a `parameters` property which is a record of parameter streams:
@@ -65,7 +65,7 @@ const p = modelParameters(parametrable, {
 ## trainingProgress
 
 ```tsx
-marcelle.trainingProgress(m: Model): TrainingProgress;
+function trainingProgress(m: Model): TrainingProgress;
 ```
 
 Displays the progress of the training process for a given model.
@@ -92,7 +92,7 @@ const prog = marcelle.trainingProgress(classifier);
 ## trainingPlot
 
 ```tsx
-marcelle.trainingPlot(m: Model): TrainingPlot;
+function trainingPlot(m: Model): TrainingPlot;
 ```
 
 Displays the training/validation loss and accuracies during the training of a neural network.
@@ -119,10 +119,13 @@ const prog = marcelle.trainingPlot(classifier);
 ## trainingHistory
 
 ```tsx
-marcelle.trainingHistory(dataStore: DataStore, options: {
-  metrics?: string[];
-  actions?: Array<string | { name: string; multiple?: boolean }>;
-}): TrainingHistory;
+function trainingHistory(
+  dataStore: DataStore,
+  options: {
+    metrics?: string[];
+    actions?: Array<string | { name: string; multiple?: boolean }>;
+  },
+): TrainingHistory;
 ```
 
 The `TrainingHistory` component can be used to track and visualize training runs stored in a data store. This component is useful to compare experiments, compare model versions, and revert back to previously trained models. When using Marcelle's Python package, each training run is recorded to a data store, and can be accessed with the `TrainingHistory` component.

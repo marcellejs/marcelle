@@ -7,7 +7,7 @@ sidebarDepth: 3
 ## button
 
 ```tsx
-button(text?: string): Button;
+function button(text?: string): Button;
 ```
 
 A generic GUI button component.
@@ -49,7 +49,7 @@ capture.$pressed.subscribe((x) => console.log('button $pressed:', x));
 ## number
 
 ```tsx
-number(defaultValue?: number): Number;
+function number(defaultValue?: number): Number;
 ```
 
 A generic GUI number input component.
@@ -85,7 +85,7 @@ epochs.$value.subscribe(console.log);
 ## numberArray
 
 ```tsx
-numberArray(defaultValue?: number[]): NumberArray;
+function numberArray(defaultValue?: number[]): NumberArray;
 ```
 
 A generic GUI number array input component.
@@ -121,7 +121,7 @@ neuronsPerLayer.$value.subscribe(console.log);
 ## select
 
 ```tsx
-select(options: string[], value?: string): Select;
+function select(options: string[], value?: string): Select;
 ```
 
 A generic GUI Select component.
@@ -156,7 +156,7 @@ sel.$value.subscribe((x) => console.log('sel $value:', x));
 ## slider
 
 ```tsx
-slider({
+function slider({
   values: number[],
   min: number,
   max: number,
@@ -221,7 +221,7 @@ slider.$values.subscribe((x) => console.log('slider $values:', x));
 ## text
 
 ```tsx
-text(initial?: string): Text;
+function text(initial?: string): Text;
 ```
 
 A generic GUI text display component accepting HTL strings.
@@ -256,7 +256,7 @@ const t = text(
 ## textArea
 
 ```tsx
-textArea(defaultValue: string, placeholder: string): TextArea;
+function textArea(defaultValue: string, placeholder: string): TextArea;
 ```
 
 A generic GUI text area component.
@@ -291,7 +291,7 @@ comments.$value.subscribe(console.log);
 ## textInput
 
 ```tsx
-textInput(defaultValue?: string): TextInput;
+function textInput(defaultValue?: string): TextInput;
 ```
 
 A generic GUI text input component.
@@ -327,7 +327,7 @@ label.$value.subscribe(console.log);
 ## toggle
 
 ```tsx
-toggle(text?: string): Toggle;
+function toggle(text?: string): Toggle;
 ```
 
 A generic GUI toggle (switch) component.

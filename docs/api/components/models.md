@@ -7,7 +7,7 @@ sidebarDepth: 3
 ## cocoSsd
 
 ```tsx
-cocoSsd({ base?: string }): CocoSsd;
+function cocoSsd({ base?: string }): CocoSsd;
 ```
 
 Object detection model based on tensorflow's [COCO-SSD](https://github.com/tensorflow/tfjs-models/tree/master/coco-ssd) implementation. The model localizes and identifies multiple objects in a single image.
@@ -56,7 +56,7 @@ const cocoPredictionStream = source.$images.map(cocoClassifier.predict).awaitPro
 ## kmeansClustering
 
 ```tsx
-kmeansClustering({ k?: number }): KMeansClustering;
+function kmeansClustering({ k?: number }): KMeansClustering;
 ```
 
 A K-means clustering algorithm based on [ml-kmeans](https://github.com/mljs/kmeans).
@@ -118,7 +118,7 @@ clustering.train(trainingSet);
 ## knnClassifier
 
 ```tsx
-knnClassifier({ k?: number }): KNNClassifier;
+function knnClassifier({ k?: number }): KNNClassifier;
 ```
 
 A K-Nearest Neighbors classifier based on [Tensorflow.js's implementation](https://github.com/tensorflow/tfjs-models/tree/master/knn-classifier).
@@ -192,7 +192,7 @@ const predictionStream = $featureStream // A stream of input features
 ## mlpClassifier
 
 ```tsx
-mlpClassifier({
+function mlpClassifier({
   layers?: number[],
   epochs?: number,
   batchSize?: number,
@@ -286,7 +286,7 @@ const predictionStream = $featureStream // A stream of input features
 ## mlpRegressor
 
 ```tsx
-mlpRegressor({
+function mlpRegressor({
   units?: number[],
   epochs?: number,
   batchSize?: number,
@@ -373,7 +373,7 @@ const predictionStream = $featureStream // A stream of input features
 ## mobileNet
 
 ```tsx
-mobileNet({
+function mobileNet({
   version?: 1 | 2,
   alpha?: 0.25 | 0.50 | 0.75 | 1.0,
 }): MobileNet;
@@ -431,7 +431,7 @@ const $prediction = input.$images.map((img) => m.predict(img)).awaitPromises();
 ## onnxModel
 
 ```tsx
-onnxModel({
+function onnxModel({
   inputType: 'image' | 'generic';
   taskType: 'classification' | 'generic';
   segmentationOptions?: {
@@ -518,7 +518,7 @@ const predictionStream = source.$images.map(classifier.predict).awaitPromises();
 ## pca
 
 ```tsx
-pca(): PCA;
+function pca(): PCA;
 ```
 
 Principal Component Analysis (PCA) based on [ml-pca](https://github.com/mljs/pca).
@@ -578,9 +578,9 @@ const $projection = $featureStream // A stream of input features
 ## poseDetection
 
 ```tsx
-poseDetection(
+function poseDetection(
   model: 'MoveNet' | 'BlazePose' | 'PoseNet' = 'MoveNet',
-  modelConfig?: ModelConfig
+  modelConfig?: ModelConfig,
 ): PoseDetection;
 ```
 
@@ -636,7 +636,7 @@ const $prediction = input.$images.map((img) => m.predict(img)).awaitPromises();
 ## tfjsModel
 
 ```tsx
-tfjsModel({
+function tfjsModel({
   inputType: 'image' | 'generic';
   taskType: 'classification' | 'segmentation' | 'generic';
   segmentationOptions?: {
@@ -724,7 +724,7 @@ const predictionStream = source.$images.map(classifier.predict).awaitPromises();
 ## umap
 
 ```tsx
-umap({
+function umap({
   nComponents: number,
   nNeighbors: number,
   minDist: number,

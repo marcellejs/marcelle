@@ -7,7 +7,7 @@ sidebarDepth: 3
 ## genericChart
 
 ```tsx
-genericChart({
+function genericChart({
   preset?: 'line' | 'line-fast' | 'bar' | 'bar-fast';
   options?: ChartOptions;
 }): Chart;
@@ -39,10 +39,7 @@ TODO;
 ## scatterPlot
 
 ```tsx
-scatterPlot(
-  dataset: Stream<number[][]>,
-  labels: Stream<string[] | number[]>
-  ): ScatterPlot;
+function scatterPlot(dataset: Stream<number[][]>, labels: Stream<string[] | number[]>): ScatterPlot;
 ```
 
 A scatter plot component using the [scatterGL](https://github.com/PAIR-code/scatter-gl) library.

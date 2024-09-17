@@ -11,7 +11,7 @@ Wizards are dedicated to the creation of step-by-step guides for beginners or en
 The following factory function creates and returns an empty Wizard:
 
 ```tsx
-wizard(): Wizard
+function wizard(): Wizard;
 ```
 
 ### properties

@@ -73,7 +73,7 @@ Train the model from a given dataset or dataset iterator. An optional validation
 
 | Option            | Type | Description                                                                                                                                                                                                                             | Required | Default |
 | ----------------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: | ------- |
-| dataset           | TODO | A Marcelle [Dataset](/api/data-storage.html#dataset) or an iterator (TODO: undocumented) for training.                                                                                                                                  |    ✔     |         |
+| dataset           | TODO | A Marcelle [Dataset](/api/data-storage.html#dataset) or an iterator (TODO: undocumented) for training.                                                                                                                                  |    ✔    |         |
 | validationDataset | TODO | A Marcelle [Dataset](/api/data-storage.html#dataset) or an iterator (TODO: undocumented) used for validation. If not defined, the validation datasets will be created automatically according to the model's validationSplit parameter. |          |         |
 
 ### .predict()
@@ -88,7 +88,7 @@ Make a prediction from a single input frame. Input and output formats vary acros
 
 | Option | Type      | Description                 | Required | Default |
 | ------ | --------- | --------------------------- | :------: | ------- |
-| x      | InputType | a single input to the model |    ✔     |         |
+| x      | InputType | a single input to the model |    ✔    |         |
 
 #### Returns
 
@@ -111,8 +111,8 @@ Save the model to a data store with a given name and optional metadata. If the i
 
 | Option   | Type                      | Description                                                                  | Required | Default |
 | -------- | ------------------------- | ---------------------------------------------------------------------------- | :------: | ------- |
-| store    | DataStore                 | The data store to save the model                                             |    ✔     |         |
-| name     | string                    | The name of the model                                                        |    ✔     |         |
+| store    | DataStore                 | The data store to save the model                                             |    ✔    |         |
+| name     | string                    | The name of the model                                                        |    ✔    |         |
 | metadata | Record\<string, unknown\> | An optional object containing metadata about the model                       |          |         |
 | id       | ObjectId                  | The id of an existing model. If defined, the existing model will be updated. |          |         |
 
@@ -132,8 +132,8 @@ Load a model from a data store from either its id or its name.
 
 | Option | Type               | Description                                                                                                                                            | Required | Default |
 | ------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ | :------: | ------- |
-| store  | DataStore          | The data store from which to load the model                                                                                                            |    ✔     |         |
-| id     | ObjectId \| string | The ID of the model's document in the data store, or its name. If several models in the data store have the same name, the latest model will be loaded |    ✔     |         |
+| store  | DataStore          | The data store from which to load the model                                                                                                            |    ✔    |         |
+| id     | ObjectId \| string | The ID of the model's document in the data store, or its name. If several models in the data store have the same name, the latest model will be loaded |    ✔    |         |
 
 #### Returns
 
@@ -188,13 +188,13 @@ Synchronize a model with a data store, given a model name. The model will be aut
 
 | Option | Type      | Description                                                              | Required | Default |
 | ------ | --------- | ------------------------------------------------------------------------ | :------: | ------- |
-| store  | DataStore | The data store where the model should be synchronize                     |    ✔     |         |
-| name   | string    | A unique name for the model so that it can be retrieved in the datastore |    ✔     |         |
+| store  | DataStore | The data store where the model should be synchronize                     |    ✔    |         |
+| name   | string    | A unique name for the model so that it can be retrieved in the datastore |    ✔    |         |
 
 ## BatchPrediction
 
 ```tsx
-marcelle.batchPrediction(name: string, dataStore?: DataStore): BatchPrediction;
+batchPrediction(name: string, dataStore?: DataStore): BatchPrediction;
 ```
 
 This component allows to compute and store batch predictions with a given model over an entire dataset. Similarly to [Datasets](/api/data-storage.html#dataset), the prediction results are stored in a data store passed in argument.
