@@ -3,7 +3,7 @@ import { sequential, layers as tfLayers } from '@tensorflow/tfjs-layers';
 import { Stream } from '../../core/stream';
 import {
   TFJSCustomClassifier,
-  TFJSCustomClassifierOptions,
+  type TFJSCustomClassifierOptions,
 } from '../../core/model/tfjs-custom-classifier';
 
 export interface MLPClassifierOptions extends TFJSCustomClassifierOptions {

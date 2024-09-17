@@ -1,4 +1,4 @@
-import { Dataset, Instance, isDataset, Model, Stream } from '../../core';
+import { type Dataset, type Instance, isDataset, Model, Stream } from '../../core';
 import type { LazyIterable } from '../../utils';
 import { UMAP } from 'umap-js';
 

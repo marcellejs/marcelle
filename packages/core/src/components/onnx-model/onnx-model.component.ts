@@ -1,6 +1,6 @@
 import type { RegularArray } from '@tensorflow/tfjs-core/dist/types';
 import ort from 'onnxruntime-web';
-import { ClassifierResults, Instance, Model, Stream } from '../../core';
+import { type ClassifierResults, type Instance, Model, Stream } from '../../core';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './onnx-model.view.svelte';
 

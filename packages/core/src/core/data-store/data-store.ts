@@ -1,5 +1,5 @@
 import authentication from '@feathersjs/authentication-client';
-import { feathers, Application } from '@feathersjs/feathers';
+import { feathers, type Application } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio-client';
 import io from 'socket.io-client';
 import { MemoryService } from '@feathersjs/memory';

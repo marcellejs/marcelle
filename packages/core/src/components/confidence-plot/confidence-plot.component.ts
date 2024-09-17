@@ -1,8 +1,8 @@
 import type { ClassifierResults } from '../../core/model/types';
 import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
-import { genericChart, GenericChart } from '../generic-chart';
-import { text, Text } from '../text';
+import { genericChart, type GenericChart } from '../generic-chart';
+import { text, type Text } from '../text';
 
 export class ConfidencePlot extends Component {
   title = 'confidence plot';

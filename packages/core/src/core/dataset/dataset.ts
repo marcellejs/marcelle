@@ -2,7 +2,7 @@ import type { Paginated, Params as FeathersParams, Query, HookContext } from '@f
 import type { Instance, ObjectId, Service } from '../types';
 import { Stream } from '../stream';
 import { Component } from '../component';
-import { dataStore, DataStore } from '../data-store';
+import { dataStore, type DataStore } from '../data-store';
 import type { ServiceIterable } from '../data-store/service-iterable';
 import { throwError } from '../../utils/error-handling';
 import { readJSONFile, saveBlob } from '../../utils/file-io';

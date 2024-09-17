@@ -1,4 +1,4 @@
-import { ConfusionMatrix, ConfusionMatrixT } from './confusion-matrix.component';
+import { ConfusionMatrix, type ConfusionMatrixT } from './confusion-matrix.component';
 
 export function confusionMatrix(
   ...args: ConstructorParameters<typeof ConfusionMatrix>

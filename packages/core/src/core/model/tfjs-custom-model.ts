@@ -1,12 +1,12 @@
-import { Tensor2D, Tensor, TensorLike, tensor, tidy, ready } from '@tensorflow/tfjs-core';
+import { type Tensor2D, Tensor, type TensorLike, tensor, tidy, ready } from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/gather';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/arg_max';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/squeeze';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/expand_dims';
 import { loadLayersModel, Sequential } from '@tensorflow/tfjs-layers';
-import { Dataset, isDataset } from '../../core/dataset';
+import { type Dataset, isDataset } from '../../core/dataset';
 import { Catch, TrainingError } from '../../utils/error-handling';
-import { dataset2tfjs, TFDataset } from '../../core/model/tfjs-utils';
+import { dataset2tfjs, type TFDataset } from '../../core/model/tfjs-utils';
 import { TFJSBaseModel } from './tfjs-base-model';
 import { Stream } from '../stream';
 import type { Instance } from '../types';

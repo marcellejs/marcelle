@@ -1,6 +1,6 @@
 import type { ChartConfiguration } from 'chart.js';
 import colorLib from '@kurkle/color';
-import { Component, type Dataset, type Instance, Stream, ObjectId } from '../../core';
+import { Component, type Dataset, type Instance, Stream, type ObjectId } from '../../core';
 import View from './dataset-scatter.view.svelte';
 
 const defaultColors = [

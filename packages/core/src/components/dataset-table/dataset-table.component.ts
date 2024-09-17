@@ -1,4 +1,4 @@
-import { Component, Dataset, Instance, Stream } from '../../core';
+import { Component, type Dataset, type Instance, Stream } from '../../core';
 import View from './dataset-table.view.svelte';
 
 export class DatasetTable<T extends Instance> extends Component {

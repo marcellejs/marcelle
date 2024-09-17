@@ -1,7 +1,7 @@
 import type { Instance, Model, TrainingStatus } from '../../core';
 import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
-import { genericChart, GenericChart } from '../generic-chart';
+import { genericChart, type GenericChart } from '../generic-chart';
 import { throwError } from '../../utils/error-handling';
 import View from './training-plot.view.svelte';
 

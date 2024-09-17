@@ -1,6 +1,6 @@
-import { load, ObjectDetection, ObjectDetectionBaseModel } from '@tensorflow-models/coco-ssd';
+import { load, ObjectDetection, type ObjectDetectionBaseModel } from '@tensorflow-models/coco-ssd';
 import { io, ready } from '@tensorflow/tfjs-core';
-import { type Instance, Model, ObjectDetectorResults } from '../../core';
+import { type Instance, Model, type ObjectDetectorResults } from '../../core';
 import { logger } from '../../core/logger';
 import { Stream } from '../../core/stream';
 import { Catch, TrainingError } from '../../utils/error-handling';

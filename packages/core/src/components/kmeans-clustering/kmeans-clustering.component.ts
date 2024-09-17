@@ -3,13 +3,13 @@ import { kmeans } from 'ml-kmeans';
 import {
   Stream,
   Model,
-  ClusteringResults,
-  StoredModel,
-  ObjectId,
-  Instance,
-  DataStore,
+  type ClusteringResults,
+  type StoredModel,
+  type ObjectId,
+  type Instance,
+  type DataStore,
 } from '../../core';
-import { Dataset, isDataset } from '../../core/dataset';
+import { type Dataset, isDataset } from '../../core/dataset';
 import { Catch, throwError } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';

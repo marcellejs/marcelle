@@ -10,13 +10,13 @@ import { KNNClassifier as TfjsKNNClassifier } from '@tensorflow-models/knn-class
 import {
   Stream,
   Model,
-  ClassifierResults,
-  StoredModel,
-  ObjectId,
-  Instance,
-  DataStore,
+  type ClassifierResults,
+  type StoredModel,
+  type ObjectId,
+  type Instance,
+  type DataStore,
 } from '../../core';
-import { Dataset, isDataset } from '../../core/dataset';
+import { type Dataset, isDataset } from '../../core/dataset';
 import { Catch } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';

@@ -1,12 +1,12 @@
 import type { GraphModel } from '@tensorflow/tfjs-converter';
 import {
   load as loadMobilenet,
-  MobileNet as TfjsMobileNet,
-  MobileNetVersion,
-  MobileNetAlpha,
+  type MobileNet as TfjsMobileNet,
+  type MobileNetVersion,
+  type MobileNetAlpha,
 } from '@tensorflow-models/mobilenet';
 import { io, ready, tidy } from '@tensorflow/tfjs-core';
-import { ClassifierResults, Instance, logger, Model } from '../../core';
+import { type ClassifierResults, type Instance, logger, Model } from '../../core';
 import { Stream } from '../../core/stream';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './mobile-net.view.svelte';

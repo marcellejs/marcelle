@@ -1,5 +1,5 @@
 // Temporaty adaptation of https://github.com/feathersjs-ecosystem/feathers-localstorage
-import { MemoryService, MemoryServiceOptions } from '@feathersjs/memory';
+import { MemoryService, type MemoryServiceOptions } from '@feathersjs/memory';
 import type { AdapterParams, PaginationOptions } from '@feathersjs/adapter-commons';
 import type { Id, NullableId, Paginated } from '@feathersjs/feathers';
 
