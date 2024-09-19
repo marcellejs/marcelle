@@ -1,6 +1,6 @@
 import { authenticate } from '@feathersjs/authentication';
 import { HookContext } from '@feathersjs/feathers';
-import { setField } from 'feathers-hooks-common';
+import { iff, setField } from 'feathers-hooks-common';
 import { authorize } from 'feathers-casl';
 import { defineAbilitiesFor, User } from '../authentication/authentication.abilities';
 import { Application } from '../declarations';
@@ -32,12 +32,17 @@ export const authReadHooks = (requireAuth: boolean) => {
   return [];
 };
 
+const hasNoUserId = (context: HookContext) => !context.data?.userId;
+
 export const authWriteHooks = (requireAuth: boolean) => {
   if (requireAuth) {
     return [
       authenticate('jwt'),
       setAbilitiesForRestProvider,
-      setField({ from: 'params.user._id', as: 'data.userId' }),
+      (context: HookContext) => {
+        console.log('hasNoUserId', hasNoUserId(context));
+      },
+      iff(hasNoUserId, setField({ from: 'params.user._id', as: 'data.userId' })).else(),
       authorizeHook,
     ];
   }
