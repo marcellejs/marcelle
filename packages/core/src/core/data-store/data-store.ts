@@ -288,7 +288,7 @@ export class DataStore {
       const res = await fetch(`${this.location}/assets`, fetchOptions);
       const resData = await res.json();
 
-      if (res.status === 403) {
+      if (res.status !== 201) {
         const e = new Error(resData.message);
         e.name = resData.name;
         throw e;

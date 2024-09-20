@@ -81,7 +81,8 @@ export const mlModels = (modelType: ModelType) => (app: Application) => {
         before: [
           bodyParser({
             multipart: true,
-            formLimit: 15,
+            formLimit: '50mb',
+            jsonLimit: '50mb',
             formidable: {
               // uploadDir: 'uploads',
               fileWriteStreamHandler: (file: any) => {

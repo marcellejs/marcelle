@@ -29,7 +29,8 @@ export const assets = (app: Application) => {
       before: [
         bodyParser({
           multipart: true,
-          formLimit: 15,
+          formLimit: '50mb',
+          jsonLimit: '50mb',
           formidable: {
             // uploadDir: 'assets',
             fileWriteStreamHandler: (file: any) => {
