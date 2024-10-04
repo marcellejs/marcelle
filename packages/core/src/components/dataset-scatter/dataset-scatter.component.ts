@@ -1,6 +1,6 @@
 import type { ChartConfiguration } from 'chart.js';
 import colorLib from '@kurkle/color';
-import { Component, type Dataset, type Instance, Stream, ObjectId } from '../../core';
+import { Component, type Dataset, type Instance, Stream, type ObjectId } from '../../core';
 import View from './dataset-scatter.view.svelte';
 
 const defaultColors = [
@@ -25,8 +25,8 @@ export class DatasetScatter<T extends Instance> extends Component {
   };
 
   $data = new Stream<ChartConfiguration['data']>(undefined, true);
-  $hovered: Stream<ObjectId[]> = new Stream([], true);
-  $clicked: Stream<ObjectId[]> = new Stream([], true);
+  $hovered = new Stream<ObjectId[]>([], true);
+  $clicked = new Stream<ObjectId[]>([], true);
 
   constructor(private dataset: Dataset<T>) {
     super();

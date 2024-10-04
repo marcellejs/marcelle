@@ -2,7 +2,7 @@ import type { Paginated, Params as FeathersParams, Query, HookContext } from '@f
 import type { Instance, ObjectId, Service } from '../types';
 import { Stream } from '../stream';
 import { Component } from '../component';
-import { dataStore, DataStore } from '../data-store';
+import { dataStore, type DataStore } from '../data-store';
 import type { ServiceIterable } from '../data-store/service-iterable';
 import { throwError } from '../../utils/error-handling';
 import { readJSONFile, saveBlob } from '../../utils/file-io';
@@ -30,8 +30,8 @@ export class Dataset<T extends Instance> extends Component {
   query: Query = {};
   #updatedCreate = new Set<string>();
 
-  $count: Stream<number> = new Stream(0, true);
-  $changes: Stream<DatasetChange[]> = new Stream([]);
+  $count = new Stream<number>(0, true);
+  $changes = new Stream<DatasetChange[]>([]);
 
   constructor(name: string, store = dataStore()) {
     super();
@@ -55,8 +55,10 @@ export class Dataset<T extends Instance> extends Component {
 
   protected async setup(): Promise<void> {
     const instanceServiceName = toKebabCase(`instances-${this.name}`);
-    this.instanceService = this.#store.service(instanceServiceName) as Service<T>;
+    this.instanceService = this.#store.service(instanceServiceName);
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     if (this.instanceService.__hooks.before.find === undefined) {
       this.instanceService.hooks({
         before: {
@@ -72,7 +74,7 @@ export class Dataset<T extends Instance> extends Component {
           find: [dataURL2ImageData],
           get: [dataURL2ImageData],
         },
-      });
+      } as unknown);
     }
 
     this.instanceService.hooks({
@@ -80,7 +82,7 @@ export class Dataset<T extends Instance> extends Component {
         update: [this.checkUpdates],
         patch: [this.checkUpdates],
       },
-    });
+    } as unknown);
 
     await this.reset();
     this.watchChanges();
@@ -228,9 +230,9 @@ export class Dataset<T extends Instance> extends Component {
     await this.remove(null, { query: {} });
   }
 
-  async distinct(field: string): Promise<T['y'][]> {
+  async distinct(field: string): Promise<Array<T['y']>> {
     const query = { $distinct: field, ...this.query };
-    return this.instanceService.find({ query }) as Promise<T['y'][]>;
+    return this.instanceService.find({ query }) as Promise<Array<T['y']>>;
   }
 
   async download(): Promise<void> {

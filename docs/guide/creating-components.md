@@ -16,38 +16,27 @@ The details for the underlying mathematics can be found in the [following paper 
 
 Let's start by generating a new Marcelle application:
 
-<CodeGroup>
-<CodeGroupItem title="npm">
+::: code-group
 
-```bash
+```bash [npm]
 npm init marcelle marcelle-umap
 cd marcelle-umap
 npm install
 ```
 
-</CodeGroupItem>
-
-<CodeGroupItem title="yarn">
-
-```bash
+```bash [yarn]
 yarn create marcelle marcelle-umap
 cd marcelle-umap
 yarn
 ```
 
-</CodeGroupItem>
-
-<CodeGroupItem title="pnpm">
-
-```bash
+```bash [pnpm]
 pnpm create marcelle marcelle-umap
 cd marcelle-umap
 pnpm i
 ```
 
-</CodeGroupItem>
-
-</CodeGroup>
+:::
 
 Select the default options of the CLI. Then, make sure the application works by running the development server:
 
@@ -61,7 +50,7 @@ Then, update the main application entry point (`src/index.js`) with the applicat
 
 ::: details src/index.js
 
-````js
+```js
 import '@marcellejs/core/dist/marcelle.css';
 import {
   datasetBrowser,
@@ -115,10 +104,13 @@ dash.page('Data Management').sidebar(input, label, featureExtractor).use(trainin
 dash.settings.datasets(trainingSet);
 
 dash.show();
+```
+
 :::
 
 The application's input is an image upload component, and images are preprocessed using the pretrained neural network Mobilenet. Training data can be captured to a dataset called `TrainingSet`.
 You can download the data [here](/cats-dogs.zip). Unzip the folder, then in the Marcelle application:
+
 - Select 'cat' in the menu and drop all cat images
 - Select 'dog' in the menu and drop all dog images
 
@@ -130,29 +122,21 @@ You should obtain the following application:
 
 Components are essentially JavaScript objects exposing a set of streams for communicating with other Marcelle components, and optionally providing a view. The easiest way to generate a new component is using the [CLI](/cli):
 
-<CodeGroup>
-<CodeGroupItem title="npm">
+::: code-group
 
-```bash
+```bash [npm]
 npx marcelle
 ```
 
-</CodeGroupItem>
-<CodeGroupItem title="yarn">
-
-```bash
+```bash [yarn]
 yarn marcelle
 ```
 
-</CodeGroupItem>
-<CodeGroupItem title="pnpm">
-
-```bash
+```bash [pnpm]
 pnpx marcelle
 ```
 
-</CodeGroupItem>
-</CodeGroup>
+:::
 
 Select 'Create a component', choose the name 'umap', the CLI will generate the following files:
 
@@ -621,4 +605,7 @@ Finally, it is useful to visualize the images associated with each point in the 
 ## Final Result
 
 The source code for the example is available [on Github](https://github.com/marcellejs/marcelle/tree/main/apps/demos/umap), and the demo is [available online](https://demos.marcelle.dev/umap/).
-````
+
+```
+
+```

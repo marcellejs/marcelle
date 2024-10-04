@@ -1,78 +1,73 @@
-// import favicon from 'serve-favicon';
-import compress from 'compression';
-import helmet from 'helmet';
-import cors from 'cors';
-
-import feathers from '@feathersjs/feathers';
+// For more information about this file see https://dove.feathersjs.com/guides/cli/application.html
+import { feathers } from '@feathersjs/feathers';
 import configuration from '@feathersjs/configuration';
-import express from '@feathersjs/express';
+import {
+  koa,
+  rest,
+  bodyParser,
+  errorHandler,
+  parseAuthentication,
+  cors,
+  serveStatic,
+} from '@feathersjs/koa';
 import socketio from '@feathersjs/socketio';
-import casl from 'feathers-casl';
-
-import { Application } from './declarations';
-import logger from './logger';
-import middleware from './middleware';
-import services from './services';
-import appHooks from './app.hooks';
-import channels from './channels';
-import authentication from './authentication';
-import mongodb from './mongodb';
+import { feathersCasl } from 'feathers-casl';
+import { mongodb } from './mongodb';
+import { authentication } from './authentication';
+import { services } from './services/index';
+import { channels } from './channels';
 import { getRegisteredServices } from './utils/registered-services';
-// Don't remove this comment. It's needed to format import lines nicely.
+import appHooks from './app.hooks';
 
-const app: Application = express(feathers());
+const app = koa(feathers()) as any;
 
-// Load app configuration
+// Load our app configuration (see config/ folder)
 app.configure(configuration());
-// Enable security, CORS, compression, favicon and body parsing
-app.use(
-  helmet({
-    contentSecurityPolicy: false,
-  }),
-);
+
+// Set up Koa middleware
 app.use(cors());
-app.use(compress());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-// app.use(favicon(path.join(app.get('public'), 'favicon.ico')));
-// Host the public folder
-// app.use('/', express.static(app.get('public')));
+app.use(serveStatic(app.get('public')));
+app.use(errorHandler());
+app.use(parseAuthentication());
+app.use(bodyParser({ multipart: false }));
 
-// Set up Plugins and providers
-app.configure(express.rest());
+// Configure services and transports
+app.configure(rest());
 app.configure(
-  socketio(function (io) {
-    io.on('connection', async (socket) => {
-      const registeredServices = await getRegisteredServices(app);
-      socket.emit('init', {
-        auth: app.get('authentication').enabled,
-        services: registeredServices,
+  socketio(
+    {
+      cors: {
+        origin: app.get('origins'),
+      },
+      maxHttpBufferSize: 1e8,
+    },
+    (io) => {
+      io.on('connection', async (socket) => {
+        const registeredServices = await getRegisteredServices(app);
+        socket.emit('init', {
+          auth: app.get('authentication').enabled,
+          services: registeredServices,
+        });
       });
-    });
-  }),
+    },
+  ),
 );
-
-if (app.get('database') === 'mongodb') {
-  app.configure(mongodb);
-}
-
-// Configure other middleware (see `middleware/index.ts`)
-app.configure(middleware);
+app.configure(channels);
+app.configure(mongodb);
 if (app.get('authentication').enabled) {
   app.configure(authentication);
-  app.configure(casl());
+  app.configure(feathersCasl());
+} else {
+  console.log('Warning: This application does not have authentication enabled');
 }
-
-// Set up our services (see `services/index.ts`)
 app.configure(services);
 
-// Set up event channels (see channels.ts)
-app.configure(channels);
-
-// Configure a middleware for 404s and the error handler
-app.use(express.notFound());
-app.use(express.errorHandler({ logger }));
-
+// Register hooks that run on all service methods
 app.hooks(appHooks);
+// Register application setup and teardown hooks here
+app.hooks({
+  setup: [],
+  teardown: [],
+});
 
-export default app;
+export { app };

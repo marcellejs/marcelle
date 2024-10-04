@@ -1,24 +1,25 @@
-import { ServiceAddons } from '@feathersjs/feathers';
-import { AuthenticationService, JWTStrategy } from '@feathersjs/authentication';
+// For more information about this file see https://dove.feathersjs.com/guides/cli/authentication.html
+import { AuthenticationService } from '@feathersjs/authentication';
 import { LocalStrategy } from '@feathersjs/authentication-local';
-import { expressOauth } from '@feathersjs/authentication-oauth';
 
-import authHooks from './authentication.hooks';
-import { Application } from '../declarations';
+import type { Application } from '../declarations';
+import authenticationHooks from './authentication.hooks';
+import { AnonymousStrategy } from './anonymous';
+import { MyJwtStrategy } from './jwt';
 
 declare module '../declarations' {
   interface ServiceTypes {
-    authentication: AuthenticationService & ServiceAddons<any>;
+    authentication: AuthenticationService;
   }
 }
 
-export default function (app: Application): void {
-  const authentication = new AuthenticationService(app);
+export const authentication = (app: Application) => {
+  const auth = new AuthenticationService(app);
 
-  authentication.register('jwt', new JWTStrategy());
-  authentication.register('local', new LocalStrategy());
+  auth.register('jwt', new MyJwtStrategy());
+  auth.register('local', new LocalStrategy());
+  auth.register('anonymous', new AnonymousStrategy());
 
-  app.use('/authentication', authentication);
-  app.service('authentication').hooks(authHooks);
-  app.configure(expressOauth());
-}
+  app.use('authentication', auth);
+  app.service('authentication').hooks(authenticationHooks);
+};

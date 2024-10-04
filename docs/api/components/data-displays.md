@@ -7,11 +7,12 @@ sidebarDepth: 3
 ## datasetBrowser
 
 ```tsx
-datasetBrowser(
+function datasetBrowser(
   dataset: Dataset<InputType, string>,
   options: {
     batchSize: number;
-  }): DatasetBrowser;
+  },
+): DatasetBrowser;
 ```
 
 A Dataset browser provides an interface to visualize the contents of a dataset. It takes a dataset as argument, assuming that each instance contains a `thumbnail` property that can be displayed as an image (typically, a base64 dataURI).
@@ -39,9 +40,7 @@ dashboard.page('Data Management').use(trainingSetBrowser);
 ## datasetScatter
 
 ```tsx
-datasetScatter<T extends Instance>(
-  dataset: Dataset<T>
-): DatasetScatter<T>;
+function datasetScatter<T extends Instance>(dataset: Dataset<T>): DatasetScatter<T>;
 ```
 
 Visualize the contents of a dataset using a scatter plot visualization. The mapping between the fields of dataset instances and the x, y position, as well as the label, can be specified using transformer functions.
@@ -57,7 +56,7 @@ Visualize the contents of a dataset using a scatter plot visualization. The mapp
 #### .setTransforms()
 
 ```tsx
-setTransforms(t: Partial<Transforms<T>>): void;
+function setTransforms(t: Partial<Transforms<T>>): void;
 ```
 
 Set one or several data transformations for `xy` coordinates, and `label`. Transforms have the following signature:
@@ -85,10 +84,7 @@ dashboard.page('Data Management').use(trainingScatter);
 ## datasetTable
 
 ```tsx
-datasetTable(
-  dataset: Dataset,
-  columns?: string[],
-): DatasetTable
+function datasetTable(dataset: Dataset, columns?: string[]): DatasetTable;
 ```
 
 This components provides a visualization of a dataset as a paginated data table, where each row describes an instance. It takes a dataset as argument, and optionally the list of columns to display.
@@ -116,9 +112,7 @@ dashboard.page('Data Management').use(tst);
 ## imageDisplay
 
 ```tsx
-marcelle.imageDisplay(
-  imageStream: Stream<ImageData> | Stream<ImageData[]>
-): DatasetBrowser;
+function imageDisplay(imageStream: Stream<ImageData> | Stream<ImageData[]>): DatasetBrowser;
 ```
 
 An Image Display allows for displaying an image on screen provided by an input stream.
@@ -146,7 +140,7 @@ dashboard.page('Data').use(instanceViewer);
 ## videoPlayer
 
 ```tsx
-marcelle.videoPlayer(src: string): VideoPlayer;
+function videoPlayer(src: string): VideoPlayer;
 ```
 
 A simple video player.

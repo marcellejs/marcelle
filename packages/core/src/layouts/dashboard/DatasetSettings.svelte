@@ -1,10 +1,9 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
-
-  import type { Dataset } from '../../dataset';
   import { Button } from '@marcellejs/design-system';
+  import type { Dataset, Instance } from '../../core';
 
-  export let dataset: Dataset<unknown, unknown>;
+  export let dataset: Dataset<Instance>;
 
   let uploadInput: HTMLInputElement;
 
@@ -29,7 +28,7 @@
       const fl = (e.target as HTMLInputElement).files;
       const files: File[] = [];
       for (let i = 0; i < fl.length; i++) {
-        files.push(fl[i]);
+        files.push(fl.item(i));
       }
       dataset.upload(files);
     });

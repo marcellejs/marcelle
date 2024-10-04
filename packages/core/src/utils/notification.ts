@@ -13,7 +13,7 @@ export function notification({
   title: string;
   message: string;
   duration?: number;
-  type?: string;
+  type?: 'default' | 'danger';
 }): void {
   if (!notificationContainer) {
     notificationContainer = document.createElement('div');

@@ -13,7 +13,7 @@ In Marcelle, dashboards are applications that can be displayed on demand on top 
 The following factory function creates and returns an empty Dashboard Application:
 
 ```tsx
-marcelle.dashboard({
+function dashboard({
   title: string;
   author: string;
   closable?: boolean;

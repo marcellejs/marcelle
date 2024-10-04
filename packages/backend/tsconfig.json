@@ -1,15 +1,22 @@
 {
+  "ts-node": {
+    "files": true
+  },
   "compilerOptions": {
-    "target": "es2018",
+    "target": "es2020",
     "module": "commonjs",
     "outDir": "./lib",
     "rootDir": "./src",
+    "declaration": true,
     "strict": true,
     "esModuleInterop": true,
+    "sourceMap": true,
     "skipLibCheck": true
   },
+  "include": [
+    "src"
+  ],
   "exclude": [
-    "test",
-    "bin"
+    "test"
   ]
 }

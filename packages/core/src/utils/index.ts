@@ -3,6 +3,7 @@ import { notification } from './notification';
 export { throwError } from './error-handling';
 export { notification } from './notification';
 export * from './lazy-iterable';
+export * from './image';
 export { mergeDeep } from './object';
 
 if (window) {

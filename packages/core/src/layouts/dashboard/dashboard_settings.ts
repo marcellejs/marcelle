@@ -16,8 +16,8 @@ export class DashboardSettings {
   components: Array<Component | Component[] | string> = [];
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  xModels: Model<Instance, unknown>[] = [];
-  xDatasets: Dataset<Instance>[] = [];
+  xModels: Array<Model<Instance, unknown>> = [];
+  xDatasets: Array<Dataset<Instance>> = [];
   xPredictions: BatchPrediction[] = [];
   xDataStores: DataStore[] = [];
 
@@ -31,12 +31,12 @@ export class DashboardSettings {
     return this;
   }
 
-  models(...models: Model<Instance, unknown>[]): DashboardSettings {
+  models(...models: Array<Model<Instance, unknown>>): DashboardSettings {
     this.xModels = models;
     return this;
   }
 
-  datasets(...datasets: Dataset<Instance>[]): DashboardSettings {
+  datasets(...datasets: Array<Dataset<Instance>>): DashboardSettings {
     this.xDatasets = datasets;
     return this;
   }

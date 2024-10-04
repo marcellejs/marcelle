@@ -1,5 +1,5 @@
 import type { SvelteComponent } from 'svelte';
-import type { Service as FeathersService } from '@feathersjs/feathers';
+import type { FeathersService } from '@feathersjs/feathers';
 import type { Stream } from './stream';
 import type { ServiceIterable } from './data-store/service-iterable';
 
@@ -11,10 +11,8 @@ export interface ComponentInternals {
 }
 
 export interface Parametrable {
-  parameters: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [name: string]: Stream<any>;
-  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  parameters: Record<string, Stream<any>>;
 }
 
 export type ObjectId = string;
@@ -23,6 +21,7 @@ export type Service<T> = FeathersService<T> & { items: () => ServiceIterable<T> 
 
 export interface User {
   email: string;
+  role: string;
 }
 
 export interface Instance {
@@ -69,7 +68,7 @@ export interface TrainingRun {
   epochs?: number;
   params?: Record<string, unknown>;
   logs?: TrainingStatus['data'];
-  checkpoints?: Array<ModelCheckpoint>;
+  checkpoints?: ModelCheckpoint[];
   model?: {
     summary?: string;
     [key: string]: unknown;

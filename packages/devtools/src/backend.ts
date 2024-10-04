@@ -23,17 +23,51 @@ interface PackageJson {
 }
 
 export async function configureBackend(cwd: string, pkg: PackageJson): Promise<void> {
-  const { database, auth } = await prompts(
+  // const { database, auth } = await prompts(
+  //   [
+  //     {
+  //       type: 'select',
+  //       name: 'database',
+  //       message: 'What kind of database do you want to use?',
+  //       choices: [
+  //         { title: 'NeDB', value: 'nedb' },
+  //         { title: 'MongoDB', value: 'mongodb' },
+  //       ],
+  //       initial: 0,
+  //     },
+  //     {
+  //       type: 'toggle',
+  //       name: 'auth',
+  //       message: 'Do you want to use authentication?',
+  //     },
+  //   ],
+  //   { onCancel },
+  // );
+
+  // let dbname = '';
+  // if (database === 'mongodb') {
+  //   dbname = snakeCase(pkg.name);
+  //   ({ dbname } = await prompts(
+  //     [
+  //       {
+  //         type: 'text',
+  //         name: 'dbname',
+  //         message: 'What database name do you want to use with mongodb?',
+  //         initial: dbname,
+  //       },
+  //     ],
+  //     { onCancel },
+  //   ));
+  // }
+
+  let dbname = snakeCase(pkg.name);
+  const res = await prompts(
     [
       {
-        type: 'select',
-        name: 'database',
-        message: 'What kind of database do you want to use?',
-        choices: [
-          { title: 'NeDB', value: 'nedb' },
-          { title: 'MongoDB', value: 'mongodb' },
-        ],
-        initial: 0,
+        type: 'text',
+        name: 'dbname',
+        message: 'What database name do you want to use with mongodb?',
+        initial: dbname,
       },
       {
         type: 'toggle',
@@ -43,22 +77,8 @@ export async function configureBackend(cwd: string, pkg: PackageJson): Promise<v
     ],
     { onCancel },
   );
-
-  let dbname = '';
-  if (database === 'mongodb') {
-    dbname = snakeCase(pkg.name);
-    ({ dbname } = await prompts(
-      [
-        {
-          type: 'text',
-          name: 'dbname',
-          message: 'What database name do you want to use with mongodb?',
-          initial: dbname,
-        },
-      ],
-      { onCancel },
-    ));
-  }
+  dbname = res.dbname;
+  const { auth } = res;
 
   const dst = path.join(cwd, 'backend');
   if (fs.existsSync(path.join(dst, 'config', 'default.json'))) {
@@ -84,7 +104,7 @@ export async function configureBackend(cwd: string, pkg: PackageJson): Promise<v
     if (srcname === 'default.json') {
       const config = JSON.parse(fs.readFileSync(path.join(dir, srcname), 'utf-8'));
       config.mongodb = `mongodb://localhost:27017/${dbname}`;
-      config.database = database;
+      config.database = 'mongodb';
       config.authentication.enabled = auth;
       fs.writeFileSync(
         path.join(dst, 'config', 'default.json'),
@@ -94,6 +114,14 @@ export async function configureBackend(cwd: string, pkg: PackageJson): Promise<v
       copy(path.join(dir, srcname), path.join(dst, 'config', srcname));
     }
     console.log(`\tadded: ${green('backend/config/' + srcname)}`);
+  }
+
+  mkdirp(path.join(dst, 'public'));
+
+  const files2 = fs.readdirSync(dir).filter((x) => x === 'index.html');
+  for (const srcname of files2) {
+    copy(path.join(dir, srcname), path.join(dst, 'public', srcname));
+    console.log(`\tadded: ${green('backend/public/' + srcname)}`);
   }
 
   let dependencies: PackageJson['dependencies'] = {
@@ -125,6 +153,7 @@ async function writeBackendFiles(dstDir: string, githubPath: string, octokit: Oc
     // ref: backendVersion.replace('^', 'v'),
   });
   mkdirp(dstDir);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   for (const { name, type, download_url } of (files as any).data) {
     if (name === 'config' && type === 'dir') {
       continue;

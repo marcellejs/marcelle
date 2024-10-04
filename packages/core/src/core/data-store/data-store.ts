@@ -1,9 +1,9 @@
-import io from 'socket.io-client';
 import authentication from '@feathersjs/authentication-client';
-import feathers, { Application } from '@feathersjs/feathers';
+import { feathers, type Application } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio-client';
-import memoryService from 'feathers-memory';
-import localStorageService from 'feathers-localstorage';
+import io from 'socket.io-client';
+import { MemoryService } from '@feathersjs/memory';
+import localStorageService from './feathers-localstorage';
 import { addObjectId, renameIdField, createDate, updateDate, findDistinct } from './hooks';
 import { logger } from '../logger';
 import Login from './Login.svelte';
@@ -12,6 +12,7 @@ import { Stream } from '../stream';
 import { noop } from '../../utils/misc';
 import { iterableFromService } from './service-iterable';
 import type { Service, User } from '../types';
+import type { ObjectId } from '@marcellejs/design-system';
 
 function isValidUrl(str: string) {
   try {
@@ -38,7 +39,8 @@ export class DataStore {
   location: string;
   apiPrefix = '';
 
-  $services: Stream<string[]> = new Stream([], true);
+  $services = new Stream<string[]>([], true);
+  $status = new Stream<'init' | 'connecting' | 'connected'>('init', true);
 
   #initPromise: Promise<void>;
   #connectPromise: Promise<void>;
@@ -78,6 +80,13 @@ export class DataStore {
           logger.log(`Connected to backend ${this.location}!`);
           resolve();
         });
+        this.feathers.io.on('disconnect', (reason: string, details: unknown) => {
+          logger.log(`Disconnected from backend ${this.location}! Reason: "${reason}"`);
+          console.log('Details', details);
+        });
+        this.feathers.io.on('connect_error', (e: Error) => {
+          logger.log(`Socket.io error: ${e.name}: ${e.message}`);
+        });
         this.feathers.io.on('reconnect_failed', () => {
           const e =
             new Error(`Cannot reach backend at location ${this.location}. Is the server running?
@@ -109,7 +118,7 @@ export class DataStore {
       this.#createService = (name: string) => {
         this.feathers.use(
           `/${name}`,
-          memoryService({
+          new MemoryService({
             id: '_id',
             paginate: {
               default: 100,
@@ -125,8 +134,11 @@ export class DataStore {
   }
 
   async connect(): Promise<User> {
+    if (this.$status.get() === 'connected') return this.user;
     if (this.backend !== DataStoreBackend.Remote) {
-      return { email: null };
+      this.$status.set('connected');
+      this.user = { email: null, role: 'anonymous' };
+      return this.user;
     }
     await this.#initPromise;
     await this.#connectPromise;
@@ -134,13 +146,21 @@ export class DataStore {
   }
 
   async authenticate(): Promise<User> {
+    if (this.$status.get() === 'connected') return this.user;
+
     if (!this.requiresAuth) {
-      this.user = { email: null };
+      this.user = { email: null, role: 'anonymous' };
+      this.$status.set('connected');
       return this.user;
     }
 
     if (this.user) {
+      this.$status.set('connected');
       return this.user;
+    }
+
+    if (this.$status.get() !== 'connecting') {
+      this.$status.set('connecting');
     }
 
     const doAuth = () => {
@@ -148,10 +168,17 @@ export class DataStore {
       return new Promise<void>((resolve, reject) => {
         this.feathers
           .reAuthenticate()
+          .catch(() => {
+            return this.feathers.authenticate({ strategy: 'anonymous' });
+          })
           .then(({ user }) => {
             this.#authenticating = false;
             this.user = user;
-            logger.log(`Authenticated as ${user.email}`);
+            if (user.role === 'anonymous') {
+              logger.log(`Accessing DataStore Anonymously.`);
+            } else {
+              logger.log(`Authenticated as ${user.email}.`);
+            }
             resolve();
           })
           .catch((err) => {
@@ -165,25 +192,32 @@ export class DataStore {
       this.#authenticating ? null : doAuth(),
     );
 
-    return this.#authenticationPromise.then(() => this.user);
+    return this.#authenticationPromise.then(() => {
+      this.$status.set('connected');
+      return this.user;
+    });
   }
 
   async login(email: string, password: string): Promise<User> {
+    this.$status.set('connecting');
     const res = await this.feathers.authenticate({ strategy: 'local', email, password });
     this.user = res.user;
+    this.$status.set('connected');
     return this.user;
   }
 
   async loginWithUI(): Promise<User> {
+    this.$status.set('connecting');
     const app = new Login({
       target: document.body,
       props: { dataStore: this },
     });
     return new Promise<User>((resolve, reject) => {
-      app.$on('terminate', (user: User) => {
+      app.$on('terminate', (e: CustomEvent<User>) => {
         app.$destroy();
-        if (user) {
-          resolve(user);
+        if (e.detail) {
+          this.$status.set('connected');
+          resolve(e.detail);
         } else {
           reject();
         }
@@ -191,14 +225,21 @@ export class DataStore {
     });
   }
 
-  async signup(email: string, password: string): Promise<User> {
+  async signup(options: {
+    email: string;
+    password: string;
+    [key: string]: unknown;
+  }): Promise<User> {
     try {
-      await this.service('users').create({ email, password });
-      await this.login(email, password);
+      this.$status.set('connecting');
+      await this.service('users').create(options);
+      await this.login(options.email, options.password);
+      this.$status.set('connected');
       return this.user;
     } catch (error) {
       logger.error('An error occurred during signup', error);
-      return { email: null };
+      throw error;
+      // return { email: null, role: 'anonymous' };
     }
   }
 
@@ -217,39 +258,46 @@ export class DataStore {
     //   this.backend === DataStoreBackend.Remote
     //     ? this.feathers.service(`${this.apiPrefix}/${name}`)
     //     : this.feathers.service(name);
-    const s = this.feathers.service(name);
+    const s: Service<T> = this.feathers.service(name) as Service<T>;
     if (!serviceExists) {
       s.items = () => iterableFromService(s);
     }
-    return s as Service<T>;
+    return s;
   }
 
-  async uploadAsset(blob: Blob, filename = ''): Promise<string> {
+  async uploadAsset(
+    blob: Blob,
+    filename = '',
+  ): Promise<{ _id: ObjectId; files: Record<string, ObjectId> }> {
     if (this.backend !== DataStoreBackend.Remote) {
       throwError(new Error('LocalStorage Backend does not yet support upload'));
     }
-    // try {
-    const ext = blob.type.split(';')[0].split('/')[1];
-    const name = filename || `asset.${ext}`;
-    const fd = new FormData();
-    fd.append(name, blob);
-    const fetchOptions: RequestInit = { method: 'POST', body: fd };
-    if (this.requiresAuth) {
-      const jwt = await this.feathers.authentication.getAccessToken();
-      const headers = new Headers({ Authorization: `Bearer ${jwt}` });
-      fetchOptions.headers = headers;
+
+    try {
+      const ext = blob.type.split(';')[0].split('/')[1];
+      const name = filename || `asset.${ext}`;
+      const fd = new FormData();
+      fd.append(name, blob);
+
+      const fetchOptions: RequestInit = { method: 'POST', body: fd };
+      if (this.requiresAuth) {
+        const jwt = await this.feathers.authentication.getAccessToken();
+        const headers = new Headers({ Authorization: `Bearer ${jwt}` });
+        fetchOptions.headers = headers;
+      }
+      const res = await fetch(`${this.location}/assets`, fetchOptions);
+      const resData = await res.json();
+
+      if (res.status !== 201) {
+        const e = new Error(resData.message);
+        e.name = resData.name;
+        throw e;
+      }
+
+      return resData;
+    } catch (error) {
+      throwError(error as Error);
     }
-    const res = await fetch(`${this.location}/assets/upload`, fetchOptions);
-
-    const resData = await res.json();
-    // TODO: Create asset document so that it can be removed
-    // this.service('assets').create({url: resData.blob})
-    const filePath = `/assets/${resData.blob}`;
-
-    return filePath;
-    // } catch (err) {
-    //   console.error(err);
-    // }
   }
 
   setupAppHooks(): void {

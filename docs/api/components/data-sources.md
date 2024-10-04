@@ -7,7 +7,7 @@ sidebarDepth: 3
 ## fileUpload
 
 ```tsx
-marcelle.fileUpload(): fileUpload;
+function fileUpload(): FileUpload;
 ```
 
 A file upload component, that creates a stream of files.
@@ -28,7 +28,7 @@ myFileUpload.$files.subscribe((x) => console.log('fileUpload $files:', x));
 ## imageUpload
 
 ```tsx
-marcelle.imageUpload({ width?: number, height?: number }): ImageUpload;
+function imageUpload({ width?: number, height?: number }): ImageUpload;
 ```
 
 An Image upload component, that creates a stream of images and thumbnails. Images are cropped and rescaled to match the target dimensions, if these are non-zero, otherwise the dimensions are unchanged.
@@ -63,7 +63,7 @@ imgUpload.$images.subscribe((x) => console.log('imageUpload $images:', x));
 ## mediaRecorder
 
 ```tsx
-marcelle.mediaRecorder(mediaStream: MediaStream): MediaRecorder;
+function mediaRecorder(mediaStream: MediaStream): MediaRecorder;
 ```
 
 A generic recording component for audio/visual data, that works both for audio and video. The component can be used, for instance, with the microphone and webcam components.
@@ -114,7 +114,7 @@ recorder.$recordings.subscribe(console.log);
 ## microphone
 
 ```tsx
-marcelle.microphone(): Microphone;
+function microphone(): Microphone;
 ```
 
 A microphone source component.
@@ -136,7 +136,7 @@ A microphone source component.
 ## sketchPad
 
 ```tsx
-marcelle.sketchpad(): Sketchpad;
+function sketchpad(): Sketchpad;
 ```
 
 An input sketching component allowing the user to draw. The generate generates a stream of images of the sketches, as well as stream for various user actions.
@@ -167,7 +167,7 @@ sketch.$strokeEnd.subscribe(() => console.log('sketchpad $strokeEnd'));
 ## webcam
 
 ```tsx
-marcelle.webcam({ width?: number, height?: number, period?: number }): Webcam;
+function webcam({ width?: number, height?: number, period?: number }): Webcam;
 ```
 
 A webcam source component, producing a periodic stream of images.

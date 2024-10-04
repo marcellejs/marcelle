@@ -11,6 +11,7 @@
 <ViewContainer {title}>
   <div class="grow">
     {#if $text}
+      <!-- eslint-disable-next-line svelte/no-at-html-tags -->
       {@html $text}
     {/if}
   </div>

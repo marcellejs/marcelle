@@ -1,4 +1,4 @@
-import { GraphModel, loadGraphModel } from '@tensorflow/tfjs-converter';
+import { type GraphModel, loadGraphModel } from '@tensorflow/tfjs-converter';
 import type { Instance, ObjectId, StoredModel } from '../types';
 import type { DataStore } from '../data-store';
 import { io, ready, Tensor, tidy, zeros } from '@tensorflow/tfjs-core';
@@ -42,7 +42,7 @@ export abstract class TFJSBaseModel<T extends Instance, PredictionType> extends 
     id: ObjectId = null,
   ): Promise<ObjectId> {
     if (!this.model) return null;
-    let files: [string, string][];
+    let files: Array<[string, string]>;
     if (store.backend === DataStoreBackend.LocalStorage) {
       await this.model.save(`indexeddb://${name}`);
       files = [['main', `indexeddb://${name}`]];

@@ -5,9 +5,9 @@ import {
   Model,
   Component,
   Stream,
-  TrainingRun,
-  TrainingStatus,
-  Instance,
+  type TrainingRun,
+  type TrainingStatus,
+  type Instance,
 } from '../../core';
 import { preventConcurrentCalls } from '../../utils/asynchronicity';
 import { noop } from '../../utils/misc';
@@ -49,7 +49,10 @@ export class TrainingHistory<T extends Instance, PredictionType> extends Compone
 
   private lock = Promise.resolve();
 
-  constructor(public dataStore: DataStore, options: TrainingHistoryOptions = {}) {
+  constructor(
+    public dataStore: DataStore,
+    options: TrainingHistoryOptions = {},
+  ) {
     super();
     this.options = { ...defaultOptions, ...options };
     this.lock = this.lock.then(noop);

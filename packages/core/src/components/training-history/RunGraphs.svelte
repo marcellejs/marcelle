@@ -1,12 +1,12 @@
 <script lang="ts">
   import { onDestroy } from 'svelte';
 
-  import type { Model, TrainingStatus } from '../../core';
+  import type { Instance, Model, TrainingStatus } from '../../core';
   import { Stream } from '../../core/stream';
-  import { TrainingPlot, trainingPlot } from '../training-plot';
+  import { type TrainingPlot, trainingPlot } from '../training-plot';
 
   export let names: string[];
-  export let logs: Record<string, unknown>[];
+  export let logs: Array<Record<string, unknown>>;
 
   let chartElt: HTMLDivElement;
 
@@ -27,7 +27,7 @@
     }),
     {},
   );
-  let chart: TrainingPlot<unknown, unknown>;
+  let chart: TrainingPlot;
   $: {
     if (chart) {
       chart.destroy();
@@ -35,7 +35,7 @@
     chart = trainingPlot(
       {
         $training: new Stream<TrainingStatus>({ status: 'success', data: indexedLogs }, true),
-      } as Model<unknown, unknown>,
+      } as Model<Instance, unknown>,
       logSpec,
     );
     chart.mount(chartElt);

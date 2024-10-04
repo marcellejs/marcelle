@@ -7,9 +7,7 @@ sidebarDepth: 3
 ## confidencePlot
 
 ```tsx
-marcelle.confidencePlot(
-  predictionStream: Stream<Prediction>
-): ConfidencePlot;
+function confidencePlot(predictionStream: Stream<Prediction>): ConfidencePlot;
 ```
 
 Plot prediction result in real-time from a reactive stream of predictions, where each event implements the following interface:
@@ -48,9 +46,9 @@ const plotResults = marcelle.confidencePlot(predictionStream);
 ## detectionBoxes
 
 ```tsx
-marcelle.detectionBoxes(
+function detectionBoxes(
   imgStream: Stream<ImageData>,
-  objDectectionRes: Stream<ObjectDetectorResults>
+  objDectectionRes: Stream<ObjectDetectorResults>,
 ): DetectionBoxes;
 ```
 
@@ -96,7 +94,7 @@ const objDetectionVis = detectionBoxes(source.$images, cocoPredictionStream);
 ## ConfusionMatrix
 
 ```tsx
-marcelle.confusionMatrix(prediction: BatchPrediction): Confusion;
+function confusionMatrix(prediction: BatchPrediction): Confusion;
 ```
 
 Displays a confusion matrix from a [BatchPrediction](#batchprediction) component.

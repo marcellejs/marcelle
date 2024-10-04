@@ -1,16 +1,16 @@
 import type { Instance, Model, TrainingStatus } from '../../core';
 import { Component } from '../../core/component';
 import { Stream } from '../../core/stream';
-import { genericChart, GenericChart } from '../generic-chart';
+import { genericChart, type GenericChart } from '../generic-chart';
 import { throwError } from '../../utils/error-handling';
 import View from './training-plot.view.svelte';
 
-export type LogSpec = string | string[] | { [key: string]: string | string[] };
+export type LogSpec = string | string[] | Record<string, string | string[]>;
 
 export class TrainingPlot extends Component {
   title = 'training plot';
 
-  charts: { [key: string]: GenericChart } = {};
+  charts: Record<string, GenericChart> = {};
 
   constructor(
     public model: Model<Instance, unknown>,
@@ -39,9 +39,7 @@ export class TrainingPlot extends Component {
     if (Array.isArray(processedLogs)) {
       processedLogs = processedLogs.reduce((x, y) => ({ ...x, [y]: y }), {});
     }
-    const streams: {
-      [key: string]: Stream<{ x: number; y: number }[]>;
-    } = {};
+    const streams: Record<string, Stream<Array<{ x: number; y: number }>>> = {};
     for (const [key, val] of Object.entries(processedLogs)) {
       const x = Array.isArray(val) ? val : [val];
       this.charts[key] = genericChart({
@@ -53,7 +51,7 @@ export class TrainingPlot extends Component {
       });
       for (const y of x) {
         if (!Object.keys(streams).includes(y)) {
-          streams[y] = new Stream<{ x: number; y: number }[]>([], true);
+          streams[y] = new Stream<Array<{ x: number; y: number }>>([], true);
         }
         this.charts[key].addSeries(streams[y], y);
       }

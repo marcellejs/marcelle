@@ -21,7 +21,7 @@
     {
       total: number;
       loaded: number;
-      instances: Partial<DBInstance>[];
+      instances: Array<Partial<DBInstance>>;
     }
   > = {};
 
@@ -218,6 +218,7 @@
               ({ id }) => id !== data.id,
             );
             if (classes[originalLabel].total === 0) {
+              // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
               delete classes[originalLabel];
               classes = classes;
             }
@@ -239,6 +240,7 @@
               ({ id }) => id !== data.id,
             );
             if (classes[data.y].total === 0) {
+              // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
               delete classes[data.y];
               classes = classes;
             }
@@ -259,6 +261,7 @@
       <p class="ml-3 mt-2">This dataset is empty.</p>
     {/if}
 
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
       class="flex flex-wrap"
       on:click={() => selectInstance()}
@@ -294,6 +297,7 @@
             <div class="browser-class-body">
               {#each instances as { id, thumbnail } (id)}
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
                 <img
                   src={thumbnail}
                   alt="thumbnail"

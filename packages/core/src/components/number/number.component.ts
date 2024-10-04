@@ -5,7 +5,7 @@ import View from './number.view.svelte';
 export class Number extends Component {
   title = 'number';
 
-  $value: Stream<number> = new Stream(0, true);
+  $value = new Stream<number>(0, true);
   $disabled: Stream<boolean> = new Stream<boolean>(false, true);
 
   constructor(defaultValue?: number) {

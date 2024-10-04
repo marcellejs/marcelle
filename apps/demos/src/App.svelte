@@ -37,10 +37,13 @@
   let [minColWidth, maxColWidth, gap] = [300, 400, 0];
   let width, height;
 
-  function handleSelect(values, i) {
-    currentFilters[i] = (values || []).map(({ value }) => value);
-    currentFilters = currentFilters;
-  }
+  const handleChange = (i) => (e) => {
+    if (e.type === 'clear' && Array.isArray(e.detail)) currentFilters[i] = [];
+    else
+      currentFilters[i].includes(e.detail.value)
+        ? (currentFilters[i] = currentFilters[i].filter((i) => i != e.detail.value))
+        : (currentFilters[i] = [...currentFilters[i], e.detail.value]);
+  };
 </script>
 
 <div class="container">
@@ -54,11 +57,7 @@
         {#each filters as f, i}
           <div>
             <p>{f}</p>
-            <Select
-              items={filterValues[i]}
-              isMulti={true}
-              on:select={(e) => handleSelect(e.detail, i)}
-            />
+            <Select items={filterValues[i]} multiple on:select={handleChange(i)} />
           </div>
         {/each}
       </div>

@@ -5,7 +5,7 @@ import View from './text-input.view.svelte';
 export class TextInput extends Component {
   title = 'text input';
 
-  $value: Stream<string> = new Stream('', true);
+  $value = new Stream<string>('', true);
   $disabled: Stream<boolean> = new Stream<boolean>(false, true);
 
   constructor(defaultValue?: string) {

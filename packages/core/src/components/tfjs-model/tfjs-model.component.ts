@@ -1,20 +1,10 @@
-import {
-  browser,
-  image as tfImage,
-  tensor,
-  Tensor,
-  Tensor1D,
-  Tensor2D,
-  Tensor3D,
-  TensorLike,
-  tidy,
-  ready,
-} from '@tensorflow/tfjs-core';
+import type { Tensor1D, Tensor2D, Tensor3D, TensorLike } from '@tensorflow/tfjs-core';
+import { browser, image as tfImage, tensor, Tensor, tidy, ready } from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/mul';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/expand_dims';
 import { loadGraphModel } from '@tensorflow/tfjs-converter';
 import { loadLayersModel } from '@tensorflow/tfjs-layers';
-import { ClassifierResults, Instance, TFJSBaseModel } from '../../core';
+import { type ClassifierResults, type Instance, TFJSBaseModel } from '../../core';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import { readJSONFile } from '../../utils/file-io';
 import Component from './tfjs-model.view.svelte';

@@ -9,7 +9,7 @@ import {
   type Pose,
 } from '@tensorflow-models/pose-detection';
 import type { GraphModel } from '@tensorflow/tfjs-converter';
-import { Instance, logger, Model, Stream } from '../../core';
+import { type Instance, logger, Model, Stream } from '../../core';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import { SkeletonRenderer } from './renderer';
 import View from './pose-detection.view.svelte';
@@ -43,7 +43,10 @@ export class PoseDetection extends Model<PoseDetectionInstance, Pose[]> {
   #fullRenderer: SkeletonRenderer;
   #thumbnailRenderer: SkeletonRenderer;
 
-  constructor(public model: PoseDetectionModel = 'MoveNet', public modelConfig?: ModelConfig) {
+  constructor(
+    public model: PoseDetectionModel = 'MoveNet',
+    public modelConfig?: ModelConfig,
+  ) {
     super();
     this.#fullRenderer = new SkeletonRenderer(SupportedModels[model], 224);
     this.#thumbnailRenderer = new SkeletonRenderer(SupportedModels[model], 60);

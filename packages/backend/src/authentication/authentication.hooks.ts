@@ -1,13 +1,22 @@
 import { HookContext } from '@feathersjs/feathers';
 import { Application } from '../declarations';
-import { defineAbilitiesFor } from './abilities';
+import { defineAbilitiesFor } from './authentication.abilities';
 
 export default {
   before: {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [
+      (context: HookContext): HookContext => {
+        delete context.params.user;
+        delete context.params.authentication;
+        delete context.params.ability;
+        delete context.params.rules;
+
+        return context;
+      },
+    ],
     update: [],
     patch: [],
     remove: [],
@@ -18,6 +27,9 @@ export default {
     get: [],
     create: [
       (context: HookContext): HookContext => {
+        if (context.result?.anonymous) {
+          context.result.user = { role: 'anonymous', _id: null };
+        }
         const { user } = context.result;
         if (!user) return context;
         const ability = defineAbilitiesFor(user, context.app as Application);

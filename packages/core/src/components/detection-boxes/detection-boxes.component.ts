@@ -1,4 +1,4 @@
-import { Component, Stream, ObjectDetectorResults } from '../../core';
+import { Component, Stream, type ObjectDetectorResults } from '../../core';
 import View from './detection-boxes.view.svelte';
 
 export class DetectionBoxes extends Component {

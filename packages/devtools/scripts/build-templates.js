@@ -53,7 +53,7 @@ async function generate_templates() {
         let contents = fs.readFileSync(path.join(cwd, name), 'utf8');
         if (lang === 'js') {
           if (name.endsWith('.ts')) {
-            contents = convert_typescript(contents);
+            contents = await convert_typescript(contents);
             name = name.replace('.ts', '.js');
           }
           if (name.endsWith('.svelte')) {
@@ -70,9 +70,10 @@ async function generate_templates() {
   mkdirp(dir);
   copy('node_modules/@marcellejs/backend/config/default.json', path.join(dir, 'default.json'));
   copy(
-    'node_modules/@marcellejs/backend/config/production.json',
-    path.join(dir, 'production.json'),
+    'node_modules/@marcellejs/backend/config/custom-environment-variables.json',
+    path.join(dir, 'custom-environment-variables.json'),
   );
+  copy('node_modules/@marcellejs/backend/public/index.html', path.join(dir, 'index.html'));
 }
 
 async function main() {

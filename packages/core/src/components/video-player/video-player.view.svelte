@@ -15,7 +15,7 @@
   import { ViewContainer } from '@marcellejs/design-system';
   import type { Stream } from '../../core';
   export let title: string;
-  export let src: Stream<string>;
+  export let src: Stream<string | MediaStream>;
   // export let ready: Stream<boolean>;
   export let paused: Stream<boolean>;
   export let progress: Stream<number>;

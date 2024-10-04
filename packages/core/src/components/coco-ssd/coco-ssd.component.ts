@@ -1,6 +1,6 @@
-import { load, ObjectDetection, ObjectDetectionBaseModel } from '@tensorflow-models/coco-ssd';
+import { load, ObjectDetection, type ObjectDetectionBaseModel } from '@tensorflow-models/coco-ssd';
 import { io, ready } from '@tensorflow/tfjs-core';
-import { type Instance, Model, ObjectDetectorResults } from '../../core';
+import { type Instance, Model, type ObjectDetectorResults } from '../../core';
 import { logger } from '../../core/logger';
 import { Stream } from '../../core/stream';
 import { Catch, TrainingError } from '../../utils/error-handling';
@@ -23,7 +23,7 @@ export class CocoSsd extends Model<CocoInstance, ObjectDetectorResults> {
 
   #coco: ObjectDetection;
   #base: ObjectDetectionBaseModel;
-  $loading: Stream<boolean> = new Stream(true as boolean, true);
+  $loading = new Stream<boolean>(true, true);
 
   constructor({ base = 'lite_mobilenet_v2' }: CocoSsdOptions = {}) {
     super();

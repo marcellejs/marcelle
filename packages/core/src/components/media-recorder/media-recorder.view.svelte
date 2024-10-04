@@ -4,7 +4,7 @@
   import { ViewContainer } from '@marcellejs/design-system';
   import { throwError } from '../../utils';
   import { getBlobMeta } from './blob-utils';
-  import fixWebmDuration from 'fix-webm-duration';
+  import { RecordRTCPromisesHandler } from 'recordrtc';
 
   export let title: string;
   export let mediaStream: Stream<MediaStream>;
@@ -16,8 +16,9 @@
     thumbnail: string;
   }>;
 
-  let recorder: MediaRecorder;
+  let recorder: RecordRTCPromisesHandler;
   let elapsedTime = '';
+  let intvId: number;
   let thumbnail = '';
 
   function checkRecorder(): void {
@@ -29,57 +30,48 @@
   }
 
   function startRecording() {
-    const data: Blob[] = [];
-
-    recorder.ondataavailable = (event) => data.push(event.data);
-    recorder.start();
+    recorder.startRecording();
 
     const startTime = Date.now();
     elapsedTime = '00:00:00';
-    const intvId = setInterval(() => {
+    intvId = setInterval(() => {
       const interval = new Date(Date.now() - startTime);
       const hours = interval.getUTCHours().toString().padStart(2, '0');
       const minutes = interval.getUTCMinutes().toString().padStart(2, '0');
       const seconds = interval.getSeconds().toString().padStart(2, '0');
 
       elapsedTime = `${hours}:${minutes}:${seconds}`;
-    }, 1000);
-
-    let stopped = new Promise((resolve, reject) => {
-      recorder.onstop = resolve;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      recorder.onerror = (event: any) => reject(event.name);
-    });
+    }, 1000) as any as number;
+  }
 
-    return stopped
-      .then(() => {
-        clearInterval(intvId);
-        const recordedBlob = new Blob(data, { type: data[0].type.split(';')[0] });
-        return Promise.all([recordedBlob, getBlobMeta(recordedBlob)]);
-      })
-      .then(([blob, [duration, thumb]]) => {
-        return Promise.all([fixWebmDuration(blob, duration, { logger: false }), duration, thumb]);
-      })
-      .then(([blob, duration, thumb]) => {
-        thumbnail = thumb;
-        recordings.set({
-          blob: blob,
-          type: blob.type,
-          duration,
-          thumbnail,
-        });
-        return data;
-      });
+  async function stopRecording() {
+    if (!recorder || (await recorder.getState()) !== 'recording') return;
+    await recorder.stopRecording();
+    clearInterval(intvId);
+    const recordedBlob = await recorder.getBlob();
+
+    const [duration, thumb] = await getBlobMeta(recordedBlob);
+
+    thumbnail = thumb;
+    recordings.set({
+      blob: recordedBlob,
+      type: recordedBlob.type,
+      duration,
+      thumbnail,
+    });
   }
 
   onMount(() => {
     mediaStream
       .filter((s) => !!s)
-      .subscribe((s) => {
-        if (recorder && recorder.state === 'recording') {
-          recorder.stop();
+      .subscribe(async (s) => {
+        if (recorder) {
+          stopRecording();
         }
-        recorder = new MediaRecorder(s);
+        recorder = new RecordRTCPromisesHandler(s, {
+          type: 'video',
+        });
       });
     active.subscribe((shouldRecord) => {
       if (shouldRecord) {
@@ -90,7 +82,7 @@
           active.set(false);
         }
       } else {
-        recorder?.stop();
+        stopRecording();
       }
     });
   });
@@ -98,13 +90,11 @@
 
 <ViewContainer {title}>
   <div class="flex flex-col items-center">
-    <!-- <button on:click={toggleRecord}>{$active ? 'Stop' : 'Record'}</button> -->
     <div class="recorder-container">
       <input type="checkbox" id="btn" bind:checked={$active} />
       <label for="btn" />
     </div>
     <div class="text-gray-600">{elapsedTime}</div>
-    <!-- <img src={thumbnail} alt="" /> -->
   </div>
 </ViewContainer>
 

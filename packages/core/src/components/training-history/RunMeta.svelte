@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Table, TableArrayProvider } from '@marcellejs/design-system';
 
-  export let runs: Record<string, unknown>[];
+  export let runs: Array<Record<string, unknown>>;
 
   $: columns = runs.map((_, i) => ({ name: `Run ${i + 1}` }));
   $: rows = runs.length > 0 ? Object.keys(runs[0]).filter((x) => x !== 'logs') : [];

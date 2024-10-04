@@ -1,35 +1,35 @@
 {
   "host": "localhost",
   "port": 3030,
-  "database": "nedb",
-  "nedb": "../data",
-  "uploads": "../uploads",
-  "mongodb": "mongodb://localhost:27017/marcelle_backend",
-  "gridfs": true,
+  "public": "./backend/public/",
+  "origins": [
+    "http://localhost:3030"
+  ],
+  "paginate": {
+    "default": 10,
+    "max": 50
+  },
+  "mongodb": "mongodb://127.0.0.1:27017/backend-neu",
   "whitelist": {
     "services": "*",
     "assets": ["jpg", "jpeg", "png", "wav"]
   },
-  "paginate": {
-    "default": 100,
-    "max": 1000
-  },
   "authentication": {
     "enabled": false,
+    "allowSignup": false,
     "entity": "user",
     "service": "users",
-    "allowSignup": false,
-    "secret": "ZjXdk3pXZLVpvcEMGGuh6LYdi9o=",
+    "secret": "QnksTHWnxvIcN74yeDHf18sMYGr8565j",
     "authStrategies": [
       "jwt",
-      "local"
+      "local",
+      "anonymous"
     ],
     "jwtOptions": {
       "header": {
         "typ": "access"
       },
       "audience": "https://yourdomain.com",
-      "issuer": "feathers",
       "algorithm": "HS256",
       "expiresIn": "1d"
     },
@@ -50,9 +50,12 @@
     "editor": [
       { "action": "manage", "subject": "all", "conditions": { "userId": "${user._id}" } },
       { "action": "manage", "subject": "all", "conditions": { "public": "${true}" } },
-      { "action": "read", "subject": "users" },
+      { "action": "read", "subject": "users", "conditions": { "_id": "${user._id}" } },
       { "action": "update", "subject": "users", "conditions": { "_id": "${user._id}" } },
       { "action": "delete", "subject": "users", "conditions": { "_id": "${user._id}" }, "inverted": "true" }
+    ],
+    "anonymous": [
+      { "action": "read", "subject": "all", "conditions": { "public": "${true}" } }
     ]
   }
 }

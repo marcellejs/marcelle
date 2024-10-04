@@ -78,7 +78,7 @@
     // const imgPromises = [];
     let p = Promise.resolve();
     for (let i = 0; i < f.length; i++) {
-      const file = f[i];
+      const file = f.item(i);
       const isImage = file.type.match('image.*');
       if (isImage) {
         p = p.then(() => processImageFile(file));
@@ -135,6 +135,7 @@
     on:dragover={handleDragOver}
     on:drop={handleDragDrop}
     class="image-upload"
+    role="none"
   >
     <div
       class="border-dashed border-2 border-gray-300 py-8 flex flex-col justify-center items-center"
