@@ -1,4 +1,4 @@
-import { train, Tensor } from '@tensorflow/tfjs-core';
+import { train, type Tensor } from '@tensorflow/tfjs-core';
 import { sequential, layers as tfLayers } from '@tensorflow/tfjs-layers';
 import { Stream } from '../../core/stream';
 import {

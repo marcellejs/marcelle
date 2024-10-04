@@ -39,9 +39,6 @@ export const authWriteHooks = (requireAuth: boolean) => {
     return [
       authenticate('jwt'),
       setAbilitiesForRestProvider,
-      (context: HookContext) => {
-        console.log('hasNoUserId', hasNoUserId(context));
-      },
       iff(hasNoUserId, setField({ from: 'params.user._id', as: 'data.userId' })).else(),
       authorizeHook,
     ];

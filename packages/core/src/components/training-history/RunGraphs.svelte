@@ -3,7 +3,7 @@
 
   import type { Instance, Model, TrainingStatus } from '../../core';
   import { Stream } from '../../core/stream';
-  import { TrainingPlot, trainingPlot } from '../training-plot';
+  import { type TrainingPlot, trainingPlot } from '../training-plot';
 
   export let names: string[];
   export let logs: Array<Record<string, unknown>>;

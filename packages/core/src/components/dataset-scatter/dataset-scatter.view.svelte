@@ -13,7 +13,7 @@
     Title,
     Tooltip,
     type ChartConfiguration,
-    TooltipModel,
+    type TooltipModel,
   } from 'chart.js';
   import zoomPlugin from 'chartjs-plugin-zoom';
   import type { ObjectId } from '../../core';

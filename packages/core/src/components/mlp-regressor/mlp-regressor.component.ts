@@ -1,4 +1,4 @@
-import { train, tidy, type TensorLike, tensor, Tensor } from '@tensorflow/tfjs-core';
+import { train, tidy, type TensorLike, tensor, type Tensor } from '@tensorflow/tfjs-core';
 import { sequential, layers as tfLayers, metrics } from '@tensorflow/tfjs-layers';
 import { Stream } from '../../core/stream';
 import { TFJSCustomModel, type TFJSCustomModelOptions } from '../../core/model/tfjs-custom-model';
