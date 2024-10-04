@@ -1,34 +1,33 @@
-import { modelParameters, Stream, text } from '@marcellejs/core';
+import { modelParameters, text } from '@marcellejs/core';
+import { BehaviorSubject, combineLatest, debounceTime, filter, from, map, mergeMap } from 'rxjs';
 import { testSetTable, features } from './data';
 import { model } from './model';
 
-const parameters = Object.fromEntries(features.map((s) => [s, new Stream(0, true)]));
+const parameters = Object.fromEntries(features.map((s) => [s, new BehaviorSubject(0)]));
 const controls = modelParameters({ parameters });
 controls.title = 'Choose input values';
 
-testSetTable.$selection
-  .filter((x) => x.length === 1)
-  .subscribe(([x]) => {
-    for (const [key, val] of Object.entries(x)) {
-      if (key in parameters) {
-        parameters[key].set(val);
-      }
+testSetTable.$selection.pipe(filter((x) => x.length === 1)).subscribe(([x]) => {
+  for (const [key, val] of Object.entries(x)) {
+    if (key in parameters) {
+      parameters[key].next(val);
     }
-  });
+  }
+});
 
-const $features = features.reduce((s, x) => {
-  return s.combine((vx, vs) => [...vs, vx], parameters[x]);
-}, new Stream([], true));
+const $features = combineLatest(features.map((x) => parameters[x]));
 
-const $predictions = $features
-  .filter(() => model.ready)
-  .map(model.predict)
-  .awaitPromises();
+const $predictions = $features.pipe(
+  filter(() => model.ready),
+  debounceTime(20),
+  map(model.predict),
+  mergeMap((x) => from(x)),
+);
 
 const result = text('Waiting for predictions...');
 result.title = 'Prediction';
 $predictions.subscribe((x) => {
-  result.$value.set(`Result: ${x.variable}`);
+  result.$value.next(`Result: ${x.variable}`);
 });
 
 const hint = text(

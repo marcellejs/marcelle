@@ -1,31 +1,31 @@
-import { Component, Stream } from '@marcellejs/core';
+import { Component } from '@marcellejs/core';
+import { BehaviorSubject } from 'rxjs';
 import { UMAP } from 'umap-js';
 import View from './umap.view.svelte';
 
 export class Umap extends Component {
   constructor(dataset, supervised = false) {
     super();
-    this.$embedding = new Stream([], true);
-    this.$labels = new Stream([], true);
+    this.$embedding = new BehaviorSubject([]);
+    this.$labels = new BehaviorSubject([]);
     this.title = 'umap';
     this.supervised = supervised;
     this.dataset = dataset;
-    this.start();
   }
 
   async render() {
     const instances = await this.dataset.items().select(['x', 'y']).toArray();
     const umapData = instances.reduce((d, { x }) => d.concat([x]), []);
     const labels = instances.map((x) => x.y);
-    this.$labels.set(labels);
+    this.$labels.next(labels);
     const umap = new UMAP({ nComponents: 2 });
     if (this.supervised) {
       umap.setSupervisedProjection(labels);
     }
     const embedding = await umap.fitAsync(umapData, () => {
-      this.$embedding.set(umap.getEmbedding());
+      this.$embedding.next(umap.getEmbedding());
     });
-    this.$embedding.set(embedding);
+    this.$embedding.next(embedding);
   }
 
   mount(target) {

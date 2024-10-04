@@ -1,26 +1,29 @@
 import type { ClassifierResults } from '../../core/model/types';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import { genericChart, type GenericChart } from '../generic-chart';
 import { text, type Text } from '../text';
+import { BehaviorSubject, map, Observable } from 'rxjs';
+import type { ChartPoint } from '../generic-chart/generic-chart.component';
 
 export class ConfidencePlot extends Component {
   title = 'confidence plot';
 
-  $confidenceStream: Stream<Array<{ x: string; y: number }>>;
+  $confidenceStream: Observable<Array<{ x: string; y: number }>>;
   #plotConfidences: GenericChart;
   #displayLabel: Text;
 
-  constructor(predictionStream: Stream<ClassifierResults>) {
+  constructor(predictionStream: Observable<ClassifierResults>) {
     super();
-    this.$confidenceStream = predictionStream.map(({ confidences }: ClassifierResults) =>
-      Object.entries(confidences)
-        .map(([label, value]) => ({ x: label, y: value }))
-        .sort((a, b) => {
-          if (a.x < b.x) return -1;
-          if (a.x > b.x) return 1;
-          return 0;
-        }),
+    this.$confidenceStream = predictionStream.pipe(
+      map(({ confidences }: ClassifierResults) =>
+        Object.entries(confidences)
+          .map(([label, value]) => ({ x: label, y: value }))
+          .sort((a, b) => {
+            if (a.x < b.x) return -1;
+            if (a.x > b.x) return 1;
+            return 0;
+          }),
+      ),
     );
     this.#plotConfidences = genericChart({
       preset: 'bar-fast',
@@ -31,22 +34,21 @@ export class ConfidencePlot extends Component {
       },
     });
     this.#plotConfidences.addSeries(
-      this.$confidenceStream as Stream<number[]> | Stream<Array<{ x: unknown; y: unknown }>>,
+      this.$confidenceStream as BehaviorSubject<ChartPoint[]>,
       'Confidences',
     );
     this.#plotConfidences.title = '';
     this.#displayLabel = text('Waiting for predictions...');
     this.#displayLabel.title = this.title;
-    this.#displayLabel.$value = new Stream(
-      predictionStream
-        .map(
+    this.#displayLabel.$value.next('Waiting for predictions...');
+    predictionStream
+      .pipe(
+        map(
           ({ label }: ClassifierResults) =>
             `<p>Predicted Label: <code style="font-size: 1.5rem;">${label}</code></p>`,
-        )
-        .startWith('Waiting for predictions...'),
-      true,
-    );
-    this.start();
+        ),
+      )
+      .subscribe(this.#displayLabel.$value);
   }
 
   mount(target?: HTMLElement): void {

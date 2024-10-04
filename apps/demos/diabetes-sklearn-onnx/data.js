@@ -3,6 +3,7 @@ import { parse } from 'https://cdn.skypack.dev/papaparse';
 import trainData from './diabetes_train_set.csv?raw';
 import testData from './diabetes_test_set.csv?raw';
 import { store } from './common';
+import { combineLatest } from 'rxjs';
 
 export const features = ['age', 'sex', 'bmi', 'bp', 's1', 's2', 's3', 's4', 's5', 's6'];
 const columns = ['target', ...features, 'createdAt'];
@@ -38,13 +39,11 @@ loadDataBtn.$click.subscribe(() => {
 
 const info = text('The dataset is empty');
 info.title = 'Dataset Count';
-trainingSet.$count
-  .combine((a, b) => [a, b], testSet.$count)
-  .subscribe(async ([testCount, trainCount]) => {
-    info.$value.set(
-      `Datasets contain ${trainCount} instances for training and ${testCount} instances for testing`,
-    );
-  });
+combineLatest([trainingSet.$count, testSet.$count]).subscribe(async ([testCount, trainCount]) => {
+  info.$value.next(
+    `Datasets contain ${trainCount} instances for training and ${testCount} instances for testing`,
+  );
+});
 
 export function setup(dash) {
   dash.page('Load Data').sidebar(loadDataBtn, info).use(trainingSetTable, testSetTable);

@@ -3,6 +3,7 @@
   import type { User } from '../types';
   import { createEventDispatcher } from 'svelte';
   import { Modal } from '@marcellejs/design-system';
+  import type { User } from '../types';
 
   const dispatch = createEventDispatcher<{ terminate: User }>();
 

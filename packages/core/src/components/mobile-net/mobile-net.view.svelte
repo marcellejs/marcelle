@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { MobileNetAlpha, MobileNetVersion } from '@tensorflow-models/mobilenet';
-  import type { Stream } from '../../core';
   import { ViewContainer } from '@marcellejs/design-system';
+  import { Observable } from 'rxjs';
 
   export let title: string;
-  export let loading: Stream<boolean>;
+  export let loading: Observable<boolean>;
   export let version: MobileNetVersion;
   export let alpha: MobileNetAlpha;
 </script>

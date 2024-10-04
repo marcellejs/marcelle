@@ -1,15 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { Stream } from '../../core';
   import { ViewContainer } from '@marcellejs/design-system';
   import { throwError } from '../../utils';
   import { getBlobMeta } from './blob-utils';
   import { RecordRTCPromisesHandler } from 'recordrtc';
+  import { filter, type BehaviorSubject } from 'rxjs';
 
   export let title: string;
-  export let mediaStream: Stream<MediaStream>;
-  export let active: Stream<boolean>;
-  export let recordings: Stream<{
+  export let mediaStream: BehaviorSubject<MediaStream>;
+  export let active: BehaviorSubject<boolean>;
+  export let recordings: BehaviorSubject<{
     duration: number;
     blob: Blob;
     type: string;
@@ -54,7 +54,7 @@
     const [duration, thumb] = await getBlobMeta(recordedBlob);
 
     thumbnail = thumb;
-    recordings.set({
+    recordings.next({
       blob: recordedBlob,
       type: recordedBlob.type,
       duration,
@@ -63,23 +63,21 @@
   }
 
   onMount(() => {
-    mediaStream
-      .filter((s) => !!s)
-      .subscribe(async (s) => {
-        if (recorder) {
-          stopRecording();
-        }
-        recorder = new RecordRTCPromisesHandler(s, {
-          type: 'video',
-        });
+    mediaStream.pipe(filter((s) => !!s)).subscribe(async (s) => {
+      if (recorder) {
+        stopRecording();
+      }
+      recorder = new RecordRTCPromisesHandler(s, {
+        type: 'video',
       });
+    });
     active.subscribe((shouldRecord) => {
       if (shouldRecord) {
         try {
           checkRecorder();
           startRecording();
         } catch (error) {
-          active.set(false);
+          active.next(false);
         }
       } else {
         stopRecording();

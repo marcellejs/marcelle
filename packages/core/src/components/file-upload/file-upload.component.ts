@@ -1,17 +1,11 @@
-import { never } from '@most/core';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import View from './file-upload.view.svelte';
+import { Subject } from 'rxjs';
 
 export class FileUpload extends Component {
   title = 'file upload';
 
-  $files = new Stream<File[]>(never());
-
-  constructor() {
-    super();
-    this.start();
-  }
+  $files = new Subject<File[]>();
 
   mount(target?: HTMLElement): void {
     const t = target || document.querySelector(`#${this.id}`);

@@ -1,9 +1,10 @@
-<script>
+<script lang="ts">
   import { ViewContainer } from '@marcellejs/design-system';
+  import { Subject } from 'rxjs';
 
-  export let title;
-  export let value;
-  export let placeholder;
+  export let title: string;
+  export let value: Subject<string>;
+  export let placeholder: string;
   export let disabled;
 </script>
 

@@ -1,7 +1,6 @@
-import { never } from '@most/core';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import View from './image-upload.view.svelte';
+import { Subject } from 'rxjs';
 
 export interface ImageUploadOptions {
   width?: number;
@@ -11,8 +10,8 @@ export interface ImageUploadOptions {
 export class ImageUpload extends Component {
   title = 'image upload';
 
-  $images = new Stream(never());
-  $thumbnails = new Stream(never());
+  $images = new Subject<ImageData>();
+  $thumbnails = new Subject<string>();
 
   #width: number;
   #height: number;
@@ -21,7 +20,6 @@ export class ImageUpload extends Component {
     super();
     this.#width = width;
     this.#height = height;
-    this.start();
   }
 
   mount(target?: HTMLElement): void {

@@ -73,6 +73,7 @@ Replace the contents of the file by the following two lines, that import the mar
 ```js
 import '@marcellejs/core/dist/marcelle.css';
 import * as marcelle from '@marcellejs/core';
+import * as rxjs from 'rxjs';
 ```
 
 ## Setting up a sketchpad
@@ -133,7 +134,7 @@ If we want to build a classifier that takes images as inputs and that can be tra
 const featureExtractor = marcelle.mobileNet();
 ```
 
-Marcelle heavily relies on a paradigm called reactive programming. Reactive programming means programming with asynchronous data streams, i.e. sequences of ongoing events ordered in time. Most Marcelle components expose data streams that can be filtered, transformed, and consumed by other components.
+Marcelle heavily relies on a paradigm called reactive programming. Reactive programming means programming with asynchronous data streams, i.e. sequences of ongoing events ordered in time. Most Marcelle components expose data streams that can be filtered, transformed, and consumed by other components. Technically, streams are implemented using [RxJS](https://rxjs.dev/) **Observables**.
 
 For example, the `sketchpad` component exposes a stream called `$images`, that emits events containing an image of the sketchpad content every time a stroke is drawn on the sketchpad. To react to these events, we can subscribe to the stream, for instance to log its events to the console:
 
@@ -154,16 +155,27 @@ input.$images.subscribe(async (img) => {
 });
 ```
 
-We now create a derived stream of instances from the sketchpad stream like this:
+The events on streams implemented as RxJS observables can be processed using a set of operators, documented on [RxJS's website](https://rxjs.dev/). We can re-write the previous code as:
 
 ```js
-const $instances = input.$images
-  .map(async (img) => ({
-    x: await featureExtractor.process(img),
+const $features = input.$images.pipe(
+  rxjs.map(featureExtractor.process), // For each image, extract features (asynchronous)
+  rxjs.mergeMap((x) => rxjs.from(x)), // Await the promise for each event
+);
+$features.subscribe(console.log);
+```
+
+We now create a derived stream of instances from the feature stream like this:
+
+```js
+const $instances = rxjs.zip([$features, input.$thumbnails]).pipe(
+  rxjs.map(([features, thumbnail]) => ({
+    x: features,
     y: 'test',
-    thumbnail: input.$thumbnails.get(),
-  }))
-  .awaitPromises();
+    thumbnail,
+  })),
+);
+$instances.subscribe(console.log);
 ```
 
 Instances have few properties. In this example, we see that the label is specified by a string that we 'hard-coded' to `test`. In an application, a label can be provided by the user through a [textInput](../api/components/widgets.html#textinput) on the interface:
@@ -190,13 +202,13 @@ label.$value.subscribe((currentInput) => {
 We can access the current value of a stream using its `.get()` method. We use it to complement our stream of instances:
 
 ```js{4}
-const $instances = input.$images
-  .map(async (img) => ({
-    x: await featureExtractor.process(img),
-    y: label.$value.get(),
-    thumbnail: input.$thumbnails.get(),
-  }))
-  .awaitPromises();
+const $instances = rxjs.zip([$features, input.$thumbnails]).pipe(
+  rxjs.map(([features, thumbnail]) => ({
+    x: features,
+    y: label.$value.getValue(),
+    thumbnail,
+  })),
+);
 ```
 
 We now create a dataset that can be used to train a classifier. A dataset requires a [DataStore](../api/data-storage.html#datastore) to store the captured data. A datastore can be created in the `localStorage` of your browser, but also on a server using a specified database.
@@ -237,14 +249,15 @@ myDashboard
 Using reactive programming, we can filter, transform and combine streams. In this case, we want to sample instances whenever the button is clicked. To do this, we can use the `sample` method from the button's `$click` stream:
 
 ```js
-const $instances = capture.$click
-  .sample(input.$images)
-  .map(async (img) => ({
+const $instances = capture.$click.pipe(
+  rxjs.withLatestFrom(rxjs.zip([input.$images, input.$thumbnails]), (x) => x[1]),
+  rxjs.map(async ([img, thumbnail]) => ({
     x: await featureExtractor.process(img),
-    y: label.$value.get(),
-    thumbnail: input.$thumbnails.get(),
-  }))
-  .awaitPromises();
+    y: label.$value.getValue(),
+    thumbnail,
+  })),
+  rxjs.mergeMap((x) => rxjs.from(x)),
+);
 ```
 
 If you refresh the page in the browser, you should have:
@@ -305,17 +318,18 @@ Now that our model is trained, we can create another pipeline for prediction. Wi
 To create a stream of predictions, we need to pass images through the feature extractor (mobilenet), and then through the `.predict()` method of our classifier. To do this, we use the `.map()` method of streams, that transforms a stream by applying a function to each of its elements:
 
 ```js
-const $predictions = input.$images
-  .map(async (img) => {
+const $predictions = input.$images.pipe(
+  rxjs.map(async (img) => {
     const features = await featureExtractor.process(img);
     return classifier.predict(features);
-  })
-  .awaitPromises();
+  }),
+  rxjs.mergeMap((x) => rxjs.from(x)),
+);
 
 $predictions.subscribe(console.log);
 ```
 
-Note that in Marcelle, prediction functions are asynchronous. This means that they return promises. In order to create a stream containing the resulting values, we need to call `awaitPromises()` on the resulting stream.
+Note that in Marcelle, prediction functions are asynchronous. This means that they return promises. In order to create a stream containing the resulting values, we need to call `.pipe(rxjs.mergeMap((x) => rxjs.from(x)))` on the resulting stream.
 
 To visualize the predictions, we can use a component called `classificationPlot`. Let's add the sketchpad and this visualization component to a new page so that we can test our classifier:
 
@@ -334,50 +348,66 @@ To give it a try, first train the model, then switch to the second page for test
 ```js
 import '@marcellejs/core/dist/marcelle.css';
 import * as marcelle from '@marcellejs/core';
+import * as rxjs from 'rxjs';
 
+// Setup the input component (sketchPad) and a pre-trained feature extractor
 const input = marcelle.sketchPad();
 const featureExtractor = marcelle.mobileNet();
 
+// Setup UI components for capturing instances
 const label = marcelle.textInput();
 label.title = 'Instance label';
-
 const capture = marcelle.button('Click to record an instance');
 capture.title = 'Capture instances to the training set';
 
-const $instances = capture.$click
-  .sample(input.$images)
-  .map(async (img) => ({
+// Capture instances: when the users clicks on the button, we capture the join
+// values of the image and thumbnail streams from the sketchpad. The instance
+// to store in the dataset is an object where:
+// - `x` is a feature vector computed from the image
+// - `y` is the current label in the textfield
+// - `thumbnail` is a the thumbnail used for display in other components
+const $instances = capture.$click.pipe(
+  rxjs.withLatestFrom(rxjs.zip([input.$images, input.$thumbnails]), (x) => x[1]),
+  rxjs.map(async ([img, thumbnail]) => ({
     x: await featureExtractor.process(img),
-    y: label.$value.get(),
-    thumbnail: input.$thumbnails.get(),
-  }))
-  .awaitPromises();
+    y: label.$value.getValue(),
+    thumbnail,
+  })),
+  rxjs.mergeMap((x) => rxjs.from(x)),
+);
 
+// Create a dataset, using a storage in the browser
 const store = marcelle.dataStore('localStorage');
 const trainingSet = marcelle.dataset('TrainingSet', store);
-
-$instances.subscribe(trainingSet.create);
-
 const trainingSetBrowser = marcelle.datasetBrowser(trainingSet);
 
-const classifier = marcelle.mlpClassifier({ layers: [32, 32], epochs: 20 });
-const trainingButton = marcelle.button('Train');
+// At each new event on the $instances stream, an instance is stored in the dataset
+$instances.subscribe(trainingSet.create);
 
+// Create a classifier, and add component to visualize training
+const classifier = marcelle.mlpClassifier({ layers: [32, 32], epochs: 20 });
+const plotTraining = marcelle.trainingPlot(classifier);
+
+// Train the classifier
+const trainingButton = marcelle.button('Train');
 trainingButton.$click.subscribe(() => {
   classifier.train(trainingSet);
 });
 
-const plotTraining = marcelle.trainingPlot(classifier);
-
-const $predictions = input.$images
-  .map(async (img) => {
+// Create a stream of predictions by passing new images through the
+// feature extractor and the current model
+const $predictions = input.$images.pipe(
+  rxjs.map(async (img) => {
     const features = await featureExtractor.process(img);
     return classifier.predict(features);
-  })
-  .awaitPromises();
+  }),
+  rxjs.mergeMap((x) => rxjs.from(x)),
+);
 
+// Display the results
 const predViz = marcelle.confidencePlot($predictions);
 
+// Setup all components on a dashboard
 const myDashboard = marcelle.dashboard({
   title: 'My First Tutorial',
   author: 'Myself',

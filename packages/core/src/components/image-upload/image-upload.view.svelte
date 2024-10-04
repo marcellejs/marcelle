@@ -1,13 +1,13 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
   import loadImage from 'blueimp-load-image';
-  import type { Stream } from '../../core';
   import { ViewContainer } from '@marcellejs/design-system';
   import { Button } from '@marcellejs/design-system';
+  import type { Subject } from 'rxjs';
 
   export let title: string;
-  export let images: Stream<ImageData>;
-  export let thumbnails: Stream<string>;
+  export let images: Subject<ImageData>;
+  export let thumbnails: Subject<string>;
   export let width: number;
   export let height: number;
 
@@ -69,8 +69,8 @@
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const thumb = thumbnail as any as HTMLCanvasElement;
     const thumbData = thumb.toDataURL('image/jpeg');
-    thumbnails.set(thumbData);
-    images.set(imgData);
+    thumbnails.next(thumbData);
+    images.next(imgData);
   }
 
   async function processFiles(f: FileList) {

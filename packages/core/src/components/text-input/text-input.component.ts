@@ -1,19 +1,19 @@
+import { BehaviorSubject } from 'rxjs';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import View from './text-input.view.svelte';
+import { rxBind } from '../../utils/rxjs';
 
 export class TextInput extends Component {
   title = 'text input';
 
-  $value = new Stream<string>('', true);
-  $disabled: Stream<boolean> = new Stream<boolean>(false, true);
+  $value = new BehaviorSubject('');
+  $disabled = new BehaviorSubject<boolean>(false);
 
   constructor(defaultValue?: string) {
     super();
     if (defaultValue !== undefined) {
-      this.$value.set(defaultValue);
+      this.$value.next(defaultValue);
     }
-    this.start();
   }
 
   mount(target?: HTMLElement): void {
@@ -24,7 +24,7 @@ export class TextInput extends Component {
       target: t,
       props: {
         title: this.title,
-        value: this.$value,
+        value: rxBind(this.$value),
         disabled: this.$disabled,
       },
     });

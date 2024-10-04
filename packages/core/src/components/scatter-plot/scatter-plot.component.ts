@@ -1,18 +1,17 @@
-import type { Stream } from '../../core/stream';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Component } from '../../core/component';
 import View from './scatter-plot.view.svelte';
 
 export class ScatterPlot extends Component {
   title = 'Scatter plot';
 
-  $data: Stream<number[][]>;
-  $labels: Stream<number[] | string[]>;
+  $data = new BehaviorSubject<number[][]>([]);
+  $labels = new BehaviorSubject<number[] | string[]>([]);
 
-  constructor(dataset: Stream<number[][]>, labels: Stream<string[] | number[]>) {
+  constructor(dataset: Observable<number[][]>, labels: Observable<string[] | number[]>) {
     super();
-    this.$data = dataset.hold();
-    this.$labels = labels.hold();
-    this.start();
+    dataset.subscribe(this.$data);
+    labels.subscribe(this.$labels);
   }
 
   mount(target?: HTMLElement): void {
@@ -24,7 +23,7 @@ export class ScatterPlot extends Component {
       props: {
         title: this.title,
         embedding: this.$data,
-        labels: this.$labels,
+        labels: this.$labels as BehaviorSubject<number[]>,
       },
     });
   }

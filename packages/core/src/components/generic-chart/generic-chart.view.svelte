@@ -29,7 +29,8 @@
   import { onDestroy, onMount, tick } from 'svelte';
   import { mergeDeep } from '../../utils/object';
   import { ViewContainer } from '@marcellejs/design-system';
-  import type { ChartDataset } from './generic-chart.component';
+  import type { ChartDataset, ChartPoint } from './generic-chart.component';
+  import { Subscription } from 'rxjs';
 
   export let title: string;
   export let preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };
@@ -98,15 +99,15 @@
     const data: { labels: string[]; datasets?: unknown[] } = { labels: [] };
     let maxElts = 0;
     data.datasets = ds.map(({ dataStream, label, options: localOptions }, i) => {
-      maxElts = Math.max(maxElts, dataStream.get() ? dataStream.get().length : 0);
+      maxElts = Math.max(maxElts, dataStream.getValue() ? dataStream.getValue().length : 0);
       if (i === 0) {
         data.labels = localOptions.labels || [];
-        if (!localOptions.labels && dataStream.get() && dataStream.get().length > 0) {
-          if (typeof dataStream.get()[0] === 'number') {
-            data.labels = Array.from(Array(dataStream.get().length), (_, j) => j.toString());
+        if (!localOptions.labels && dataStream.getValue() && dataStream.getValue().length > 0) {
+          if (typeof dataStream.getValue()[0] === 'number') {
+            data.labels = Array.from(Array(dataStream.getValue().length), (_, j) => j.toString());
           } else {
             data.labels = (
-              dataStream.get() as Array<{
+              dataStream.getValue() as Array<{
                 x: unknown;
                 y: unknown;
               }>
@@ -119,7 +120,7 @@
         ...opts,
         ...localOptions,
         label: label,
-        data: dataStream.get() || [],
+        data: dataStream.getValue() || [],
       };
       if (
         (['bar', 'bar-fast'].includes(localOptions.type) ||
@@ -135,7 +136,7 @@
   }
 
   let chart: Chart;
-  let unSub: Array<() => void> = [];
+  let subs: Subscription[];
   let canvasElement: HTMLCanvasElement;
 
   function setup() {
@@ -156,9 +157,9 @@
       });
     }
 
-    const pointsPerSeries = datasets.map(({ dataStream }) => dataStream.get()?.length || 0);
-    unSub = datasets.map(({ dataStream, options: localOptions }, i) =>
-      dataStream.subscribe((values: number[] | Array<{ x: unknown; y: unknown }>) => {
+    const pointsPerSeries = datasets.map(({ dataStream }) => dataStream.getValue()?.length || 0);
+    subs = datasets.map(({ dataStream, options: localOptions }, i) =>
+      dataStream.subscribe((values: Array<ChartPoint>) => {
         if (values && chart) {
           const prevMaxPoint = pointsPerSeries.reduce((m, x) => Math.max(m, x));
           pointsPerSeries[i] = values.length;
@@ -191,8 +192,8 @@
   }
 
   function destroy() {
-    for (const f of unSub) {
-      f();
+    for (const s of subs) {
+      s.unsubscribe();
     }
     chart?.destroy();
   }

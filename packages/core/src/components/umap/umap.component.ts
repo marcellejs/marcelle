@@ -1,4 +1,5 @@
-import { type Dataset, type Instance, isDataset, Model, Stream } from '../../core';
+import { type Dataset, type Instance, isDataset, Model } from '../../core';
+import { BehaviorSubject } from 'rxjs';
 import type { LazyIterable } from '../../utils';
 import { UMAP } from 'umap-js';
 
@@ -23,11 +24,11 @@ export class Umap extends Model<UmapInstance, number[]> {
   serviceName = 'umap';
 
   parameters: {
-    nComponents: Stream<number>;
-    nNeighbors: Stream<number>;
-    minDist: Stream<number>;
-    spread: Stream<number>;
-    supervised: Stream<boolean>;
+    nComponents: BehaviorSubject<number>;
+    nNeighbors: BehaviorSubject<number>;
+    minDist: BehaviorSubject<number>;
+    spread: BehaviorSubject<number>;
+    supervised: BehaviorSubject<boolean>;
   };
 
   model: UMAP;
@@ -41,34 +42,34 @@ export class Umap extends Model<UmapInstance, number[]> {
   }: Partial<UmapOptions> = {}) {
     super();
     this.parameters = {
-      nComponents: new Stream(nComponents, true),
-      nNeighbors: new Stream(nNeighbors, true),
-      minDist: new Stream(minDist, true),
-      spread: new Stream(spread, true),
-      supervised: new Stream(supervised, true),
+      nComponents: new BehaviorSubject(nComponents),
+      nNeighbors: new BehaviorSubject(nNeighbors),
+      minDist: new BehaviorSubject(minDist),
+      spread: new BehaviorSubject(spread),
+      supervised: new BehaviorSubject(supervised),
     };
   }
 
   async train(dataset: Dataset<UmapInstance> | LazyIterable<UmapInstance>): Promise<void> {
-    this.$training.set({ status: 'start', epochs: -1 });
+    this.$training.next({ status: 'start', epochs: -1 });
 
     const items = isDataset(dataset) ? dataset.items() : dataset;
     const instances = await items.toArray();
     const umapData = instances.reduce((d, { x }) => d.concat([x]), []);
 
-    this.model = new UMAP({ nComponents: this.parameters.nComponents.get() });
+    this.model = new UMAP({ nComponents: this.parameters.nComponents.getValue() });
 
-    if (this.parameters.supervised.get()) {
+    if (this.parameters.supervised.getValue()) {
       const labels = instances.map((x) => x.y);
       this.model.setSupervisedProjection(labels);
     }
 
     const nEpochs = this.model.initializeFit(umapData);
-    this.$training.set({ status: 'start', epochs: nEpochs });
+    this.$training.next({ status: 'start', epochs: nEpochs });
 
     for (let i = 0; i < nEpochs; i++) {
       this.model.step();
-      this.$training.set({
+      this.$training.next({
         status: 'epoch',
         epoch: i + 1,
         epochs: nEpochs,
@@ -76,7 +77,7 @@ export class Umap extends Model<UmapInstance, number[]> {
       });
     }
 
-    this.$training.set({
+    this.$training.next({
       status: 'success',
       data: { embedding: this.model.getEmbedding() },
     });

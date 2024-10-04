@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
+  import type { Dataset, Instance } from '../../core';
   import { Button } from '@marcellejs/design-system';
   import type { Dataset, Instance } from '../../core';
 

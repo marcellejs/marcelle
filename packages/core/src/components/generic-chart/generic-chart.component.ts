@@ -1,9 +1,9 @@
 import type { ChartOptions as ChartJsOptions } from 'chart.js';
 import type { ServiceIterable } from '../../core/data-store/service-iterable';
 import { Component } from '../../core/component';
-import { Stream, isStream } from '../../core/stream';
 import { throwError } from '../../utils/error-handling';
 import View from './generic-chart.view.svelte';
+import { BehaviorSubject, Observable, debounceTime, isObservable } from 'rxjs';
 
 // TODO: Automatic switch to fast mode when high number of points
 
@@ -99,8 +99,10 @@ export interface GenericChartOptions {
   options?: ChartJsOptions & { xlabel?: string; ylabel?: string };
 }
 
+export type ChartPoint = number | { x: unknown; y: unknown };
+
 export interface ChartDataset {
-  dataStream: Stream<number[]> | Stream<Array<{ x: unknown; y: unknown }>>;
+  dataStream: BehaviorSubject<Array<ChartPoint>>;
   label: string;
   options: { type?: string; labels?: string[]; [key: string]: unknown };
 }
@@ -121,53 +123,42 @@ export class GenericChart extends Component {
     this.#presetName = preset;
     this.#preset = presets[preset];
     this.options = options;
-    this.start();
   }
 
   addSeries(
-    series:
-      | Stream<number[]>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      | Stream<Array<{ x: any; y: any }>>
-      | ServiceIterable<number>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      | ServiceIterable<{ x: any; y: any }>,
+    series: Observable<Array<ChartPoint>> | ServiceIterable<ChartPoint>,
     label: string,
     options: Record<string, unknown> = {},
   ): void {
-    if (isStream<number[]>(series)) {
+    if (isObservable(series)) {
+      const points = new BehaviorSubject<Array<ChartPoint>>(
+        typeof (series as BehaviorSubject<Array<ChartPoint>>).getValue === 'function'
+          ? (series as BehaviorSubject<Array<ChartPoint>>).getValue()
+          : [],
+      );
       if (this.#presetName === 'line-fast') {
-        const throttledStream = series.debounce(10);
-        throttledStream.value = series.get();
-        this.#datasets.push({
-          dataStream: throttledStream,
-          label,
-          options,
-        });
+        series.pipe(debounceTime(10)).subscribe(points);
       } else {
-        this.#datasets.push({ dataStream: series, label, options });
+        series.subscribe(points);
       }
+      this.#datasets.push({ dataStream: points, label, options });
       this.updateView();
     } else {
-      (series as ServiceIterable<number> | ServiceIterable<{ x: unknown; y: unknown }>)
-        .toArray()
-        .then((values) => {
-          const dataStream = new Stream(values, true) as
-            | Stream<number[]>
-            | Stream<Array<{ x: unknown; y: unknown }>>;
-          this.#datasets.push({ dataStream, label, options });
-          this.updateView();
-        });
+      series.toArray().then((values) => {
+        const dataStream = new BehaviorSubject(values);
+        this.#datasets.push({ dataStream, label, options });
+        this.updateView();
+      });
     }
   }
 
-  setColors(colorStream: Stream<number[]>): void {
+  setColors(colorStream: BehaviorSubject<number[]>): void {
     this.#datasets[0].label = 'clusters';
-    this.#datasets[0].options.backgroundColor = colorStream.get();
-    this.#datasets[0].options.color = colorStream.get(); //alternatePointStyles;
+    this.#datasets[0].options.backgroundColor = colorStream.getValue();
+    this.#datasets[0].options.color = colorStream.getValue(); //alternatePointStyles;
   }
 
-  removeSeries(dataStream: Stream<number[]> | Stream<Array<{ x: unknown; y: unknown }>>): void {
+  removeSeries(dataStream: BehaviorSubject<Array<ChartPoint>>): void {
     const index = this.#datasets.map((x) => x.dataStream).indexOf(dataStream);
     if (index > -1) {
       this.#datasets.splice(index, 1);

@@ -1,16 +1,15 @@
+import { BehaviorSubject } from 'rxjs';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import View from './text.view.svelte';
 
 export class Text extends Component {
   title = 'text';
 
-  $value: Stream<string>;
+  $value: BehaviorSubject<string>;
 
   constructor(initial = 'click me') {
     super();
-    this.$value = new Stream(initial, true);
-    this.start();
+    this.$value = new BehaviorSubject(initial);
   }
 
   mount(target?: HTMLElement): void {

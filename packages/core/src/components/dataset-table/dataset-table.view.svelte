@@ -1,16 +1,16 @@
 <script lang="ts">
-  import type { Dataset, Instance, Stream } from '../../core';
+  import type { Dataset, Instance } from '../../core';
   import type { Column } from '@marcellejs/design-system';
+  import type { BehaviorSubject } from 'rxjs';
   import { onMount, tick } from 'svelte';
   import { TableServiceProvider, Spinner, Table, ViewContainer } from '@marcellejs/design-system';
 
   export let title: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let dataset: Dataset<Instance>;
-  export let colNames: Stream<string[]>;
+  export let colNames: BehaviorSubject<string[]>;
   export let singleSelection = false;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export let selection: Stream<Instance[]>;
+  export let selection: BehaviorSubject<Instance[]>;
 
   let columns: Column[] = [
     { name: 'x' },
@@ -48,7 +48,7 @@
     provider = new TableServiceProvider({ service: dataset.instanceService, columns });
     colNames.subscribe(async (cols) => {
       columns = cols.map((name) => ({ name }));
-      if (dataset.$count.get() > 0) {
+      if (dataset.$count.getValue() > 0) {
         const [firstInstance] = await dataset.items().query(dataset.query).take(1).toArray();
         columns = columns.map(({ name }) => ({
           name,
@@ -62,7 +62,7 @@
       provider.query.$select = columns.map((x) => x.name).concat(['id']);
       provider.update();
     });
-    const unSub = dataset.$count.subscribe(async (c) => {
+    const sub = dataset.$count.subscribe(async (c) => {
       if (c > 0) {
         const [firstInstance] = await dataset.items().query(dataset.query).take(1).toArray();
         columns = columns.map(({ name }) => ({
@@ -70,7 +70,7 @@
           type: getType(firstInstance[name]),
           sortable: isSortable(firstInstance[name]),
         }));
-        unSub();
+        sub.unsubscribe();
       }
     });
   });
@@ -86,7 +86,7 @@
         {columns}
         {singleSelection}
         on:selection={({ detail }) => {
-          selection.set(detail);
+          selection.next(detail);
         }}
         actions={[{ name: 'delete' }]}
       />

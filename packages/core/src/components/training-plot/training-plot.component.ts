@@ -1,9 +1,10 @@
 import type { Instance, Model, TrainingStatus } from '../../core';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import { genericChart, type GenericChart } from '../generic-chart';
 import { throwError } from '../../utils/error-handling';
 import View from './training-plot.view.svelte';
+import { BehaviorSubject } from 'rxjs';
+import type { ChartPoint } from '../generic-chart/generic-chart.component';
 
 export type LogSpec = string | string[] | Record<string, string | string[]>;
 
@@ -39,7 +40,7 @@ export class TrainingPlot extends Component {
     if (Array.isArray(processedLogs)) {
       processedLogs = processedLogs.reduce((x, y) => ({ ...x, [y]: y }), {});
     }
-    const streams: Record<string, Stream<Array<{ x: number; y: number }>>> = {};
+    const streams: Record<string, BehaviorSubject<ChartPoint[]>> = {};
     for (const [key, val] of Object.entries(processedLogs)) {
       const x = Array.isArray(val) ? val : [val];
       this.charts[key] = genericChart({
@@ -51,7 +52,7 @@ export class TrainingPlot extends Component {
       });
       for (const y of x) {
         if (!Object.keys(streams).includes(y)) {
-          streams[y] = new Stream<Array<{ x: number; y: number }>>([], true);
+          streams[y] = new BehaviorSubject<ChartPoint[]>([]);
         }
         this.charts[key].addSeries(streams[y], y);
       }
@@ -61,7 +62,7 @@ export class TrainingPlot extends Component {
 
     function resetCharts() {
       for (const stream of Object.values(streams)) {
-        stream.set([]);
+        stream.next([]);
       }
     }
 
@@ -72,16 +73,17 @@ export class TrainingPlot extends Component {
         for (const [key, val] of Object.entries(x.data)) {
           if (!Object.keys(streams).includes(key)) return;
           if (Array.isArray(val)) {
-            streams[key].set((val as number[]).map((y, j) => ({ x: j + 1, y })));
+            streams[key].next((val as number[]).map((y, j) => ({ x: j + 1, y })));
           } else {
-            streams[key].set(
-              streams[key].get().concat([{ x: streams[key].get().length + 1, y: val as number }]),
+            streams[key].next(
+              streams[key]
+                .getValue()
+                .concat([{ x: streams[key].getValue().length + 1, y: val as number }]),
             );
           }
         }
       }
     });
-    this.start();
   }
 
   mount(target?: HTMLElement): void {

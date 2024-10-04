@@ -92,7 +92,7 @@ export class TFJSModel<
 
   @Catch
   async predict(input: InputTypes[InputType]): Promise<PredictionTypes[TaskType]> {
-    if (!this.model || this.$training.get().status !== 'loaded') {
+    if (!this.model || this.$training.getValue().status !== 'loaded') {
       throw new Error('Model is not loaded');
     }
 
@@ -175,7 +175,7 @@ export class TFJSModel<
 
   @Catch
   async loadFromFiles(files: File[]): Promise<void> {
-    this.$training.set({
+    this.$training.next({
       status: 'loading',
     });
     await ready();
@@ -187,13 +187,13 @@ export class TFJSModel<
         e.name = 'File upload error';
         throw e;
       }
-      this.$training.set({ status: 'loading' });
+      this.$training.next({ status: 'loading' });
       if (files.length) {
         const jsonData = await readJSONFile(jsonFiles[0]);
         this.loadFn = jsonData.format === 'graph-model' ? loadGraphModel : loadLayersModel;
         this.model = await this.loadFn(browserFiles([jsonFiles[0], ...weightFiles]));
         await this.warmup();
-        this.$training.set({
+        this.$training.next({
           status: 'loaded',
           data: {
             source: 'file',
@@ -201,7 +201,7 @@ export class TFJSModel<
         });
       }
     } catch (error) {
-      this.$training.set({
+      this.$training.next({
         status: 'error',
       });
       throw error;
@@ -210,7 +210,7 @@ export class TFJSModel<
 
   @Catch
   async loadFromUrl(url: string): Promise<void> {
-    this.$training.set({
+    this.$training.next({
       status: 'loading',
     });
     await ready();
@@ -219,7 +219,7 @@ export class TFJSModel<
       this.loadFn = modelJson.format === 'graph-model' ? loadGraphModel : loadLayersModel;
       this.model = await this.loadFn(http(url));
       await this.warmup();
-      this.$training.set({
+      this.$training.next({
         status: 'loaded',
         data: {
           source: 'url',
@@ -229,7 +229,7 @@ export class TFJSModel<
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log('[tf-model] Loading error', error);
-      this.$training.set({
+      this.$training.next({
         status: 'error',
       });
       throw error;

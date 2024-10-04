@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ViewContainer } from '@marcellejs/design-system';
-  import type { DataStore } from '../../core';
+  import type { DataStore } from '../../core/data-store';
   import { Button, Spinner } from '@marcellejs/design-system';
 
   export let dataStore: DataStore;

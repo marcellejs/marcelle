@@ -33,7 +33,7 @@ loadDataBtn.$click.subscribe(loadData);
 const info = text('The dataset is empty');
 info.title = 'Dataset Count';
 ts.$count.subscribe(async (c) => {
-  info.$value.set(`The dataset contains ${c} instances`);
+  info.$value.next(`The dataset contains ${c} instances`);
 });
 
 export function setup(dash) {

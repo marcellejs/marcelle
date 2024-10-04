@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { Stream } from '../../core';
   import { ViewContainer } from '@marcellejs/design-system';
   import { NumberArray } from '@marcellejs/design-system';
+  import { BehaviorSubject } from 'rxjs';
 
   export let title: string;
-  export let value: Stream<number[]>;
-  export let disabled: Stream<boolean>;
+  export let value: BehaviorSubject<number[]>;
+  export let disabled: BehaviorSubject<boolean>;
 </script>
 
 <ViewContainer {title}>
