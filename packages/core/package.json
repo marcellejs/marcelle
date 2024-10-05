@@ -43,6 +43,7 @@
   "scripts": {
     "dev": "rollup -c -w",
     "build": "pnpm run clean && rollup -c && pnpm run types:build",
+    "bundle": "rollup --config rollup.config.bundle.js",
     "types:dev": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir types --watch",
     "types:build": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir types",
     "lint": "eslint src",
