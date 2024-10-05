@@ -1,6 +1,6 @@
 import type { Paginated, Params as FeathersParams, Query, HookContext } from '@feathersjs/feathers';
+import { BehaviorSubject } from 'rxjs';
 import type { Instance, ObjectId, Service } from '../types';
-import { Stream } from '../stream';
 import { Component } from '../component';
 import { dataStore, type DataStore } from '../data-store';
 import type { ServiceIterable } from '../data-store/service-iterable';
@@ -30,15 +30,14 @@ export class Dataset<T extends Instance> extends Component {
   query: Query = {};
   #updatedCreate = new Set<string>();
 
-  $count = new Stream<number>(0, true);
-  $changes = new Stream<DatasetChange[]>([]);
+  $count = new BehaviorSubject(0);
+  $changes = new BehaviorSubject<DatasetChange[]>([]);
 
   constructor(name: string, store = dataStore()) {
     super();
     this.name = name;
     this.title = `dataset (${name})`;
     this.#store = store;
-    this.start();
     this.ready = new Promise((resolve, reject) => {
       this.#store
         .connect()
@@ -92,8 +91,8 @@ export class Dataset<T extends Instance> extends Component {
     const { total } = (await this.find({ query: { ...this.query, $limit: 0 } })) as Paginated<
       Partial<T>
     >;
-    this.$count.set(total);
-    this.$changes.set([
+    this.$count.next(total);
+    this.$changes.next([
       {
         level: 'dataset',
         type: 'created',
@@ -109,8 +108,8 @@ export class Dataset<T extends Instance> extends Component {
       const current = await this.get(context.id as string);
       const isCurrentValid = respectsQuery(current);
       if (isCurrentValid && !isTargetValid) {
-        this.$count.set(this.$count.get() - 1);
-        this.$changes.set([
+        this.$count.next(this.$count.getValue() - 1);
+        this.$changes.next([
           {
             level: 'instance',
             type: 'removed',
@@ -131,8 +130,8 @@ export class Dataset<T extends Instance> extends Component {
         ...x,
         id: x.id || x._id,
       };
-      this.$count.set(this.$count.get() + 1);
-      this.$changes.set([
+      this.$count.next(this.$count.getValue() + 1);
+      this.$changes.next([
         {
           level: 'instance',
           type: 'created',
@@ -148,8 +147,8 @@ export class Dataset<T extends Instance> extends Component {
         id: x.id || x._id,
       };
       if (this.#updatedCreate.has(instance.id)) {
-        this.$count.set(this.$count.get() + 1);
-        this.$changes.set([
+        this.$count.next(this.$count.getValue() + 1);
+        this.$changes.next([
           {
             level: 'instance',
             type: 'created',
@@ -158,7 +157,7 @@ export class Dataset<T extends Instance> extends Component {
         ]);
         this.#updatedCreate.delete(instance.id);
       } else {
-        this.$changes.set([
+        this.$changes.next([
           {
             level: 'instance',
             type: 'updated',
@@ -172,12 +171,12 @@ export class Dataset<T extends Instance> extends Component {
 
     this.instanceService.on('removed', (x: T) => {
       if (!respectsQuery(x)) return;
-      this.$count.set(this.$count.get() - 1);
+      this.$count.next(this.$count.getValue() - 1);
       const instance = {
         ...x,
         id: x.id || x._id,
       };
-      this.$changes.set([
+      this.$changes.next([
         {
           level: 'instance',
           type: 'removed',

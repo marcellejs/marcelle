@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { Stream } from '../../core';
   import { ViewContainer } from '@marcellejs/design-system';
   import { Input } from '@marcellejs/design-system';
+  import { Subject } from 'rxjs';
 
   export let title: string;
-  export let value: Stream<string>;
-  export let disabled: Stream<boolean>;
+  export let value: Subject<string>;
+  export let disabled: Subject<boolean>;
 </script>
 
 <ViewContainer {title}>

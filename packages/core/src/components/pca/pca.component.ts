@@ -26,14 +26,14 @@ export class PCA extends Model<PCAInstance, number[]> {
   model: MLPCA;
 
   async train(dataset: Dataset<PCAInstance> | LazyIterable<PCAInstance>): Promise<void> {
-    this.$training.set({ status: 'start', epochs: -1 });
+    this.$training.next({ status: 'start', epochs: -1 });
 
     const items = isDataset(dataset) ? dataset.items() : dataset;
     const instances = await items.toArray();
     const pcaData = instances.reduce((d, { x }) => d.concat([x]), []);
 
     this.model = new MLPCA(pcaData);
-    this.$training.set({
+    this.$training.next({
       status: 'success',
       data: {
         explainedVariance: this.model.getExplainedVariance(),
@@ -104,7 +104,7 @@ export class PCA extends Model<PCAInstance, number[]> {
     const m = s.metadata.PCAModel as PCAModel;
     if (!m) return;
     this.model = MLPCA.load(m);
-    this.$training.set({
+    this.$training.next({
       status: 'loaded',
     });
   }

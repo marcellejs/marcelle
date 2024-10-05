@@ -17,11 +17,22 @@ import {
   poseDetection,
   throwError,
   webcam,
-  Stream,
   text,
   imageDisplay,
 } from '@marcellejs/core';
 import { $joints, selectPreset, skeletonImage } from './configuration';
+import {
+  EMPTY,
+  concatMap,
+  distinctUntilChanged,
+  filter,
+  from,
+  interval,
+  map,
+  mergeMap,
+  switchMap,
+  zip,
+} from 'rxjs';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
@@ -30,20 +41,22 @@ import { $joints, selectPreset, skeletonImage } from './configuration';
 const input = webcam();
 const featureExtractor = poseDetection('MoveNet', { runtime: 'tfjs' });
 
-const postprocess = (poses) => featureExtractor.postprocess(poses, $joints.get());
+console.log('$joints', $joints);
+console.log('$joints.getValue()', $joints.getValue());
+const postprocess = (poses) => featureExtractor.postprocess(poses, $joints.getValue());
 
 const showSkeleton = toggle('Visualize Skeleton');
 showSkeleton.title = '';
 
 const poseViz2 = imageDisplay(
-  showSkeleton.$checked
-    .map((v) => (v ? input.$images : Stream.empty()))
-    .switchLatest()
-    .map(async (img) => {
+  showSkeleton.$checked.pipe(
+    switchMap((v) => (v ? input.$images : EMPTY)),
+    map(async (img) => {
       const result = await featureExtractor.predict(img);
       return featureExtractor.render(img, result);
-    })
-    .awaitPromises(),
+    }),
+    mergeMap((x) => from(x)),
+  ),
 );
 
 const label = textInput();
@@ -55,30 +68,31 @@ const store = dataStore('localStorage');
 const trainingSet = dataset('training-set-poses', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
-const $ctl = capture.$click.chain(() =>
-  Stream.periodic(1000).withItems(['3', '2', '1', 'start', 'start', 'start', 'stop']),
+const $ctl = capture.$click.pipe(
+  concatMap(() => zip(interval(1000), from(['3', '2', '1', 'start', 'start', 'start', 'stop']))),
+  map((x) => x[1]),
 );
+$ctl.subscribe(console.log);
 const counter = text();
 counter.title = 'Recording Status';
-$ctl.subscribe((x) => counter.$value.set(`<span style="font-size: 32px">${x}</span>`));
+$ctl.subscribe((x) => counter.$value.next(`<span style="font-size: 32px">${x}</span>`));
 
-const $instances = $ctl
-  .filter((x) => ['start', 'stop'].includes(x))
-  .skipRepeats()
-  .map((x) => (x === 'start' ? 1 : 0))
-  .map((record) => (record ? input.$images : Stream.empty()))
-  .switchLatest()
-  .map(async (img) => {
+const $instances = $ctl.pipe(
+  filter((x) => ['start', 'stop'].includes(x)),
+  distinctUntilChanged(),
+  switchMap((x) => (x === 'start' ? input.$images : EMPTY)),
+  map(async (img) => {
     const result = await featureExtractor.predict(img);
     const thumbnail = featureExtractor.thumbnail(img, result);
     return {
       x: result,
-      y: label.$value.get(),
+      y: label.$value.getValue(),
       raw_image: img,
       thumbnail,
     };
-  })
-  .awaitPromises();
+  }),
+  mergeMap((x) => from(x)),
+);
 
 $instances.subscribe(trainingSet.create);
 
@@ -127,21 +141,22 @@ tog.$checked.subscribe((checked) => {
   if (checked && !classifier.ready) {
     throwError(new Error('No classifier has been trained'));
     setTimeout(() => {
-      tog.$checked.set(false);
+      tog.$checked.next(false);
     }, 500);
   }
 });
 
-const predictionStream = input.$images
-  .filter(() => tog.$checked.get() && classifier.ready)
-  .map(featureExtractor.predict)
-  .awaitPromises()
-  .filter((x) => x.length > 0)
-  .map(postprocess)
-  .map(classifier.predict)
-  .awaitPromises();
+const $predictions = input.$images.pipe(
+  filter(() => tog.$checked.getValue() && classifier.ready),
+  map(featureExtractor.predict),
+  mergeMap((x) => from(x)),
+  filter((x) => x.length > 0),
+  map(postprocess),
+  map(classifier.predict),
+  mergeMap((x) => from(x)),
+);
 
-const plotResults = confidencePlot(predictionStream);
+const plotResults = confidencePlot($predictions);
 
 // -----------------------------------------------------------
 // DASHBOARDS

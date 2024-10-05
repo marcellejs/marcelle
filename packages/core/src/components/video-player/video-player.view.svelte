@@ -13,13 +13,13 @@
   import type { MediaPlayerElement } from 'vidstack/elements';
 
   import { ViewContainer } from '@marcellejs/design-system';
-  import type { Stream } from '../../core';
+  import type { BehaviorSubject } from 'rxjs';
+
   export let title: string;
-  export let src: Stream<string | MediaStream>;
-  // export let ready: Stream<boolean>;
-  export let paused: Stream<boolean>;
-  export let progress: Stream<number>;
-  export let mirror: Stream<boolean>;
+  export let src: BehaviorSubject<string | MediaStream>;
+  export let paused: BehaviorSubject<boolean>;
+  export let progress: BehaviorSubject<number>;
+  export let mirror: BehaviorSubject<boolean>;
 
   // import { textTracks } from './tracks';
 
@@ -48,11 +48,11 @@
 
     // Subscribe to state updates.
     return player.subscribe((state) => {
-      if (state.paused !== paused.get()) {
-        paused.set(state.paused);
+      if (state.paused !== paused.getValue()) {
+        paused.next(state.paused);
       }
       allowProgressControl = false;
-      progress.set(state.currentTime);
+      progress.next(state.currentTime);
       allowProgressControl = true;
     });
   });

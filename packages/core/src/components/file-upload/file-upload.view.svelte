@@ -1,12 +1,11 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
-
-  import type { Stream } from '../../core';
   import { ViewContainer } from '@marcellejs/design-system';
   import { Button } from '@marcellejs/design-system';
+  import type { Subject } from 'rxjs';
 
   export let title: string;
-  export let fileStream: Stream<File[]>;
+  export let fileStream: Subject<File[]>;
 
   let uploadInput: HTMLInputElement;
 
@@ -43,7 +42,7 @@
     for (let i = 0; i < f.length; i++) {
       files.push(f.item(i));
     }
-    fileStream.set(files);
+    fileStream.next(files);
   }
 
   function handleDragDrop(e: DragEvent) {

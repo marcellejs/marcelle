@@ -1,5 +1,5 @@
+import { BehaviorSubject } from 'rxjs';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import View from './media-recorder.view.svelte';
 
 export interface MediaRecording {
@@ -12,14 +12,13 @@ export interface MediaRecording {
 export class MediaRecorder extends Component {
   title = 'Media Recorder';
 
-  $mediaStream: Stream<MediaStream>;
-  $active = new Stream(false, true);
-  $recordings: Stream<MediaRecording> = new Stream(undefined).skip(1);
+  $mediaStream: BehaviorSubject<MediaStream>;
+  $active = new BehaviorSubject(false);
+  $recordings = new BehaviorSubject<MediaRecording>(undefined);
 
   constructor(mediaStream: MediaStream) {
     super();
-    this.$mediaStream = new Stream(mediaStream, true);
-    this.start();
+    this.$mediaStream = new BehaviorSubject(mediaStream);
   }
 
   mount(target?: HTMLElement): void {

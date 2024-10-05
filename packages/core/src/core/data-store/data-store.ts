@@ -1,6 +1,7 @@
 import authentication from '@feathersjs/authentication-client';
 import { feathers, type Application } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio-client';
+import { BehaviorSubject } from 'rxjs';
 import io from 'socket.io-client';
 import { MemoryService } from '@feathersjs/memory';
 import localStorageService from './feathers-localstorage';
@@ -8,7 +9,6 @@ import { addObjectId, renameIdField, createDate, updateDate, findDistinct } from
 import { logger } from '../logger';
 import Login from './Login.svelte';
 import { throwError } from '../../utils/error-handling';
-import { Stream } from '../stream';
 import { noop } from '../../utils/misc';
 import { iterableFromService } from './service-iterable';
 import type { Service, User } from '../types';
@@ -39,8 +39,8 @@ export class DataStore {
   location: string;
   apiPrefix = '';
 
-  $services = new Stream<string[]>([], true);
-  $status = new Stream<'init' | 'connecting' | 'connected'>('init', true);
+  $services = new BehaviorSubject([]);
+  $status = new BehaviorSubject<'init' | 'connecting' | 'connected'>('init');
 
   #initPromise: Promise<void>;
   #connectPromise: Promise<void>;
@@ -134,9 +134,9 @@ export class DataStore {
   }
 
   async connect(): Promise<User> {
-    if (this.$status.get() === 'connected') return this.user;
+    if (this.$status.getValue() === 'connected') return this.user;
     if (this.backend !== DataStoreBackend.Remote) {
-      this.$status.set('connected');
+      this.$status.next('connected');
       this.user = { email: null, role: 'anonymous' };
       return this.user;
     }
@@ -146,21 +146,21 @@ export class DataStore {
   }
 
   async authenticate(): Promise<User> {
-    if (this.$status.get() === 'connected') return this.user;
+    if (this.$status.getValue() === 'connected') return this.user;
 
     if (!this.requiresAuth) {
       this.user = { email: null, role: 'anonymous' };
-      this.$status.set('connected');
+      this.$status.next('connected');
       return this.user;
     }
 
     if (this.user) {
-      this.$status.set('connected');
+      this.$status.next('connected');
       return this.user;
     }
 
-    if (this.$status.get() !== 'connecting') {
-      this.$status.set('connecting');
+    if (this.$status.getValue() !== 'connecting') {
+      this.$status.next('connecting');
     }
 
     const doAuth = () => {
@@ -193,21 +193,21 @@ export class DataStore {
     );
 
     return this.#authenticationPromise.then(() => {
-      this.$status.set('connected');
+      this.$status.next('connected');
       return this.user;
     });
   }
 
   async login(email: string, password: string): Promise<User> {
-    this.$status.set('connecting');
+    this.$status.next('connecting');
     const res = await this.feathers.authenticate({ strategy: 'local', email, password });
     this.user = res.user;
-    this.$status.set('connected');
+    this.$status.next('connected');
     return this.user;
   }
 
   async loginWithUI(): Promise<User> {
-    this.$status.set('connecting');
+    this.$status.next('connecting');
     const app = new Login({
       target: document.body,
       props: { dataStore: this },
@@ -216,7 +216,7 @@ export class DataStore {
       app.$on('terminate', (e: CustomEvent<User>) => {
         app.$destroy();
         if (e.detail) {
-          this.$status.set('connected');
+          this.$status.next('connected');
           resolve(e.detail);
         } else {
           reject();
@@ -231,10 +231,10 @@ export class DataStore {
     [key: string]: unknown;
   }): Promise<User> {
     try {
-      this.$status.set('connecting');
+      this.$status.next('connecting');
       await this.service('users').create(options);
       await this.login(options.email, options.password);
-      this.$status.set('connected');
+      this.$status.next('connected');
       return this.user;
     } catch (error) {
       logger.error('An error occurred during signup', error);
@@ -252,7 +252,7 @@ export class DataStore {
     const serviceExists = Object.keys(this.feathers.services).includes(name);
     if (!serviceExists) {
       this.#createService(name);
-      this.$services.set(Object.keys(this.feathers.services));
+      this.$services.next(Object.keys(this.feathers.services));
     }
     // const s =
     //   this.backend === DataStoreBackend.Remote

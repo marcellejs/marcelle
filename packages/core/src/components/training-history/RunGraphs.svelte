@@ -2,8 +2,8 @@
   import { onDestroy } from 'svelte';
 
   import type { Instance, Model, TrainingStatus } from '../../core';
-  import { Stream } from '../../core/stream';
   import { type TrainingPlot, trainingPlot } from '../training-plot';
+  import { BehaviorSubject } from 'rxjs';
 
   export let names: string[];
   export let logs: Array<Record<string, unknown>>;
@@ -34,7 +34,7 @@
     }
     chart = trainingPlot(
       {
-        $training: new Stream<TrainingStatus>({ status: 'success', data: indexedLogs }, true),
+        $training: new BehaviorSubject<TrainingStatus>({ status: 'success', data: indexedLogs }),
       } as Model<Instance, unknown>,
       logSpec,
     );

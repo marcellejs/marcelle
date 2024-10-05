@@ -1,9 +1,9 @@
 import { train, tidy, type TensorLike, tensor, type Tensor } from '@tensorflow/tfjs-core';
 import { sequential, layers as tfLayers, metrics } from '@tensorflow/tfjs-layers';
-import { Stream } from '../../core/stream';
 import { TFJSCustomModel, type TFJSCustomModelOptions } from '../../core/model/tfjs-custom-model';
 import type { Dataset, Instance } from '../../core';
 import type { LazyIterable } from '../../utils';
+import { BehaviorSubject } from 'rxjs';
 
 export interface MLPRegressorOptions extends TFJSCustomModelOptions {
   units: number[];
@@ -18,13 +18,13 @@ export class MLPRegressor extends TFJSCustomModel<MLPRegressorInstance, number |
   title = 'MLPRegressor';
 
   parameters: {
-    units: Stream<number[]>;
+    units: BehaviorSubject<number[]>;
   } & TFJSCustomModel<MLPRegressorInstance, number | number[]>['parameters'];
 
   constructor({ units = [64, 32], ...rest }: Partial<MLPRegressorOptions> = {}) {
     super(rest);
     this.parameters = {
-      units: new Stream(units, true),
+      units: new BehaviorSubject(units),
       ...this.parameters,
     };
   }
@@ -43,7 +43,7 @@ export class MLPRegressor extends TFJSCustomModel<MLPRegressorInstance, number |
   }
 
   buildModel(inputShape: Tensor['shape'], outputShape: Tensor['shape']) {
-    const units = this.parameters.units.get();
+    const units = this.parameters.units.getValue();
     this.model = sequential();
     this.model.add(tfLayers.inputLayer({ inputShape }));
     for (const u of units) {

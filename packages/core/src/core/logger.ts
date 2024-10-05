@@ -1,5 +1,4 @@
-import { never } from '@most/core';
-import { Stream } from './stream';
+import { Subject } from 'rxjs';
 
 export enum LogLevel {
   Debug,
@@ -8,13 +7,13 @@ export enum LogLevel {
   Error,
 }
 
-const $log = new Stream<[LogLevel, string]>(never());
+const $log = new Subject<[LogLevel, string]>();
 
 export const logger = {
   log(...messages: unknown[]): void {
     // eslint-disable-next-line no-console
     console.log(...messages);
-    $log.set([
+    $log.next([
       LogLevel.Info,
       messages
         .filter((x) => x !== undefined)
@@ -23,7 +22,7 @@ export const logger = {
     ]);
   },
   debug(...messages: unknown[]): void {
-    $log.set([
+    $log.next([
       LogLevel.Debug,
       messages
         .filter((x) => x !== undefined)
@@ -35,7 +34,7 @@ export const logger = {
     this.log(...messages);
   },
   warning(...messages: unknown[]): void {
-    $log.set([
+    $log.next([
       LogLevel.Warning,
       messages
         .filter((x) => x !== undefined)
@@ -46,7 +45,7 @@ export const logger = {
   error(...messages: unknown[]): void {
     // eslint-disable-next-line no-console
     console.error(...messages);
-    $log.set([
+    $log.next([
       LogLevel.Error,
       messages
         .filter((x) => x !== undefined)
@@ -56,6 +55,6 @@ export const logger = {
   },
 };
 
-export function getLogStream(): Stream<[LogLevel, string]> {
+export function getLogStream() {
   return $log;
 }

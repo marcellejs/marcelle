@@ -1,11 +1,11 @@
 <script lang="ts">
   import { ViewContainer } from '@marcellejs/design-system';
   import { Progress } from '@marcellejs/design-system';
-  import type { Stream } from '../../core';
   import type { ProgressType } from './progress-bar.component';
+  import { Observable } from 'rxjs';
 
   export let title: string;
-  export let progress: Stream<ProgressType>;
+  export let progress: Observable<ProgressType>;
 </script>
 
 <ViewContainer {title}>

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
 
+  import type { Instance, Model } from '../../core';
   import { Button } from '@marcellejs/design-system';
   import { throwError } from '../../utils/error-handling';
   import type { Instance, Model } from '../../core';

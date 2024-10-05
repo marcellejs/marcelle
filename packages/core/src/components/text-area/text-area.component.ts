@@ -1,19 +1,19 @@
+import { BehaviorSubject } from 'rxjs';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import View from './text-area.view.svelte';
+import { rxBind } from '../../utils/rxjs';
 
 export class TextArea extends Component {
   title = 'text area';
 
-  $value: Stream<string>;
+  $value: BehaviorSubject<string>;
   placeholder: string;
-  $disabled: Stream<boolean> = new Stream<boolean>(false, true);
+  $disabled = new BehaviorSubject(false);
 
   constructor(defaultValue = '', placeholder = '') {
     super();
-    this.$value = new Stream(defaultValue, true);
+    this.$value = new BehaviorSubject(defaultValue);
     this.placeholder = placeholder;
-    this.start();
   }
 
   mount(target?: HTMLElement): void {
@@ -24,7 +24,7 @@ export class TextArea extends Component {
       target: t,
       props: {
         title: this.title,
-        value: this.$value,
+        value: rxBind(this.$value),
         placeholder: this.placeholder,
         disabled: this.$disabled,
       },

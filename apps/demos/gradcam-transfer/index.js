@@ -16,6 +16,7 @@ import {
   text,
 } from '@marcellejs/core';
 import { gradcam, imageClassifier } from './components';
+import { combineLatest, filter, from, map, mergeMap, mergeWith, throttleTime, zip } from 'rxjs';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CLASSIFICATION
@@ -32,10 +33,16 @@ const store = dataStore('localStorage');
 const trainingSet = dataset('training-set-dashboard', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
-input.$images
-  .filter(() => capture.$pressed.get())
-  .map((x) => ({ x, y: label.$value.get(), thumbnail: input.$thumbnails.get() }))
-  .subscribe(trainingSet.create);
+const $instances = zip(input.$images, input.$thumbnails).pipe(
+  filter(() => capture.$pressed.getValue()),
+  map(([x, thumbnail]) => ({
+    x,
+    y: label.$value.getValue(),
+    thumbnail,
+  })),
+);
+
+$instances.subscribe(trainingSet.create);
 
 // -----------------------------------------------------------
 // MODEL & TRAINING
@@ -71,34 +78,36 @@ const selectClass = select([]);
 selectClass.title = 'Select the class to inspect';
 classifier.$training.subscribe(({ status }) => {
   if (['success', 'loaded'].includes(status)) {
-    selectClass.$options.set(classifier.labels);
+    selectClass.$options.next(classifier.labels);
   }
 });
 
 const wc = webcam();
 
-const $instances = trainingSetBrowser.$selected
-  .filter((sel) => sel.length === 1)
-  .map(([id]) => trainingSet.get(id))
-  .awaitPromises()
-  .map(({ x }) => x)
-  .merge(wc.$images.throttle(500));
+const $images = trainingSetBrowser.$selected.pipe(
+  filter((sel) => sel.length === 1),
+  mergeMap(([id]) => from(trainingSet.get(id))),
+  map(({ x }) => x),
+  mergeWith(wc.$images.pipe(throttleTime(500))),
+);
 
-const $predictions = $instances.map(async (img) => classifier.predict(img)).awaitPromises();
+const $predictions = $images.pipe(
+  map(classifier.predict),
+  mergeMap((x) => from(x)),
+);
 
 $predictions.subscribe(({ label }) => {
-  selectClass.$value.set(label);
+  selectClass.$value.next(label);
 });
 
 const plotResults = confidencePlot($predictions);
 
 const gcDisplay = [
-  imageDisplay($instances),
+  imageDisplay($images),
   imageDisplay(
-    $instances
-      .combine((className, img) => [img, className], selectClass.$value)
-      .map(([img, className]) => gc.explain(img, classifier.labels.indexOf(className)))
-      .awaitPromises(),
+    combineLatest([$images, selectClass.$value]).pipe(
+      mergeMap(([img, className]) => from(gc.explain(img, classifier.labels.indexOf(className)))),
+    ),
   ),
 ];
 

@@ -4,11 +4,11 @@
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
   import { ViewContainer } from '@marcellejs/design-system';
-  import type { Stream } from '../../core/stream';
+  import type { BehaviorSubject } from 'rxjs';
 
   export let title: string;
-  export let embedding: Stream<number[][]>;
-  export let labels: Stream<number[]>;
+  export let embedding: BehaviorSubject<number[][]>;
+  export let labels: BehaviorSubject<number[]>;
 
   let scatterContainer: HTMLElement;
   let scatterGL: ScatterGL;
@@ -25,10 +25,10 @@
     embedding.subscribe((points) => {
       if (points.length > 0) {
         let labs: number[] = [];
-        if (labels === undefined || labels.get().length === 0) {
+        if (labels === undefined || labels.getValue().length === 0) {
           labs = new Array(points.length).fill(0);
         } else {
-          labs = labels.get();
+          labs = labels.getValue();
         }
 
         const dataset = new ScatterGL.Dataset(points as Array<[number, number]>);

@@ -1,24 +1,22 @@
-import { never } from '@most/core';
+import { BehaviorSubject, Subject, skip } from 'rxjs';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import View from './button.view.svelte';
 
 export class Button extends Component {
   title = 'button';
 
-  $text: Stream<string>;
-  $click = new Stream<CustomEvent<unknown>>(never());
-  $pressed = new Stream(false, true);
-  $loading = new Stream(false, true);
-  $disabled: Stream<boolean> = new Stream<boolean>(false, true);
-  $type = new Stream<'default' | 'success' | 'warning' | 'danger'>('default', true);
+  $text: BehaviorSubject<string>;
+  $click = new Subject<CustomEvent<unknown>>();
+  $pressed = new BehaviorSubject(false);
+  $loading = new BehaviorSubject(false);
+  $disabled = new BehaviorSubject(false);
+  $type = new BehaviorSubject<'default' | 'success' | 'warning' | 'danger'>('default');
 
   constructor(text = 'click me') {
     super();
-    this.$text = new Stream(text, true);
-    this.start();
-    this.$loading.skip(1).subscribe((loading) => {
-      this.$disabled.set(loading);
+    this.$text = new BehaviorSubject(text);
+    this.$loading.pipe(skip(1)).subscribe((loading) => {
+      this.$disabled.next(loading);
     });
   }
 
@@ -37,6 +35,8 @@ export class Button extends Component {
         type: this.$type,
       },
     });
-    this.$$.app.$on('click', this.$click.set);
+    this.$$.app.$on('click', (e) => {
+      this.$click.next(e);
+    });
   }
 }

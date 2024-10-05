@@ -1,7 +1,6 @@
 import type { LazyIterable } from '../../utils';
 import { kmeans } from 'ml-kmeans';
 import {
-  Stream,
   Model,
   type ClusteringResults,
   type StoredModel,
@@ -13,6 +12,7 @@ import { type Dataset, isDataset } from '../../core/dataset';
 import { Catch, throwError } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
 import { toKebabCase } from '../../utils/string';
+import { BehaviorSubject } from 'rxjs';
 
 export interface KMeansClusteringOptions {
   k: number;
@@ -37,36 +37,35 @@ export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
   serviceName = 'kmeans-models';
 
   parameters: {
-    k: Stream<number>;
+    k: BehaviorSubject<number>;
   };
 
-  $centers: Stream<number[][]>;
-  $clusters: Stream<number[]>;
+  $centers: BehaviorSubject<number[][]>;
+  $clusters: BehaviorSubject<number[]>;
   extremes: Array<{ min: number; max: number }>;
   dataset: number[][];
 
   constructor({ k = 3 }: Partial<KMeansClusteringOptions> = {}) {
     super();
     this.parameters = {
-      k: new Stream(k, true),
+      k: new BehaviorSubject(k),
     };
-    this.$centers = new Stream([], false);
-    this.$clusters = new Stream([], false);
+    this.$centers = new BehaviorSubject([]);
+    this.$clusters = new BehaviorSubject([]);
     this.dataset = [];
-    this.start();
   }
 
   @Catch
   async train(dataset: Dataset<KMeansInstance> | LazyIterable<KMeansInstance>): Promise<void> {
-    this.$training.set({ status: 'start', epochs: 1 });
+    this.$training.next({ status: 'start', epochs: 1 });
     const ds = isDataset(dataset) ? dataset.items() : dataset;
     for await (const { x } of ds) {
       this.dataset.push(x);
     }
-    const ans = kmeans(this.dataset, this.parameters.k.get(), {});
-    this.$centers.set(ans.centroids);
-    this.$clusters.set(ans.clusters);
-    this.$training.set({ status: 'success' });
+    const ans = kmeans(this.dataset, this.parameters.k.getValue(), {});
+    this.$centers.next(ans.centroids);
+    this.$clusters.next(ans.clusters);
+    this.$training.next({ status: 'success' });
   }
 
   @Catch
@@ -75,8 +74,8 @@ export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
     let minDistance = 1000;
     const confidences: Record<string, number> = {};
     let distSum = 0;
-    for (let i = 0; i < this.$centers.get().length; i++) {
-      const dist = euclideanDistance(this.$centers.get()[i], x);
+    for (let i = 0; i < this.$centers.getValue().length; i++) {
+      const dist = euclideanDistance(this.$centers.getValue()[i], x);
       if (dist < minDistance) {
         minDistance = dist;
         cluster = i;
@@ -87,7 +86,7 @@ export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
     Object.entries(confidences).forEach(([key]) => {
       confidences[key] /= distSum;
     });
-    if (this.$centers.get().length === 0) {
+    if (this.$centers.getValue().length === 0) {
       const e = new Error('KMeans is not trained');
       e.name = '[KMeans] Prediction Error';
       throwError(e);
@@ -107,7 +106,7 @@ export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
     for (const x of data) {
       this.predict(x).then((result) => resPromises.push(result));
     }
-    if (this.$centers.get().length === 0) {
+    if (this.$centers.getValue().length === 0) {
       const e = new Error('KMeans is not trained');
       e.name = '[KMeans] Prediction Error';
       throwError(e);
@@ -159,8 +158,8 @@ export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
       files: [],
       format: 'ml-kmeans',
       metadata: {
-        clusters: this.$clusters.get(),
-        centers: this.$centers.get(),
+        clusters: this.$clusters.getValue(),
+        centers: this.$centers.getValue(),
         ...metadata,
       },
     };
@@ -173,8 +172,8 @@ export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
     Object.entries(dataset).forEach(([key, d]) => {
       tensorObj[key] = d;
     });
-    this.$clusters.set(s.metadata.labels as number[]);
-    this.$training.set({
+    this.$clusters.next(s.metadata.labels as number[]);
+    this.$training.next({
       status: 'loaded',
     });
   }

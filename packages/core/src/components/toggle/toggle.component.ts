@@ -1,18 +1,18 @@
+import { BehaviorSubject } from 'rxjs';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import View from './toggle.view.svelte';
+import { rxBind } from '../../utils/rxjs';
 
 export class Toggle extends Component {
   title = 'toggle';
 
-  $text: Stream<string>;
-  $checked = new Stream(false, true);
-  $disabled = new Stream(false, true);
+  $text: BehaviorSubject<string>;
+  $checked = new BehaviorSubject(false);
+  $disabled = new BehaviorSubject(false);
 
   constructor(text = 'toggle me') {
     super();
-    this.$text = new Stream(text, true);
-    this.start();
+    this.$text = new BehaviorSubject(text);
   }
 
   mount(target?: HTMLElement): void {
@@ -24,7 +24,7 @@ export class Toggle extends Component {
       props: {
         title: this.title,
         text: this.$text,
-        checked: this.$checked,
+        checked: rxBind(this.$checked),
         disabled: this.$disabled,
       },
     });

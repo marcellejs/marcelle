@@ -1,39 +1,30 @@
 <script lang="ts">
-  import { onMount, tick } from 'svelte';
-
   import type { BatchPrediction } from '../../components/batch-prediction';
   import { Button } from '@marcellejs/design-system';
+  import { map } from 'rxjs';
 
   export let prediction: BatchPrediction;
 
-  let uploadInput: HTMLInputElement;
+  // let uploadInput: HTMLInputElement;
 
-  $: count = prediction.$status.map((x) => x.count || 0);
-
-  // function downloadPredictions() {
-  //   prediction.download();
-  // }
-
-  // function uploadPredictions() {
-  //   uploadInput?.click();
-  // }
+  $: count = prediction.$status.pipe(map((x) => x.count || 0));
 
   function clearPredictions() {
     prediction.clear();
   }
 
-  onMount(async () => {
-    await tick();
-    await tick();
-    uploadInput.addEventListener('change', (e) => {
-      const fl = (e.target as HTMLInputElement).files;
-      const files: File[] = [];
-      for (let i = 0; i < fl.length; i++) {
-        files.push(fl.item(i));
-      }
-      // prediction.upload(files);
-    });
-  });
+  // onMount(async () => {
+  //   await tick();
+  //   await tick();
+  //   uploadInput.addEventListener('change', (e) => {
+  //     const fl = (e.target as HTMLInputElement).files;
+  //     const files: File[] = [];
+  //     for (let i = 0; i < fl.length; i++) {
+  //       files.push(fl.item(i));
+  //     }
+  //     // prediction.upload(files);
+  //   });
+  // });
 </script>
 
 <span class="card-title">{prediction.title}</span>

@@ -8,6 +8,7 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "pnpm --recursive --filter @marcellejs/* --filter create-marcelle run build",
+    "bundle": "pnpm build && pnpm --recursive --filter @marcellejs/* run bundle",
     "clean": "pnpm --recursive run clean"
   },
   "devDependencies": {

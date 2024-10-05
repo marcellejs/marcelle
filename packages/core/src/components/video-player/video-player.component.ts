@@ -1,17 +1,17 @@
-import { Component, Stream } from '../../core';
+import { BehaviorSubject } from 'rxjs';
+import { Component } from '../../core';
 import View from './video-player.view.svelte';
 
 export class VideoPlayer extends Component {
   title = 'Video Player';
-  $src: Stream<string | MediaStream>;
-  // $ready = new Stream(false, true);
-  $paused = new Stream(true, true);
-  $progress = new Stream(0, true);
-  $mirror = new Stream(false, true);
+  $src: BehaviorSubject<string | MediaStream>;
+  $paused = new BehaviorSubject(true);
+  $progress = new BehaviorSubject(0);
+  $mirror = new BehaviorSubject(false);
 
   constructor(src = '') {
     super();
-    this.$src = new Stream<string | MediaStream>(src, true);
+    this.$src = new BehaviorSubject<string | MediaStream>(src);
   }
 
   mount(target?: HTMLElement): void {

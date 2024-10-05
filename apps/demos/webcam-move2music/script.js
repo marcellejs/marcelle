@@ -20,6 +20,7 @@ import {
   webcam,
   wizard,
 } from '@marcellejs/core';
+import { filter, from, map, mergeMap, zip } from 'rxjs';
 
 // -----------------------------------------------------------
 // SOUNDS
@@ -49,15 +50,17 @@ const store = dataStore('localStorage');
 const trainingSet = dataset('TrainingSet-move2audio', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
-input.$images
-  .filter(() => capture.$pressed.value)
-  .map(async (img) => ({
+const $instances = zip(input.$images, input.$thumbnails).pipe(
+  filter(() => capture.$pressed.getValue()),
+  map(async ([img, thumbnail]) => ({
     x: await featureExtractor.process(img),
-    y: labelInput.$value.value,
-    thumbnail: input.$thumbnails.value,
-  }))
-  .awaitPromises()
-  .subscribe(trainingSet.create.bind(trainingSet));
+    y: labelInput.$value.getValue(),
+    thumbnail,
+  })),
+  mergeMap((x) => from(x)),
+);
+
+$instances.subscribe(trainingSet.create);
 
 // -----------------------------------------------------------
 // TRAINING
@@ -76,11 +79,14 @@ const plotTraining = trainingPlot(classifier);
 // BATCH PREDICTION
 // -----------------------------------------------------------
 
-const batchMLP = batchPrediction({ name: 'mlp', dataStore: store });
+const batchMLP = batchPrediction('mlp', store);
 const confMat = confusionMatrix(batchMLP);
 
 const predictButton = button('Update predictions');
 predictButton.$click.subscribe(async () => {
+  if (!classifier.ready) {
+    throwError(new Error('No classifier has been trained'));
+  }
   await batchMLP.clear();
   await batchMLP.predict(classifier, trainingSet);
 });
@@ -91,10 +97,11 @@ predictButton.$click.subscribe(async () => {
 
 const tog = toggle('toggle prediction');
 
-const $predictions = input.$images
-  .filter(() => tog.$checked.value)
-  .map(async (img) => classifier.predict(await featureExtractor.process(img)))
-  .awaitPromises();
+const $predictions = input.$images.pipe(
+  filter(() => tog.$checked.getValue() && classifier.ready),
+  map(async (img) => classifier.predict(await featureExtractor.process(img))),
+  mergeMap((x) => from(x)),
+);
 
 const plotResults = confidencePlot($predictions);
 
@@ -124,7 +131,7 @@ dash.settings.dataStores(store).datasets(trainingSet).models(classifier);
 const wizardButton = button('Record Examples (class a)');
 const wizardText = text('Waiting for examples...');
 wizardButton.$pressed.subscribe((x) => {
-  capture.$pressed.set(x);
+  capture.$pressed.next(x);
 });
 
 let countPerClass = { A: 0, B: 0, C: 0 };
@@ -143,7 +150,7 @@ trainingSet.$changes.subscribe(async (changes) => {
   }
   const label = labelInput.$value.value;
   const numExamples = countPerClass[label] || 0;
-  wizardText.$value.set(
+  wizardText.$value.next(
     numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
   );
 });
@@ -173,25 +180,25 @@ wiz
   .use([input, plotResults]);
 
 labelInput.$value.subscribe((label) => {
-  wizardButton.$text.set(`Record Examples (class ${label})`);
+  wizardButton.$text.next(`Record Examples (class ${label})`);
   const numExamples = countPerClass[label] || 0;
-  wizardText.$value.set(
+  wizardText.$value.next(
     numExamples ? `Recorded ${numExamples} examples of "${label}"` : 'Waiting for examples...',
   );
 });
 
 wiz.$current.subscribe((pageIndex) => {
   if (pageIndex === 0) {
-    labelInput.$value.set('A');
+    labelInput.$value.next('A');
   } else if (pageIndex === 1) {
-    labelInput.$value.set('B');
+    labelInput.$value.next('B');
   } else if (pageIndex === 2) {
-    labelInput.$value.set('C');
+    labelInput.$value.next('C');
   }
   if (pageIndex === 4) {
-    tog.$checked.set(true);
+    tog.$checked.next(true);
   } else {
-    tog.$checked.set(false);
+    tog.$checked.next(false);
   }
 });
 
@@ -205,7 +212,7 @@ input.$mediastream.subscribe((s) => {
 });
 
 setTimeout(() => {
-  input.$active.set(true);
+  input.$active.next(true);
 }, 200);
 
 // Load audio files

@@ -1,11 +1,11 @@
 <svelte:options accessors />
 
 <script lang="ts">
-  import type { Stream } from '../../core';
   import { ViewContainer } from '@marcellejs/design-system';
+  import type { Observable } from 'rxjs';
 
   export let title: string;
-  export let text: Stream<string>;
+  export let text: Observable<string>;
 </script>
 
 <ViewContainer {title}>
