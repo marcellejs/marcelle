@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { Progress } from '@marcellejs/design-system';
   import type { ProgressType } from './progress-bar.component';
   import { Observable } from 'rxjs';
 
@@ -10,7 +9,7 @@
   <div class="flex mb-2 items-center justify-between">
     <div>
       <span
-        class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600
+        class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-accent
           bg-blue-200"
         class:gray={$progress?.type === 'idle'}
         class:green={$progress?.type === 'success'}
@@ -30,7 +29,14 @@
       </span>
     </div>
   </div>
-  <Progress progress={$progress?.progress} type={$progress?.type} />
+  <progress
+    class="progress w-full"
+    value={$progress?.progress}
+    max="1"
+    class:progress-accent={$progress?.type === 'default'}
+    class:progress-error={$progress?.type === 'danger'}
+    class:progress-success={$progress?.type === 'success'}
+  ></progress>
 </div>
 
 <style>
