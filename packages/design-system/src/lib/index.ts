@@ -1,6 +1,5 @@
 import './styles.css';
 
-export { default as Input } from './Input.svelte';
 export { default as Modal } from './Modal.svelte';
 export { default as Notification } from './Notification.svelte';
 export { default as Number } from './Number.svelte';

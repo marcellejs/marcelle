@@ -45,7 +45,6 @@
   },
   "exports": {
     "./package.json": "./package.json",
-    "./Input.svelte": "./dist/Input.svelte",
     "./Modal.svelte": "./dist/Modal.svelte",
     "./Notification.svelte": "./dist/Notification.svelte",
     "./Number.svelte": "./dist/Number.svelte",

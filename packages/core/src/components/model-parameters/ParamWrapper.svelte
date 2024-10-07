@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Number, NumberArray, Input, Select } from '@marcellejs/design-system';
+  import { Number, NumberArray, Select } from '@marcellejs/design-system';
   import { BehaviorSubject } from 'rxjs';
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,6 +17,6 @@
   {:else if spec.type === 'number array' || (spec.type === 'auto' && Array.isArray(stream.getValue()) && stream.getValue().length && typeof stream.getValue()[0] === 'number')}
     <NumberArray bind:value={$stream} />
   {:else}
-    <Input type="text" bind:value={$stream} />
+    <input type="text" class="input input-bordered" bind:value={$stream} />
   {/if}
 </div>
