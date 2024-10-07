@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Spinner from './Spinner.svelte';
   import Progress from './Progress.svelte';
 
   export let title: string;
@@ -15,7 +14,11 @@
   {/if}
   <span class="card-title">{title}</span>
   {#if loading}
-    <Spinner />
+    <span
+      class="absolute flex flex-nowrap items-center justify-center inset-0 w-full bg-white bg-opacity-50 z-50"
+    >
+      <span class="loading loading-spinner loading-lg"></span>
+    </span>
   {/if}
   <slot />
 </div>

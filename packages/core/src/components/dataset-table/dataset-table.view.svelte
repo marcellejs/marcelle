@@ -3,7 +3,7 @@
   import type { Column } from '@marcellejs/design-system';
   import type { BehaviorSubject } from 'rxjs';
   import { onMount, tick } from 'svelte';
-  import { TableServiceProvider, Spinner, Table, ViewContainer } from '@marcellejs/design-system';
+  import { TableServiceProvider, Table, ViewContainer } from '@marcellejs/design-system';
 
   export let title: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -78,7 +78,9 @@
 
 <ViewContainer {title}>
   {#await dataset.ready}
-    <Spinner />
+    <div class="w-full min-h-28 flex flex-col justify-center items-center">
+      <span class="loading loading-spinner loading-lg"></span>
+    </div>
   {:then}
     {#if provider}
       <Table

@@ -51,7 +51,6 @@
     "./NumberArray.svelte": "./dist/NumberArray.svelte",
     "./PopMenu.svelte": "./dist/PopMenu.svelte",
     "./Select.svelte": "./dist/Select.svelte",
-    "./Spinner.svelte": "./dist/Spinner.svelte",
     "./Table.svelte": "./dist/Table.svelte",
     "./TableActions.svelte": "./dist/TableActions.svelte",
     "./TableContentCell.svelte": "./dist/TableContentCell.svelte",

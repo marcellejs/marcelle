@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy, tick } from 'svelte';
   import { ViewContainer } from '@marcellejs/design-system';
-  import { Spinner } from '@marcellejs/design-system';
   import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
   export let title: string;
@@ -64,7 +63,11 @@
         width}px"
     >
       {#if $active && !$ready}
-        <Spinner />
+        <span
+          class="absolute flex flex-nowrap items-center justify-center inset-0 w-full bg-white bg-opacity-50"
+        >
+          <span class="loading loading-spinner loading-lg"></span>
+        </span>
       {/if}
       <video
         id="webcam-video"
