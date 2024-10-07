@@ -37,7 +37,6 @@
     class:btn-error={$type === 'danger'}
     class:btn-success={$type === 'success'}
     class:btn-warning={$type === 'warning'}
-    on:click
     on:mousedown={startDown}
     on:touchstart|preventDefault={startDown}
     on:touchend={fireClick}
