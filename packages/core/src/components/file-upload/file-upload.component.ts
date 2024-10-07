@@ -14,7 +14,6 @@ export class FileUpload extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         fileStream: this.$files,
       },
     });

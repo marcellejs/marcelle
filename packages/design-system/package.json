@@ -52,7 +52,6 @@
     "./TableContentCell.svelte": "./dist/TableContentCell.svelte",
     "./TableFooter.svelte": "./dist/TableFooter.svelte",
     "./TableHeaderCell.svelte": "./dist/TableHeaderCell.svelte",
-    "./ViewContainer.svelte": "./dist/ViewContainer.svelte",
     "./styles.css": "./dist/styles.css",
     "./table-abstract-provider": "./dist/table-abstract-provider.js",
     "./table-array-provider": "./dist/table-array-provider.js",

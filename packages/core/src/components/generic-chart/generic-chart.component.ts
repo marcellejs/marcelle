@@ -183,7 +183,6 @@ export class GenericChart extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         preset: this.#preset,
         options: this.options,
         datasets: this.#datasets,

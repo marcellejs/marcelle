@@ -2,11 +2,7 @@
   import { Chart, CategoryScale, Title, Tooltip } from 'chart.js';
   import { MatrixElement, MatrixController } from 'chartjs-chart-matrix';
   import { onDestroy } from 'svelte';
-  import { ViewContainer } from '@marcellejs/design-system';
 
-  export let title;
-  export let loading;
-  export let progress;
   export let accuracy;
   export let confusion;
   export let labels;
@@ -149,14 +145,12 @@
   });
 </script>
 
-<ViewContainer {title} loading={$loading} progress={$progress}>
-  {#if $accuracy !== undefined}
-    <p class="m-2">Global Accuracy: {$accuracy.toFixed(2)}</p>
-    <div class="confusion-container"><canvas use:setup /></div>
-  {:else}
-    <p class="m-2">Waiting for predictions...</p>
-  {/if}
-</ViewContainer>
+{#if $accuracy !== undefined}
+  <p class="m-2">Global Accuracy: {$accuracy.toFixed(2)}</p>
+  <div class="confusion-container"><canvas use:setup /></div>
+{:else}
+  <p class="m-2">Waiting for predictions...</p>
+{/if}
 
 <style>
   .confusion-container {

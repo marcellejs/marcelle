@@ -239,15 +239,11 @@ In our example, we define "props" in the script part by using the keyword `expor
 
 ```html
 <script>
-  import { ViewContainer } from '@marcellejs/design-system';
-  export let title;
   export let options;
 </script>
 
-<ViewContainer {title}>
-  <div>This is a <span class="my-color">custom</span> component with the following options:</div>
-  <p>{JSON.stringify(options)}</p>
-</ViewContainer>
+<div>This is a <span class="my-color">custom</span> component with the following options:</div>
+<p>{JSON.stringify(options)}</p>
 
 <style>
   .my-color {
@@ -387,15 +383,10 @@ Let's edit `umap.view.svelte` to pass our stream of embeddings to the component:
 
 ```html
 <script>
-  import { ViewContainer } from '@marcellejs/design-system';
-
-  export let title;
   export let embedding;
 </script>
 
-<ViewContainer {title}>
-  <div>{$embedding}</div>
-</ViewContainer>
+<div>{$embedding}</div>
 ```
 
 `export let embedding;` defines a 'prop', that will be accessible when the component instanciation. `{$embedding}` means that we consider that `embedding` is a data stream (a 'store' in svelte's terminology), and that the DOM will be updated reactively.
@@ -435,9 +426,7 @@ We then integrate scatter-gl in the Svelte component:
 <script>
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
-  import { ViewContainer } from '@marcellejs/design-system';
 
-  export let title;
   export let embedding;
 
   let scatterContainer;
@@ -458,9 +447,7 @@ We then integrate scatter-gl in the Svelte component:
   });
 </script>
 
-<ViewContainer {title}>
-  <div id="scatter-container" bind:this="{scatterContainer}" />
-</ViewContainer>
+<div id="scatter-container" bind:this="{scatterContainer}" />
 
 <style>
   #scatter-container {
@@ -545,9 +532,8 @@ export class Umap extends Component {
 <script>
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
-  import { ViewContainer } from '@marcellejs/design-system';
 
-  export let title;
+
   export let embedding;
   export let labels;
 
@@ -577,9 +563,8 @@ export class Umap extends Component {
 
 </script>
 
-<ViewContainer {title}>
-  <div id="scatter-container" bind:this={scatterContainer} />
-</ViewContainer>
+<div id="scatter-container" bind:this={scatterContainer} />
+
 
 <style>
   #scatter-container {

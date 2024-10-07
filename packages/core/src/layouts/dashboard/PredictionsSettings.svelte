@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { BatchPrediction } from '../../components/batch-prediction';
   import { map } from 'rxjs';
+  import ViewContainer from './ViewContainer.svelte';
 
   export let prediction: BatchPrediction;
 
@@ -26,21 +27,22 @@
   // });
 </script>
 
-<span class="card-title">{prediction.title}</span>
-<p class="pb-2">
-  {#if $count}
-    This batch prediction component contains
-    {$count}
-    prediction{$count ? 's' : ''}
-  {:else}This batch prediction component is empty{/if}
-</p>
-<div class="flex">
-  <!-- {#if $count}
+<ViewContainer title={prediction.title}>
+  <p class="pb-2">
+    {#if $count}
+      This batch prediction component contains
+      {$count}
+      prediction{$count ? 's' : ''}
+    {:else}This batch prediction component is empty{/if}
+  </p>
+  <div class="flex">
+    <!-- {#if $count}
     <button on:click={downloadPredictions}>Download Predictions</button>
     <span class="w-1" />
   {/if}
   <button on:click={uploadPredictions}>Upload Predictions</button> -->
-  <!-- <span class="w-1" />
+    <!-- <span class="w-1" />
   <input bind:this={uploadInput} type="file" multiple class="hidden" /> -->
-  <button class="btn btn-outline btn-error" on:click={clearPredictions}>Clear Predictions</button>
-</div>
+    <button class="btn btn-outline btn-error" on:click={clearPredictions}>Clear Predictions</button>
+  </div>
+</ViewContainer>

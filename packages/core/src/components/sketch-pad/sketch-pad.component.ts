@@ -32,7 +32,6 @@ export class SketchPad extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         strokeStart: this.$strokeStart,
         strokeEnd: this.$strokeEnd,
       },

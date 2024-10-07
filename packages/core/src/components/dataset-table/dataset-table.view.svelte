@@ -3,10 +3,8 @@
   import type { Column } from '@marcellejs/design-system';
   import type { BehaviorSubject } from 'rxjs';
   import { onMount, tick } from 'svelte';
-  import { TableServiceProvider, Table, ViewContainer } from '@marcellejs/design-system';
+  import { TableServiceProvider, Table } from '@marcellejs/design-system';
 
-  export let title: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let dataset: Dataset<Instance>;
   export let colNames: BehaviorSubject<string[]>;
   export let singleSelection = false;
@@ -76,22 +74,20 @@
   });
 </script>
 
-<ViewContainer {title}>
-  {#await dataset.ready}
-    <div class="w-full min-h-28 flex flex-col justify-center items-center">
-      <span class="loading loading-spinner loading-lg"></span>
-    </div>
-  {:then}
-    {#if provider}
-      <Table
-        {provider}
-        {columns}
-        {singleSelection}
-        on:selection={({ detail }) => {
-          selection.next(detail);
-        }}
-        actions={[{ name: 'delete' }]}
-      />
-    {/if}
-  {/await}
-</ViewContainer>
+{#await dataset.ready}
+  <div class="w-full min-h-28 flex flex-col justify-center items-center">
+    <span class="loading loading-spinner loading-lg"></span>
+  </div>
+{:then}
+  {#if provider}
+    <Table
+      {provider}
+      {columns}
+      {singleSelection}
+      on:selection={({ detail }) => {
+        selection.next(detail);
+      }}
+      actions={[{ name: 'delete' }]}
+    />
+  {/if}
+{/await}

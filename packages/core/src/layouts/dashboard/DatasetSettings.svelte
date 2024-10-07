@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
   import type { Dataset, Instance } from '../../core';
+  import ViewContainer from './ViewContainer.svelte';
 
   export let dataset: Dataset<Instance>;
 
@@ -34,21 +35,22 @@
   });
 </script>
 
-<span class="card-title">{dataset.title}</span>
-<p class="pb-2">
-  {#if $count}
-    This dataset contains {$count} instance{$count ? 's' : ''}.
-  {:else}
-    This dataset is empty
-  {/if}
-</p>
-<div class="flex">
-  {#if $count}
-    <button class="btn btn-outline" on:click={downloadDataset}> Download Dataset </button>
+<ViewContainer title={dataset.title}>
+  <p class="pb-2">
+    {#if $count}
+      This dataset contains {$count} instance{$count ? 's' : ''}.
+    {:else}
+      This dataset is empty
+    {/if}
+  </p>
+  <div class="flex">
+    {#if $count}
+      <button class="btn btn-outline" on:click={downloadDataset}> Download Dataset </button>
+      <span class="w-1" />
+    {/if}
+    <button class="btn btn-outline" on:click={uploadDataset}> Upload Dataset </button>
     <span class="w-1" />
-  {/if}
-  <button class="btn btn-outline" on:click={uploadDataset}> Upload Dataset </button>
-  <span class="w-1" />
-  <input bind:this={uploadInput} type="file" multiple class="hidden" />
-  <button class="btn btn-outline btn-error" on:click={clearDataset}> Clear Dataset </button>
-</div>
+    <input bind:this={uploadInput} type="file" multiple class="hidden" />
+    <button class="btn btn-outline btn-error" on:click={clearDataset}> Clear Dataset </button>
+  </div>
+</ViewContainer>

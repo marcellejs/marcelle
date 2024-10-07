@@ -96,7 +96,6 @@ export class MobileNet extends Model<MobileNetInstance, ClassifierResults> {
     this.$$.app = new Component({
       target: t,
       props: {
-        title: this.title,
         loading: this.$loading,
         version: this.version,
         alpha: this.alpha,

@@ -104,7 +104,6 @@ export class Webcam extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         width: this.#width,
         height: this.#height,
         facingMode: this.$facingMode,

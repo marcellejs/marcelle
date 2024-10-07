@@ -22,7 +22,6 @@ export class Toggle extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         text: this.$text,
         checked: rxBind(this.$checked),
         disabled: this.$disabled,

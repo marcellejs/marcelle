@@ -3,14 +3,11 @@
 <script lang="ts">
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
-  import { ViewContainer } from '@marcellejs/design-system';
   import type { BehaviorSubject } from 'rxjs';
 
-  export let title: string;
   export let embedding: BehaviorSubject<number[][]>;
   export let labels: BehaviorSubject<number[]>;
 
-  let scatterContainer: HTMLElement;
   let scatterGL: ScatterGL;
 
   onMount(() => {
@@ -80,9 +77,7 @@
   });
 </script>
 
-<ViewContainer {title}>
-  <div id="scatter-container" bind:this={scatterContainer} />
-</ViewContainer>
+<div id="scatter-container" />
 
 <style>
   #scatter-container {

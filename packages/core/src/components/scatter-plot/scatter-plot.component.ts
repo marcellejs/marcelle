@@ -21,7 +21,6 @@ export class ScatterPlot extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         embedding: this.$data,
         labels: this.$labels as BehaviorSubject<number[]>,
       },

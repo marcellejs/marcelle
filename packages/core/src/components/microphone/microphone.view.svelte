@@ -1,9 +1,7 @@
 <script lang="ts">
-  import { ViewContainer } from '@marcellejs/design-system';
   import type { BehaviorSubject } from 'rxjs';
   import { onDestroy, onMount } from 'svelte';
 
-  export let title: string;
   export let active: BehaviorSubject<boolean>;
   export let mediaStream: BehaviorSubject<MediaStream>;
 
@@ -72,21 +70,19 @@
   onDestroy(unSub);
 </script>
 
-<ViewContainer {title}>
+<div>
   <div>
-    <div>
-      <div class="form-control">
-        <label class="label cursor-pointer">
-          <input type="checkbox" class="toggle" bind:checked={$active} />
-          <span class="label-text ml-2">activate microphone</span>
-        </label>
-      </div>
-    </div>
-    <div>
-      <canvas bind:this={canvasElt} class="w-full" />
+    <div class="form-control">
+      <label class="label cursor-pointer">
+        <input type="checkbox" class="toggle" bind:checked={$active} />
+        <span class="label-text ml-2">activate microphone</span>
+      </label>
     </div>
   </div>
-</ViewContainer>
+  <div>
+    <canvas bind:this={canvasElt} class="w-full" />
+  </div>
+</div>
 
 <style>
 </style>

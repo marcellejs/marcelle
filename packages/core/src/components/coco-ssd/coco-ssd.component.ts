@@ -4,7 +4,6 @@ import { type Instance, Model, type ObjectDetectorResults } from '../../core';
 import { logger } from '../../core/logger';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './coco-ssd.view.svelte';
-import { BehaviorSubject } from 'rxjs';
 
 export interface CocoSsdOptions {
   base?: ObjectDetectionBaseModel;
@@ -23,11 +22,11 @@ export class CocoSsd extends Model<CocoInstance, ObjectDetectorResults> {
 
   #coco: ObjectDetection;
   #base: ObjectDetectionBaseModel;
-  $loading = new BehaviorSubject(true as boolean);
 
   constructor({ base = 'lite_mobilenet_v2' }: CocoSsdOptions = {}) {
     super();
     this.#base = base;
+    this.$loading.next(true);
     this.setup();
   }
 
@@ -76,7 +75,6 @@ export class CocoSsd extends Model<CocoInstance, ObjectDetectorResults> {
     this.$$.app = new Component({
       target: t,
       props: {
-        title: this.title,
         loading: this.$loading,
         base: this.#base,
       },

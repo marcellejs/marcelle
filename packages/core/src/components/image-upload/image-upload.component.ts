@@ -29,7 +29,6 @@ export class ImageUpload extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         images: this.$images,
         thumbnails: this.$thumbnails,
         width: this.#width,

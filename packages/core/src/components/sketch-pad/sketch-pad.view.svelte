@@ -1,9 +1,7 @@
 <script lang="ts">
   import type { Subject } from 'rxjs';
   import { onMount, createEventDispatcher, tick } from 'svelte';
-  import { ViewContainer } from '@marcellejs/design-system';
 
-  export let title: string;
   export let strokeStart: Subject<void>;
   export let strokeEnd: Subject<void>;
 
@@ -68,22 +66,20 @@
 
 <svelte:body on:mouseup={stopDrawing} />
 
-<ViewContainer {title}>
-  <div class="w-full flex flex-col items-center box-border">
-    <canvas
-      id="fxid"
-      class="sketchpad-container"
-      width="300"
-      height="300"
-      bind:this={canvasElement}
-      on:mousemove={draw}
-      on:mousedown={startDrawing}
-    />
-    <div class="m-1">
-      <button class="btn btn-sm btn-error" on:click={clearDrawing}>Clear</button>
-    </div>
+<div class="w-full flex flex-col items-center box-border">
+  <canvas
+    id="fxid"
+    class="sketchpad-container"
+    width="300"
+    height="300"
+    bind:this={canvasElement}
+    on:mousemove={draw}
+    on:mousedown={startDrawing}
+  />
+  <div class="m-1">
+    <button class="btn btn-sm btn-error" on:click={clearDrawing}>Clear</button>
   </div>
-</ViewContainer>
+</div>
 
 <style lang="postcss">
   .sketchpad-container {

@@ -1,12 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { ViewContainer } from '@marcellejs/design-system';
   import { throwError } from '../../utils';
   import { getBlobMeta } from './blob-utils';
   import { RecordRTCPromisesHandler } from 'recordrtc';
   import { filter, type BehaviorSubject } from 'rxjs';
 
-  export let title: string;
   export let mediaStream: BehaviorSubject<MediaStream>;
   export let active: BehaviorSubject<boolean>;
   export let recordings: BehaviorSubject<{
@@ -86,15 +84,13 @@
   });
 </script>
 
-<ViewContainer {title}>
-  <div class="flex flex-col items-center">
-    <div class="recorder-container">
-      <input type="checkbox" id="btn" bind:checked={$active} />
-      <label for="btn" />
-    </div>
-    <div class="text-gray-600">{elapsedTime}</div>
+<div class="flex flex-col items-center">
+  <div class="recorder-container">
+    <input type="checkbox" id="btn" bind:checked={$active} />
+    <label for="btn" />
   </div>
-</ViewContainer>
+  <div class="text-gray-600">{elapsedTime}</div>
+</div>
 
 <style lang="postcss">
   @keyframes stop {

@@ -12,7 +12,6 @@
   import { isHLSProvider, type MediaCanPlayEvent, type MediaProviderChangeEvent } from 'vidstack';
   import type { MediaPlayerElement } from 'vidstack/elements';
 
-  import { ViewContainer } from '@marcellejs/design-system';
   import type { BehaviorSubject } from 'rxjs';
 
   export let title: string;
@@ -72,37 +71,27 @@
   }
 </script>
 
-<ViewContainer {title}>
-  <!-- <video
-    src={$src}
-    width="480"
-    controls
-    bind:this={videoElt}
-    bind:currentTime={$progress}
-    bind:paused={$paused}
-  /> -->
-  <media-player
-    class="player"
-    {title}
-    src={$src || ''}
-    crossorigin
-    on:provider-change={onProviderChange}
-    on:can-play={onCanPlay}
-    bind:this={player}
-    paused={$paused}
-  >
-    <media-provider style={$mirror ? 'transform: scaleX(-1)' : ''}>
-      <!-- <media-poster
+<media-player
+  class="player"
+  {title}
+  src={$src || ''}
+  crossorigin
+  on:provider-change={onProviderChange}
+  on:can-play={onCanPlay}
+  bind:this={player}
+  paused={$paused}
+>
+  <media-provider style={$mirror ? 'transform: scaleX(-1)' : ''}>
+    <!-- <media-poster
         class="vds-poster"
         src="https://image.mux.com/VZtzUzGRv02OhRnZCxcNg49OilvolTqdnFLEqBsTwaxU/thumbnail.webp?time=268&width=1200"
         alt="Girl walks into campfire with gnomes surrounding her friend ready for their next meal!"
       /> -->
-    </media-provider>
-    <!-- Layouts -->
-    <media-audio-layout />
-    <media-video-layout />
-  </media-player>
-</ViewContainer>
+  </media-provider>
+  <!-- Layouts -->
+  <media-audio-layout />
+  <media-video-layout />
+</media-player>
 
 <style lang="postcss">
   .player {

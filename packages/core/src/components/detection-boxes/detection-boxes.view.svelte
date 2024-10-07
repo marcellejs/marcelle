@@ -1,10 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { ObjectDetectorResults } from '../../core';
-  import { ViewContainer } from '@marcellejs/design-system';
   import { filter, type Observable } from 'rxjs';
 
-  export let title: string;
   export let imageStream: Observable<ImageData>;
   export let objectDetectionResults: Observable<ObjectDetectorResults>;
 
@@ -17,7 +15,7 @@
       ctx.putImageData(img, 0, 0);
     });
     objectDetectionResults.pipe(filter((x) => !!x)).subscribe(({ outputs }) => {
-      for (let i = 0; i < outputs.length; i++) {
+      for (const output of outputs) {
         ctx.font = `${Math.floor(mycan.width / 60)}px sans-serif`;
         const msg = `${output.confidence.toFixed(3)} ${output.class}`;
         const textSize = ctx.measureText(msg);
@@ -48,4 +46,4 @@
   });
 </script>
 
-<ViewContainer {title}><canvas id="can" class="w-full max-w-full" /></ViewContainer>
+<canvas id="can" class="w-full max-w-full" />

@@ -103,7 +103,6 @@ export class PoseDetection extends Model<PoseDetectionInstance, Pose[]> {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         loading: this.$loading,
         model: this.model,
       },

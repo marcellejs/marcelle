@@ -1,9 +1,7 @@
 <script lang="ts">
   import type { BehaviorSubject } from 'rxjs';
-  import { ViewContainer } from '@marcellejs/design-system';
   import RangeSlider from 'svelte-range-slider-pips';
 
-  export let title: string;
   export let values: BehaviorSubject<number[]>;
   export let min: BehaviorSubject<number>;
   export let max: BehaviorSubject<number>;
@@ -21,40 +19,38 @@
   }
 </script>
 
-<ViewContainer {title}>
-  {#if continuous}
-    <RangeSlider
-      bind:values={$values}
-      min={$min}
-      max={$max}
-      step={$step}
-      {range}
-      {float}
-      {vertical}
-      {pips}
-      {pipstep}
-      {formatter}
-      all="label"
-      springValues={{ stiffness: 0.2, damping: 0.8 }}
-    />
-  {:else}
-    <RangeSlider
-      values={$values}
-      on:stop={dispatchValues}
-      min={$min}
-      max={$max}
-      step={$step}
-      {range}
-      {float}
-      {vertical}
-      {pips}
-      {pipstep}
-      {formatter}
-      all="label"
-      springValues={{ stiffness: 0.2, damping: 0.8 }}
-    />
-  {/if}
-</ViewContainer>
+{#if continuous}
+  <RangeSlider
+    bind:values={$values}
+    min={$min}
+    max={$max}
+    step={$step}
+    {range}
+    {float}
+    {vertical}
+    {pips}
+    {pipstep}
+    {formatter}
+    all="label"
+    springValues={{ stiffness: 0.2, damping: 0.8 }}
+  />
+{:else}
+  <RangeSlider
+    values={$values}
+    on:stop={dispatchValues}
+    min={$min}
+    max={$max}
+    step={$step}
+    {range}
+    {float}
+    {vertical}
+    {pips}
+    {pipstep}
+    {formatter}
+    all="label"
+    springValues={{ stiffness: 0.2, damping: 0.8 }}
+  />
+{/if}
 
 <style lang="postcss">
   :global(.rangeSlider > .rangeBar),

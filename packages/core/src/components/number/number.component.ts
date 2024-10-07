@@ -23,7 +23,6 @@ export class Number extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         value: rxBind(this.$value),
         disabled: this.$disabled,
       },

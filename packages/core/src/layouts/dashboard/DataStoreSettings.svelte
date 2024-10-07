@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { ViewContainer } from '@marcellejs/design-system';
   import type { DataStore } from '../../core/data-store';
+  import ViewContainer from './ViewContainer.svelte';
 
   export let dataStore: DataStore;
 

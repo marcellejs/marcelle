@@ -25,6 +25,9 @@ export class ConfusionMatrix extends Component {
   constructor(prediction: BatchPrediction) {
     super();
     this.#prediction = prediction;
+    this.#prediction.$status
+      .pipe(map(({ status }) => status === 'loading'))
+      .subscribe(this.$loading);
     this.setup();
   }
 
@@ -98,9 +101,7 @@ export class ConfusionMatrix extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
-        loading: this.#prediction.$status.pipe(map(({ status }) => status === 'loading')),
-        progress: this.$progress,
+        // progress: this.$progress,
         confusion: this.$confusion,
         accuracy: this.$accuracy,
         labels: this.$labels,

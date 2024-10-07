@@ -19,7 +19,6 @@ export class Account extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         dataStore: this.#dataStore,
       },
     });

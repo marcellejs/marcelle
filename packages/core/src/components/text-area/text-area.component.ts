@@ -23,7 +23,6 @@ export class TextArea extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         value: rxBind(this.$value),
         placeholder: this.placeholder,
         disabled: this.$disabled,

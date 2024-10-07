@@ -2,6 +2,7 @@
   import { onMount, tick } from 'svelte';
   import type { Instance, Model } from '../../core';
   import { throwError } from '../../utils/error-handling';
+  import ViewContainer from './ViewContainer.svelte';
 
   export let model: Model<Instance, unknown>;
 
@@ -48,10 +49,11 @@
   });
 </script>
 
-<span class="card-title">{model.title}</span>
-<div class="flex">
-  <button class="btn btn-outline" on:click={downloadModel}>Download Model</button>
-  <span class="w-1" />
-  <input bind:this={uploadInput} type="file" multiple class="hidden" />
-  <button class="btn btn-outline" on:click={uploadModel}>Upload Model</button>
-</div>
+<ViewContainer title={model.title}>
+  <div class="flex">
+    <button class="btn btn-outline" on:click={downloadModel}>Download Model</button>
+    <span class="w-1" />
+    <input bind:this={uploadInput} type="file" multiple class="hidden" />
+    <button class="btn btn-outline" on:click={uploadModel}>Upload Model</button>
+  </div>
+</ViewContainer>

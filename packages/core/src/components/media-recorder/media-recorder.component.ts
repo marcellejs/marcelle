@@ -28,7 +28,6 @@ export class MediaRecorder extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         mediaStream: this.$mediaStream,
         active: this.$active,
         recordings: this.$recordings,

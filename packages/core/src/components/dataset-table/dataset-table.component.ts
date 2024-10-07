@@ -39,7 +39,6 @@ export class DatasetTable<T extends Instance> extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         dataset: this.#dataset,
         colNames: this.$columns,
         singleSelection: this.singleSelection,

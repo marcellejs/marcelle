@@ -4,11 +4,9 @@
   import type { DBInstance } from './dataset-browser.component';
   import { onMount } from 'svelte';
   import { scale } from 'svelte/transition';
-  import { ViewContainer } from '@marcellejs/design-system';
   import { BehaviorSubject } from 'rxjs';
   import { noop } from '../../utils/misc';
 
-  export let title: string;
   export let batchSize: number;
   export let count: BehaviorSubject<number>;
   export let dataset: Dataset<DBInstance>;
@@ -233,113 +231,111 @@
 
 <svelte:window on:keydown={handleKeydown} on:keyup={handleKeyup} />
 
-<ViewContainer {title} {loading}>
-  {#if classes && !dataStoreError}
-    {#if $count > 0}
-      <p class="ml-3 mt-2">This dataset contains {$count} instance{$count > 1 ? 's' : ''}.</p>
-    {:else}
-      <p class="ml-3 mt-2">This dataset is empty.</p>
-    {/if}
+{#if classes && !dataStoreError}
+  {#if $count > 0}
+    <p class="ml-3 mt-2">This dataset contains {$count} instance{$count > 1 ? 's' : ''}.</p>
+  {:else}
+    <p class="ml-3 mt-2">This dataset is empty.</p>
+  {/if}
 
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div
-      class="flex flex-wrap"
-      on:click={() => selectInstance()}
-      on:keypress|preventDefault={(e) => e.key === 'Escape' && selectInstance()}
-    >
-      {#each Object.entries(classes) as [label, { loaded, total, instances }]}
-        <div class="browser-class">
-          <div class="w-full">
-            <div class="browser-class-header">
-              <span class="browser-class-title">{label}</span>
-              <div class="dropdown dropdown-end">
-                <button
-                  tabindex="0"
-                  class="btn btn-sm btn-circle btn-ghost"
-                  on:click|stopPropagation={noop}
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
+  <div
+    class="flex flex-wrap"
+    on:click={() => selectInstance()}
+    on:keypress|preventDefault={(e) => e.key === 'Escape' && selectInstance()}
+  >
+    {#each Object.entries(classes) as [label, { loaded, total, instances }]}
+      <div class="browser-class">
+        <div class="w-full">
+          <div class="browser-class-header">
+            <span class="browser-class-title">{label}</span>
+            <div class="dropdown dropdown-end">
+              <button
+                tabindex="0"
+                class="btn btn-sm btn-circle btn-ghost"
+                on:click|stopPropagation={noop}
+              >
+                <svg
+                  class="fill-current inline-block h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  ><path
+                    d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"
+                  /></svg
                 >
-                  <svg
-                    class="fill-current inline-block h-5 w-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    ><path
-                      d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"
-                    /></svg
-                  >
-                </button>
-                <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-                <ul
-                  tabindex="0"
-                  class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
-                >
+              </button>
+              <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+              <ul
+                tabindex="0"
+                class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+              >
+                <li>
+                  <button on:click={() => editClassLabel(label)}> Edit Class Label </button>
+                </li>
+                <li><button on:click={() => deleteClass(label)}> Delete class </button></li>
+                {#if $selected.length > 0}
                   <li>
-                    <button on:click={() => editClassLabel(label)}> Edit Class Label </button>
+                    <button on:click={deleteSelectedInstances}>
+                      Delete selected instance{$selected.length > 1 ? 's' : ''}
+                    </button>
                   </li>
-                  <li><button on:click={() => deleteClass(label)}> Delete class </button></li>
-                  {#if $selected.length > 0}
-                    <li>
-                      <button on:click={deleteSelectedInstances}>
-                        Delete selected instance{$selected.length > 1 ? 's' : ''}
-                      </button>
-                    </li>
-                    <li>
-                      <button on:click={relabelSelectedInstances}>
-                        Relabel selected instance{$selected.length > 1 ? 's' : ''}
-                      </button>
-                    </li>
-                  {/if}
-                </ul>
-              </div>
-            </div>
-
-            <div class="browser-class-body">
-              {#each instances as { id, thumbnail } (id)}
-                <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-                <img
-                  src={thumbnail}
-                  alt="thumbnail"
-                  class="m-1"
-                  class:selected={$selected.includes(id)}
-                  in:scale
-                  out:scale
-                  on:click|stopPropagation={() => selectInstance(id)}
-                />
-              {/each}
+                  <li>
+                    <button on:click={relabelSelectedInstances}>
+                      Relabel selected instance{$selected.length > 1 ? 's' : ''}
+                    </button>
+                  </li>
+                {/if}
+              </ul>
             </div>
           </div>
-          <div class="pb-1">
-            {#if loaded < total}
-              <button class="btn btn-sm" on:click={() => loadMore(label)}> View More </button>
-            {/if}
+
+          <div class="browser-class-body">
+            {#each instances as { id, thumbnail } (id)}
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+              <img
+                src={thumbnail}
+                alt="thumbnail"
+                class="m-1"
+                class:selected={$selected.includes(id)}
+                in:scale
+                out:scale
+                on:click|stopPropagation={() => selectInstance(id)}
+              />
+            {/each}
           </div>
         </div>
-      {/each}
-    </div>
-  {/if}
-  {#if dataStoreError}
-    <div
-      class="flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
-      role="alert"
-    >
-      <svg
-        class="inline flex-shrink-0 mr-3 w-5 h-5"
-        fill="currentColor"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-        ><path
-          fill-rule="evenodd"
-          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-          clip-rule="evenodd"
-        /></svg
-      >
-      <div>
-        <span class="font-medium">Data Store connection Error!</span> This data store probably requires
-        authentication
+        <div class="pb-1">
+          {#if loaded < total}
+            <button class="btn btn-sm" on:click={() => loadMore(label)}> View More </button>
+          {/if}
+        </div>
       </div>
+    {/each}
+  </div>
+{/if}
+{#if dataStoreError}
+  <div
+    class="flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
+    role="alert"
+  >
+    <svg
+      class="inline flex-shrink-0 mr-3 w-5 h-5"
+      fill="currentColor"
+      viewBox="0 0 20 20"
+      xmlns="http://www.w3.org/2000/svg"
+      ><path
+        fill-rule="evenodd"
+        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+        clip-rule="evenodd"
+      /></svg
+    >
+    <div>
+      <span class="font-medium">Data Store connection Error!</span> This data store probably requires
+      authentication
     </div>
-  {/if}
-</ViewContainer>
+  </div>
+{/if}
 
 <style>
   .browser-class {

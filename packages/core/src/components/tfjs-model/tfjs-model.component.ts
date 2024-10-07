@@ -9,6 +9,7 @@ import { Catch, TrainingError } from '../../utils/error-handling';
 import { readJSONFile } from '../../utils/file-io';
 import Component from './tfjs-model.view.svelte';
 import { browserFiles, http } from '../../core/model/tfjs-io';
+import { map } from 'rxjs';
 
 export interface InputTypes {
   image: ImageData;
@@ -82,6 +83,7 @@ export class TFJSModel<
         this.inputShape = this.model.inputs[0].shape.map((x) => (x && x > 0 ? x : 1));
       }
     });
+    this.$training.pipe(map(({ status }) => status === 'loading')).subscribe(this.$loading);
   }
 
   @Catch
@@ -243,7 +245,6 @@ export class TFJSModel<
     this.$$.app = new Component({
       target: t,
       props: {
-        title: this.title,
         training: this.$training,
       },
     });

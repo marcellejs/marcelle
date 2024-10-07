@@ -3,7 +3,7 @@ import ort from 'onnxruntime-web';
 import { type ClassifierResults, type Instance, Model } from '../../core';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './onnx-model.view.svelte';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 
 export interface InputTypes {
   image: ImageData;
@@ -72,6 +72,7 @@ export class OnnxModel<
     this.inputType = inputType;
     this.taskType = taskType;
     this.inputShape = inputShape;
+    this.$training.pipe(map(({ status }) => status === 'loading')).subscribe(this.$loading);
   }
 
   @Catch
@@ -244,7 +245,6 @@ export class OnnxModel<
     this.$$.app = new Component({
       target: t,
       props: {
-        title: this.title,
         training: this.$training,
       },
     });

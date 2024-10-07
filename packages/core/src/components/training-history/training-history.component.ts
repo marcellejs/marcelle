@@ -149,7 +149,6 @@ export class TrainingHistory<T extends Instance, PredictionType> extends Compone
       this.$$.app = new View({
         target: t,
         props: {
-          title: this.title,
           service: this.runService,
           metrics: this.options.metrics,
           actions: this.options.actions,

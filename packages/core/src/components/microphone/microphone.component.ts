@@ -49,7 +49,6 @@ export class Microphone extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         active: this.$active,
         mediaStream: this.$mediastream,
       },

@@ -24,7 +24,6 @@ export class DetectionBoxes extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         imageStream: this.$imgStream,
         objectDetectionResults: this.$objectDetectionResults,
       },

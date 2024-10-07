@@ -82,7 +82,6 @@ export class Slider extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         values: rxBind(this.$values),
         min: this.$min,
         max: this.$max,

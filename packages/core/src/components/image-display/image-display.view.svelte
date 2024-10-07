@@ -2,10 +2,8 @@
 
 <script lang="ts">
   import { onDestroy, onMount, tick } from 'svelte';
-  import { ViewContainer } from '@marcellejs/design-system';
   import { Observable, Subscription } from 'rxjs';
 
-  export let title: string;
   export let imageStream: Observable<ImageData | ImageData[]>;
 
   let canvas: HTMLCanvasElement;
@@ -32,6 +30,4 @@
   });
 </script>
 
-<ViewContainer {title}>
-  <canvas bind:this={canvas} class="w-full max-w-full" />
-</ViewContainer>
+<canvas bind:this={canvas} class="w-full max-w-full" />

@@ -35,7 +35,6 @@ export class DatasetBrowser extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         batchSize: this.batchSize,
         count: this.#dataset.$count,
         dataset: this.#dataset,

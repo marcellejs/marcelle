@@ -8,7 +8,6 @@ export class Button extends Component {
   $text: BehaviorSubject<string>;
   $click = new Subject<CustomEvent<unknown>>();
   $pressed = new BehaviorSubject(false);
-  $loading = new BehaviorSubject(false);
   $disabled = new BehaviorSubject(false);
   $type = new BehaviorSubject<'default' | 'success' | 'warning' | 'danger'>('default');
 
@@ -27,10 +26,8 @@ export class Button extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         text: this.$text,
         pressed: this.$pressed,
-        loading: this.$loading,
         disabled: this.$disabled,
         type: this.$type,
       },

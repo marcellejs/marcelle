@@ -19,7 +19,6 @@ export class Text extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         text: this.$value,
       },
     });

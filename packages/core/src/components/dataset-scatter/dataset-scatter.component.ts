@@ -81,7 +81,6 @@ export class DatasetScatter<T extends Instance> extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         data: this.$data,
         hovered: this.$hovered,
         clicked: this.$clicked,

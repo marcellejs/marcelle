@@ -22,7 +22,6 @@ export class Select extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         options: this.$options,
         value: rxBind(this.$value),
       },

@@ -119,8 +119,7 @@
   }
 
   .main-container {
-    @apply box-border w-full p-1 flex flex-col flex-nowrap grow bg-gray-100;
-    background-color: rgb(237, 242, 247);
+    @apply box-border w-full p-1 flex flex-col flex-nowrap grow bg-base-200;
   }
 
   @screen lg {
