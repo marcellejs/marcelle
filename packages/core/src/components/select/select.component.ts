@@ -1,6 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { Component } from '../../core/component';
 import View from './select.view.svelte';
+import { rxBind } from '../../utils/rxjs';
 
 export class Select extends Component {
   title = 'select';
@@ -23,7 +24,7 @@ export class Select extends Component {
       props: {
         title: this.title,
         options: this.$options,
-        value: this.$value,
+        value: rxBind(this.$value),
       },
     });
   }

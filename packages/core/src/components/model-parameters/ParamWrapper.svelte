@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Number, NumberArray, Select } from '@marcellejs/design-system';
+  import { Number, NumberArray } from '@marcellejs/design-system';
   import { BehaviorSubject } from 'rxjs';
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -9,7 +9,11 @@
 
 <div style="flex-grow: 1;">
   {#if spec.type === 'menu' && Array.isArray(spec.options) && spec.options.length > 0}
-    <Select options={spec.options} bind:value={$stream} />
+    <select class="select select-bordered w-full max-w-xs" bind:value={$stream}>
+      {#each spec.options as option}
+        <option>{option}</option>
+      {/each}
+    </select>
   {:else if spec.type === 'boolean' || (spec.type === 'auto' && typeof stream.getValue() === 'boolean')}
     <input type="checkbox" class="toggle" bind:checked={$stream} />
   {:else if spec.type === 'number' || (spec.type === 'auto' && typeof stream.getValue() === 'number')}

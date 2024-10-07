@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { Action } from './table-types';
-  import Select from './Select.svelte';
   import type { TableDataProvider } from './table-abstract-provider';
   import TableActions from './TableActions.svelte';
 
@@ -61,16 +60,19 @@
     <div class="flex items-center mx-4">
       Items per page:
       <div class="w-12 ml-2">
-        <Select
-          size="small"
-          options={['10', '20', '50', 'all']}
+        <select
+          class="select select-bordered select-sm w-full max-w-xs"
           value={itemsPerPage.toString()}
-          on:change={({ detail }) => {
-            const n = detail === 'all' ? total : parseInt(detail);
+          on:change={({ currentTarget }) => {
+            const n = currentTarget.value === 'all' ? total : parseInt(currentTarget.value);
             provider.paginate(n);
             itemsPerPage = n;
           }}
-        />
+        >
+          {#each ['10', '20', '50', 'all'] as option}
+            <option>{option}</option>
+          {/each}
+        </select>
       </div>
     </div>
     <div class="mx-3">
