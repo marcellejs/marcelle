@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { Number, NumberArray } from '@marcellejs/design-system';
   import { BehaviorSubject } from 'rxjs';
+  import Number from '../number/Number.svelte';
+  import NumberArray from '../number-array/NumberArray.svelte';
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let stream: BehaviorSubject<any>;

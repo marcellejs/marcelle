@@ -2,8 +2,6 @@ import './styles.css';
 
 export { default as Modal } from './Modal.svelte';
 export { default as Notification } from './Notification.svelte';
-export { default as Number } from './Number.svelte';
-export { default as NumberArray } from './NumberArray.svelte';
 export { default as Progress } from './Progress.svelte';
 export { default as Table } from './Table.svelte';
 export { TableDataProvider } from './table-abstract-provider';

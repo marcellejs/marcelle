@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ViewContainer } from '@marcellejs/design-system';
-  import { Number } from '@marcellejs/design-system';
   import { BehaviorSubject } from 'rxjs';
+  import Number from './Number.svelte';
 
   export let title: string;
   export let value: BehaviorSubject<number>;

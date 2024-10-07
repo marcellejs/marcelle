@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ViewContainer } from '@marcellejs/design-system';
-  import { NumberArray } from '@marcellejs/design-system';
   import { BehaviorSubject } from 'rxjs';
+  import NumberArray from './NumberArray.svelte';
 
   export let title: string;
   export let value: BehaviorSubject<number[]>;
