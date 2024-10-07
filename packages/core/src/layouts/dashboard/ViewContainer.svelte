@@ -5,7 +5,9 @@
   export let loading: BehaviorSubject<boolean> = undefined;
 </script>
 
-<div class="card bg-base-100 my-2 p-3 shadow-md overflow-hidden">
+<div
+  class="card bg-base-100 my-2 p-3 shadow-md overflow-hidden flex-none xl:flex-1 w-full xl:w-auto"
+>
   {#if title}
     <h2 class="card-title mb-4">{title}</h2>
   {/if}

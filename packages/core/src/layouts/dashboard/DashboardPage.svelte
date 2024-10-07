@@ -25,11 +25,11 @@
       {#if Array.isArray(m)}
         <div class="flex flex-row flex-wrap items-stretch gap-1">
           {#each m as { id, title, $loading: loading }}
-            <div class="flex-none xl:flex-1 w-full xl:w-auto">
-              <ViewContainer {title} {loading}>
-                <div {id} />
-              </ViewContainer>
-            </div>
+            <!-- <div class="flex-none xl:flex-1 w-full xl:w-auto"> -->
+            <ViewContainer {title} {loading}>
+              <div {id} />
+            </ViewContainer>
+            <!-- </div> -->
           {/each}
         </div>
       {:else if typeof m === 'string'}

@@ -107,10 +107,13 @@
 </script>
 
 {#if draggedOver}
-  <div class="overlay">
+  <div
+    class="w-full h-full absolute top-0 left-0 pointer-events-none z-50 flex flex-col items-center
+      justify-center rounded-md bg-base-100 opacity-90"
+  >
     <i>
       <svg
-        class="fill-current w-12 h-12 mb-3 text-blue-700"
+        class="fill-current w-12 h-12 mb-3 text-accent"
         xmlns="http://www.w3.org/2000/svg"
         width="24"
         height="24"
@@ -121,7 +124,7 @@
         />
       </svg>
     </i>
-    <p class="text-lg text-blue-700">Drop files to upload</p>
+    <p class="text-lg text-accent">Drop files to upload</p>
   </div>
 {/if}
 
@@ -136,7 +139,7 @@
   <div
     class="border-dashed border-2 border-gray-300 py-8 flex flex-col justify-center items-center"
   >
-    <p class="mb-3 font-semibold text-gray-900 flex flex-wrap justify-center">
+    <p class="mb-3 font-semibold flex flex-wrap justify-center">
       <span>Drag and drop an image or</span>
     </p>
     <input bind:this={uploadInput} type="file" multiple class="hidden" />
@@ -161,11 +164,5 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-  }
-
-  .overlay {
-    @apply w-full h-full absolute top-0 left-0 pointer-events-none z-50 flex flex-col items-center
-      justify-center rounded-md;
-    background-color: rgba(255, 255, 255, 0.7);
   }
 </style>

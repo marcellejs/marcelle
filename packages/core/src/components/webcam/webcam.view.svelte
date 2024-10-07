@@ -60,9 +60,7 @@
       width}px"
   >
     {#if $active && !$ready}
-      <span
-        class="absolute flex flex-nowrap items-center justify-center inset-0 w-full bg-white bg-opacity-50"
-      >
+      <span class="absolute flex flex-nowrap items-center justify-center inset-0 w-full">
         <span class="loading loading-spinner loading-lg"></span>
       </span>
     {/if}
@@ -111,7 +109,7 @@
   }
 
   .webcam .webcam-container {
-    @apply rounded-md overflow-hidden bg-gray-200 m-2 w-full flex justify-center;
+    @apply rounded-md overflow-hidden bg-base-300 m-2 w-full flex justify-center;
     max-width: 350px;
   }
 
