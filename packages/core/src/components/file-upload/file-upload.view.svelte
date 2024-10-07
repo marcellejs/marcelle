@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
   import { ViewContainer } from '@marcellejs/design-system';
-  import { Button } from '@marcellejs/design-system';
   import type { Subject } from 'rxjs';
 
   export let title: string;
@@ -101,7 +100,7 @@
         <span>Drop Files here or:</span>
       </p>
       <input bind:this={uploadInput} type="file" multiple class="hidden" />
-      <Button on:click={clickUpload}>Upload a file</Button>
+      <button class="btn" on:click={clickUpload}>Upload a file</button>
     </div>
   </div>
 </ViewContainer>

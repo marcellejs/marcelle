@@ -1,10 +1,7 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
-
   import type { Instance, Model } from '../../core';
-  import { Button } from '@marcellejs/design-system';
   import { throwError } from '../../utils/error-handling';
-  import type { Instance, Model } from '../../core';
 
   export let model: Model<Instance, unknown>;
 
@@ -53,8 +50,8 @@
 
 <span class="card-title">{model.title}</span>
 <div class="flex">
-  <Button on:click={downloadModel}>Download Model</Button>
+  <button class="btn btn-outline" on:click={downloadModel}>Download Model</button>
   <span class="w-1" />
   <input bind:this={uploadInput} type="file" multiple class="hidden" />
-  <Button on:click={uploadModel}>Upload Model</Button>
+  <button class="btn btn-outline" on:click={uploadModel}>Upload Model</button>
 </div>

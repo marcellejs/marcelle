@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, onDestroy, tick } from 'svelte';
-  import { Button, ViewContainer } from '@marcellejs/design-system';
-  import { Spinner, Switch } from '@marcellejs/design-system';
+  import { ViewContainer } from '@marcellejs/design-system';
+  import { Spinner } from '@marcellejs/design-system';
   import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
   export let title: string;
@@ -48,9 +48,12 @@
 
 <ViewContainer {title}>
   <div class="webcam">
-    <div>
-      <div>
-        <Switch text="activate video" bind:checked={$active} />
+    <div class="">
+      <div class="form-control">
+        <label class="label cursor-pointer">
+          <input type="checkbox" class="toggle" bind:checked={$active} />
+          <span class="label-text ml-2">activate video</span>
+        </label>
       </div>
     </div>
     <div
@@ -78,8 +81,8 @@
       />
       {#if numWebcams > 1}
         <div class="absolute bottom-2 right-2 text-right">
-          <Button
-            round
+          <button
+            class="btn btn-circle ghost"
             on:click={() =>
               facingMode.next(facingMode.getValue() === 'user' ? 'environment' : 'user')}
           >
@@ -97,7 +100,7 @@
                 d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
               />
             </svg>
-          </Button>
+          </button>
         </div>
       {/if}
     </div>

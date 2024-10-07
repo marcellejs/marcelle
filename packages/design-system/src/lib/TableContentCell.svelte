@@ -1,7 +1,6 @@
 <script lang="ts">
   import { formatDistanceToNow } from 'date-fns';
   import { createEventDispatcher } from 'svelte';
-  import Button from './Button.svelte';
   import type { Column } from './table-types';
 
   export let type: Column['type'] = 'generic';
@@ -33,15 +32,17 @@
   {#if type === 'image'}
     <img alt="thumbnail" src={value} width="30" height="30" class="rounded-md" />
   {:else if type === 'link'}
-    <Button
-      size="small"
+    <button
+      class="btn btn-sm btn-outline"
       on:click={() => {
         // eslint-disable-next-line no-console
         console.log('GOTO:', value.href);
-      }}>{value.text}</Button
+      }}>{value.text}</button
     >
   {:else if type === 'action'}
-    <Button size="small" on:click={() => dispatch('action', value)}>{value}</Button>
+    <button class="btn btn-sm btn-outline" on:click={() => dispatch('action', value)}>
+      {value}
+    </button>
   {:else if type === 'slot'}
     <slot />
   {:else if type === 'date'}

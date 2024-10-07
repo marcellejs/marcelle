@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ViewContainer } from '@marcellejs/design-system';
   import type { DataStore } from '../../core/data-store';
-  import { Button, Spinner } from '@marcellejs/design-system';
+  import { Spinner } from '@marcellejs/design-system';
 
   export let dataStore: DataStore;
 
@@ -26,10 +26,10 @@
     {:then user}
       {#if user.role === 'anonymous'}
         <p>You are not authenticated.</p>
-        <div class="flex"><Button on:click={signin}>Sign in</Button></div>
+        <div class="flex"><button class="btn btn-outline" on:click={signin}> Sign in </button></div>
       {:else}
         <p class="pb-2">Hello, {user.email}</p>
-        <div class="flex"><Button on:click={logout}>Log out</Button></div>
+        <div class="flex"><button class="btn btn-outline" on:click={logout}> Log out </button></div>
       {/if}
     {/await}
     <!-- {:else}

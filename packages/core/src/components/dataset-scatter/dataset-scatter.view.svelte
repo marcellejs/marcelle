@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount, tick } from 'svelte';
-  import { Button, ViewContainer } from '@marcellejs/design-system';
+  import { ViewContainer } from '@marcellejs/design-system';
   import {
     Chart,
     Filler,
@@ -183,7 +183,7 @@
 <ViewContainer {title}>
   <div id="scatter-container"><canvas bind:this={canvasElement} /></div>
   <div class="flex justify-end">
-    <Button size="small" on:click={() => chart.resetZoom()}>Reset Zoom</Button>
+    <button class="btn btn-sm" on:click={() => chart.resetZoom()}>Reset Zoom</button>
   </div>
 </ViewContainer>
 

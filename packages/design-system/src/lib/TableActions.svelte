@@ -2,7 +2,6 @@
   import type { Action } from './table-types';
   import type { TableDataProvider } from './table-abstract-provider';
   import { createEventDispatcher } from 'svelte';
-  import Button from './Button.svelte';
   import Modal from './Modal.svelte';
 
   export let provider: TableDataProvider;
@@ -41,11 +40,12 @@
 <!-- <div class="table-actions"> -->
 <div class="actions">
   {#each actions as { name, multiple, confirm }}
-    <Button
-      size="small"
+    <button
+      class="btn btn-sm"
+      class:btn-disabled={multiple === false && selected.length > 1}
+      class:btn-error={name === 'delete'}
       disabled={multiple === false && selected.length > 1}
-      type={name === 'delete' ? 'danger' : 'default'}
-      on:click={() => handleAction(name, confirm)}>{name}</Button
+      on:click={() => handleAction(name, confirm || false)}>{name}</button
     >
   {/each}
 </div>
@@ -56,14 +56,14 @@
     <div class="p-8">
       <p>Do you want to {selectedAction} the selected items?</p>
       <div class="w-full flex justify-end">
-        <Button
-          type="danger"
+        <button
+          class="btn btn-error"
           on:click={() => {
             confirmActionPending = false;
-          }}>Cancel</Button
+          }}>Cancel</button
         >
         <span class="w-2" />
-        <Button variant="filled" on:click={confirmAction}>Confirm</Button>
+        <button class="btn" on:click={confirmAction}>Confirm</button>
       </div>
     </div>
   </Modal>

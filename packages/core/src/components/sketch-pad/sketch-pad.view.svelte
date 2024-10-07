@@ -2,7 +2,6 @@
   import type { Subject } from 'rxjs';
   import { onMount, createEventDispatcher, tick } from 'svelte';
   import { ViewContainer } from '@marcellejs/design-system';
-  import { Button } from '@marcellejs/design-system';
 
   export let title: string;
   export let strokeStart: Subject<void>;
@@ -81,7 +80,7 @@
       on:mousedown={startDrawing}
     />
     <div class="m-1">
-      <Button size="small" type="danger" on:click={clearDrawing}>Clear</Button>
+      <button class="btn btn-sm btn-error" on:click={clearDrawing}>Clear</button>
     </div>
   </div>
 </ViewContainer>

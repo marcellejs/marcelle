@@ -1,8 +1,6 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
   import type { Dataset, Instance } from '../../core';
-  import { Button } from '@marcellejs/design-system';
-  import type { Dataset, Instance } from '../../core';
 
   export let dataset: Dataset<Instance>;
 
@@ -46,11 +44,11 @@
 </p>
 <div class="flex">
   {#if $count}
-    <Button on:click={downloadDataset}>Download Dataset</Button>
+    <button class="btn btn-outline" on:click={downloadDataset}> Download Dataset </button>
     <span class="w-1" />
   {/if}
-  <Button on:click={uploadDataset}>Upload Dataset</Button>
+  <button class="btn btn-outline" on:click={uploadDataset}> Upload Dataset </button>
   <span class="w-1" />
   <input bind:this={uploadInput} type="file" multiple class="hidden" />
-  <Button type="danger" on:click={clearDataset}>Clear Dataset</Button>
+  <button class="btn btn-outline btn-error" on:click={clearDataset}> Clear Dataset </button>
 </div>

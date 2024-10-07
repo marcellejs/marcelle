@@ -1,6 +1,5 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { Button } from '@marcellejs/design-system';
 
   export let title: string;
   export let items: Record<string, string>;
@@ -28,65 +27,94 @@
   }
 </script>
 
-<header class="bg-white text-gray-700 body-font">
-  <div class="mx-auto flex flex-wrap flex-col md:flex-row items-stretch w-full">
-    <a
-      href="#/"
-      class="flex p-3 title-font font-medium items-center text-gray-900 mb-4 md:mb-0 border-solid border-0 border-r border-gray-200"
-    >
-      <span class="mx-3 text-lg">{title}</span>
-    </a>
-    <nav class="flex items-stretch justify-start flex-wrap text-base grow mx-4">
-      {#each Object.entries(items) as [slug, name]}
-        <a
-          href={`#${slug}`}
-          class:active={!showSettings && current === name}
-          class="ml-2 mr-5 flex items-center hover:text-black border-solid border-0 border-b-2 border-transparent"
-        >
-          {name}
-        </a>
-      {/each}
-    </nav>
-    <div class="flex items-center">
-      <Button round on:click={toggleSettings}>
+<div class="navbar bg-base-100">
+  <div class="navbar-start">
+    <div class="dropdown">
+      <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
+          class="h-5 w-5"
           fill="none"
+          viewBox="0 0 24 24"
           stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="feather feather-settings"
-          ><circle cx="12" cy="12" r="3" /><path
-            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
-          /></svg
         >
-      </Button>
-      <span class="w-1" />
-      {#if closable}
-        <Button round type="danger" on:click={quit}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
+          <path
             stroke-linecap="round"
             stroke-linejoin="round"
-            class="feather feather-power"
-            ><path d="M18.36 6.64a9 9 0 1 1-12.73 0" /><line x1="12" y1="2" x2="12" y2="12" /></svg
-          >
-        </Button>
-        <span class="w-1" />
-      {/if}
+            stroke-width="2"
+            d="M4 6h16M4 12h8m-8 6h16"
+          />
+        </svg>
+      </div>
+      <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+      <ul
+        tabindex="0"
+        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+      >
+        {#each Object.entries(items) as [slug, name]}
+          <li>
+            <a href={`#${slug}`} class:active={!showSettings && current === name}>
+              {name}
+            </a>
+          </li>
+        {/each}
+      </ul>
+    </div>
+    <a href="#/" class="btn btn-ghost text-xl">{title}</a>
+    <!-- </div> -->
+    <div class="hidden lg:flex">
+      <ul class="menu menu-horizontal my-0 px-1 gap-1">
+        {#each Object.entries(items) as [slug, name]}
+          <li>
+            <a href={`#${slug}`} class:active={!showSettings && current === name}>
+              {name}
+            </a>
+          </li>
+        {/each}
+      </ul>
     </div>
   </div>
-</header>
+  <div class="navbar-end">
+    <button class="btn btn-ghost btn-circle" on:click={toggleSettings}>
+      <div class="indicator">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="size-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z"
+          />
+        </svg>
+      </div>
+    </button>
+    {#if closable}
+      <button class="btn btn-ghost btn-circle text-error" on:click={quit}>
+        <div class="indicator">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+            />
+          </svg>
+        </div>
+      </button>
+    {/if}
+  </div>
+</div>
 
 <style lang="postcss">
   a {

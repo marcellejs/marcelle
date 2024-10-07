@@ -30,6 +30,7 @@
     "@sveltejs/package": "^2.3.5",
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "autoprefixer": "^10.4.20",
+    "daisyui": "^4.12.12",
     "postcss": "^8.4.47",
     "postcss-load-config": "^6.0.1",
     "publint": "^0.2.10",
@@ -44,7 +45,6 @@
   },
   "exports": {
     "./package.json": "./package.json",
-    "./Button.svelte": "./dist/Button.svelte",
     "./Input.svelte": "./dist/Input.svelte",
     "./Modal.svelte": "./dist/Modal.svelte",
     "./Notification.svelte": "./dist/Notification.svelte",
@@ -53,7 +53,6 @@
     "./PopMenu.svelte": "./dist/PopMenu.svelte",
     "./Select.svelte": "./dist/Select.svelte",
     "./Spinner.svelte": "./dist/Spinner.svelte",
-    "./Switch.svelte": "./dist/Switch.svelte",
     "./Tab.svelte": "./dist/Tab.svelte",
     "./TabList.svelte": "./dist/TabList.svelte",
     "./TabPanel.svelte": "./dist/TabPanel.svelte",

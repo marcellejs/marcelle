@@ -1,6 +1,5 @@
 <script lang="ts">
   import { ViewContainer } from '@marcellejs/design-system';
-  import { Input } from '@marcellejs/design-system';
   import { Subject } from 'rxjs';
 
   export let title: string;
@@ -11,7 +10,13 @@
 <ViewContainer {title}>
   <div class="w-full max-w-sm">
     <div class="md:flex md:items-center mb-2">
-      <Input type="text" placeholder="Enter a label.." bind:value={$value} disabled={$disabled} />
+      <input
+        type="text"
+        placeholder="Enter a label..."
+        class="input input-bordered w-full max-w-sm"
+        bind:value={$value}
+        disabled={$disabled}
+      />
     </div>
   </div>
 </ViewContainer>

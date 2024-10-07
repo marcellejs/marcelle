@@ -1,6 +1,5 @@
 <script lang="ts">
   import { ViewContainer } from '@marcellejs/design-system';
-  import { Switch } from '@marcellejs/design-system';
   import { BehaviorSubject } from 'rxjs';
 
   export let title: string;
@@ -10,5 +9,10 @@
 </script>
 
 <ViewContainer {title}>
-  <Switch bind:checked={$checked} disabled={$disabled} text={$text} />
+  <div class="form-control">
+    <label class="label cursor-pointer justify-start">
+      <input type="checkbox" class="toggle" bind:checked={$checked} disabled={$disabled} />
+      <span class="label-text ml-2">{$text}</span>
+    </label>
+  </div>
 </ViewContainer>

@@ -5,8 +5,8 @@
   import { onMount } from 'svelte';
   import { scale } from 'svelte/transition';
   import { ViewContainer } from '@marcellejs/design-system';
-  import { Button, PopMenu } from '@marcellejs/design-system';
   import { BehaviorSubject } from 'rxjs';
+  import { noop } from '../../utils/misc';
 
   export let title: string;
   export let batchSize: number;
@@ -95,7 +95,9 @@
     selected.next([]);
   }
 
-  async function relabelSelectedInstances(newLabel: string) {
+  async function relabelSelectedInstances() {
+    const newLabel = window.prompt('Enter the new label');
+    if (!newLabel) return;
     let p: Promise<unknown> = Promise.resolve();
     for (const id of selected.getValue()) {
       // eslint-disable-next-line no-loop-func
@@ -152,38 +154,15 @@
     }
   }
 
-  function onClassAction(label: string, code: string) {
-    let result: string;
-    switch (code) {
-      case 'edit':
-        // eslint-disable-next-line no-alert
-        result = window.prompt('Enter the new label', label);
-        if (result) {
-          dataset.patch(null, { y: result }, { query: { y: label } });
-        }
-        break;
-
-      case 'delete':
-        dataset.remove(null, { query: { y: label } });
-        break;
-
-      case 'deleteInstances':
-        deleteSelectedInstances();
-        break;
-
-      case 'relabelInstances':
-        // eslint-disable-next-line no-alert
-        result = window.prompt('Enter the new label', label);
-        if (result) {
-          relabelSelectedInstances(result);
-        }
-        break;
-
-      default:
-        // eslint-disable-next-line no-alert
-        alert(`Class ${label}: ${code}`);
-        break;
+  function editClassLabel(label: string) {
+    const result = window.prompt('Enter the new label', label);
+    if (result) {
+      dataset.patch(null, { y: result }, { query: { y: label } });
     }
+  }
+
+  function deleteClass(label: string) {
+    dataset.remove(null, { query: { y: label } });
   }
 
   onMount(() => {
@@ -273,26 +252,44 @@
           <div class="w-full">
             <div class="browser-class-header">
               <span class="browser-class-title">{label}</span>
-              <PopMenu
-                actions={[
-                  { code: 'edit', text: 'Edit class label' },
-                  { code: 'delete', text: 'Delete class' },
-                ].concat(
-                  $selected.length > 0
-                    ? [
-                        {
-                          code: 'deleteInstances',
-                          text: `Delete selected instance${$selected.length > 1 ? 's' : ''}`,
-                        },
-                        {
-                          code: 'relabelInstances',
-                          text: `Relabel selected instance${$selected.length > 1 ? 's' : ''}`,
-                        },
-                      ]
-                    : [],
-                )}
-                on:select={(e) => onClassAction(label, e.detail)}
-              />
+              <div class="dropdown dropdown-end">
+                <button
+                  tabindex="0"
+                  class="btn btn-sm btn-circle btn-ghost"
+                  on:click|stopPropagation={noop}
+                >
+                  <svg
+                    class="fill-current inline-block h-5 w-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    ><path
+                      d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"
+                    /></svg
+                  >
+                </button>
+                <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+                <ul
+                  tabindex="0"
+                  class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+                >
+                  <li>
+                    <button on:click={() => editClassLabel(label)}> Edit Class Label </button>
+                  </li>
+                  <li><button on:click={() => deleteClass(label)}> Delete class </button></li>
+                  {#if $selected.length > 0}
+                    <li>
+                      <button on:click={deleteSelectedInstances}>
+                        Delete selected instance{$selected.length > 1 ? 's' : ''}
+                      </button>
+                    </li>
+                    <li>
+                      <button on:click={relabelSelectedInstances}>
+                        Relabel selected instance{$selected.length > 1 ? 's' : ''}
+                      </button>
+                    </li>
+                  {/if}
+                </ul>
+              </div>
             </div>
 
             <div class="browser-class-body">
@@ -313,9 +310,7 @@
           </div>
           <div class="pb-1">
             {#if loaded < total}
-              <Button size="small" variant="light" on:click={() => loadMore(label)}>
-                View More
-              </Button>
+              <button class="btn btn-sm" on:click={() => loadMore(label)}> View More </button>
             {/if}
           </div>
         </div>

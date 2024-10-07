@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte';
-  import { Button } from '@marcellejs/design-system';
   import WizardPageComponent from './WizardPage.svelte';
   import type { WizardPage } from './wizard_page';
   import { BehaviorSubject } from 'rxjs';
@@ -73,7 +72,7 @@
       index={$current + 1}
     />
     <div class="bg-white border-t border-gray-300 px-4 py-2 grid grid-cols-3">
-      <div><Button type="danger" on:click={quit}>Close</Button></div>
+      <div><button class="btn btn-outline btn-error" on:click={quit}>Close</button></div>
       <div class="text-center">
         <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
         {#each Array(pages.length) as _, i}
@@ -81,17 +80,18 @@
         {/each}
       </div>
       <div class="text-right">
-        <Button
+        <button
+          class="btn btn-outline"
           disabled={$current <= 0}
           on:click={() => {
             goToPage($current - 1);
           }}
         >
           Previous
-        </Button>
-        <Button
-          variant="filled"
-          type={$current >= pages.length - 1 ? 'success' : 'default'}
+        </button>
+        <button
+          class="btn"
+          class:btn-success={$current >= pages.length - 1}
           on:click={() => {
             if (current.getValue() < pages.length - 1) {
               goToPage($current + 1);
@@ -101,7 +101,7 @@
           }}
         >
           {$current >= pages.length - 1 ? 'Finish' : 'Next'}
-        </Button>
+        </button>
       </div>
     </div>
   </div>

@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { BatchPrediction } from '../../components/batch-prediction';
-  import { Button } from '@marcellejs/design-system';
   import { map } from 'rxjs';
 
   export let prediction: BatchPrediction;
@@ -37,11 +36,11 @@
 </p>
 <div class="flex">
   <!-- {#if $count}
-    <Button on:click={downloadPredictions}>Download Predictions</Button>
+    <button on:click={downloadPredictions}>Download Predictions</button>
     <span class="w-1" />
   {/if}
-  <Button on:click={uploadPredictions}>Upload Predictions</Button> -->
+  <button on:click={uploadPredictions}>Upload Predictions</button> -->
   <!-- <span class="w-1" />
   <input bind:this={uploadInput} type="file" multiple class="hidden" /> -->
-  <Button type="danger" on:click={clearPredictions}>Clear Predictions</Button>
+  <button class="btn btn-outline btn-error" on:click={clearPredictions}>Clear Predictions</button>
 </div>
