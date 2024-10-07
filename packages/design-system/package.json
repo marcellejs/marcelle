@@ -49,7 +49,6 @@
     "./Notification.svelte": "./dist/Notification.svelte",
     "./Number.svelte": "./dist/Number.svelte",
     "./NumberArray.svelte": "./dist/NumberArray.svelte",
-    "./PopMenu.svelte": "./dist/PopMenu.svelte",
     "./Select.svelte": "./dist/Select.svelte",
     "./Table.svelte": "./dist/Table.svelte",
     "./TableActions.svelte": "./dist/TableActions.svelte",
