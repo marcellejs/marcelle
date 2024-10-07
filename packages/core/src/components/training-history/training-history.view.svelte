@@ -3,18 +3,14 @@
   import type { Column } from '@marcellejs/design-system';
   import type { Service } from '@feathersjs/feathers';
   import { createEventDispatcher, onMount, tick } from 'svelte';
-  import {
-    TableServiceProvider,
-    Table,
-    Tab,
-    TabList,
-    TabPanel,
-    Tabs,
-    ViewContainer,
-  } from '@marcellejs/design-system';
+  import { TableServiceProvider, Table, ViewContainer } from '@marcellejs/design-system';
   import RunMeta from './RunMeta.svelte';
   import RunGraphs from './RunGraphs.svelte';
   import { BehaviorSubject } from 'rxjs';
+  import Tabs from './Tabs.svelte';
+  import TabList from './TabList.svelte';
+  import Tab from './Tab.svelte';
+  import TabPanel from './TabPanel.svelte';
 
   export let title: string;
   export let service: Service<TrainingRun>;
@@ -65,7 +61,7 @@
         ({
           name: typeof action === 'string' ? action : action.name,
           type: 'action',
-        } as Column),
+        }) as Column,
     ),
   ];
 
