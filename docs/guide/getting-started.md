@@ -32,7 +32,7 @@ pnpm i
 
 Several options are available to customize the project. If you don't know what to choose, just hit enter to select the defaults.
 
-![Screenshot of the CLI's options](../images/cli_app.png)
+![Screenshot of the CLI's options](../public/images/cli_app.png)
 
 This will scaffold a new Marcelle project with the following structure:
 

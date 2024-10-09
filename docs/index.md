@@ -40,7 +40,7 @@ Marcelle provides a high-level API enabling rapid prototyping of applications wh
 </span>
 <!-- <span class="teaser-desc"></span> -->
 
-![GIF Webcam recognition](./images/sketch-gif.gif)
+![GIF Webcam recognition](./public/images/sketch-gif.gif)
 
 </div>
 
@@ -85,6 +85,6 @@ Marcelle emphasizes machine learning pipelines driven by user interactions, thro
 Marcelle's data stores enable sharing data and models among stakeholders
 </span>
 
-![Collaboration](./images/teaser-pres.jpg)
+![Collaboration](./public/images/teaser-pres.jpg)
 
 </div>
