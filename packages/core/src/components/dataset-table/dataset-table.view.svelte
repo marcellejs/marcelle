@@ -87,7 +87,7 @@
       on:selection={({ detail }) => {
         selection.next(detail);
       }}
-      actions={[{ name: 'delete' }]}
+      actions={[{ name: 'delete', confirm: true }]}
     />
   {/if}
 {/await}

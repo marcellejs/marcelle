@@ -45,7 +45,6 @@
   },
   "exports": {
     "./package.json": "./package.json",
-    "./Modal.svelte": "./dist/Modal.svelte",
     "./Table.svelte": "./dist/Table.svelte",
     "./TableActions.svelte": "./dist/TableActions.svelte",
     "./TableContentCell.svelte": "./dist/TableContentCell.svelte",

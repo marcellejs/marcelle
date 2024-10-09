@@ -2,7 +2,6 @@
   import type { Action } from './table-types';
   import type { TableDataProvider } from './table-abstract-provider';
   import { createEventDispatcher } from 'svelte';
-  import Modal from './Modal.svelte';
 
   export let provider: TableDataProvider;
   export let actions: Action[];
@@ -10,8 +9,8 @@
 
   const dispatch = createEventDispatcher();
 
+  let modal: HTMLDialogElement;
   let selectedAction = '';
-  let confirmActionPending = false;
 
   async function confirmAction() {
     if (selectedAction === 'delete') {
@@ -21,7 +20,7 @@
     } else {
       dispatch('action', [selectedAction, selected]);
     }
-    confirmActionPending = false;
+
     selected = [];
     dispatch('selected', selected);
   }
@@ -30,7 +29,7 @@
     selectedAction = action;
     if (!selectedAction || selected.length === 0) return;
     if (confirm) {
-      confirmActionPending = true;
+      modal.showModal();
     } else {
       confirmAction();
     }
@@ -51,20 +50,22 @@
 </div>
 <!-- </div> -->
 
-{#if confirmActionPending}
-  <Modal>
-    <div class="p-8">
-      <p>Do you want to {selectedAction} the selected items?</p>
-      <div class="w-full flex justify-end">
-        <button
-          class="btn btn-error"
-          on:click={() => {
-            confirmActionPending = false;
-          }}>Cancel</button
-        >
-        <span class="w-2" />
-        <button class="btn" on:click={confirmAction}>Confirm</button>
-      </div>
+<dialog id="my_modal_2" class="modal" bind:this={modal}>
+  <div class="modal-box">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+    </form>
+    <h3 class="text-lg font-bold">Confirmation required</h3>
+    <p class="py-4">Do you want to {selectedAction} the selected items?</p>
+    <div class="w-full flex justify-end">
+      <button
+        class="btn btn-ghost"
+        on:click={() => {
+          modal.close();
+        }}>Cancel</button
+      >
+      <span class="w-2" />
+      <button class="btn btn-primary" on:click={confirmAction}>Confirm</button>
     </div>
-  </Modal>
-{/if}
+  </div>
+</dialog>
