@@ -32,7 +32,7 @@ pnpm i
 
 Several options are available to customize the project. If you don't know what to choose, just hit enter to select the defaults.
 
-![Screenshot of the CLI's options](../images/cli_app.png)
+![Screenshot of the CLI's options](../public/images/cli_app.png)
 
 This will scaffold a new Marcelle project with the following structure:
 
@@ -78,7 +78,7 @@ import * as rxjs from 'rxjs';
 
 ## Setting up a sketchpad
 
-In our app, we want to capture drawings in order to interactively build a classifier. Drawings will be captured as images from a sketchpad. Marcelle is built around _components_, that can be instanciated using construction functions. To create a new [sketchPad component](../components/data-sources.html#sketchpad), add the following line to the script:
+In our app, we want to capture drawings in order to interactively build a classifier. Drawings will be captured as images from a sketchpad. Marcelle is built around _components_, that can be instanciated using construction functions. To create a new [sketchPad component](/api/components/data-sources.html#sketchpad), add the following line to the script:
 
 ```js
 const input = marcelle.sketchPad();
