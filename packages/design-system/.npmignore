@@ -1,8 +1,0 @@
-*.config.cjs
-*.config.js
-*.config.ts
-tsconfig.json
-src
-static
-stories
-.svelte-kit

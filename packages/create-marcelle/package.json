@@ -16,7 +16,6 @@
 	},
 	"devDependencies": {
 		"@marcellejs/core": "workspace:^0.6.2",
-		"@marcellejs/design-system": "workspace:^0.6.2",
 		"@marcellejs/devtools": "workspace:^0.6.2",
 		"@types/gitignore-parser": "^0.0.3",
 		"@types/prompts": "^2.4.4",

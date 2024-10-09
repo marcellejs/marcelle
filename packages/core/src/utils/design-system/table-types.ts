@@ -1,5 +1,3 @@
-export type ObjectId = string;
-
 export interface Column {
   name: string;
   type?: 'image' | 'action' | 'date' | 'link' | 'slot' | 'array' | 'generic';

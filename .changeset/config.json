@@ -5,7 +5,6 @@
   "fixed": [[
     "@marcellejs/core",
     "@marcellejs/backend",
-    "@marcellejs/design-system",
     "@marcellejs/devtools",
     "demos",
     "docs"

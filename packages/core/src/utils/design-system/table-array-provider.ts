@@ -2,10 +2,10 @@ import type { TableProviderOptions } from './table-abstract-provider';
 import { TableDataProvider } from './table-abstract-provider';
 
 export class TableArrayProvider<T extends Record<string, unknown>> extends TableDataProvider<T> {
-  rawData: Array<T>;
+  rawData: T[];
   private currentPage = 1;
 
-  constructor({ data, ...options }: TableProviderOptions & { data: Array<T> }) {
+  constructor({ data, ...options }: TableProviderOptions & { data: T[] }) {
     super(options);
     this.rawData = data;
     this.total.set(data.length);

@@ -1,9 +1,8 @@
 <script lang="ts">
   import type { TrainingRun } from '../../core';
-  import type { Column } from '@marcellejs/design-system';
   import type { Service } from '@feathersjs/feathers';
   import { createEventDispatcher, onMount, tick } from 'svelte';
-  import { TableServiceProvider, Table } from '@marcellejs/design-system';
+  import { TableServiceProvider, Table, type Column } from '../../utils/design-system';
   import RunMeta from './RunMeta.svelte';
   import RunGraphs from './RunGraphs.svelte';
   import { BehaviorSubject } from 'rxjs';

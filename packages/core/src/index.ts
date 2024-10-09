@@ -3,7 +3,7 @@ import '@tensorflow/tfjs-backend-cpu';
 import '@tensorflow/tfjs-backend-webgl';
 import '@tensorflow/tfjs-backend-webgpu';
 import './utils';
-import '@marcellejs/design-system/styles.css';
+import './styles.css';
 
 export * from './core';
 export * from './components';

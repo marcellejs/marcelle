@@ -1,9 +1,8 @@
 <script lang="ts">
   import type { Dataset, Instance } from '../../core';
-  import type { Column } from '@marcellejs/design-system';
   import type { BehaviorSubject } from 'rxjs';
   import { onMount, tick } from 'svelte';
-  import { TableServiceProvider, Table } from '@marcellejs/design-system';
+  import { TableServiceProvider, Table, type Column } from '../../utils/design-system';
 
   export let dataset: Dataset<Instance>;
   export let colNames: BehaviorSubject<string[]>;

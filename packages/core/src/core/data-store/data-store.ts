@@ -11,8 +11,7 @@ import Login from './Login.svelte';
 import { throwError } from '../../utils/error-handling';
 import { noop } from '../../utils/misc';
 import { iterableFromService } from './service-iterable';
-import type { Service, User } from '../types';
-import type { ObjectId } from '@marcellejs/design-system';
+import type { ObjectId, Service, User } from '../types';
 
 function isValidUrl(str: string) {
   try {
