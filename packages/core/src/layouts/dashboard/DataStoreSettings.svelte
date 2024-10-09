@@ -38,7 +38,7 @@
     <div>This dataStore does not require authentication</div> -->
   {/if}
   {#if $services}
-    <div>This data store contains the following services: {$services.join(', ')}</div>
+    <div class="mt-6">This data store contains the following services: {$services.join(', ')}</div>
   {/if}
 </ViewContainer>
 
