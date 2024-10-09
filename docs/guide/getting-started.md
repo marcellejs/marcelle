@@ -77,7 +77,7 @@ import * as marcelle from '@marcellejs/core';
 
 ## Setting up a sketchpad
 
-In our app, we want to capture drawings in order to interactively build a classifier. Drawings will be captured as images from a sketchpad. Marcelle is built around _components_, that can be instanciated using construction functions. To create a new [sketchPad component](../components/data-sources.html#sketchpad), add the following line to the script:
+In our app, we want to capture drawings in order to interactively build a classifier. Drawings will be captured as images from a sketchpad. Marcelle is built around _components_, that can be instanciated using construction functions. To create a new [sketchPad component](/api/components/data-sources.html#sketchpad), add the following line to the script:
 
 ```js
 const input = marcelle.sketchPad();

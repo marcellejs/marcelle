@@ -90,4 +90,6 @@ export default defineConfig({
   markdown: {
     lineNumbers: true,
   },
+
+  ignoreDeadLinks: 'localhostLinks',
 });

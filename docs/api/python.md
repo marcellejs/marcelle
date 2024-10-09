@@ -52,7 +52,7 @@ class Service()
 ```
 
 Services provide an interface to interact with data stored in Marcelle backend.
-Since Marcelle backends are based on Feathers.js (https://crow.docs.feathersjs.com/),
+Since Marcelle backends are based on Feathers.js (https://feathersjs.com/),
 services provide a similar API with predefined CRUD methods.
 
 **Arguments**:
@@ -71,13 +71,13 @@ to filter and limit the returned data.
 **Arguments**:
 
 - `params` _dict, optional_ - contain additional information for the service
-  method call. See httpscrow.://docs.feathersjs.com/api/services.html#params
+  method call. See https://feathersjs.com/api/services.html#params
   Defaults to {}.
 
 **Returns**:
 
 - `dict` - A dictionary containing the response. Data is paginated by default.
-  see httpscrow.://docs.feathersjs.com/api/services.html#params
+  see https://feathersjs.com/api/services.html#params
 
 ### .get()
 
@@ -91,7 +91,7 @@ Retrieves a single resource with the given id from the service.
 
 - `id` _str_ - unique identifier of the ressource
 - `params` _dict, optional_ - contain additional information for the service
-  method call. See httpscrow.://docs.feathersjs.com/api/services.html#params
+  method call. See https://feathersjs.com/api/services.html#params
   Defaults to {}.
 
 **Returns**:
@@ -111,7 +111,7 @@ created data. data may also be an array.
 
 - `data` _dict_ - ressource data as a JSON-serializable dictionary
 - `params` _dict, optional_ - contain additional information for the service
-  method call. See httpscrow.://docs.feathersjs.com/api/services.html#params
+  method call. See https://feathersjs.com/api/services.html#params
   Defaults to {}.
 
 **Returns**:
@@ -134,7 +134,7 @@ criteria.
 - `id` _str_ - unique identifier of the ressource
 - `data` _dict_ - ressource data as a JSON-serializable dictionary
 - `params` _dict, optional_ - contain additional information for the service
-  method call. See httpscrow.://docs.feathersjs.com/api/services.html#params
+  method call. See https://feathersjs.com/api/services.html#params
   Defaults to {}.
 
 **Returns**:
@@ -156,7 +156,7 @@ patched with params.query containing the query criteria.
 - `id` _str_ - unique identifier of the ressource
 - `data` _dict_ - partial ressource data as a JSON-serializable dictionary
 - `params` _dict, optional_ - contain additional information for the service
-  method call. See httpscrow.://docs.feathersjs.com/api/services.html#params
+  method call. See https://feathersjs.com/api/services.html#params
   Defaults to {}.
 
 **Returns**:
@@ -177,7 +177,7 @@ resources, with params.query containing the query criteria.
 
 - `id` _str_ - unique identifier of the ressource
 - `params` _dict, optional_ - contain additional information for the service
-  method call. See httpscrow.://docs.feathersjs.com/api/services.html#params
+  method call. See https://feathersjs.com/api/services.html#params
   Defaults to {}.
 
 **Returns**:
@@ -192,12 +192,12 @@ resources, with params.query containing the query criteria.
 
 Returns an iterator over the service data, given an optional query.
 See feathers documentation for querying:
-httpscrow.://docs.feathersjs.com/api/databases/querying.html
+https://feathersjs.com/api/databases/querying.html
 
 **Arguments**:
 
 - `query` _dict, optional_ - Optional query.
-  See httpscrow.://docs.feathersjs.com/api/databases/querying.html.
+  See https://feathersjs.com/api/databases/querying.html.
   Defaults to {}.
 
 **Yields**:

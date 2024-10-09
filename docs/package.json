@@ -5,7 +5,7 @@
   "description": "Marcelle Documentation Website",
   "main": "index.js",
   "scripts": {
-    "dev": "vitepress dev",
+    "dev": "vitepress dev --port 8080",
     "build": "vitepress build",
     "preview": "vitepress preview"
   },
