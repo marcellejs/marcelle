@@ -15,7 +15,7 @@ hero:
       link: /guide/
     - theme: alt
       text: Try the demos
-      link: https://demos.marcelle.dev/
+      link: https://marcelle-demos-next.netlify.app/
 # features:
 #   - title: Feature A
 #     details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
@@ -24,6 +24,10 @@ hero:
 #   - title: Feature C
 #     details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
 ---
+
+::: warning
+This website document the next big update to Marcelle. It is unstable and breaking changes are expected. The current stable version is documented at [https://marcelle.dev/](https://marcelle.dev/)
+:::
 
 <div class="intro">
 
