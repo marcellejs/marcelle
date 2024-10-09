@@ -17,7 +17,7 @@ export default defineConfig({
       },
       {
         text: 'Examples',
-        link: 'https://demos.marcelle.dev/',
+        link: 'https://marcelle-demos-next.netlify.app/',
       },
       {
         text: 'Credits',
@@ -90,4 +90,6 @@ export default defineConfig({
   markdown: {
     lineNumbers: true,
   },
+
+  ignoreDeadLinks: 'localhostLinks',
 });

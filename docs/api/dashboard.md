@@ -96,7 +96,7 @@ use(...components: Array<Component | Component[] | string>): DashboardPage
 
 The `use` method takes an arbitrary number of arguments specifying the components to display on the page. By default, components are stacked vertically in the right column of the page. Each argument can either be:
 
-- A component ([`Component`](/api/components/)), displayed full-width on the right column
+- A component (`Component`, displayed full-width on the right column
 - An array of component, which are then distributed horizontally
 - A string, which defines a section title
 
@@ -155,6 +155,6 @@ use(...components: Array<Component | Component[] | string>): DashboardSettings
 
 The `use` method takes an arbitrary number of arguments specifying the components to display on the page. By default, components are stacked vertically in the right column of the page. Each argument can either be:
 
-- A component ([`Component`](/api/components/)), displayed full-width on the right column
+- A component (`Component`, displayed full-width on the right column
 - An array of component, which are then distributed horizontally
 - A string, which defines a section title

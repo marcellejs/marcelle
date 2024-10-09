@@ -43,7 +43,7 @@
  *   in custom container, badges, etc.
  * -------------------------------------------------------------------------- */
 
- :root {
+:root {
   --vp-c-default-1: var(--vp-c-gray-1);
   --vp-c-default-2: var(--vp-c-gray-2);
   --vp-c-default-3: var(--vp-c-gray-3);
@@ -51,7 +51,7 @@
 
   /* --vp-c-brand-1: var(--vp-c-indigo-1); */
   /* --vp-c-brand-2: var(--vp-c-indigo-2); */
-  --vp-c-brand-1: #F7770F;
+  --vp-c-brand-1: #f7770f;
   --vp-c-brand-2: #ff933a;
   --vp-c-brand-3: var(--vp-c-indigo-3);
   --vp-c-brand-soft: var(--vp-c-indigo-soft);
@@ -94,17 +94,9 @@
 
 :root {
   --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(
-    120deg,
-    #bd34fe 30%,
-    #41d1ff
-  );
+  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #bd34fe 30%, #41d1ff);
 
-  --vp-home-hero-image-background-image: linear-gradient(
-    -45deg,
-    #bd34fe 50%,
-    #47caff 50%
-  );
+  --vp-home-hero-image-background-image: linear-gradient(-45deg, #bd34fe 50%, #47caff 50%);
   /* --vp-home-hero-name-background: -webkit-linear-gradient(
     120deg,
     rgb(221, 224, 12) 30%,
@@ -174,7 +166,7 @@
       padding: 1rem;
       border: 1px solid #ffc9b2;
       @media (max-width: 900px) {
-        margin: 0 auto
+        margin: 0 auto;
       }
     }
     p {
@@ -184,7 +176,7 @@
       }
     }
     &.top {
-      align-items: flex-start
+      align-items: flex-start;
     }
     &.reversed {
       flex-direction: row-reverse;
@@ -197,15 +189,9 @@
       }
     }
   }
-  // .action-button {
-  //   box-sizing: border-box;
-  //   background-color: #FF6F61 !important;
-  //   border-color: #FF6151 !important;
-  //   color: white !important;
-  //   margin-bottom: 2rem;
-  // }
+
   a.demos {
-    color: #FF6151 !important;
+    color: #ff6151 !important;
     margin-left: 1rem;
   }
   .action {
@@ -236,12 +222,13 @@
     background-color: #f3f5f7;
     border-radius: 0;
     &::before {
-      content: "";
+      content: '';
     }
     &::after {
       display: none;
     }
-    button.copy, span.lang {
+    button.copy,
+    span.lang {
       display: none;
     }
     pre.language-tsx {
@@ -260,7 +247,6 @@
     border-top-width: 4px;
     border-top-style: solid;
     border-color: #476582;
-    /* font-size: 1.2em; */
     pre.language-tsx {
       margin: 0;
     }

@@ -15,7 +15,7 @@ hero:
       link: /guide/
     - theme: alt
       text: Try the demos
-      link: https://demos.marcelle.dev/
+      link: https://marcelle-demos-next.netlify.app/
 # features:
 #   - title: Feature A
 #     details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
@@ -24,6 +24,10 @@ hero:
 #   - title: Feature C
 #     details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
 ---
+
+::: warning
+This website document the next big update to Marcelle. It is unstable and breaking changes are expected. The current stable version is documented at [https://marcelle.dev/](https://marcelle.dev/)
+:::
 
 <div class="intro">
 
@@ -40,7 +44,7 @@ Marcelle provides a high-level API enabling rapid prototyping of applications wh
 </span>
 <!-- <span class="teaser-desc"></span> -->
 
-![GIF Webcam recognition](./images/sketch-gif.gif)
+![GIF Webcam recognition](./public/images/sketch-gif.gif)
 
 </div>
 
@@ -85,6 +89,6 @@ Marcelle emphasizes machine learning pipelines driven by user interactions, thro
 Marcelle's data stores enable sharing data and models among stakeholders
 </span>
 
-![Collaboration](./images/teaser-pres.jpg)
+![Collaboration](./public/images/teaser-pres.jpg)
 
 </div>

@@ -104,6 +104,6 @@ use(...components: Array<Component | Component[] | string>): WizardPage
 
 Add a set of components to the step. The syntax is similar to the one for Dashoards. By default, components are stacked vertically in the right column of the page. Each argument can either be:
 
-- A component ([`Component`](/api/components/)), displayed full-width on the right column
+- A component `Component`, displayed full-width on the right column
 - An array of component, which are then distributed horizontally
 - A string, which defines a section title

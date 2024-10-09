@@ -201,10 +201,10 @@ This component allows to compute and store batch predictions with a given model 
 
 ### Parameters
 
-| Option    | Type      | Description                                                                                                                                                        | Required |
-| --------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------: |
-| name      | string    | The name of the predictions (for data storage)                                                                                                                     |    ✓     |
-| dataStore | DataStore | The [dataStore](/api/data-stores.html) used to store the instances of the dataset. This parameter is optional. By default, a data store in memory will be created. |          |
+| Option    | Type      | Description                                                                                                                                                                   | Required |
+| --------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
+| name      | string    | The name of the predictions (for data storage)                                                                                                                                |    ✓     |
+| dataStore | DataStore | The [dataStore](/api/data-storage.html#datastore) used to store the instances of the dataset. This parameter is optional. By default, a data store in memory will be created. |          |
 
 ### Streams
 
@@ -229,7 +229,7 @@ export interface BatchPredictionStatus {
 async predict(model: Model, dataset: Dataset, inputField = 'features'): Promise<void>
 ```
 
-Compute predictions for all instances of a given [Datasets](/api/components/data.html#dataset) `dataset`, using a trained `model`. The instance field used for predictions can be specified with the `inputField` parameters, that defaults to `features`.
+Compute predictions for all instances of a given [Datasets](/api/data-storage.html#dataset) `dataset`, using a trained `model`. The instance field used for predictions can be specified with the `inputField` parameters, that defaults to `features`.
 
 #### .clear()
 

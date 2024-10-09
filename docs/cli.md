@@ -49,7 +49,7 @@ Several options are available:
   - **SvelteKit+Marcelle App**: a more elaborate template for multipage applications with a custom interface. It uses [SvelteKit](https://kit.svelte.dev/).
 - TypeScript: use [Typescript](https://www.typescriptlang.org/) for your Marcelle application (including for custom components)
 
-![Screenshot of the CLI's options](./images/cli_app.png)
+![Screenshot of the CLI's options](./public/images/cli_app.png)
 
 ## Development Tools (CLI)
 

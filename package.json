@@ -30,6 +30,7 @@
     "node": ">=16",
     "pnpm": ">=9"
   },
+  "packageManager": "pnpm@9.12.1",
   "pnpm": {
     "peerDependencyRules": {
       "ignoreMissing": [
