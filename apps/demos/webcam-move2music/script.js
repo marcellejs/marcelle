@@ -1,5 +1,5 @@
 import '@marcellejs/core/dist/marcelle.css';
-import { Howl } from 'https://cdn.skypack.dev/howler';
+import howler from 'https://cdn.jsdelivr.net/npm/howler@2.2.4/+esm';
 import {
   batchPrediction,
   datasetBrowser,
@@ -220,7 +220,7 @@ let numLoaded = 0;
 const sounds = Object.entries(soundFiles).reduce(
   (res, [label, src]) => ({
     ...res,
-    [label]: new Howl({
+    [label]: new howler.Howl({
       src: [src],
       loop: playMode === 'loop',
       volume: playMode === 'trigger' ? 1 : 0,

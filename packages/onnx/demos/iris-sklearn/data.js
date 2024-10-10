@@ -1,5 +1,5 @@
 import { button, dataset, datasetTable, text } from '@marcellejs/core';
-import { parse } from 'https://cdn.skypack.dev/papaparse';
+import papaparse from 'https://cdn.jsdelivr.net/npm/papaparse@5.4.1/+esm';
 import irisData from './iris.csv?raw';
 import { store } from './common';
 
@@ -14,7 +14,7 @@ export const tst = datasetTable(ts, [
 
 async function loadData() {
   await ts.clear();
-  const { data: iris, errors } = parse(irisData, { header: true, dynamicTyping: true });
+  const { data: iris, errors } = papaparse.parse(irisData, { header: true, dynamicTyping: true });
   if (errors.length > 0) {
     for (const err of errors) {
       if (err.code === 'TooFewFields') {

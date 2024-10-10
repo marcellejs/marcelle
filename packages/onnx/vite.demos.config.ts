@@ -1,6 +1,7 @@
 /* eslint-env node */
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import externalGlobals from 'rollup-plugin-external-globals';
 import { resolve } from 'path';
 import demos from './demos/demo-list';
 

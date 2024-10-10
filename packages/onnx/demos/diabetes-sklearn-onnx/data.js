@@ -1,5 +1,5 @@
 import { button, dataset, datasetTable, text } from '@marcellejs/core';
-import { parse } from 'https://cdn.skypack.dev/papaparse';
+import papaparse from 'https://cdn.jsdelivr.net/npm/papaparse@5.4.1/+esm';
 import trainData from './diabetes_train_set.csv?raw';
 import testData from './diabetes_test_set.csv?raw';
 import { store } from './common';
@@ -17,7 +17,7 @@ testSetTable.title = 'Test Set';
 
 async function loadData(ds, rawCsv) {
   await ds.clear();
-  const { data, errors } = parse(rawCsv, { header: true, dynamicTyping: true });
+  const { data, errors } = papaparse.parse(rawCsv, { header: true, dynamicTyping: true });
   if (errors.length > 0) {
     for (const err of errors) {
       if (err.code === 'TooFewFields') {
