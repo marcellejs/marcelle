@@ -447,10 +447,10 @@ importers:
         version: 2.4.2
     devDependencies:
       '@marcellejs/core':
-        specifier: workspace:^0.6.2
+        specifier: workspace:^0.6.5
         version: link:../core
       '@marcellejs/devtools':
-        specifier: workspace:^0.6.2
+        specifier: workspace:^0.6.5
         version: link:../devtools
       '@types/gitignore-parser':
         specifier: ^0.0.3
