@@ -1,6 +1,6 @@
 import { notification } from './notification';
 
-export { throwError } from './error-handling';
+export * from './error-handling';
 export { notification } from './notification';
 export * from './lazy-iterable';
 export * from './image';

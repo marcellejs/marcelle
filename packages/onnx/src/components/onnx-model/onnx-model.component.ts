@@ -1,9 +1,9 @@
-import type { RegularArray } from '@tensorflow/tfjs-core/dist/types';
 import ort from 'onnxruntime-web';
-import { type ClassifierResults, type Instance, Model } from '../../core';
-import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './onnx-model.view.svelte';
 import { BehaviorSubject, map } from 'rxjs';
+import { type ClassifierResults, Catch, Instance, Model, TrainingError } from '@marcellejs/core';
+
+type RegularArray<T> = T[] | T[][] | T[][][] | T[][][][] | T[][][][][] | T[][][][][][];
 
 export interface InputTypes {
   image: ImageData;

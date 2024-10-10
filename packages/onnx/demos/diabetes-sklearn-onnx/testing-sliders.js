@@ -1,5 +1,5 @@
 import { slider, text } from '@marcellejs/core';
-import { combineLatest, filter, from, map, mergeMap } from 'rxjs';
+import { combineLatest, debounceTime, filter, from, map, mergeMap } from 'rxjs';
 import { testSetTable, features } from './data';
 import { model } from './model';
 

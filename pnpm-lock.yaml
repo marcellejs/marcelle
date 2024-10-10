@@ -324,9 +324,6 @@ importers:
       ml-pca:
         specifier: ^4.1.1
         version: 4.1.1
-      onnxruntime-web:
-        specifier: ^1.19.2
-        version: 1.19.2
       recordrtc:
         specifier: ^5.6.2
         version: 5.6.2
@@ -397,9 +394,6 @@ importers:
       rollup:
         specifier: ^4.24.0
         version: 4.24.0
-      rollup-plugin-external-globals:
-        specifier: ^0.10.0
-        version: 0.10.0(rollup@4.24.0)
       rollup-plugin-filesize:
         specifier: ^10.0.0
         version: 10.0.0
@@ -525,6 +519,70 @@ importers:
       typescript:
         specifier: ^5.6.3
         version: 5.6.3
+
+  packages/onnx:
+    dependencies:
+      '@marcellejs/core':
+        specifier: workspace:^0.6.5
+        version: link:../core
+      onnxruntime-web:
+        specifier: ^1.19.2
+        version: 1.19.2
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@sveltejs/vite-plugin-svelte':
+        specifier: ^3.1.2
+        version: 3.1.2(svelte@4.2.19)(vite@5.4.8(@types/node@22.7.5)(sass@1.77.8)(terser@5.31.5))
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^7.18.0
+        version: 7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.6.3))(eslint@8.57.1)(typescript@5.6.3)
+      '@typescript-eslint/parser':
+        specifier: ^7.18.0
+        version: 7.18.0(eslint@8.57.1)(typescript@5.6.3)
+      eslint:
+        specifier: ^8.57.1
+        version: 8.57.1
+      eslint-config-prettier:
+        specifier: ^9.1.0
+        version: 9.1.0(eslint@8.57.1)
+      eslint-plugin-import:
+        specifier: ^2.31.0
+        version: 2.31.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.6.3))(eslint@8.57.1)
+      eslint-plugin-prettier:
+        specifier: ^5.2.1
+        version: 5.2.1(eslint-config-prettier@9.1.0(eslint@8.57.1))(eslint@8.57.1)(prettier@3.3.3)
+      eslint-plugin-svelte:
+        specifier: ^2.44.1
+        version: 2.44.1(eslint@8.57.1)(svelte@4.2.19)(ts-node@10.9.2(@types/node@22.7.5)(typescript@5.6.3))
+      prettier:
+        specifier: ^3.3.3
+        version: 3.3.3
+      rollup-plugin-external-globals:
+        specifier: ^0.12.0
+        version: 0.12.0(rollup@4.24.0)
+      svelte:
+        specifier: ^4.2.19
+        version: 4.2.19
+      svelte-bricks:
+        specifier: ^0.2.1
+        version: 0.2.1
+      svelte-preprocess:
+        specifier: ^5.1.4
+        version: 5.1.4(postcss-load-config@4.0.2(postcss@8.4.47)(ts-node@10.9.2(@types/node@22.7.5)(typescript@5.6.3)))(postcss@8.4.47)(sass@1.77.8)(svelte@4.2.19)(typescript@5.6.3)
+      svelte-select:
+        specifier: ^5.8.3
+        version: 5.8.3
+      tslib:
+        specifier: ^2.7.0
+        version: 2.7.0
+      typescript:
+        specifier: ^5.6.3
+        version: 5.6.3
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.8(@types/node@22.7.5)(sass@1.77.8)(terser@5.31.5)
 
 packages:
 
@@ -4935,8 +4993,8 @@ packages:
     resolution: {integrity: sha512-l0OE8wL34P4nJH/H2ffoaniAokM2qSmrtXHmlpvYr5AVVX8msAyW0l8NVJFDxlSK4u3Uh/f41cQheDVdnYijwQ==}
     hasBin: true
 
-  rollup-plugin-external-globals@0.10.0:
-    resolution: {integrity: sha512-RXlupZrmn97AaaS5dWnktkjM+Iy+od0E+8L0mUkMIs3iuoUXNJebueQocQKV7Ircd54fSGGmkBaXwNzY05J1yQ==}
+  rollup-plugin-external-globals@0.12.0:
+    resolution: {integrity: sha512-65Tqhh/f7hDY0qHmT4lYTVdDkY/BZU5bUQwS+SPvy6seSlACpcFRu2HzOmbLozXJS0/mOjwFyLlzJjlT2MTt8g==}
     peerDependencies:
       rollup: ^2.25.0 || ^3.3.0 || ^4.1.4
 
@@ -8676,7 +8734,7 @@ snapshots:
 
   estree-walker@3.0.3:
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
 
   esutils@2.0.3: {}
 
@@ -9299,7 +9357,7 @@ snapshots:
 
   is-reference@3.0.2:
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
 
   is-regex@1.1.4:
     dependencies:
@@ -10651,12 +10709,12 @@ snapshots:
     dependencies:
       glob: 10.4.1
 
-  rollup-plugin-external-globals@0.10.0(rollup@4.24.0):
+  rollup-plugin-external-globals@0.12.0(rollup@4.24.0):
     dependencies:
       '@rollup/pluginutils': 5.1.0(rollup@4.24.0)
       estree-walker: 3.0.3
       is-reference: 3.0.2
-      magic-string: 0.30.10
+      magic-string: 0.30.11
       rollup: 4.24.0
 
   rollup-plugin-filesize@10.0.0:

@@ -1,0 +1,51 @@
+{
+  "name": "@marcellejs/onnx",
+  "description": "Use ONNX with Marcelle",
+  "version": "0.6.5",
+  "keywords": [
+    "marcelle"
+  ],
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/marcelle-onnx.umd.cjs",
+  "module": "./dist/marcelle-onnx.js",
+  "exports": {
+    ".": {
+      "import": "./dist/marcelle-onnx.js",
+      "require": "./dist/marcelle-onnx.umd.cjs"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build-demos": "vite build -c vite.demos.config.ts",
+    "lint": "eslint src",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@marcellejs/core": "workspace:^0.6.5",
+    "onnxruntime-web": "^1.19.2",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.1.2",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-svelte": "^2.44.1",
+    "prettier": "^3.3.3",
+    "rollup-plugin-external-globals": "^0.12.0",
+    "svelte": "^4.2.19",
+    "svelte-bricks": "^0.2.1",
+    "svelte-preprocess": "^5.1.4",
+    "svelte-select": "^5.8.3",
+    "tslib": "^2.7.0",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.8"
+  }
+}

@@ -1,4 +1,5 @@
-import { fileUpload, onnxModel, select } from '@marcellejs/core';
+import { fileUpload, select } from '@marcellejs/core';
+import { onnxModel } from '@marcellejs/onnx';
 
 /**
  * @warning
