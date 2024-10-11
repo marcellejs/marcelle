@@ -47,6 +47,9 @@ importers:
       svelte:
         specifier: ^4.2.19
         version: 4.2.19
+      svelte-eslint-parser:
+        specifier: ^0.41.1
+        version: 0.41.1(svelte@4.2.19)
       typescript:
         specifier: ^5.6.3
         version: 5.6.3
@@ -252,9 +255,6 @@ importers:
       '@mediapipe/pose':
         specifier: ~0.5.1675469404
         version: 0.5.1675469404
-      '@rollup/plugin-terser':
-        specifier: ^0.4.4
-        version: 0.4.4(rollup@4.24.0)
       '@tensorflow-models/coco-ssd':
         specifier: ^2.2.3
         version: 2.2.3(@tensorflow/tfjs-converter@4.21.0(@tensorflow/tfjs-core@4.21.0(encoding@0.1.13)))(@tensorflow/tfjs-core@4.21.0(encoding@0.1.13))
@@ -315,12 +315,6 @@ importers:
       dequal:
         specifier: ^2.0.3
         version: 2.0.3
-      feathers-localstorage:
-        specifier: github:feathersjs-ecosystem/feathers-localstorage
-        version: https://codeload.github.com/feathersjs-ecosystem/feathers-localstorage/tar.gz/3c1c51e26f0fefaef7761ea3388b5b14ea8f07c0
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       luxon:
         specifier: ^3.5.0
         version: 3.5.0
@@ -364,15 +358,15 @@ importers:
       '@rollup/plugin-replace':
         specifier: ^5.0.7
         version: 5.0.7(rollup@4.24.0)
+      '@rollup/plugin-terser':
+        specifier: ^0.4.4
+        version: 0.4.4(rollup@4.24.0)
       '@rollup/plugin-typescript':
         specifier: ^11.1.6
         version: 11.1.6(rollup@4.24.0)(tslib@2.7.0)(typescript@5.6.3)
       '@types/blueimp-load-image':
         specifier: ^5.16.6
         version: 5.16.6
-      '@types/lodash':
-        specifier: ^4.17.10
-        version: 4.17.10
       '@types/ndarray':
         specifier: ^1.0.14
         version: 1.0.14
@@ -388,9 +382,6 @@ importers:
       daisyui:
         specifier: ^4.12.13
         version: 4.12.13(postcss@8.4.47)
-      ejs:
-        specifier: ^3.1.10
-        version: 3.1.10
       postcss:
         specifier: ^8.4.47
         version: 8.4.47
@@ -1889,9 +1880,6 @@ packages:
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
 
-  '@types/lodash@4.17.10':
-    resolution: {integrity: sha512-YpS0zzoduEhuOWjAotS6A5AVCva7X4lVlYLF0FYHAY9sdraBfnatttHItlWeZdGhuEkf+OzMNg2ZYAx8t+52uQ==}
-
   '@types/long@4.0.2':
     resolution: {integrity: sha512-MqTGEo5bj5t157U6fA/BiDynNkn0YknVdh48CMPkTSpFTVmvao5UQmm7uEF6xBEo7qIMAlY/JSleYaE6VOdpaA==}
 
@@ -2921,11 +2909,6 @@ packages:
   ee-first@1.1.1:
     resolution: {integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=}
 
-  ejs@3.1.10:
-    resolution: {integrity: sha512-UeJmFfOrAQS8OJWPZ4qtgHyWExa088/MtK5UEyoJGFH67cDEXkZSviOiKRCZ4Xij0zxI3JECgYs3oKx+AizQBA==}
-    engines: {node: '>=0.10.0'}
-    hasBin: true
-
   electron-to-chromium@1.5.6:
     resolution: {integrity: sha512-jwXWsM5RPf6j9dPYzaorcBSUg6AiqocPEyMpkchkvntaH9HGfOOMZwxMJjDY/XEs3T5dM7uyH1VhRMkqUU9qVw==}
 
@@ -3222,11 +3205,6 @@ packages:
     peerDependencies:
       '@feathersjs/feathers': ^5.0.0
 
-  feathers-localstorage@https://codeload.github.com/feathersjs-ecosystem/feathers-localstorage/tar.gz/3c1c51e26f0fefaef7761ea3388b5b14ea8f07c0:
-    resolution: {tarball: https://codeload.github.com/feathersjs-ecosystem/feathers-localstorage/tar.gz/3c1c51e26f0fefaef7761ea3388b5b14ea8f07c0}
-    version: 6.0.0-pre.2
-    engines: {node: '>= 6'}
-
   feathers-utils@3.1.3:
     resolution: {integrity: sha512-49cEbxO+l7f1/dUXt31KuyZwzxeXMFq4AnYdsZJsZ2X5qMOvy7OqIXcAoaHoIp/HHu/TUcT0ahvN15PDP7atVA==}
     engines: {node: '>= 18'}
@@ -3243,9 +3221,6 @@ packages:
   file-entry-cache@6.0.1:
     resolution: {integrity: sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==}
     engines: {node: ^10.12.0 || >=12.0.0}
-
-  filelist@1.0.4:
-    resolution: {integrity: sha512-w1cEuf3S+DrLCQL7ET6kz+gmlJdbq9J7yXCSjK/OZCPA+qEN1WyF4ZAf0YYJa4/shHJra2t/d/r8SV4Ji+x+8Q==}
 
   filesize@6.4.0:
     resolution: {integrity: sha512-mjFIpOHC4jbfcTfoh4rkWpI31mF7viw9ikj/JyLoKzqlwG/YsefKfvYlYhdYdg/9mtK2z1AzgN/0LvVQ3zdlSQ==}
@@ -3810,11 +3785,6 @@ packages:
   jackspeak@3.4.0:
     resolution: {integrity: sha512-JVYhQnN59LVPFCEcVa2C3CrEKYacvjRfqIQl+h8oi91aLYQVWRYbxjPcv1bUiUy/kLmQaANrYfNMCO3kuEDHfw==}
     engines: {node: '>=14'}
-
-  jake@10.8.5:
-    resolution: {integrity: sha512-sVpxYeuAhWt0OTWITwT98oyV0GsXyMlXCF+3L1SuafBVUIr/uILGRB+NqwkzhgXKvoJpDIpQvqkUALgdmQsQxw==}
-    engines: {node: '>=10'}
-    hasBin: true
 
   jiti@1.21.6:
     resolution: {integrity: sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==}
@@ -7402,8 +7372,6 @@ snapshots:
 
   '@types/linkify-it@5.0.0': {}
 
-  '@types/lodash@4.17.10': {}
-
   '@types/long@4.0.2': {}
 
   '@types/markdown-it@14.1.2':
@@ -8507,10 +8475,6 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  ejs@3.1.10:
-    dependencies:
-      jake: 10.8.5
-
   electron-to-chromium@1.5.6: {}
 
   emoji-regex@8.0.0: {}
@@ -8942,10 +8906,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  feathers-localstorage@https://codeload.github.com/feathersjs-ecosystem/feathers-localstorage/tar.gz/3c1c51e26f0fefaef7761ea3388b5b14ea8f07c0:
-    dependencies:
-      '@feathersjs/memory': 5.0.30
-
   feathers-utils@3.1.3(@feathersjs/feathers@5.0.30):
     dependencies:
       '@feathersjs/adapter-commons': 5.0.30
@@ -8968,10 +8928,6 @@ snapshots:
   file-entry-cache@6.0.1:
     dependencies:
       flat-cache: 3.1.0
-
-  filelist@1.0.4:
-    dependencies:
-      minimatch: 5.1.6
 
   filesize@6.4.0: {}
 
@@ -9551,13 +9507,6 @@ snapshots:
       '@isaacs/cliui': 8.0.2
     optionalDependencies:
       '@pkgjs/parseargs': 0.11.0
-
-  jake@10.8.5:
-    dependencies:
-      async: 3.2.4
-      chalk: 4.1.2
-      filelist: 1.0.4
-      minimatch: 3.1.2
 
   jiti@1.21.6: {}
 
@@ -11557,7 +11506,7 @@ snapshots:
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
       '@types/node': 22.7.5
-      acorn: 8.12.1
+      acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1

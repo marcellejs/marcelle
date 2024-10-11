@@ -25,6 +25,7 @@
     "prettier-plugin-tailwindcss": "^0.6.8",
     "rimraf": "^5.0.10",
     "svelte": "^4.2.19",
+    "svelte-eslint-parser": "^0.41.1",
     "typescript": "^5.6.3"
   },
   "engines": {
