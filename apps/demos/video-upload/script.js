@@ -1,4 +1,5 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import {
   dashboard,
   webcam,

@@ -6,6 +6,33 @@ sidebarDepth: 3
 
 Wizards are dedicated to the creation of step-by-step guides for beginners or end-users. Wizards are inspired by Teachable machine's [_training wizard_ demo](https://glitch.com/~tm-wizard) that walks users through training their machine learning model. Marcelle wizards are more flexible and allow developers to specify what components should be displayed at every step. Therefore, wizards can be used to assist the training but could also guide users in the analysis of the model's result.
 
+## Installation
+
+To install the package:
+
+::: code-group
+
+```bash [npm]
+npm install @marcellejs/layouts
+```
+
+```bash [yarn]
+npm add @marcellejs/layouts
+```
+
+```bash [pnpm]
+pnpm add @marcellejs/layouts
+```
+
+:::
+
+To use the package in your app, import both the CSS and the JS constructors:
+
+```js
+import '@marcellejs/layouts/dist/marcelle-layouts.css';
+import { wizard } from '@marcellejs/layouts';
+```
+
 ## Wizard
 
 The following factory function creates and returns an empty Wizard:

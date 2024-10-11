@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { DataStore } from '../../core/data-store';
+  import type { DataStore } from '@marcellejs/core';
   import ViewContainer from './ViewContainer.svelte';
 
   export let dataStore: DataStore;

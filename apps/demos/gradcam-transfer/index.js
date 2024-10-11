@@ -1,6 +1,6 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import {
-  dashboard,
   confidencePlot,
   webcam,
   textInput,
@@ -15,6 +15,7 @@ import {
   imageDisplay,
   text,
 } from '@marcellejs/core';
+import { dashboard } from '@marcellejs/layouts';
 import { gradcam, imageClassifier } from './components';
 import { combineLatest, filter, from, map, mergeMap, mergeWith, throttleTime, zip } from 'rxjs';
 

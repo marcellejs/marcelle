@@ -1,11 +1,11 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import howler from 'https://cdn.jsdelivr.net/npm/howler@2.2.4/+esm';
 import {
   batchPrediction,
   datasetBrowser,
   button,
   confusionMatrix,
-  dashboard,
   dataset,
   dataStore,
   mlpClassifier,
@@ -18,8 +18,8 @@ import {
   toggle,
   trainingPlot,
   webcam,
-  wizard,
 } from '@marcellejs/core';
+import { dashboard, wizard } from '@marcellejs/layouts';
 import { filter, from, map, mergeMap, zip } from 'rxjs';
 
 // -----------------------------------------------------------

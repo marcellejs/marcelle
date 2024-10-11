@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BatchPrediction } from '../../components/batch-prediction';
+  import type { BatchPrediction } from '@marcellejs/core';
   import { map } from 'rxjs';
   import ViewContainer from './ViewContainer.svelte';
 

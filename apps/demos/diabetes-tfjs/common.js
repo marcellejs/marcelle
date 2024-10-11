@@ -1,5 +1,7 @@
 import '@marcellejs/core/dist/marcelle.css';
-import { dashboard, dataStore } from '@marcellejs/core';
+import '@marcellejs/layouts/dist/marcelle-layouts.css';
+import { dataStore } from '@marcellejs/core';
+import { dashboard } from '@marcellejs/layouts';
 
 export const store = dataStore('localStorage');
 

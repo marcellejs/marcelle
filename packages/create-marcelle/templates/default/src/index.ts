@@ -1,5 +1,6 @@
 import '@marcellejs/core/dist/marcelle.css';
-import { dashboard, text } from '@marcellejs/core';
+import { text } from '@marcellejs/core';
+import { dashboard } from '@marcellejs/layouts';
 
 const x = text('Welcome to Marcelle!');
 

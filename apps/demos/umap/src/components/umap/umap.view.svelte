@@ -3,8 +3,8 @@
 <script>
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
+  import { auditTime } from 'rxjs';
 
-  export let title;
   export let embedding;
   export let labels;
 
@@ -37,7 +37,7 @@
         return heavyTransparentColorsByLabel[classIndices.indexOf(labs[index])];
       });
     });
-    embedding.subscribe((points) => {
+    embedding.pipe(auditTime(50)).subscribe((points) => {
       if (points.length > 0) {
         const dataset = new ScatterGL.Dataset(points);
         scatterGL.render(dataset);

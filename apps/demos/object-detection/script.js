@@ -1,14 +1,14 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import {
   cocoSsd,
-  dashboard,
   imageUpload,
   confidencePlot,
-  toggle,
   detectionBoxes,
   webcam,
   notification,
 } from '@marcellejs/core';
+import { dashboard } from '@marcellejs/layouts';
 import { filter, from, interval, map, mergeMap, withLatestFrom } from 'rxjs';
 
 // -----------------------------------------------------------

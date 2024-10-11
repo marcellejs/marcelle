@@ -1,9 +1,9 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import {
   datasetBrowser,
   datasetScatter,
   button,
-  dashboard,
   dataset,
   dataStore,
   mobileNet,
@@ -16,6 +16,7 @@ import {
   confidencePlot,
   pca,
 } from '@marcellejs/core';
+import { dashboard } from '@marcellejs/layouts';
 import { filter, from, map, mergeMap, Subject, zip } from 'rxjs';
 
 // -----------------------------------------------------------

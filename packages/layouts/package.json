@@ -1,0 +1,80 @@
+{
+  "name": "@marcellejs/layouts",
+  "description": "Layouts systems for Marcelle applications",
+  "version": "0.6.5",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marcellejs/marcelle"
+  },
+  "author": {
+    "name": "Jules Françoise",
+    "email": "me@julesfrancoise.com"
+  },
+  "keywords": [
+    "marcelle",
+    "interactive machine learning"
+  ],
+  "license": "MIT",
+  "main": "dist/marcelle-layouts.bundle.esm.js",
+  "module": "dist/marcelle-layouts.esm.js",
+  "browser": "dist/marcelle-layouts.bundle.umd.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "browser": {
+        "types": "./types/index.d.ts",
+        "import": "./dist/marcelle-layouts.esm.js",
+        "require": "./dist/marcelle-layouts.bundle.umd.js"
+      },
+      "import": {
+        "types": "./types/index.d.ts",
+        "default": "./dist/marcelle-layouts.esm.js"
+      },
+      "require": "./dist/marcelle-layouts.bundle.umd.js",
+      "default": "./dist/marcelle-layouts.esm.js"
+    },
+    "./dist/marcelle-layouts.css": "./dist/marcelle-layouts.css"
+  },
+  "types": "./types/index.d.ts",
+  "files": [
+    "dist",
+    "types"
+  ],
+  "scripts": {
+    "dev": "rollup -c -w",
+    "build": "pnpm run clean && rollup -c && pnpm run types:build",
+    "bundle": "rollup --config rollup.config.bundle.js",
+    "types:dev": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir types --watch",
+    "types:build": "tsc --project tsconfig.json  -d --emitDeclarationOnly --outDir types",
+    "lint": "eslint src",
+    "clean": "rimraf dist types"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.3",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-replace": "^5.0.7",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "autoprefixer": "^10.4.20",
+    "daisyui": "^4.12.13",
+    "postcss": "^8.4.47",
+    "postcss-load-config": "^6.0.1",
+    "rollup": "^4.24.0",
+    "rollup-plugin-filesize": "^10.0.0",
+    "rollup-plugin-postcss": "^4.0.0",
+    "rollup-plugin-progress": "^1.1.2",
+    "rollup-plugin-sizes": "^1.0.6",
+    "rollup-plugin-svelte": "^7.2.2",
+    "svelte": "^4.2.19",
+    "svelte-loader": "^3.2.4",
+    "svelte-preprocess": "^5.1.4",
+    "tailwindcss": "^3.4.13",
+    "tslib": "^2.7.0",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "@feathersjs/feathers": "^5.0.30",
+    "@marcellejs/core": "workspace:^0.6.5",
+    "rxjs": "^7.8.1"
+  }
+}

@@ -1,12 +1,7 @@
 import '@marcellejs/core/dist/marcelle.css';
-import {
-  dashboard,
-  imageUpload,
-  confidencePlot,
-  select,
-  imageDisplay,
-  tfjsModel,
-} from '@marcellejs/core';
+import '@marcellejs/layouts/dist/marcelle-layouts.css';
+import { imageUpload, confidencePlot, select, imageDisplay, tfjsModel } from '@marcellejs/core';
+import { dashboard } from '@marcellejs/layouts';
 import { from, map, merge, mergeMap, withLatestFrom } from 'rxjs';
 import { gradcam } from './components';
 import imagenet_labs from './imagenet_class_index.json';

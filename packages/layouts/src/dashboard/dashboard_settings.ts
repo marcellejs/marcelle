@@ -1,7 +1,11 @@
-import type { BatchPrediction } from '../../components';
-import type { Model, Component, Instance } from '../../core';
-import type { DataStore } from '../../core/data-store';
-import type { Dataset } from '../../core/dataset';
+import type {
+  BatchPrediction,
+  Component,
+  Dataset,
+  DataStore,
+  Instance,
+  Model,
+} from '@marcellejs/core';
 
 function isTitle(x: Component | Component[] | string): x is string {
   return typeof x === 'string';

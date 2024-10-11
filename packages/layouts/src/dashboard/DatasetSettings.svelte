@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
-  import type { Dataset, Instance } from '../../core';
+  import type { Dataset, Instance } from '@marcellejs/core';
   import ViewContainer from './ViewContainer.svelte';
 
   export let dataset: Dataset<Instance>;

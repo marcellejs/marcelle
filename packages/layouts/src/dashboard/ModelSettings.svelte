@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
-  import type { Instance, Model } from '../../core';
-  import { throwError } from '../../utils/error-handling';
+  import type { Instance, Model } from '@marcellejs/core';
+  import { throwError } from '@marcellejs/core';
   import ViewContainer from './ViewContainer.svelte';
 
   export let model: Model<Instance, unknown>;

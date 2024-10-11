@@ -1,4 +1,5 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import {
   datasetBrowser,
   webcam,
@@ -6,11 +7,11 @@ import {
   dataset,
   button,
   dataStore,
-  dashboard,
   textInput,
 } from '@marcellejs/core';
 import { umap } from './components';
 import { filter, from, map, mergeMap, zip } from 'rxjs';
+import { dashboard } from '@marcellejs/layouts';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE

@@ -1,10 +1,10 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import {
   batchPrediction,
   datasetBrowser,
   button,
   confusionMatrix,
-  dashboard,
   dataset,
   dataStore,
   mlpClassifier,
@@ -20,6 +20,7 @@ import {
   text,
   imageDisplay,
 } from '@marcellejs/core';
+import { dashboard } from '@marcellejs/layouts';
 import { $joints, selectPreset, skeletonImage } from './configuration';
 import {
   EMPTY,

@@ -1,10 +1,10 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import {
   batchPrediction,
   datasetBrowser,
   button,
   confusionMatrix,
-  dashboard,
   dataset,
   dataStore,
   mlpClassifier,
@@ -18,6 +18,7 @@ import {
   webcam,
   throwError,
 } from '@marcellejs/core';
+import { dashboard } from '@marcellejs/layouts';
 import { filter, from, map, mergeMap, zip } from 'rxjs';
 
 // -----------------------------------------------------------

@@ -1,4 +1,4 @@
-import type { Component } from '../../core/component';
+import type { Component } from '@marcellejs/core';
 
 export class WizardPage {
   components: Array<Component | Component[]> = [];

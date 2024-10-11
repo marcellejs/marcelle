@@ -1,4 +1,5 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import './style.css';
 import {
   datasetBrowser,
@@ -8,7 +9,6 @@ import {
   trainingProgress,
   toggle,
   dataStore,
-  dashboard,
   textInput,
   batchPrediction,
   confusionMatrix,
@@ -18,6 +18,7 @@ import {
   webcam,
   knnClassifier,
 } from '@marcellejs/core';
+import { dashboard } from '@marcellejs/layouts';
 import { setMove, reset, stop } from './tetris';
 import App from './App.svelte';
 

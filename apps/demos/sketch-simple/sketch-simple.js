@@ -1,8 +1,8 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import {
   datasetBrowser,
   button,
-  dashboard,
   dataset,
   dataStore,
   mlpClassifier,
@@ -12,6 +12,7 @@ import {
   textInput,
   trainingProgress,
 } from '@marcellejs/core';
+import { dashboard } from '@marcellejs/layouts';
 import { from, map, mergeMap, withLatestFrom, zip } from 'rxjs';
 
 // Main components

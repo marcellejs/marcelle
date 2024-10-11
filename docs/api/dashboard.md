@@ -8,6 +8,33 @@ Dashboards provide a way to create applications with multiple pages displaying c
 
 In Marcelle, dashboards are applications that can be displayed on demand on top of any existing web application.
 
+## Installation
+
+To install the package:
+
+::: code-group
+
+```bash [npm]
+npm install @marcellejs/layouts
+```
+
+```bash [yarn]
+npm add @marcellejs/layouts
+```
+
+```bash [pnpm]
+pnpm add @marcellejs/layouts
+```
+
+:::
+
+To use the package in your app, import both the CSS and the JS constructors:
+
+```js
+import '@marcellejs/layouts/dist/marcelle-layouts.css';
+import { dashboard } from '@marcellejs/layouts';
+```
+
 ## Dashboard
 
 The following factory function creates and returns an empty Dashboard Application:

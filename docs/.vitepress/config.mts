@@ -51,15 +51,12 @@ export default defineConfig({
           ],
         },
         {
-          text: 'Layouts',
+          text: '@marcellejs/layouts',
+          collapsed: true,
           items: [
             { text: 'Dashboards', link: '/api/dashboard' },
             { text: 'Wizards', link: '/api/wizard' },
           ],
-        },
-        {
-          text: 'Python',
-          link: '/api/python',
         },
         {
           text: '@marcellejs/onnx',
@@ -68,6 +65,11 @@ export default defineConfig({
             { text: 'Guide', link: '/api/onnx/' },
             { text: 'API', link: '/api/onnx/components' },
           ],
+        },
+        {
+          text: 'Python',
+          collapsed: true,
+          items: [{ text: 'API', link: '/api/python' }],
         },
       ],
       '/': [
@@ -84,6 +86,8 @@ export default defineConfig({
         { text: 'CLI', link: '/cli' },
       ],
     },
+
+    outline: 'deep',
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/marcellejs/marcelle' },
