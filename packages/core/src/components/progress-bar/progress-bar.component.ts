@@ -1,4 +1,4 @@
-import type { Stream } from '../../core/stream';
+import { Observable } from 'rxjs';
 import { Component } from '../../core/component';
 import View from './progress-bar.view.svelte';
 
@@ -11,9 +11,8 @@ export interface ProgressType {
 export class ProgressBar extends Component {
   title = 'progress bar';
 
-  constructor(public $progress: Stream<ProgressType>) {
+  constructor(public $progress: Observable<ProgressType>) {
     super();
-    this.start();
   }
 
   mount(target?: HTMLElement): void {
@@ -23,7 +22,6 @@ export class ProgressBar extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         progress: this.$progress,
       },
     });

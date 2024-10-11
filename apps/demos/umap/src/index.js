@@ -10,6 +10,7 @@ import {
   textInput,
 } from '@marcellejs/core';
 import { umap } from './components';
+import { filter, from, map, mergeMap, zip } from 'rxjs';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
@@ -27,15 +28,17 @@ const store = dataStore('localStorage');
 const trainingSet = dataset('training-set-umap', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 
-input.$images
-  .filter(() => capture.$pressed.get())
-  .map(async (x) => ({
-    x: await featureExtractor.process(x),
-    y: label.$value.get(),
-    thumbnail: input.$thumbnails.get(),
-  }))
-  .awaitPromises()
-  .subscribe(trainingSet.create);
+const $instances = zip(input.$images, input.$thumbnails).pipe(
+  filter(() => capture.$pressed.getValue()),
+  map(async ([img, thumbnail]) => ({
+    x: await featureExtractor.process(img),
+    y: label.$value.getValue(),
+    thumbnail,
+  })),
+  mergeMap((x) => from(x)),
+);
+
+$instances.subscribe(trainingSet.create);
 
 // -----------------------------------------------------------
 // UMAP

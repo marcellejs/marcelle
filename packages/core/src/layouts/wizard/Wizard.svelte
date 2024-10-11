@@ -1,16 +1,15 @@
 <script lang="ts">
   import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte';
-  import { Button } from '@marcellejs/design-system';
   import WizardPageComponent from './WizardPage.svelte';
   import type { WizardPage } from './wizard_page';
-  import type { Stream } from '../../core';
+  import { BehaviorSubject } from 'rxjs';
 
   export let pages: WizardPage[];
-  export let current: Stream<number>;
+  export let current: BehaviorSubject<number>;
 
   function goToPage(index: number) {
     if (index >= 0 && index <= pages.length - 1) {
-      for (const m of pages[current.get()].components) {
+      for (const m of pages[current.getValue()].components) {
         if (Array.isArray(m)) {
           for (const n of m) {
             n.destroy();
@@ -19,12 +18,12 @@
           m.destroy();
         }
       }
-      current.set(index);
+      current.next(index);
     }
   }
 
   afterUpdate(() => {
-    for (const m of pages[current.get()].components) {
+    for (const m of pages[current.getValue()].components) {
       if (Array.isArray(m)) {
         for (const n of m) {
           n.mount();
@@ -36,7 +35,7 @@
   });
 
   onDestroy(() => {
-    for (const m of pages[current.get()].components) {
+    for (const m of pages[current.getValue()].components) {
       if (Array.isArray(m)) {
         for (const n of m) {
           n.destroy();
@@ -73,7 +72,7 @@
       index={$current + 1}
     />
     <div class="bg-white border-t border-gray-300 px-4 py-2 grid grid-cols-3">
-      <div><Button type="danger" on:click={quit}>Close</Button></div>
+      <div><button class="btn btn-outline btn-error" on:click={quit}>Close</button></div>
       <div class="text-center">
         <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
         {#each Array(pages.length) as _, i}
@@ -81,19 +80,20 @@
         {/each}
       </div>
       <div class="text-right">
-        <Button
+        <button
+          class="btn btn-outline"
           disabled={$current <= 0}
           on:click={() => {
             goToPage($current - 1);
           }}
         >
           Previous
-        </Button>
-        <Button
-          variant="filled"
-          type={$current >= pages.length - 1 ? 'success' : 'default'}
+        </button>
+        <button
+          class="btn"
+          class:btn-success={$current >= pages.length - 1}
           on:click={() => {
-            if (current.get() < pages.length - 1) {
+            if (current.getValue() < pages.length - 1) {
               goToPage($current + 1);
             } else {
               quit();
@@ -101,7 +101,7 @@
           }}
         >
           {$current >= pages.length - 1 ? 'Finish' : 'Next'}
-        </Button>
+        </button>
       </div>
     </div>
   </div>

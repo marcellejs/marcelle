@@ -1,7 +1,7 @@
 import { DashboardPage } from './dashboard_page';
 import DashboardComponent from './Dashboard.svelte';
-import { Stream } from '../../core';
 import { DashboardSettings } from './dashboard_settings';
+import { BehaviorSubject } from 'rxjs';
 
 export interface DashboardOptions {
   title: string;
@@ -14,8 +14,8 @@ export class Dashboard {
   app?: DashboardComponent;
   settings = new DashboardSettings();
 
-  $active = new Stream(false as boolean, true);
-  $page = new Stream('', true);
+  $active = new BehaviorSubject(false as boolean);
+  $page = new BehaviorSubject('');
 
   title: string;
   author: string;
@@ -50,9 +50,9 @@ export class Dashboard {
         closable: this.closable,
       },
     });
-    this.$active.set(true);
+    this.$active.next(true);
     this.app.$on('quit', () => {
-      this.$active.set(false);
+      this.$active.next(false);
       this.app?.$destroy();
       for (const panel of Object.values(this.panels)) {
         panel.destroy();

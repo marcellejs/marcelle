@@ -1,6 +1,7 @@
+import { BehaviorSubject } from 'rxjs';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import View from './slider.view.svelte';
+import { rxBind } from '../../utils/rxjs';
 
 export interface SliderOptions {
   values: number[];
@@ -36,10 +37,10 @@ function round(value: number, exp: number): number {
 export class Slider extends Component {
   title = 'slider';
 
-  $values: Stream<number[]>;
-  $min: Stream<number>;
-  $max: Stream<number>;
-  $step: Stream<number>;
+  $values: BehaviorSubject<number[]>;
+  $min: BehaviorSubject<number>;
+  $max: BehaviorSubject<number>;
+  $step: BehaviorSubject<number>;
   range: boolean | 'min' | 'max';
   float: boolean;
   vertical: boolean;
@@ -61,10 +62,10 @@ export class Slider extends Component {
     continuous = true,
   }: Partial<SliderOptions> = {}) {
     super();
-    this.$values = new Stream(values, true);
-    this.$min = new Stream(min, true);
-    this.$max = new Stream(max, true);
-    this.$step = new Stream(step, true);
+    this.$values = new BehaviorSubject(values);
+    this.$min = new BehaviorSubject(min);
+    this.$max = new BehaviorSubject(max);
+    this.$step = new BehaviorSubject(step);
     this.range = range;
     this.float = float;
     this.vertical = vertical;
@@ -72,7 +73,6 @@ export class Slider extends Component {
     this.pipstep = pipstep !== undefined ? pipstep : Math.floor((max - min) / (10 * step));
     this.formatter = formatter;
     this.continuous = continuous;
-    this.start();
   }
 
   mount(target?: HTMLElement): void {
@@ -82,8 +82,7 @@ export class Slider extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
-        values: this.$values,
+        values: rxBind(this.$values),
         min: this.$min,
         max: this.$max,
         step: this.$step,

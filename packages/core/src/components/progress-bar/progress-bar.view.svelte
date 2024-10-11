@@ -1,41 +1,43 @@
 <script lang="ts">
-  import { ViewContainer } from '@marcellejs/design-system';
-  import { Progress } from '@marcellejs/design-system';
-  import type { Stream } from '../../core';
   import type { ProgressType } from './progress-bar.component';
+  import { Observable } from 'rxjs';
 
-  export let title: string;
-  export let progress: Stream<ProgressType>;
+  export let progress: Observable<ProgressType>;
 </script>
 
-<ViewContainer {title}>
-  <div class="relative pt-6 w-full" style="min-width: 250px;">
-    <div class="flex mb-2 items-center justify-between">
-      <div>
-        <span
-          class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600
+<div class="relative pt-6 w-full" style="min-width: 250px;">
+  <div class="flex mb-2 items-center justify-between">
+    <div>
+      <span
+        class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-accent
           bg-blue-200"
-          class:gray={$progress?.type === 'idle'}
-          class:green={$progress?.type === 'success'}
-          class:red={$progress?.type === 'danger'}
-        >
-          {$progress?.message}
-        </span>
-      </div>
-      <div class="text-right">
-        <span
-          class="text-xs font-semibold inline-block text-blue-600"
-          class:tgray={$progress?.type === 'idle'}
-          class:tgreen={$progress?.type === 'success'}
-          class:tred={$progress?.type === 'danger'}
-        >
-          {Math.floor($progress?.progress * 100)}%
-        </span>
-      </div>
+        class:gray={$progress?.type === 'idle'}
+        class:green={$progress?.type === 'success'}
+        class:red={$progress?.type === 'danger'}
+      >
+        {$progress?.message}
+      </span>
     </div>
-    <Progress progress={$progress?.progress} type={$progress?.type} />
+    <div class="text-right">
+      <span
+        class="text-xs font-semibold inline-block text-blue-600"
+        class:tgray={$progress?.type === 'idle'}
+        class:tgreen={$progress?.type === 'success'}
+        class:tred={$progress?.type === 'danger'}
+      >
+        {Math.floor($progress?.progress * 100)}%
+      </span>
+    </div>
   </div>
-</ViewContainer>
+  <progress
+    class="progress w-full"
+    value={$progress?.progress}
+    max="1"
+    class:progress-accent={$progress?.type === 'default'}
+    class:progress-error={$progress?.type === 'danger'}
+    class:progress-success={$progress?.type === 'success'}
+  ></progress>
+</div>
 
 <style>
   .tgray {

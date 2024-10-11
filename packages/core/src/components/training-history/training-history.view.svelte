@@ -1,25 +1,20 @@
 <script lang="ts">
-  import type { Stream, TrainingRun } from '../../core';
-  import type { Column } from '@marcellejs/design-system';
+  import type { TrainingRun } from '../../core';
   import type { Service } from '@feathersjs/feathers';
   import { createEventDispatcher, onMount, tick } from 'svelte';
-  import {
-    TableServiceProvider,
-    Table,
-    Tab,
-    TabList,
-    TabPanel,
-    Tabs,
-    ViewContainer,
-  } from '@marcellejs/design-system';
+  import { TableServiceProvider, Table, type Column } from '../../utils/design-system';
   import RunMeta from './RunMeta.svelte';
   import RunGraphs from './RunGraphs.svelte';
+  import { BehaviorSubject } from 'rxjs';
+  import Tabs from './Tabs.svelte';
+  import TabList from './TabList.svelte';
+  import Tab from './Tab.svelte';
+  import TabPanel from './TabPanel.svelte';
 
-  export let title: string;
   export let service: Service<TrainingRun>;
   export let metrics: string[];
   export let actions: Array<string | { name: string }>;
-  export let selection: Stream<TrainingRun[]>;
+  export let selection: BehaviorSubject<TrainingRun[]>;
 
   const dispatch = createEventDispatcher();
 
@@ -50,7 +45,7 @@
   });
 
   provider.data.subscribe(() => {
-    selection.set([]);
+    selection.next([]);
   });
 
   const columns: Column[] = [
@@ -64,7 +59,7 @@
         ({
           name: typeof action === 'string' ? action : action.name,
           type: 'action',
-        } as Column),
+        }) as Column,
     ),
   ];
 
@@ -82,53 +77,51 @@
   });
 </script>
 
-<ViewContainer {title}>
-  <Table
-    {columns}
-    {provider}
-    actions={[
-      ...actions.map((name) => (typeof name === 'string' ? { name } : name)),
-      { name: 'delete', confirm: true },
-    ]}
-    bind:selection={$selection}
-    bind:this={mainTable}
-    on:select={({ detail }) => dispatch('load', detail)}
-  />
+<Table
+  {columns}
+  {provider}
+  actions={[
+    ...actions.map((name) => (typeof name === 'string' ? { name } : name)),
+    { name: 'delete', confirm: true },
+  ]}
+  bind:selection={$selection}
+  bind:this={mainTable}
+  on:select={({ detail }) => dispatch('load', detail)}
+/>
 
-  <br />
+<br />
 
-  <Tabs>
-    <TabList>
-      <Tab>Graphs</Tab>
-      <Tab>Metadata</Tab>
-      <Tab>Parameters</Tab>
-      <Tab>Model Summary</Tab>
-    </TabList>
+<Tabs>
+  <TabList>
+    <Tab>Graphs</Tab>
+    <Tab>Metadata</Tab>
+    <Tab>Parameters</Tab>
+    <Tab>Model Summary</Tab>
+  </TabList>
 
-    <TabPanel>
-      <RunGraphs logs={$selection.map((x) => x.logs)} names={$selection.map((x) => x.name)} />
-    </TabPanel>
+  <TabPanel>
+    <RunGraphs logs={$selection.map((x) => x.logs)} names={$selection.map((x) => x.name)} />
+  </TabPanel>
 
-    <TabPanel>
-      <RunMeta runs={$selection} />
-    </TabPanel>
+  <TabPanel>
+    <RunMeta runs={$selection} />
+  </TabPanel>
 
-    <TabPanel>
-      <RunMeta runs={$selection.map((x) => x.params)} />
-    </TabPanel>
+  <TabPanel>
+    <RunMeta runs={$selection.map((x) => x.params)} />
+  </TabPanel>
 
-    <TabPanel>
-      <div class="summaries">
-        {#each $selection.map((x) => x.model?.summary || 'No summary available') as summary, i}
-          <div>
-            <h2>Model {i + 1}</h2>
-            <div class="summary"><pre>{summary}<br /></pre></div>
-          </div>
-        {/each}
-      </div>
-    </TabPanel>
-  </Tabs>
-</ViewContainer>
+  <TabPanel>
+    <div class="summaries">
+      {#each $selection.map((x) => x.model?.summary || 'No summary available') as summary, i}
+        <div>
+          <h2>Model {i + 1}</h2>
+          <div class="summary"><pre>{summary}<br /></pre></div>
+        </div>
+      {/each}
+    </div>
+  </TabPanel>
+</Tabs>
 
 <style lang="postcss">
   .summaries {

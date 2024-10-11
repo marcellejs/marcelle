@@ -1,16 +1,13 @@
 <script lang="ts">
-  import type { Dataset, Instance, Stream } from '../../core';
-  import type { Column } from '@marcellejs/design-system';
+  import type { Dataset, Instance } from '../../core';
+  import type { BehaviorSubject } from 'rxjs';
   import { onMount, tick } from 'svelte';
-  import { TableServiceProvider, Spinner, Table, ViewContainer } from '@marcellejs/design-system';
+  import { TableServiceProvider, Table, type Column } from '../../utils/design-system';
 
-  export let title: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let dataset: Dataset<Instance>;
-  export let colNames: Stream<string[]>;
+  export let colNames: BehaviorSubject<string[]>;
   export let singleSelection = false;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export let selection: Stream<Instance[]>;
+  export let selection: BehaviorSubject<Instance[]>;
 
   let columns: Column[] = [
     { name: 'x' },
@@ -48,7 +45,7 @@
     provider = new TableServiceProvider({ service: dataset.instanceService, columns });
     colNames.subscribe(async (cols) => {
       columns = cols.map((name) => ({ name }));
-      if (dataset.$count.get() > 0) {
+      if (dataset.$count.getValue() > 0) {
         const [firstInstance] = await dataset.items().query(dataset.query).take(1).toArray();
         columns = columns.map(({ name }) => ({
           name,
@@ -62,7 +59,7 @@
       provider.query.$select = columns.map((x) => x.name).concat(['id']);
       provider.update();
     });
-    const unSub = dataset.$count.subscribe(async (c) => {
+    const sub = dataset.$count.subscribe(async (c) => {
       if (c > 0) {
         const [firstInstance] = await dataset.items().query(dataset.query).take(1).toArray();
         columns = columns.map(({ name }) => ({
@@ -70,26 +67,26 @@
           type: getType(firstInstance[name]),
           sortable: isSortable(firstInstance[name]),
         }));
-        unSub();
+        sub.unsubscribe();
       }
     });
   });
 </script>
 
-<ViewContainer {title}>
-  {#await dataset.ready}
-    <Spinner />
-  {:then}
-    {#if provider}
-      <Table
-        {provider}
-        {columns}
-        {singleSelection}
-        on:selection={({ detail }) => {
-          selection.set(detail);
-        }}
-        actions={[{ name: 'delete' }]}
-      />
-    {/if}
-  {/await}
-</ViewContainer>
+{#await dataset.ready}
+  <div class="w-full min-h-28 flex flex-col justify-center items-center">
+    <span class="loading loading-spinner loading-lg"></span>
+  </div>
+{:then}
+  {#if provider}
+    <Table
+      {provider}
+      {columns}
+      {singleSelection}
+      on:selection={({ detail }) => {
+        selection.next(detail);
+      }}
+      actions={[{ name: 'delete', confirm: true }]}
+    />
+  {/if}
+{/await}

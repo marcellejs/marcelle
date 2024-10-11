@@ -1,9 +1,9 @@
-import { never } from '@most/core';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import { throwError } from '../../utils/error-handling';
 import { noop } from '../../utils/misc';
+import { rxBind } from '../../utils/rxjs';
 import View from './webcam.view.svelte';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 function requestInterval(fn: () => void, delay: number) {
   let start = new Date().getTime();
@@ -38,12 +38,12 @@ export interface WebcamOptions {
 export class Webcam extends Component {
   title = 'webcam';
 
-  $active = new Stream(false, true);
-  $ready = new Stream(false, true);
-  $mediastream = new Stream<MediaStream>(undefined, true);
-  $images = new Stream<ImageData>(never(), true);
-  $thumbnails = new Stream<string>(never(), true);
-  $facingMode: Stream<WebcamOptions['facingMode']>;
+  $active = new BehaviorSubject(false);
+  $ready = new BehaviorSubject(false);
+  $mediastream = new BehaviorSubject<MediaStream>(undefined);
+  $images = new Subject<ImageData>();
+  $thumbnails = new Subject<string>();
+  $facingMode: BehaviorSubject<WebcamOptions['facingMode']>;
 
   period: number;
 
@@ -73,7 +73,7 @@ export class Webcam extends Component {
     this.#height = height;
     this.period = period;
 
-    this.$facingMode = new Stream(facingMode, true);
+    this.$facingMode = new BehaviorSubject(facingMode);
     this.#audio = audio;
 
     this.setupCapture();
@@ -90,8 +90,7 @@ export class Webcam extends Component {
       }
     };
     this.$active.subscribe(reload);
-    this.$facingMode.subscribe(() => this.$active.get() && reload(true));
-    this.start();
+    this.$facingMode.subscribe(() => this.$active.getValue() && reload(true));
   }
 
   getWidth(): number {
@@ -105,11 +104,10 @@ export class Webcam extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         width: this.#width,
         height: this.#height,
         facingMode: this.$facingMode,
-        active: this.$active,
+        active: rxBind(this.$active),
         mediaStream: this.$mediastream,
         ready: this.$ready,
       },
@@ -117,10 +115,9 @@ export class Webcam extends Component {
   }
 
   stop(): void {
-    super.stop();
     this.#stopStreaming();
-    if (this.$mediastream.get()) {
-      for (const track of this.$mediastream.get().getTracks()) {
+    if (this.$mediastream.getValue()) {
+      for (const track of this.$mediastream.getValue().getTracks()) {
         track.stop();
       }
     }
@@ -140,7 +137,7 @@ export class Webcam extends Component {
   async loadCameras(): Promise<void> {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: this.$facingMode.get() } },
+        video: { facingMode: { ideal: this.$facingMode.getValue() } },
         audio: this.#audio,
       });
       this.#webcamWidth = mediaStream.getVideoTracks()[0].getSettings().width;
@@ -152,36 +149,36 @@ export class Webcam extends Component {
   }
 
   loadSrcStream(s: MediaStream): void {
-    this.$mediastream.set(s);
+    this.$mediastream.next(s);
     this.#videoElement.srcObject = s;
     this.#videoElement.play();
     this.#videoElement.onloadedmetadata = () => {
       this.#webcamWidth = this.#videoElement.videoWidth;
       this.#webcamHeight = this.#videoElement.videoHeight;
-      this.$ready.set(true);
+      this.$ready.next(true);
     };
   }
 
   stopCamera(): void {
-    if (this.$mediastream.get()) {
-      const tracks = this.$mediastream.get().getTracks();
+    if (this.$mediastream.getValue()) {
+      const tracks = this.$mediastream.getValue().getTracks();
       for (const track of tracks) {
         track.stop();
         this.#videoElement.srcObject = null;
       }
 
-      this.$ready.set(false);
+      this.$ready.next(false);
     }
   }
 
   process(): void {
-    if (!this.$ready.get()) return;
-    this.$thumbnails.set(this.captureThumbnail());
-    this.$images.set(this.captureImage());
+    if (!this.$ready.getValue()) return;
+    this.$thumbnails.next(this.captureThumbnail());
+    this.$images.next(this.captureImage());
   }
 
   captureThumbnail(): string {
-    if (!this.$ready.get()) return null;
+    if (!this.$ready.getValue()) return null;
     const hRatio = this.#height / this.#webcamHeight;
     const wRatio = this.#width / this.#webcamWidth;
     if (hRatio > wRatio) {
@@ -207,7 +204,7 @@ export class Webcam extends Component {
   }
 
   captureImage(): ImageData {
-    if (!this.$ready.get()) return null;
+    if (!this.$ready.getValue()) return null;
     const hRatio = this.#height / this.#webcamHeight;
     const wRatio = this.#width / this.#webcamWidth;
     if (hRatio > wRatio) {

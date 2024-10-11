@@ -24,7 +24,6 @@ export class ModelParameters extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         parameters: this.#component.parameters,
         config: this.config,
       },

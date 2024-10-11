@@ -9,11 +9,12 @@ import {
   type Pose,
 } from '@tensorflow-models/pose-detection';
 import type { GraphModel } from '@tensorflow/tfjs-converter';
-import { type Instance, logger, Model, Stream } from '../../core';
+import { type Instance, logger, Model } from '../../core';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import { SkeletonRenderer } from './renderer';
 import View from './pose-detection.view.svelte';
 import { ready } from '@tensorflow/tfjs-core';
+import { BehaviorSubject } from 'rxjs';
 
 export type PoseDetectionModel = keyof typeof SupportedModels;
 
@@ -37,8 +38,8 @@ export class PoseDetection extends Model<PoseDetectionInstance, Pose[]> {
   serviceName = 'undefined';
 
   #detector: (PoseDetector & { model?: GraphModel }) | undefined;
-  $loading = new Stream(true, true);
-  $bodyParts = new Stream('Full body', false);
+  $loading = new BehaviorSubject(true);
+  $bodyParts = new BehaviorSubject('Full body');
 
   #fullRenderer: SkeletonRenderer;
   #thumbnailRenderer: SkeletonRenderer;
@@ -50,7 +51,6 @@ export class PoseDetection extends Model<PoseDetectionInstance, Pose[]> {
     super();
     this.#fullRenderer = new SkeletonRenderer(SupportedModels[model], 224);
     this.#thumbnailRenderer = new SkeletonRenderer(SupportedModels[model], 60);
-    this.start();
     this.setup(model, modelConfig);
   }
 
@@ -58,8 +58,7 @@ export class PoseDetection extends Model<PoseDetectionInstance, Pose[]> {
     await ready();
     this.#detector = await createDetector(SupportedModels[model], modelConfig);
     logger.info(`${model} loaded`);
-    this.$loading.set(false);
-    this.start();
+    this.$loading.next(false);
   }
 
   async predict(image: ImageData): Promise<Pose[]> {
@@ -104,7 +103,6 @@ export class PoseDetection extends Model<PoseDetectionInstance, Pose[]> {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         loading: this.$loading,
         model: this.model,
       },

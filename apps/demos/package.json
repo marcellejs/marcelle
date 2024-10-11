@@ -11,15 +11,15 @@
   "dependencies": {
     "@marcellejs/core": "workspace:^0.6.5",
     "@tensorflow/tfjs-core": "^4.21.0",
-    "@tensorflow/tfjs-layers": "^4.21.0"
+    "@tensorflow/tfjs-layers": "^4.21.0",
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@marcellejs/design-system": "workspace:^0.6.5",
     "@marcellejs/devtools": "workspace:^0.6.5",
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "svelte": "^4.2.19",
     "svelte-bricks": "^0.2.1",
     "svelte-select": "^5.8.3",
-    "vite": "^5.4.5"
+    "vite": "^5.4.8"
   }
 }

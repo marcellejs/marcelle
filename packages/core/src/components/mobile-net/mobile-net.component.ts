@@ -7,9 +7,9 @@ import {
 } from '@tensorflow-models/mobilenet';
 import { io, ready, tidy } from '@tensorflow/tfjs-core';
 import { type ClassifierResults, type Instance, logger, Model } from '../../core';
-import { Stream } from '../../core/stream';
 import { Catch, TrainingError } from '../../utils/error-handling';
 import Component from './mobile-net.view.svelte';
+import { BehaviorSubject } from 'rxjs';
 
 export interface MobileNetOptions {
   version?: MobileNetVersion;
@@ -28,7 +28,7 @@ export class MobileNet extends Model<MobileNetInstance, ClassifierResults> {
   serviceName = 'undefined';
 
   #mobilenet: (TfjsMobileNet & { model?: GraphModel }) | undefined;
-  $loading = new Stream(true, true);
+  $loading = new BehaviorSubject(true);
   readonly version: MobileNetVersion;
   readonly alpha: MobileNetAlpha;
 
@@ -66,8 +66,7 @@ export class MobileNet extends Model<MobileNetInstance, ClassifierResults> {
       await this.#mobilenet.model.save(`indexeddb://mobilenet-v${this.version}-${this.alpha}`);
     }
     logger.info(`MobileNet v${this.version} loaded with alpha = ${this.alpha}`);
-    this.$loading.set(false);
-    this.start();
+    this.$loading.next(false);
     return this;
   }
 
@@ -97,7 +96,6 @@ export class MobileNet extends Model<MobileNetInstance, ClassifierResults> {
     this.$$.app = new Component({
       target: t,
       props: {
-        title: this.title,
         loading: this.$loading,
         version: this.version,
         alpha: this.alpha,

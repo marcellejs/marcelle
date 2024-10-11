@@ -12,14 +12,13 @@
   import { isHLSProvider, type MediaCanPlayEvent, type MediaProviderChangeEvent } from 'vidstack';
   import type { MediaPlayerElement } from 'vidstack/elements';
 
-  import { ViewContainer } from '@marcellejs/design-system';
-  import type { Stream } from '../../core';
+  import type { BehaviorSubject } from 'rxjs';
+
   export let title: string;
-  export let src: Stream<string | MediaStream>;
-  // export let ready: Stream<boolean>;
-  export let paused: Stream<boolean>;
-  export let progress: Stream<number>;
-  export let mirror: Stream<boolean>;
+  export let src: BehaviorSubject<string | MediaStream>;
+  export let paused: BehaviorSubject<boolean>;
+  export let progress: BehaviorSubject<number>;
+  export let mirror: BehaviorSubject<boolean>;
 
   // import { textTracks } from './tracks';
 
@@ -48,11 +47,11 @@
 
     // Subscribe to state updates.
     return player.subscribe((state) => {
-      if (state.paused !== paused.get()) {
-        paused.set(state.paused);
+      if (state.paused !== paused.getValue()) {
+        paused.next(state.paused);
       }
       allowProgressControl = false;
-      progress.set(state.currentTime);
+      progress.next(state.currentTime);
       allowProgressControl = true;
     });
   });
@@ -72,37 +71,27 @@
   }
 </script>
 
-<ViewContainer {title}>
-  <!-- <video
-    src={$src}
-    width="480"
-    controls
-    bind:this={videoElt}
-    bind:currentTime={$progress}
-    bind:paused={$paused}
-  /> -->
-  <media-player
-    class="player"
-    {title}
-    src={$src || ''}
-    crossorigin
-    on:provider-change={onProviderChange}
-    on:can-play={onCanPlay}
-    bind:this={player}
-    paused={$paused}
-  >
-    <media-provider style={$mirror ? 'transform: scaleX(-1)' : ''}>
-      <!-- <media-poster
+<media-player
+  class="player"
+  {title}
+  src={$src || ''}
+  crossorigin
+  on:provider-change={onProviderChange}
+  on:can-play={onCanPlay}
+  bind:this={player}
+  paused={$paused}
+>
+  <media-provider style={$mirror ? 'transform: scaleX(-1)' : ''}>
+    <!-- <media-poster
         class="vds-poster"
         src="https://image.mux.com/VZtzUzGRv02OhRnZCxcNg49OilvolTqdnFLEqBsTwaxU/thumbnail.webp?time=268&width=1200"
         alt="Girl walks into campfire with gnomes surrounding her friend ready for their next meal!"
       /> -->
-    </media-provider>
-    <!-- Layouts -->
-    <media-audio-layout />
-    <media-video-layout />
-  </media-player>
-</ViewContainer>
+  </media-provider>
+  <!-- Layouts -->
+  <media-audio-layout />
+  <media-video-layout />
+</media-player>
 
 <style lang="postcss">
   .player {

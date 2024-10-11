@@ -1,12 +1,9 @@
 <script lang="ts">
+  import type { Subject } from 'rxjs';
   import { onMount, createEventDispatcher, tick } from 'svelte';
-  import { Stream } from '../../core';
-  import { ViewContainer } from '@marcellejs/design-system';
-  import { Button } from '@marcellejs/design-system';
 
-  export let title: string;
-  export let strokeStart: Stream<void>;
-  export let strokeEnd: Stream<void>;
+  export let strokeStart: Subject<void>;
+  export let strokeEnd: Subject<void>;
 
   let canvasElement: HTMLCanvasElement;
   let isDrawing = false;
@@ -55,13 +52,13 @@
       left: rect.left + document.body.scrollLeft,
     };
     draw(e);
-    strokeStart.set();
+    strokeStart.next();
     isDrawing = true;
   }
 
   function stopDrawing() {
     if (isDrawing) {
-      strokeEnd.set();
+      strokeEnd.next();
     }
     isDrawing = false;
   }
@@ -69,22 +66,20 @@
 
 <svelte:body on:mouseup={stopDrawing} />
 
-<ViewContainer {title}>
-  <div class="w-full flex flex-col items-center box-border">
-    <canvas
-      id="fxid"
-      class="sketchpad-container"
-      width="300"
-      height="300"
-      bind:this={canvasElement}
-      on:mousemove={draw}
-      on:mousedown={startDrawing}
-    />
-    <div class="m-1">
-      <Button size="small" type="danger" on:click={clearDrawing}>Clear</Button>
-    </div>
+<div class="w-full flex flex-col items-center box-border">
+  <canvas
+    id="fxid"
+    class="sketchpad-container"
+    width="300"
+    height="300"
+    bind:this={canvasElement}
+    on:mousemove={draw}
+    on:mousedown={startDrawing}
+  />
+  <div class="m-1">
+    <button class="btn btn-sm btn-error" on:click={clearDrawing}>Clear</button>
   </div>
-</ViewContainer>
+</div>
 
 <style lang="postcss">
   .sketchpad-container {

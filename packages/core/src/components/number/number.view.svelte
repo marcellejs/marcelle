@@ -1,17 +1,13 @@
 <script lang="ts">
-  import type { Stream } from '../../core';
-  import { ViewContainer } from '@marcellejs/design-system';
-  import { Number } from '@marcellejs/design-system';
+  import { BehaviorSubject } from 'rxjs';
+  import Number from './Number.svelte';
 
-  export let title: string;
-  export let value: Stream<number>;
-  export let disabled: Stream<boolean>;
+  export let value: BehaviorSubject<number>;
+  export let disabled: BehaviorSubject<boolean>;
 </script>
 
-<ViewContainer {title}>
-  <div class="w-full max-w-sm">
-    <div class="md:flex md:items-center mb-2">
-      <Number bind:value={$value} disabled={$disabled} />
-    </div>
+<div class="w-full max-w-sm">
+  <div class="md:flex md:items-center mb-2">
+    <Number bind:value={$value} disabled={$disabled} />
   </div>
-</ViewContainer>
+</div>

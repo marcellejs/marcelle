@@ -1,11 +1,9 @@
 <script lang="ts">
-  import { Switch, ViewContainer } from '@marcellejs/design-system';
+  import type { BehaviorSubject } from 'rxjs';
   import { onDestroy, onMount } from 'svelte';
-  import type { Stream } from '../../core';
 
-  export let title: string;
-  export let active: Stream<boolean>;
-  export let mediaStream: Stream<MediaStream>;
+  export let active: BehaviorSubject<boolean>;
+  export let mediaStream: BehaviorSubject<MediaStream>;
 
   let canvasElt: HTMLCanvasElement;
 
@@ -72,16 +70,19 @@
   onDestroy(unSub);
 </script>
 
-<ViewContainer {title}>
+<div>
   <div>
-    <div>
-      <Switch text="activate microphone" bind:checked={$active} />
-    </div>
-    <div>
-      <canvas bind:this={canvasElt} class="w-full" />
+    <div class="form-control">
+      <label class="label cursor-pointer">
+        <input type="checkbox" class="toggle" bind:checked={$active} />
+        <span class="label-text ml-2">activate microphone</span>
+      </label>
     </div>
   </div>
-</ViewContainer>
+  <div>
+    <canvas bind:this={canvasElt} class="w-full" />
+  </div>
+</div>
 
 <style>
 </style>

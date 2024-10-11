@@ -1,6 +1,7 @@
-import { TFJSCustomModel, Stream } from '@marcellejs/core';
+import { TFJSCustomModel } from '@marcellejs/core';
 import { tidy, tensor, train } from '@tensorflow/tfjs-core';
 import { sequential, layers, metrics } from '@tensorflow/tfjs-layers';
+import { BehaviorSubject } from 'rxjs';
 
 /**
  * A Multi-layer Perceptron for regression with two hidden layers
@@ -10,7 +11,7 @@ export class Regressor extends TFJSCustomModel {
     super(rest);
     this.title = 'Regressor';
     this.parameters = {
-      units: new Stream(units, true),
+      units: new BehaviorSubject(units),
       ...this.parameters,
     };
   }
@@ -26,7 +27,7 @@ export class Regressor extends TFJSCustomModel {
   }
 
   buildModel(inputShape) {
-    const units = this.parameters.units.get();
+    const units = this.parameters.units.getValue();
     this.model = sequential();
     this.model.add(
       layers.dense({

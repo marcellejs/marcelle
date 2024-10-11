@@ -1,15 +1,14 @@
-import { never } from '@most/core';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import View from './sketch-pad.view.svelte';
+import { Subject } from 'rxjs';
 
 export class SketchPad extends Component {
   title = 'sketchPad';
 
-  $images = new Stream<ImageData>(never());
-  $thumbnails = new Stream<string>(never());
-  $strokeStart = new Stream(never());
-  $strokeEnd = new Stream(never());
+  $images = new Subject<ImageData>();
+  $thumbnails = new Subject<string>();
+  $strokeStart = new Subject<void>();
+  $strokeEnd = new Subject<void>();
 
   sketchElement: HTMLCanvasElement;
 
@@ -24,7 +23,6 @@ export class SketchPad extends Component {
     this.$strokeEnd.subscribe(() => {
       this.capture();
     });
-    this.start();
   }
 
   mount(target?: HTMLElement): void {
@@ -34,7 +32,6 @@ export class SketchPad extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         strokeStart: this.$strokeStart,
         strokeEnd: this.$strokeEnd,
       },
@@ -54,8 +51,8 @@ export class SketchPad extends Component {
 
   capture(): void {
     const t = this.captureThumbnail();
-    this.$thumbnails.set(t);
-    this.$images.set(this.captureImage());
+    this.$thumbnails.next(t);
+    this.$images.next(this.captureImage());
   }
 
   captureThumbnail(): string {

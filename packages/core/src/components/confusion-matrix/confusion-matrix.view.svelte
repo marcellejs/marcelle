@@ -2,11 +2,7 @@
   import { Chart, CategoryScale, Title, Tooltip } from 'chart.js';
   import { MatrixElement, MatrixController } from 'chartjs-chart-matrix';
   import { onDestroy } from 'svelte';
-  import { ViewContainer } from '@marcellejs/design-system';
 
-  export let title;
-  export let loading;
-  export let progress;
   export let accuracy;
   export let confusion;
   export let labels;
@@ -121,11 +117,11 @@
   };
 
   let chart;
-  let unSub = [];
+  let subs = [];
   function setup(canvasElement) {
     const ctx = canvasElement.getContext('2d');
     chart = new Chart(ctx, defaultOptions);
-    unSub.push(
+    subs.push(
       labels.subscribe((labs) => {
         nLabels = labs.length;
         defaultOptions.options.scales.x.labels = labs.sort();
@@ -133,7 +129,7 @@
         chart.update();
       }),
     );
-    unSub.push(
+    subs.push(
       confusion.subscribe((conf) => {
         maxCount = conf.reduce((m, { v }) => Math.max(m, v), 0);
         defaultOptions.data.datasets[0].data = conf;
@@ -143,20 +139,18 @@
   }
 
   onDestroy(() => {
-    for (const f of unSub) {
-      f();
+    for (const s of subs) {
+      s.unsubscribe();
     }
   });
 </script>
 
-<ViewContainer {title} loading={$loading} progress={$progress}>
-  {#if $accuracy !== undefined}
-    <p class="m-2">Global Accuracy: {$accuracy.toFixed(2)}</p>
-    <div class="confusion-container"><canvas use:setup /></div>
-  {:else}
-    <p class="m-2">Waiting for predictions...</p>
-  {/if}
-</ViewContainer>
+{#if $accuracy !== undefined}
+  <p class="m-2">Global Accuracy: {$accuracy.toFixed(2)}</p>
+  <div class="confusion-container"><canvas use:setup /></div>
+{:else}
+  <p class="m-2">Waiting for predictions...</p>
+{/if}
 
 <style>
   .confusion-container {

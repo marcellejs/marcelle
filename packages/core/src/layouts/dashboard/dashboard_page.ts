@@ -12,7 +12,10 @@ export class DashboardPage {
   components: Array<Component | Component[] | string> = [];
   componentsLeft: Component[] = [];
 
-  constructor(public name: string, public showSidebar = true) {}
+  constructor(
+    public name: string,
+    public showSidebar = true,
+  ) {}
 
   use(...components: Array<Component | Component[] | string>): DashboardPage {
     this.components = this.components.concat(components);

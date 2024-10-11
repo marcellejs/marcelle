@@ -13,18 +13,18 @@
     "email": "me@julesfrancoise.com"
   },
   "scripts": {
-    "dev": "vite --force",
+    "dev": "vite",
     "build": "vite build",
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@marcellejs/core": "workspace:^0.6.0",
+    "@marcellejs/core": "workspace:^0.6.2",
     "scatter-gl": "^0.0.13",
     "umap-js": "^1.4.0"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "svelte": "^4.2.19",
-    "vite": "^5.4.5"
+    "vite": "^5.4.8"
   }
 }

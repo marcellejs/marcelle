@@ -8,22 +8,23 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "pnpm --recursive --filter @marcellejs/* --filter create-marcelle run build",
+    "bundle": "pnpm build && pnpm --recursive --filter @marcellejs/* run bundle",
     "clean": "pnpm --recursive run clean"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.27.8",
+    "@changesets/cli": "^2.27.9",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
-    "eslint": "^8.57.0",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.30.0",
+    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.2.1",
-    "eslint-plugin-svelte": "^2.44.0",
+    "eslint-plugin-svelte": "^2.44.1",
     "prettier": "^3.3.3",
-    "prettier-plugin-svelte": "^3.2.6",
+    "prettier-plugin-svelte": "^3.2.7",
     "rimraf": "^5.0.10",
     "svelte": "^4.2.19",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.3"
   },
   "engines": {
     "node": ">=16",

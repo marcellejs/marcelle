@@ -61,6 +61,14 @@ export default defineConfig({
           text: 'Python',
           link: '/api/python',
         },
+        {
+          text: '@marcellejs/onnx',
+          collapsed: true,
+          items: [
+            { text: 'Guide', link: '/api/onnx/' },
+            { text: 'API', link: '/api/onnx/components' },
+          ],
+        },
       ],
       '/': [
         { text: 'Installation', link: '/installation' },
@@ -85,11 +93,15 @@ export default defineConfig({
     search: {
       provider: 'local',
     },
+
+    editLink: {
+      pattern: 'https://github.com/marcellejs/marcelle/edit/main/docs/:path',
+    },
   },
 
   markdown: {
     lineNumbers: true,
   },
-
+  lastUpdated: true,
   ignoreDeadLinks: 'localhostLinks',
 });

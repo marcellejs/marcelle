@@ -9,6 +9,7 @@ import { Catch, TrainingError } from '../../utils/error-handling';
 import { readJSONFile } from '../../utils/file-io';
 import Component from './tfjs-model.view.svelte';
 import { browserFiles, http } from '../../core/model/tfjs-io';
+import { map } from 'rxjs';
 
 export interface InputTypes {
   image: ImageData;
@@ -82,6 +83,7 @@ export class TFJSModel<
         this.inputShape = this.model.inputs[0].shape.map((x) => (x && x > 0 ? x : 1));
       }
     });
+    this.$training.pipe(map(({ status }) => status === 'loading')).subscribe(this.$loading);
   }
 
   @Catch
@@ -92,7 +94,7 @@ export class TFJSModel<
 
   @Catch
   async predict(input: InputTypes[InputType]): Promise<PredictionTypes[TaskType]> {
-    if (!this.model || this.$training.get().status !== 'loaded') {
+    if (!this.model || this.$training.getValue().status !== 'loaded') {
       throw new Error('Model is not loaded');
     }
 
@@ -175,7 +177,7 @@ export class TFJSModel<
 
   @Catch
   async loadFromFiles(files: File[]): Promise<void> {
-    this.$training.set({
+    this.$training.next({
       status: 'loading',
     });
     await ready();
@@ -187,13 +189,13 @@ export class TFJSModel<
         e.name = 'File upload error';
         throw e;
       }
-      this.$training.set({ status: 'loading' });
+      this.$training.next({ status: 'loading' });
       if (files.length) {
         const jsonData = await readJSONFile(jsonFiles[0]);
         this.loadFn = jsonData.format === 'graph-model' ? loadGraphModel : loadLayersModel;
         this.model = await this.loadFn(browserFiles([jsonFiles[0], ...weightFiles]));
         await this.warmup();
-        this.$training.set({
+        this.$training.next({
           status: 'loaded',
           data: {
             source: 'file',
@@ -201,7 +203,7 @@ export class TFJSModel<
         });
       }
     } catch (error) {
-      this.$training.set({
+      this.$training.next({
         status: 'error',
       });
       throw error;
@@ -210,7 +212,7 @@ export class TFJSModel<
 
   @Catch
   async loadFromUrl(url: string): Promise<void> {
-    this.$training.set({
+    this.$training.next({
       status: 'loading',
     });
     await ready();
@@ -219,7 +221,7 @@ export class TFJSModel<
       this.loadFn = modelJson.format === 'graph-model' ? loadGraphModel : loadLayersModel;
       this.model = await this.loadFn(http(url));
       await this.warmup();
-      this.$training.set({
+      this.$training.next({
         status: 'loaded',
         data: {
           source: 'url',
@@ -229,7 +231,7 @@ export class TFJSModel<
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log('[tf-model] Loading error', error);
-      this.$training.set({
+      this.$training.next({
         status: 'error',
       });
       throw error;
@@ -243,7 +245,6 @@ export class TFJSModel<
     this.$$.app = new Component({
       target: t,
       props: {
-        title: this.title,
         training: this.$training,
       },
     });

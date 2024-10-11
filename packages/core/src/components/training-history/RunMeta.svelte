@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Table, TableArrayProvider } from '@marcellejs/design-system';
+  import { Table, TableArrayProvider } from '../../utils/design-system';
 
   export let runs: Array<Record<string, unknown>>;
 

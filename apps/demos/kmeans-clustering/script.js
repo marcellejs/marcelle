@@ -14,9 +14,9 @@ import {
   scatterPlot,
   throwError,
   confidencePlot,
-  Stream,
   pca,
 } from '@marcellejs/core';
+import { filter, from, map, mergeMap, Subject, zip } from 'rxjs';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CAPTURE TO DATASET
@@ -29,21 +29,23 @@ const capture = button('Hold to record instances');
 capture.title = 'Capture instances to the training set';
 
 const store = dataStore('localStorage');
-const trainingSet = dataset('TrainingSet', store);
+const trainingSet = dataset('training-set-kmeans', store);
 const trainingSetBrowser = datasetBrowser(trainingSet);
 const trainingSetScatter = datasetScatter(trainingSet);
 
 trainingSetScatter.$clicked.subscribe(console.log);
 trainingSetScatter.$hovered.subscribe(console.log);
 
-input.$images
-  .filter(() => capture.$pressed.get())
-  .map(async (img) => ({
-    x: await featureExtractor.process(img),
-    y: '?',
-    thumbnail: input.$thumbnails.get(),
-  }))
-  .awaitPromises()
+zip(input.$images, input.$thumbnails)
+  .pipe(
+    filter(() => capture.$pressed.getValue()),
+    map(async ([img, thumbnail]) => ({
+      x: await featureExtractor.process(img),
+      y: '?',
+      thumbnail,
+    })),
+    mergeMap((x) => from(x)),
+  )
   .subscribe(trainingSet.create);
 
 // -----------------------------------------------------------
@@ -79,39 +81,37 @@ b.$click.subscribe(() => {
   clusteringKMeans.train(trainingSet);
 });
 
-clusteringKMeans.$training
-  .filter(({ status }) => status === 'success')
-  .subscribe(() => {
-    trainingSetScatter.setTransforms({
-      label: (instance) => clusteringKMeans.predict(instance.x).then(({ cluster }) => cluster),
-    });
+clusteringKMeans.$training.pipe(filter(({ status }) => status === 'success')).subscribe(() => {
+  trainingSetScatter.setTransforms({
+    label: (instance) => clusteringKMeans.predict(instance.x).then(({ cluster }) => cluster),
   });
+});
 
 // -----------------------------------------------------------
 // PLOT CLUSTERS
 // -----------------------------------------------------------
-const $features2d = new Stream([]);
+const $features2d = new Subject([]);
 
 async function resetScatterPlot() {
   const allInstances = await trainingSet.items().select(['x']).toArray();
-  $features2d.set(allInstances.map((x) => [x.x[0], x.x[1]]));
+  $features2d.next(allInstances.map((x) => [x.x[0], x.x[1]]));
 }
 
 trainingSet.$changes.subscribe(async (changes) => {
   for (const { level, type, data } of changes) {
     if (level === 'instance' && type === 'created') {
-      $features2d.set([[data.x[0], data.x[1]]]);
+      $features2d.next([[data.x[0], data.x[1]]]);
     } else if (level === 'instance' && type === 'removed') {
-      $features2d.set([[data.x[0], data.x[1]]]);
+      $features2d.next([[data.x[0], data.x[1]]]);
     } else {
       resetScatterPlot();
     }
   }
 });
 
-clusteringKMeans.$training.filter(({ status }) => status === 'success').subscribe(resetScatterPlot);
-
-const clusteringScatterPlot = scatterPlot($features2d, clusteringKMeans.$clusters);
+clusteringKMeans.$training
+  .pipe(filter(({ status }) => status === 'success'))
+  .subscribe(resetScatterPlot);
 
 // -----------------------------------------------------------
 // REALTIME CLUSTER PREDICTION
@@ -126,13 +126,6 @@ tog.$checked.subscribe((checked) => {
     }, 500);
   }
 });
-
-const predictionStream = input.$images
-  .filter(() => tog.$checked.get() && clusteringKMeans.ready)
-  .map(async (img) => clusteringKMeans.predict(await featureExtractor.process(img)))
-  .awaitPromises();
-
-const predPlot = confidencePlot(predictionStream);
 
 // -----------------------------------------------------------
 // DASHBOARDS
@@ -149,7 +142,7 @@ dash
   .use(updatePCA, trainingSetScatter);
 
 dash.page('Training').sidebar(params, b).use(trainingSetScatter);
-// .use([clusteringScatterPlot, predPlot]);
+
 dash.settings.dataStores(store).models(clusteringKMeans).datasets(trainingSet);
 
 dash.show();

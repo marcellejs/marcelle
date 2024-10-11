@@ -18,6 +18,7 @@ import {
   confusionMatrix,
   throwError,
 } from '@marcellejs/core';
+import { filter, from, map, mergeMap, tap, withLatestFrom, zip } from 'rxjs';
 
 // Main components
 const input = sketchPad();
@@ -41,14 +42,16 @@ const lossCurves = trainingPlot(classifier);
 const confusion = confusionMatrix(batchResults);
 
 // Dataset Pipeline
-const $instances = captureButton.$click
-  .sample(input.$images.zip((thumbnail, data) => ({ thumbnail, data }), input.$thumbnails))
-  .map(async ({ thumbnail, data }) => ({
-    x: await featureExtractor.process(data),
-    y: classLabel.$value.get(),
+const $instances = captureButton.$click.pipe(
+  withLatestFrom(zip(input.$images, input.$thumbnails)),
+  map((x) => x[1]),
+  map(async ([img, thumbnail]) => ({
+    x: await featureExtractor.process(img),
+    y: classLabel.$value.getValue(),
     thumbnail,
-  }))
-  .awaitPromises();
+  })),
+  mergeMap((x) => from(x)),
+);
 
 $instances.subscribe(trainingSet.create);
 
@@ -56,12 +59,16 @@ $instances.subscribe(trainingSet.create);
 trainButton.$click.subscribe(() => classifier.train(trainingSet));
 
 // Real-time Prediction Pipeline
-const $features = input.$images
-  .filter(() => realTimePredictToggle.$checked.get() && classifier.ready)
-  .map((img) => featureExtractor.process(img))
-  .awaitPromises();
+const $features = input.$images.pipe(
+  filter(() => realTimePredictToggle.$checked.getValue() && classifier.ready),
+  map((img) => featureExtractor.process(img)),
+  mergeMap((x) => from(x)),
+);
 
-const $predictions = $features.map((features) => classifier.predict(features)).awaitPromises();
+const $predictions = $features.pipe(
+  map((features) => classifier.predict(features)),
+  mergeMap((x) => from(x)),
+);
 
 const predictionViz = confidencePlot($predictions);
 

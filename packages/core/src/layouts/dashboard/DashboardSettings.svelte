@@ -15,29 +15,21 @@
 
 {#if settings}
   <div class="left">
-    <h2>Data Stores</h2>
+    <h2 class="text-2xl font-bold">Data Stores</h2>
     {#each settings.xDataStores as dataStore}
-      <div class="card">
-        <DataStoreSettings {dataStore} />
-      </div>
+      <DataStoreSettings {dataStore} />
     {/each}
-    <h2>Models</h2>
+    <h2 class="text-2xl font-bold">Models</h2>
     {#each settings.xModels as model}
-      <div class="card">
-        <ModelSettings {model} />
-      </div>
+      <ModelSettings {model} />
     {/each}
-    <h2>Datasets</h2>
+    <h2 class="text-2xl font-bold">Datasets</h2>
     {#each settings.xDatasets as dataset}
-      <div class="card">
-        <DatasetSettings {dataset} />
-      </div>
+      <DatasetSettings {dataset} />
     {/each}
-    <h2>Predictions</h2>
+    <h2 class="text-2xl font-bold">Predictions</h2>
     {#each settings.xPredictions as prediction}
-      <div class="card">
-        <PredictionsSettings {prediction} />
-      </div>
+      <PredictionsSettings {prediction} />
     {/each}
   </div>
   <div class="right">

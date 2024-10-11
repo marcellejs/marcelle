@@ -1,18 +1,18 @@
+import { BehaviorSubject } from 'rxjs';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import View from './select.view.svelte';
+import { rxBind } from '../../utils/rxjs';
 
 export class Select extends Component {
   title = 'select';
 
-  $options: Stream<string[]>;
-  $value: Stream<string>;
+  $options: BehaviorSubject<string[]>;
+  $value: BehaviorSubject<string>;
 
   constructor(options: string[], value?: string) {
     super();
-    this.$options = new Stream(options, true);
-    this.$value = new Stream(value !== undefined ? value : options[0], true);
-    this.start();
+    this.$options = new BehaviorSubject(options);
+    this.$value = new BehaviorSubject(value !== undefined ? value : options[0]);
   }
 
   mount(target?: HTMLElement): void {
@@ -22,9 +22,8 @@ export class Select extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         options: this.$options,
-        value: this.$value,
+        value: rxBind(this.$value),
       },
     });
   }

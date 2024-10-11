@@ -1,9 +1,9 @@
 import type { BatchPrediction } from '../batch-prediction';
 import { dequal } from 'dequal';
 import { Component } from '../../core/component';
-import { Stream } from '../../core/stream';
 import type { ClassifierPrediction } from '../../core/types';
 import View from './confusion-matrix.view.svelte';
+import { BehaviorSubject, map } from 'rxjs';
 
 export type ConfusionMatrixT = Array<{
   x: string;
@@ -16,16 +16,18 @@ export class ConfusionMatrix extends Component {
 
   #prediction: BatchPrediction;
 
-  $confusion = new Stream<ConfusionMatrixT>([], true);
-  $accuracy = new Stream<number>(undefined, true);
-  $labels = new Stream<string[]>([], true);
-  $selected = new Stream<{ x: string; y: string; v: number }>(null, true);
-  $progress = new Stream<number | false>(false, true);
+  $confusion = new BehaviorSubject<ConfusionMatrixT>([]);
+  $accuracy = new BehaviorSubject<number>(undefined);
+  $labels = new BehaviorSubject<string[]>([]);
+  $selected = new BehaviorSubject<{ x: string; y: string; v: number }>(null);
+  $progress = new BehaviorSubject<number | false>(false);
 
   constructor(prediction: BatchPrediction) {
     super();
     this.#prediction = prediction;
-    this.start();
+    this.#prediction.$status
+      .pipe(map(({ status }) => status === 'loading'))
+      .subscribe(this.$loading);
     this.setup();
   }
 
@@ -34,10 +36,10 @@ export class ConfusionMatrix extends Component {
     this.#prediction.$status.subscribe(async ({ status, count, total, data }) => {
       if (status === 'start') {
         predictions = [];
-        this.$progress.set(null);
+        this.$progress.next(null);
       } else if (status === 'running') {
         predictions.push(data as ClassifierPrediction);
-        this.$progress.set(count / total);
+        this.$progress.next(count / total);
       } else if (status === 'loaded') {
         predictions = await this.#prediction.predictionService
           .items()
@@ -45,12 +47,12 @@ export class ConfusionMatrix extends Component {
             $select: ['id', 'label', 'yTrue'],
           })
           .toArray();
-        this.$progress.set(false);
+        this.$progress.next(false);
       } else if (status === 'loading') {
         predictions = [];
-        this.$progress.set(null);
+        this.$progress.next(null);
       } else {
-        this.$progress.set(false);
+        this.$progress.next(false);
       }
       this.updateConfusionMatrix(predictions);
       this.updateAccuracy(predictions);
@@ -62,7 +64,7 @@ export class ConfusionMatrix extends Component {
     const trueLabels = predictions.map((x) => x.yTrue);
     const uniqueLabels = Array.from(new Set(labels.concat(trueLabels)));
     if (!dequal(uniqueLabels, this.$labels.value)) {
-      this.$labels.set(uniqueLabels);
+      this.$labels.next(uniqueLabels);
     }
     const nLabels = uniqueLabels.length;
     const labIndices: Record<string, number> = uniqueLabels.reduce(
@@ -78,14 +80,14 @@ export class ConfusionMatrix extends Component {
       y: uniqueLabels[i % nLabels],
       v,
     }));
-    this.$confusion.set(conf);
+    this.$confusion.next(conf);
   }
 
   updateAccuracy(predictions: ClassifierPrediction[]): void {
     if (predictions.length === 0) {
-      this.$accuracy.set(undefined);
+      this.$accuracy.next(undefined);
     } else {
-      this.$accuracy.set(
+      this.$accuracy.next(
         predictions.reduce((correct, { label, yTrue }) => correct + (label === yTrue ? 1 : 0), 0) /
           predictions.length,
       );
@@ -99,9 +101,7 @@ export class ConfusionMatrix extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
-        loading: this.#prediction.$status.map(({ status }) => status === 'loading'),
-        progress: this.$progress,
+        // progress: this.$progress,
         confusion: this.$confusion,
         accuracy: this.$accuracy,
         labels: this.$labels,

@@ -1,18 +1,20 @@
 import type { SvelteComponent } from 'svelte';
+import type { BehaviorSubject } from 'rxjs';
 import type { FeathersService } from '@feathersjs/feathers';
-import type { Stream } from './stream';
 import type { ServiceIterable } from './data-store/service-iterable';
 
 export interface ComponentInternals {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  streams: Array<Stream<any>>;
+  // streams: Array<Stream<any>>;
   app?: SvelteComponent;
   [key: string]: unknown;
 }
 
 export interface Parametrable {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  parameters: Record<string, Stream<any>>;
+  parameters: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [name: string]: BehaviorSubject<any>;
+  };
 }
 
 export type ObjectId = string;

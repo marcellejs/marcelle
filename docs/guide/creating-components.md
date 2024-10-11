@@ -53,14 +53,15 @@ Then, update the main application entry point (`src/index.js`) with the applicat
 ```js
 import '@marcellejs/core/dist/marcelle.css';
 import {
-  datasetBrowser,
-  mobileNet,
-  dataset,
-  dataStore,
   dashboard,
-  textInput,
+  dataset,
+  datasetBrowser,
+  dataStore,
   imageUpload,
+  mobileNet,
+  select,
 } from '@marcellejs/core';
+import { from, map, mergeMap, zip } from 'rxjs';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
@@ -69,20 +70,17 @@ import {
 const input = imageUpload();
 const featureExtractor = mobileNet();
 
-const label = textInput('cat');
+const label = select(['cat', 'dog'], 'cat');
 label.title = 'Label (to record in the dataset)';
 
-const $instances = input.$images
-  .zip(
-    async (thumbnail, img) => ({
-      type: 'image',
-      x: await featureExtractor.process(img),
-      y: label.$value.get(),
-      thumbnail,
-    }),
-    input.$thumbnails,
-  )
-  .awaitPromises();
+const $instances = zip(input.$images, input.$thumbnails).pipe(
+  map(async ([img, thumbnail]) => ({
+    x: await featureExtractor.process(img),
+    y: label.$value.getValue(),
+    thumbnail,
+  })),
+  mergeMap((x) => from(x)),
+);
 
 const store = dataStore('localStorage');
 const trainingSet = dataset('TrainingSet-Umap', store);
@@ -148,11 +146,12 @@ Select 'Create a component', choose the name 'umap', the CLI will generate the f
 
 The generated component is already functional. Let's start by displaying it in our application. Edit `src/index.js` to import the component, create a new instance, and display it in the dashboard:
 
-```js{5,11,18}
+```js{6,12,19}
 import '@marcellejs/core/dist/marcelle.css';
 import {
   ...
 } from '@marcellejs/core';
+import { from, map, mergeMap, zip } from 'rxjs';
 import { umap } from './components';
 
 // ...
@@ -240,15 +239,11 @@ In our example, we define "props" in the script part by using the keyword `expor
 
 ```html
 <script>
-  import { ViewContainer } from '@marcellejs/design-system';
-  export let title;
   export let options;
 </script>
 
-<ViewContainer {title}>
-  <div>This is a <span class="my-color">custom</span> component with the following options:</div>
-  <p>{JSON.stringify(options)}</p>
-</ViewContainer>
+<div>This is a <span class="my-color">custom</span> component with the following options:</div>
+<p>{JSON.stringify(options)}</p>
 
 <style>
   .my-color {
@@ -322,7 +317,7 @@ export class Umap extends Component {
   async update() {
     const instances = await this.dataset.items().toArray();
     // Concatenate all instance features in a 2D array:
-    const umapData = instances.reduce((data, { x }) => data.concat(x), []);
+    const umapData = instances.reduce((data, { x }) => data.concat([x]), []);
     const umap = new UMAP();
     const finalEmbedding = await umap.fitAsync(umapData, (epochNumber) => {
       console.log('Epoch', epochNumber, umap.getEmbedding());
@@ -340,13 +335,14 @@ The application should now log the UMAP fitting process in the console when clic
 
 ## Exposing the results as a stream
 
-For now, the results of the UMAP computation are limited to our component. In Marcelle, we use reactive streams to expose data to the outside world. Components can expose streams that can be used by other components in a pipeline. We will create a stream called `$embedding` that produce events along the fitting process. Such a stream could be used by other components for further processing, but it will also help updating the visualization in the component's view in real-time.
+For now, the results of the UMAP computation are limited to our component. In Marcelle, we use reactive streams to expose data to the outside world. Components can expose streams that can be used by other components in a pipeline. We will create a stream called `$embedding` that produce events along the fitting process. Such a stream could be used by other components for further processing, but it will also help updating the visualization in the component's view in real-time. In practice, the stream is implemented with a RxJS [`BehaviorSubject`](https://rxjs.dev/guide/subject#behaviorsubject).
 
-First, we initialize the stream in the constructor, and call the component's `start()` method to start stream processing. Then, we will imperatively push values into the stream at each iteration of the UMAP fitting process.
+First, we initialize the subject in the constructor. Then, we will imperatively push values into the stream at each iteration of the UMAP fitting process.
 
-```js{1,10-11,20,22}
-import { Component, Stream } from '@marcellejs/core';
+```js{3,11,21,23}
+import { Component } from '@marcellejs/core';
 import { UMAP } from 'umap-js';
+import { BehaviorSubject } from 'rxjs';
 import View from './umap.view.svelte';
 
 export class Umap extends Component {
@@ -354,8 +350,7 @@ export class Umap extends Component {
     super();
     this.title = 'umap [custom component 🤖]';
     this.dataset = dataset;
-    this.$embedding = new Stream([], true);
-    this.start();
+    this.$embedding = new BehaviorSubject([]);
   }
 
   async update() {
@@ -365,9 +360,9 @@ export class Umap extends Component {
     const umapData = instances.reduce((data, { features }) => data.concat(features), []);
     const umap = new UMAP();
     const finalEmbedding = await umap.fitAsync(umapData, () => {
-      this.$embedding.set(umap.getEmbedding());
+      this.$embedding.next(umap.getEmbedding());
     });
-    this.$embedding.set(finalEmbedding);
+    this.$embedding.next(finalEmbedding);
   }
 
   // ...
@@ -388,15 +383,10 @@ Let's edit `umap.view.svelte` to pass our stream of embeddings to the component:
 
 ```html
 <script>
-  import { ViewContainer } from '@marcellejs/design-system';
-
-  export let title;
   export let embedding;
 </script>
 
-<ViewContainer {title}>
-  <div>{$embedding}</div>
-</ViewContainer>
+<div>{$embedding}</div>
 ```
 
 `export let embedding;` defines a 'prop', that will be accessible when the component instanciation. `{$embedding}` means that we consider that `embedding` is a data stream (a 'store' in svelte's terminology), and that the DOM will be updated reactively.
@@ -436,9 +426,7 @@ We then integrate scatter-gl in the Svelte component:
 <script>
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
-  import { ViewContainer } from '@marcellejs/design-system';
 
-  export let title;
   export let embedding;
 
   let scatterContainer;
@@ -459,9 +447,7 @@ We then integrate scatter-gl in the Svelte component:
   });
 </script>
 
-<ViewContainer {title}>
-  <div id="scatter-container" bind:this="{scatterContainer}" />
-</ViewContainer>
+<div id="scatter-container" bind:this="{scatterContainer}" />
 
 <style>
   #scatter-container {
@@ -546,9 +532,8 @@ export class Umap extends Component {
 <script>
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
-  import { ViewContainer } from '@marcellejs/design-system';
 
-  export let title;
+
   export let embedding;
   export let labels;
 
@@ -578,9 +563,8 @@ export class Umap extends Component {
 
 </script>
 
-<ViewContainer {title}>
-  <div id="scatter-container" bind:this={scatterContainer} />
-</ViewContainer>
+<div id="scatter-container" bind:this={scatterContainer} />
+
 
 <style>
   #scatter-container {

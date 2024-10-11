@@ -1,24 +1,21 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { ObjectDetectorResults, Stream } from '../../core';
-  import { ViewContainer } from '@marcellejs/design-system';
+  import type { ObjectDetectorResults } from '../../core';
+  import { filter, type Observable } from 'rxjs';
 
-  export let title: string;
-  export let imageStream: Stream<ImageData>;
-  export let objectDetectionResults: Stream<ObjectDetectorResults>;
+  export let imageStream: Observable<ImageData>;
+  export let objectDetectionResults: Observable<ObjectDetectorResults>;
 
   onMount(() => {
     const mycan = document.getElementById('can') as HTMLCanvasElement;
     const ctx = mycan.getContext('2d');
-    imageStream.subscribe((img) => {
+    imageStream.pipe(filter((x) => !!x)).subscribe((img) => {
       mycan.height = img.height;
       mycan.width = img.width;
       ctx.putImageData(img, 0, 0);
     });
-    objectDetectionResults.subscribe(({ outputs }) => {
+    objectDetectionResults.pipe(filter((x) => !!x)).subscribe(({ outputs }) => {
       for (const output of outputs) {
-        // }
-        // for (let i = 0; i < outputs.length; i++) {
         ctx.font = `${Math.floor(mycan.width / 60)}px sans-serif`;
         const msg = `${output.confidence.toFixed(3)} ${output.class}`;
         const textSize = ctx.measureText(msg);
@@ -49,4 +46,4 @@
   });
 </script>
 
-<ViewContainer {title}><canvas id="can" class="w-full max-w-full" /></ViewContainer>
+<canvas id="can" class="w-full max-w-full" />

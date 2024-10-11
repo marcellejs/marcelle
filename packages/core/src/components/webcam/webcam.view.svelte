@@ -1,27 +1,23 @@
 <script lang="ts">
   import { onMount, onDestroy, tick } from 'svelte';
-  import type { Stream } from '../../core';
-  import { Button, ViewContainer } from '@marcellejs/design-system';
-  import { Spinner, Switch } from '@marcellejs/design-system';
-  import { noop } from '../../utils/misc';
+  import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
-  export let title: string;
   export let width: number;
   export let height: number;
-  export let facingMode: Stream<'user' | 'environment'>;
-  export let active: Stream<boolean>;
-  export let mediaStream: Stream<MediaStream>;
-  export let ready: Stream<boolean>;
+  export let facingMode: BehaviorSubject<'user' | 'environment'>;
+  export let active: Observable<boolean>;
+  export let mediaStream: Observable<MediaStream>;
+  export let ready: Observable<boolean>;
 
   let videoElement: HTMLVideoElement;
   let webcamContainerWidth: number;
 
   let numWebcams = 0;
-  let unSub = noop;
+  let sub: Subscription;
   onMount(async () => {
     await tick();
     await tick();
-    unSub = mediaStream.subscribe((s) => {
+    sub = mediaStream.subscribe((s) => {
       if (s) {
         videoElement.srcObject = s;
       }
@@ -41,66 +37,71 @@
   });
 
   onDestroy(() => {
-    unSub();
+    if (sub) {
+      sub.unsubscribe();
+    }
   });
 </script>
 
-<ViewContainer {title}>
-  <div class="webcam">
-    <div>
-      <div>
-        <Switch text="activate video" bind:checked={$active} />
-      </div>
-    </div>
-    <div
-      class="webcam-container"
-      bind:clientWidth={webcamContainerWidth}
-      style="flex-direction: {width > height ? 'column' : 'row'};height: {(webcamContainerWidth *
-        height) /
-        width}px"
-    >
-      {#if $active && !$ready}
-        <Spinner />
-      {/if}
-      <video
-        id="webcam-video"
-        class="max-w-none"
-        class:mirror={$facingMode === 'user'}
-        style="width: {width > height ? `${webcamContainerWidth}px` : 'auto'}; height: {width >
-        height
-          ? 'auto'
-          : `${(webcamContainerWidth * height) / width}px`};"
-        bind:this={videoElement}
-        autoplay
-        muted
-        playsinline
-      />
-      {#if numWebcams > 1}
-        <div class="absolute bottom-2 right-2 text-right">
-          <Button
-            round
-            on:click={() => facingMode.set(facingMode.get() === 'user' ? 'environment' : 'user')}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
-              />
-            </svg>
-          </Button>
-        </div>
-      {/if}
+<div class="webcam">
+  <div class="">
+    <div class="form-control">
+      <label class="label cursor-pointer">
+        <input type="checkbox" class="toggle" bind:checked={$active} />
+        <span class="label-text ml-2">activate video</span>
+      </label>
     </div>
   </div>
-</ViewContainer>
+  <div
+    class="webcam-container"
+    bind:clientWidth={webcamContainerWidth}
+    style="flex-direction: {width > height ? 'column' : 'row'};height: {(webcamContainerWidth *
+      height) /
+      width}px"
+  >
+    {#if $active && !$ready}
+      <span class="absolute flex flex-nowrap items-center justify-center inset-0 w-full">
+        <span class="loading loading-spinner loading-lg"></span>
+      </span>
+    {/if}
+    <video
+      id="webcam-video"
+      class="max-w-none"
+      class:mirror={$facingMode === 'user'}
+      style="width: {width > height ? `${webcamContainerWidth}px` : 'auto'}; height: {width > height
+        ? 'auto'
+        : `${(webcamContainerWidth * height) / width}px`};"
+      bind:this={videoElement}
+      autoplay
+      muted
+      playsinline
+    />
+    {#if numWebcams > 1}
+      <div class="absolute bottom-2 right-2 text-right">
+        <button
+          class="btn btn-circle ghost"
+          on:click={() =>
+            facingMode.next(facingMode.getValue() === 'user' ? 'environment' : 'user')}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+            />
+          </svg>
+        </button>
+      </div>
+    {/if}
+  </div>
+</div>
 
 <style lang="postcss">
   .webcam {
@@ -108,7 +109,7 @@
   }
 
   .webcam .webcam-container {
-    @apply rounded-md overflow-hidden bg-gray-200 m-2 w-full flex justify-center;
+    @apply rounded-md overflow-hidden bg-base-300 m-2 w-full flex justify-center;
     max-width: 350px;
   }
 

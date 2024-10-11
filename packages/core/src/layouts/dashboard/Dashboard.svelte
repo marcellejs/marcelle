@@ -1,11 +1,11 @@
 <script lang="ts">
+  import { BehaviorSubject } from 'rxjs';
   import { onMount, createEventDispatcher } from 'svelte';
   import { blur } from 'svelte/transition';
   import Routie from './routie';
   import DashboardPageComponent from './DashboardPage.svelte';
   import DashboardSettingsComponent from './DashboardSettings.svelte';
   import type { DashboardPage } from './dashboard_page';
-  import type { Stream } from '../../core';
   import type { DashboardSettings } from './dashboard_settings';
   import DashboardHeader from './DashboardHeader.svelte';
   import DashboardFooter from './DashboardFooter.svelte';
@@ -16,7 +16,7 @@
   export let author: string;
   export let dashboards: Record<string, DashboardPage> = {};
   export let settings: DashboardSettings;
-  export let page: Stream<string>;
+  export let page: BehaviorSubject<string>;
   export let closable: boolean;
 
   let showApp = false;
@@ -64,7 +64,7 @@
       router.route('settings', () => {
         showSettings = true;
         if (currentDashboard) dashboards[currentDashboard].destroy();
-        page.set('settings');
+        page.next('settings');
       });
       dashboardSlugs.forEach((slug, i) => {
         router.route(slug, () => {
@@ -72,7 +72,7 @@
           if (currentDashboard === dashboardNames[i]) return;
           if (currentDashboard) dashboards[currentDashboard].destroy();
           currentDashboard = dashboardNames[i];
-          page.set(slug === '' ? string2slug(dashboardNames[0]) : slug);
+          page.next(slug === '' ? string2slug(dashboardNames[0]) : slug);
         });
       });
     } catch (error) {
@@ -119,8 +119,7 @@
   }
 
   .main-container {
-    @apply box-border w-full p-1 flex flex-col flex-nowrap grow bg-gray-100;
-    background-color: rgb(237, 242, 247);
+    @apply box-border w-full p-1 flex flex-col flex-nowrap grow bg-base-200;
   }
 
   @screen lg {

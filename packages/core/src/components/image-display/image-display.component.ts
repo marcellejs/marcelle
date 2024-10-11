@@ -1,13 +1,13 @@
-import type { Stream } from '../../core/stream';
+import { Observable } from 'rxjs';
 import { Component } from '../../core/component';
 import View from './image-display.view.svelte';
 
 export class ImageDisplay extends Component {
   title = 'image display';
 
-  #imageStream: Stream<ImageData> | Stream<ImageData[]>;
+  #imageStream: Observable<ImageData | ImageData[]>;
 
-  constructor(imageStream: Stream<ImageData> | Stream<ImageData[]>) {
+  constructor(imageStream: Observable<ImageData | ImageData[]>) {
     super();
     this.#imageStream = imageStream;
   }
@@ -19,7 +19,6 @@ export class ImageDisplay extends Component {
     this.$$.app = new View({
       target: t,
       props: {
-        title: this.title,
         imageStream: this.#imageStream,
       },
     });

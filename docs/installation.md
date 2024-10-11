@@ -14,69 +14,47 @@ Marcelle is still experimental and is currently under active development. Breaki
 
 To create a new Marcelle project, just run:
 
-<CodeGroup>
-<CodeGroupItem title="npm">
+::: code-group
 
-```bash
+```bash [npm]
 npm init marcelle marcelle-tutorial
 cd marcelle-tutorial
 npm install
 ```
 
-</CodeGroupItem>
-
-<CodeGroupItem title="yarn">
-
-```bash
+```bash [yarn]
 yarn create marcelle marcelle-tutorial
 cd marcelle-tutorial
 yarn
 ```
 
-</CodeGroupItem>
-
-<CodeGroupItem title="pnpm">
-
-```bash
+```bash [pnpm]
 pnpm create marcelle marcelle-tutorial
 cd marcelle-tutorial
 pnpm i
 ```
 
-</CodeGroupItem>
-
-</CodeGroup>
+:::
 
 See the [CLI's documentation](/cli.html) for more information about available options.
 
 ## Using a package manager
 
-<CodeGroup>
-<CodeGroupItem title="npm">
+::: code-group
 
-```bash
+```bash [npm]
 npm install @marcellejs/core --save
 ```
 
-</CodeGroupItem>
-
-<CodeGroupItem title="yarn">
-
-```bash
+```bash [yarn]
 yarn add @marcellejs/core
 ```
 
-</CodeGroupItem>
-
-<CodeGroupItem title="pnpm">
-
-```bash
+```bash [pnpm]
 pnpm add @marcellejs/core
 ```
 
-</CodeGroupItem>
-
-</CodeGroup>
+:::
 
 ## Direct Download / CDN
 
@@ -87,7 +65,7 @@ pnpm add @marcellejs/core
 The following HTML and JS snippets provide a template marcelle application.
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />

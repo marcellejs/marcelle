@@ -1,7 +1,5 @@
 <script lang="ts">
   import { onDestroy, onMount, tick } from 'svelte';
-  import { Button, ViewContainer } from '@marcellejs/design-system';
-  import type { Stream } from '../../core/stream';
   import {
     Chart,
     Filler,
@@ -18,6 +16,7 @@
   import zoomPlugin from 'chartjs-plugin-zoom';
   import type { ObjectId } from '../../core';
   import { dequal } from 'dequal';
+  import { BehaviorSubject, Subscription, filter } from 'rxjs';
 
   Chart.register(
     Filler,
@@ -31,10 +30,9 @@
   );
   Chart.register(zoomPlugin);
 
-  export let title: string;
-  export let data: Stream<ChartConfiguration['data']>;
-  export let hovered: Stream<ObjectId[]>;
-  export let clicked: Stream<ObjectId[]>;
+  export let data: BehaviorSubject<ChartConfiguration['data']>;
+  export let hovered: BehaviorSubject<ObjectId[]>;
+  export let clicked: BehaviorSubject<ObjectId[]>;
 
   const getOrCreateTooltip = (chart: Chart) => {
     let tooltipEl = chart.canvas.parentNode.querySelector('div');
@@ -139,32 +137,30 @@
         },
       },
       onClick(e, elts) {
-        clicked.set(elts.map(({ element }) => element as unknown as string));
-        // clicked.set(elts.map(({ element }) => element?.$context?.raw?.id));
+        clicked.next(elts.map(({ element }) => element as unknown as string));
+        // clicked.next(elts.map(({ element }) => element?.$context?.raw?.id));
       },
       onHover(e, elts) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const ids = elts.map(({ element }) => (element as any)?.$context?.raw?.id);
-        if (!dequal(ids, hovered.get())) hovered.set(ids);
+        if (!dequal(ids, hovered.getValue())) hovered.next(ids);
       },
     },
   };
 
   let chart: Chart;
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  let unSub: () => void = () => {};
+  let sub: Subscription;
   let canvasElement: HTMLCanvasElement;
 
   async function setup() {
-    unSub();
-    const chartOptions: Partial<ChartConfiguration> = { ...defaultOptions, data: data.get() };
-    unSub = data
-      .filter((x) => !!x)
-      .subscribe((d) => {
-        chartOptions.data = d;
-        chart.update();
-        chart.resetZoom();
-      });
+    if (sub) sub.unsubscribe();
+    const chartOptions: Partial<ChartConfiguration> = { ...defaultOptions, data: data.getValue() };
+    sub = data.pipe(filter((x) => !!x && !!chart)).subscribe((d) => {
+      chartOptions.data = d;
+      chart.update();
+      chart.resetZoom();
+    });
 
     const ctx = canvasElement.getContext('2d');
     chart = new Chart(ctx, chartOptions as ChartConfiguration);
@@ -177,17 +173,15 @@
   });
 
   onDestroy(() => {
-    unSub();
+    if (sub) sub.unsubscribe();
     chart?.destroy();
   });
 </script>
 
-<ViewContainer {title}>
-  <div id="scatter-container"><canvas bind:this={canvasElement} /></div>
-  <div class="flex justify-end">
-    <Button size="small" on:click={() => chart.resetZoom()}>Reset Zoom</Button>
-  </div>
-</ViewContainer>
+<div id="scatter-container"><canvas bind:this={canvasElement} /></div>
+<div class="flex justify-end">
+  <button class="btn btn-sm" on:click={() => chart.resetZoom()}>Reset Zoom</button>
+</div>
 
 <style>
   #scatter-container {
