@@ -1,7 +1,7 @@
 import { confidencePlot, slider, text } from '@marcellejs/core';
 import { tst } from './data';
 import { classifier } from './model';
-import { mergeWith, filter, map, mergeMap, from, debounceTime } from 'rxjs';
+import { mergeWith, filter, map, mergeMap, from, auditTime } from 'rxjs';
 
 const hint = text('Change slider values or select a data point in the table at the bottom');
 hint.title = 'hint';
@@ -35,7 +35,7 @@ const $predictions = sepalLength.$values.pipe(
     petalLength.$values.getValue()[0],
     petalWidth.$values.getValue()[0],
   ]),
-  debounceTime(20),
+  auditTime(20),
   map(classifier.predict),
   mergeMap((x) => from(x)),
 );

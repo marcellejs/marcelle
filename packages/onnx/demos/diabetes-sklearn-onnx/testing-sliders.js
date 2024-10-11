@@ -1,5 +1,5 @@
 import { slider, text } from '@marcellejs/core';
-import { combineLatest, debounceTime, filter, from, map, mergeMap } from 'rxjs';
+import { combineLatest, auditTime, filter, from, map, mergeMap } from 'rxjs';
 import { testSetTable, features } from './data';
 import { model } from './model';
 
@@ -24,7 +24,7 @@ const $features = combineLatest(features.map((x) => sliders[x].$values.pipe(map(
 
 const $predictions = $features.pipe(
   filter(() => model.ready),
-  debounceTime(20),
+  auditTime(20),
   map(model.predict),
   mergeMap((x) => from(x)),
 );

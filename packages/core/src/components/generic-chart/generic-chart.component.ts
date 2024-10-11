@@ -3,7 +3,7 @@ import type { ServiceIterable } from '../../core/data-store/service-iterable';
 import { Component } from '../../core/component';
 import { throwError } from '../../utils/error-handling';
 import View from './generic-chart.view.svelte';
-import { BehaviorSubject, Observable, debounceTime, isObservable } from 'rxjs';
+import { BehaviorSubject, Observable, auditTime, isObservable } from 'rxjs';
 
 // TODO: Automatic switch to fast mode when high number of points
 
@@ -102,7 +102,7 @@ export interface GenericChartOptions {
 export type ChartPoint = number | { x: unknown; y: unknown };
 
 export interface ChartDataset {
-  dataStream: BehaviorSubject<Array<ChartPoint>>;
+  dataStream: BehaviorSubject<ChartPoint[]>;
   label: string;
   options: { type?: string; labels?: string[]; [key: string]: unknown };
 }
@@ -126,18 +126,18 @@ export class GenericChart extends Component {
   }
 
   addSeries(
-    series: Observable<Array<ChartPoint>> | ServiceIterable<ChartPoint>,
+    series: Observable<ChartPoint[]> | ServiceIterable<ChartPoint>,
     label: string,
     options: Record<string, unknown> = {},
   ): void {
     if (isObservable(series)) {
-      const points = new BehaviorSubject<Array<ChartPoint>>(
-        typeof (series as BehaviorSubject<Array<ChartPoint>>).getValue === 'function'
-          ? (series as BehaviorSubject<Array<ChartPoint>>).getValue()
+      const points = new BehaviorSubject<ChartPoint[]>(
+        typeof (series as BehaviorSubject<ChartPoint[]>).getValue === 'function'
+          ? (series as BehaviorSubject<ChartPoint[]>).getValue()
           : [],
       );
       if (this.#presetName === 'line-fast') {
-        series.pipe(debounceTime(10)).subscribe(points);
+        series.pipe(auditTime(10)).subscribe(points);
       } else {
         series.subscribe(points);
       }
@@ -158,7 +158,7 @@ export class GenericChart extends Component {
     this.#datasets[0].options.color = colorStream.getValue(); //alternatePointStyles;
   }
 
-  removeSeries(dataStream: BehaviorSubject<Array<ChartPoint>>): void {
+  removeSeries(dataStream: BehaviorSubject<ChartPoint[]>): void {
     const index = this.#datasets.map((x) => x.dataStream).indexOf(dataStream);
     if (index > -1) {
       this.#datasets.splice(index, 1);

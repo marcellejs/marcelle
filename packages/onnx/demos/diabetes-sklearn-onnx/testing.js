@@ -1,5 +1,5 @@
 import { modelParameters, text } from '@marcellejs/core';
-import { BehaviorSubject, combineLatest, debounceTime, filter, from, map, mergeMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, auditTime, filter, from, map, mergeMap } from 'rxjs';
 import { testSetTable, features } from './data';
 import { model } from './model';
 
@@ -19,7 +19,7 @@ const $features = combineLatest(features.map((x) => parameters[x]));
 
 const $predictions = $features.pipe(
   filter(() => model.ready),
-  debounceTime(20),
+  auditTime(20),
   map(model.predict),
   mergeMap((x) => from(x)),
 );
