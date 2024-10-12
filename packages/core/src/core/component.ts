@@ -12,7 +12,6 @@ export abstract class Component {
   $loading = new BehaviorSubject(false);
 
   $$: ComponentInternals = {
-    // streams: [],
     app: undefined,
   };
 
@@ -27,23 +26,7 @@ export abstract class Component {
     this.$$.app = undefined;
   }
 
-  // start(): void {
-  //   this.$$.streams = Object.entries(this)
-  //     .filter(([x, s]) => x[0] === '$' && isStream(s))
-  //     .map(([, stream]) => {
-  //       stream.start();
-  //       return stream;
-  //     });
-  // }
-
-  // stop(): void {
-  //   for (const s of this.$$.streams) {
-  //     s.stop();
-  //   }
-  // }
-
   dispose(): void {
     this.destroy();
-    // this.stop();
   }
 }

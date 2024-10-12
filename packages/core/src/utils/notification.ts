@@ -25,3 +25,27 @@ export function notification({
   }
   app?.add({ title, message, duration, type });
 }
+
+export function setupGlobalErrorNotifications(unhandledPromises = true) {
+  if (window) {
+    window.onerror = (message) => {
+      if (typeof message === 'string') {
+        notification({
+          title: 'An error occurred',
+          message,
+          type: 'danger',
+        });
+      }
+    };
+
+    if (unhandledPromises) {
+      window.addEventListener('unhandledrejection', (event) => {
+        notification({
+          title: 'An error occurred',
+          message: event.reason,
+          type: 'danger',
+        });
+      });
+    }
+  }
+}

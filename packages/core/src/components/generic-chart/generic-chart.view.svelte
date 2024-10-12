@@ -27,7 +27,7 @@
   import 'chartjs-adapter-luxon';
   import type { ChartOptions as ChartJsOptions, ChartConfiguration } from 'chart.js';
   import { onDestroy, onMount, tick } from 'svelte';
-  import { mergeDeep } from '../../utils/object';
+  import { mergeDeep } from '../../utils/merge-deep';
   import type { ChartDataset, ChartPoint } from './generic-chart.component';
   import { Subscription } from 'rxjs';
 
@@ -214,4 +214,4 @@
   onDestroy(destroy);
 </script>
 
-<div class="w-full h-96"><canvas bind:this={canvasElement} /></div>
+<div class="h-96 w-full"><canvas bind:this={canvasElement} /></div>

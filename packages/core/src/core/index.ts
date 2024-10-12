@@ -1,4 +1,3 @@
-// export * from './stream';
 export * from './component';
 export * from './data-store';
 export * from './dataset';
