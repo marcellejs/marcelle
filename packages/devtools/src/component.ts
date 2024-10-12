@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { bold, green } from 'kleur/colors';
 import prompts from 'prompts';
-import { kebabCase, camelCase, pascalCase } from 'change-case';
+import { kebabCase, camelCase, pascalCase } from 'scule';
 import { dist, mkdirp } from './utils.js';
 
 const onCancel = () => {

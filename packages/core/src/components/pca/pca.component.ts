@@ -10,7 +10,7 @@ import {
 } from '../../core';
 import type { LazyIterable } from '../../utils';
 import { saveBlob } from '../../utils/file-io';
-import { toKebabCase } from '../../utils/string';
+import { kebabCase } from 'scule';
 
 export interface PCAInstance extends Instance {
   x: number[];
@@ -88,7 +88,7 @@ export class PCA extends Model<PCAInstance, number[]> {
   }
 
   private async write(metadata: Record<string, unknown> = {}): Promise<StoredModel | null> {
-    const name = toKebabCase(this.title);
+    const name = kebabCase(this.title);
     return {
       name,
       files: [],

@@ -5,9 +5,9 @@ import { Component } from '../../core/component';
 import { DataStore } from '../../core/data-store/data-store';
 import { type Dataset, isDataset } from '../../core/dataset';
 import { dataStore, Model } from '../../core';
-import { toKebabCase } from '../../utils/string'; // TODO: replace with change-case's kebabCase
 import { LazyIterable, throwError } from '../../utils';
 import { BehaviorSubject } from 'rxjs';
+import { kebabCase } from 'scule';
 
 export interface BatchPredictionStatus {
   status: 'idle' | 'start' | 'running' | 'success' | 'error' | 'loaded' | 'loading';
@@ -44,7 +44,7 @@ export class BatchPrediction extends Component {
   }
 
   async setup(): Promise<void> {
-    const serviceName = toKebabCase(`predictions-${this.name}`);
+    const serviceName = kebabCase(`predictions-${this.name}`);
     this.predictionService = this.#store.service(serviceName) as Service<Prediction>;
 
     const { total } = (await this.predictionService.find({

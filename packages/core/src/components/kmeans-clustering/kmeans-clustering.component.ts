@@ -11,8 +11,8 @@ import {
 import { type Dataset, isDataset } from '../../core/dataset';
 import { Catch, throwError } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
-import { toKebabCase } from '../../utils/string';
 import { BehaviorSubject } from 'rxjs';
+import { kebabCase } from 'scule';
 
 export interface KMeansClusteringOptions {
   k: number;
@@ -152,7 +152,7 @@ export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
   }
 
   private async write(metadata: Record<string, unknown> = {}): Promise<StoredModel | null> {
-    const name = toKebabCase(this.title);
+    const name = kebabCase(this.title);
     return {
       name,
       files: [],

@@ -18,9 +18,9 @@ import {
 import { type Dataset, isDataset } from '../../core/dataset';
 import { Catch } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
-import { toKebabCase } from '../../utils/string';
 import type { LazyIterable } from '../../utils';
 import { BehaviorSubject } from 'rxjs';
+import { kebabCase } from 'scule';
 
 export interface KNNClassifierOptions {
   k: number;
@@ -128,7 +128,7 @@ export class KNNClassifier extends Model<KNNInstance, ClassifierResults> {
       const data = dataset[key].arraySync();
       datasetObj[key] = data;
     }
-    const name = toKebabCase(this.title);
+    const name = kebabCase(this.title);
     return {
       name,
       files: [],

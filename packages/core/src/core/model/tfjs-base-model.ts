@@ -6,9 +6,9 @@ import { LayersModel, loadLayersModel } from '@tensorflow/tfjs-layers';
 import { DataStoreBackend } from '../data-store/data-store';
 import { Catch } from '../../utils/error-handling';
 import { saveBlob } from '../../utils/file-io';
-import { toKebabCase } from '../../utils/string';
 import { Model } from './model';
 import { browserFiles, http } from './tfjs-io';
+import { kebabCase } from 'scule';
 
 interface MarcelleDownloadMetadata {
   type: string;
@@ -126,7 +126,7 @@ export abstract class TFJSBaseModel<T extends Instance, PredictionType> extends 
   }
 
   async download(metadata?: Record<string, unknown>): Promise<void> {
-    const name = toKebabCase(this.title);
+    const name = kebabCase(this.title);
     const meta: MarcelleDownloadMetadata = {
       type: 'tfjs-model',
       tfjsModelFormat: this.model instanceof LayersModel ? 'layers-model' : 'graph-model',

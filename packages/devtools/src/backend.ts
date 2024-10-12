@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { bold, cyan, green } from 'kleur/colors';
 import prompts from 'prompts';
-import { snakeCase } from 'change-case';
+import { snakeCase } from 'scule';
 import { Octokit } from '@octokit/rest';
 import fetch from 'node-fetch';
 import { copy, dist, mkdirp } from './utils.js';

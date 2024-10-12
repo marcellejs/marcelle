@@ -6,10 +6,10 @@ import { dataStore, type DataStore } from '../data-store';
 import type { ServiceIterable } from '../data-store/service-iterable';
 import { throwError } from '../../utils/error-handling';
 import { readJSONFile, saveBlob } from '../../utils/file-io';
-import { toKebabCase } from '../../utils/string';
 import { mergeDeep } from '../../utils';
 import sift from 'sift';
 import { addScope, dataURL2ImageData, imageData2DataURL, limitToScope } from '../data-store/hooks';
+import { kebabCase } from 'scule';
 
 interface DatasetChange {
   level: 'instance' | 'dataset';
@@ -53,7 +53,7 @@ export class Dataset<T extends Instance> extends Component {
   }
 
   protected async setup(): Promise<void> {
-    const instanceServiceName = toKebabCase(`instances-${this.name}`);
+    const instanceServiceName = kebabCase(`instances-${this.name}`);
     this.instanceService = this.#store.service(instanceServiceName);
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
