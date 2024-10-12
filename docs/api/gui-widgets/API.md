@@ -46,6 +46,120 @@ capture.$click.subscribe((x) => console.log('button $click:', x));
 capture.$pressed.subscribe((x) => console.log('button $pressed:', x));
 ```
 
+## fileUpload
+
+```tsx
+function fileUpload(): FileUpload;
+```
+
+A file upload component, that creates a stream of files.
+
+### Streams
+
+| Name    | Type              | Description     | Hold |
+| ------- | ----------------- | --------------- | :--: |
+| \$files | Stream\<never()\> | Stream of files |
+
+### Example
+
+```js
+const myFileUpload = marcelle.fileUpload();
+myFileUpload.$files.subscribe((x) => console.log('fileUpload $files:', x));
+```
+
+## imageUpload
+
+```tsx
+function imageUpload({ width?: number, height?: number }): ImageUpload;
+```
+
+An Image upload component, that creates a stream of images and thumbnails. Images are cropped and rescaled to match the target dimensions, if these are non-zero, otherwise the dimensions are unchanged.
+
+### Parameters
+
+| Option | Type   | Description         | Required | Default |
+| ------ | ------ | ------------------- | :------: | :-----: |
+| width  | number | Target image width  |          |    0    |
+| height | number | Target image height |          |    0    |
+
+### Streams
+
+| Name         | Type                | Description                                                                                                                        | Hold |
+| ------------ | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | :--: |
+| \$images     | Stream\<ImageData\> | Stream of images in the [ImageData](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) format.                            |
+| \$thumbnails | Stream\<string\>    | Stream of thumbnail images in base64 [dataURI](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) format. |      |
+
+### Screenshot
+
+<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
+  <img src="./images/imageUpload.png" alt="Screenshot of the imageUpload component" width="350">
+</div>
+
+### Example
+
+```js
+const imgUpload = marcelle.imageUpload();
+imgUpload.$images.subscribe((x) => console.log('imageUpload $images:', x));
+```
+
+## modelParameters
+
+```tsx
+function modelParameters(p: Parametrable): ModelParameters;
+```
+
+This component provides an GUI for visualizing and adjusting parameters. It takes a `Parametrable` object as argument, which is an object (typically a model) carrying a `parameters` property which is a record of parameter streams:
+
+```ts
+interface Parametrable {
+  parameters: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [name: string]: Stream<any>;
+  };
+}
+```
+
+The component will automatically display all parameters with appropriate GUI Widgets.
+
+### Parameters
+
+| Option | Type         | Description                                                             | Required |
+| ------ | ------------ | ----------------------------------------------------------------------- | :------: |
+| p      | Parametrable | An object exposing parameters as streams to visualize and make editable |    ✓     |
+
+### Screenshot
+
+<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
+  <img src="./images/model-parameters.png" alt="Screenshot of the parameters component">
+</div>
+
+### Examples
+
+```js
+const classifier = marcelle.mlp({ layers: [64, 32], epochs: 20 });
+const params = marcelle.parameters(classifier);
+
+dashboard.page('Training').use(params);
+```
+
+```js
+const parametrable = {
+  parameters: {
+    int: new Stream(12, true),
+    float: new Stream(-0.0000045, true),
+    intArray: new Stream(Array.from(Array(3), () => Math.floor(100 * Math.random()))),
+    floatArray: new Stream(Array.from(Array(3), () => Math.random())),
+    string: new Stream('test'),
+    menu: new Stream('three'),
+    bool: new Stream(false),
+  },
+};
+
+const p = modelParameters(parametrable, {
+  menu: { type: 'menu', options: ['one', 'two', 'three'] },
+});
+```
+
 ## number
 
 ```tsx
@@ -357,4 +471,31 @@ A generic GUI toggle (switch) component.
 ```js
 const tog = toggle('Toggle Real-Time Prediction');
 tog.$checked.subscribe((x) => console.log('toggle $checked:', x));
+```
+
+## trainingProgress
+
+```tsx
+function trainingProgress(m: Model): TrainingProgress;
+```
+
+Displays the progress of the training process for a given model.
+
+### Parameters
+
+| Option | Type  | Description                                            | Required |
+| ------ | ----- | ------------------------------------------------------ | :------: |
+| m      | Model | A machine learning model exposing a `$training` stream |    ✓     |
+
+### Screenshot
+
+<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
+  <img src="./images/training-progress.png" alt="Screenshot of the training-progress component">
+</div>
+
+### Example
+
+```js
+const classifier = marcelle.mlp({ layers: [64, 32], epochs: 20 });
+const prog = marcelle.trainingProgress(classifier);
 ```

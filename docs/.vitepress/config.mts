@@ -31,7 +31,6 @@ export default defineConfig({
           text: 'Core',
           items: [
             { text: 'Component API', link: '/api/component' },
-            { text: 'Streams', link: '/api/streams' },
             { text: 'Data Storage', link: '/api/data-storage' },
             { text: 'Models', link: '/api/models' },
             { text: 'Utilities', link: '/api/utilities' },
@@ -47,7 +46,14 @@ export default defineConfig({
             { text: 'Model interfaces', link: '/api/components/model-interfaces' },
             { text: 'Models', link: '/api/components/models' },
             { text: 'Prediction displays', link: '/api/components/prediction-displays' },
-            { text: 'Widgets', link: '/api/components/widgets' },
+          ],
+        },
+        {
+          text: '@marcellejs/gui-widgets',
+          collapsed: true,
+          items: [
+            { text: 'Guide', link: '/api/gui-widgets/' },
+            { text: 'API', link: '/api/gui-widgets/API' },
           ],
         },
         {

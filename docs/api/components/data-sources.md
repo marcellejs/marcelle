@@ -4,62 +4,6 @@ sidebarDepth: 3
 
 # Data sources
 
-## fileUpload
-
-```tsx
-function fileUpload(): FileUpload;
-```
-
-A file upload component, that creates a stream of files.
-
-### Streams
-
-| Name    | Type              | Description     | Hold |
-| ------- | ----------------- | --------------- | :--: |
-| \$files | Stream\<never()\> | Stream of files |
-
-### Example
-
-```js
-const myFileUpload = marcelle.fileUpload();
-myFileUpload.$files.subscribe((x) => console.log('fileUpload $files:', x));
-```
-
-## imageUpload
-
-```tsx
-function imageUpload({ width?: number, height?: number }): ImageUpload;
-```
-
-An Image upload component, that creates a stream of images and thumbnails. Images are cropped and rescaled to match the target dimensions, if these are non-zero, otherwise the dimensions are unchanged.
-
-### Parameters
-
-| Option | Type   | Description         | Required | Default |
-| ------ | ------ | ------------------- | :------: | :-----: |
-| width  | number | Target image width  |          |    0    |
-| height | number | Target image height |          |    0    |
-
-### Streams
-
-| Name         | Type                | Description                                                                                                                        | Hold |
-| ------------ | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | :--: |
-| \$images     | Stream\<ImageData\> | Stream of images in the [ImageData](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) format.                            |
-| \$thumbnails | Stream\<string\>    | Stream of thumbnail images in base64 [dataURI](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) format. |      |
-
-### Screenshot
-
-<div style="background: rgb(237, 242, 247); padding: 8px; margin-top: 1rem;">
-  <img src="./images/imageUpload.png" alt="Screenshot of the imageUpload component" width="350">
-</div>
-
-### Example
-
-```js
-const imgUpload = marcelle.imageUpload();
-imgUpload.$images.subscribe((x) => console.log('imageUpload $images:', x));
-```
-
 ## mediaRecorder
 
 ```tsx
