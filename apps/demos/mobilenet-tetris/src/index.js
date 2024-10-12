@@ -1,23 +1,20 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
 import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import './style.css';
 import {
   datasetBrowser,
   dataset,
-  button,
-  modelParameters,
   trainingProgress,
-  toggle,
   dataStore,
-  textInput,
   batchPrediction,
   confusionMatrix,
   confidencePlot,
-  select,
   mobileNet,
   webcam,
   knnClassifier,
 } from '@marcellejs/core';
+import { button, modelParameters, select, textInput, toggle } from '@marcellejs/gui-widgets';
 import { dashboard } from '@marcellejs/layouts';
 import { setMove, reset, stop } from './tetris';
 import App from './App.svelte';

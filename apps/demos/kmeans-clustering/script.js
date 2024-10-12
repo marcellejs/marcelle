@@ -1,21 +1,18 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
 import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import {
   datasetBrowser,
   datasetScatter,
-  button,
   dataset,
   dataStore,
   mobileNet,
-  toggle,
   webcam,
   kmeansClustering,
-  modelParameters,
-  scatterPlot,
   throwError,
-  confidencePlot,
   pca,
 } from '@marcellejs/core';
+import { button, modelParameters, toggle } from '@marcellejs/gui-widgets';
 import { dashboard } from '@marcellejs/layouts';
 import { filter, from, map, mergeMap, Subject, zip } from 'rxjs';
 

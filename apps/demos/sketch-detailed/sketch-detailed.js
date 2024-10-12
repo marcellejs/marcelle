@@ -1,25 +1,28 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
 import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import {
   datasetBrowser,
-  button,
   dataset,
   dataStore,
   mlpClassifier,
   mobileNet,
   confidencePlot,
   sketchPad,
-  textInput,
-  toggle,
-  modelParameters,
-  trainingProgress,
   trainingPlot,
   batchPrediction,
   confusionMatrix,
   throwError,
 } from '@marcellejs/core';
+import {
+  button,
+  modelParameters,
+  textInput,
+  toggle,
+  trainingProgress,
+} from '@marcellejs/gui-widgets';
 import { dashboard } from '@marcellejs/layouts';
-import { filter, from, map, mergeMap, tap, withLatestFrom, zip } from 'rxjs';
+import { filter, from, map, mergeMap, withLatestFrom, zip } from 'rxjs';
 
 // Main components
 const input = sketchPad();

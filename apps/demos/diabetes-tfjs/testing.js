@@ -1,4 +1,4 @@
-import { modelParameters, text } from '@marcellejs/core';
+import { modelParameters, text } from '@marcellejs/gui-widgets';
 import { BehaviorSubject, combineLatest, filter, from, map, mergeMap } from 'rxjs';
 import { testSetTable, features } from './data';
 import { model } from './model';

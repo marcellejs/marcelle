@@ -1,23 +1,26 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
 import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import {
   batchPrediction,
   datasetBrowser,
-  button,
   confusionMatrix,
   dataset,
   dataStore,
   mlpClassifier,
   mobileNet,
-  modelParameters,
   confidencePlot,
-  trainingProgress,
-  textInput,
-  toggle,
   trainingPlot,
   webcam,
   throwError,
 } from '@marcellejs/core';
+import {
+  button,
+  modelParameters,
+  textInput,
+  toggle,
+  trainingProgress,
+} from '@marcellejs/gui-widgets';
 import { dashboard } from '@marcellejs/layouts';
 import { filter, from, map, mergeMap, zip } from 'rxjs';
 

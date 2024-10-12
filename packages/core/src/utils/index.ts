@@ -3,3 +3,4 @@ export * from './image';
 export * from './lazy-iterable';
 export * from './merge-deep';
 export * from './notification';
+export * from './rxjs';

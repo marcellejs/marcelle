@@ -1,7 +1,8 @@
-import { confidencePlot, slider, text } from '@marcellejs/core';
+import { confidencePlot } from '@marcellejs/core';
 import { tst } from './data';
 import { classifier } from './training';
 import { mergeWith, filter, map, mergeMap, from } from 'rxjs';
+import { slider, text } from '@marcellejs/gui-widgets';
 
 const hint = text('Change slider values or select a data point in the table at the bottom');
 hint.title = 'hint';

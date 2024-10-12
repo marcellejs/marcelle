@@ -1,4 +1,5 @@
-import { batchPrediction, button, confusionMatrix } from '@marcellejs/core';
+import { batchPrediction, confusionMatrix } from '@marcellejs/core';
+import { button } from '@marcellejs/gui-widgets';
 import { processDataset } from './preprocessing';
 import { classifier } from './training';
 import './testing';

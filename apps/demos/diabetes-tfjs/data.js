@@ -1,4 +1,5 @@
-import { button, dataset, datasetTable, text } from '@marcellejs/core';
+import { dataset, datasetTable } from '@marcellejs/core';
+import { button, text } from '@marcellejs/gui-widgets';
 import papaparse from 'https://cdn.jsdelivr.net/npm/papaparse@5.4.1/+esm';
 import trainData from './diabetes_train_set.csv?raw';
 import testData from './diabetes_test_set.csv?raw';

@@ -1,6 +1,8 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
 import '@marcellejs/layouts/dist/marcelle-layouts.css';
-import { imageUpload, confidencePlot, select, imageDisplay, tfjsModel } from '@marcellejs/core';
+import { confidencePlot, imageDisplay, tfjsModel } from '@marcellejs/core';
+import { imageUpload, select } from '@marcellejs/gui-widgets';
 import { dashboard } from '@marcellejs/layouts';
 import { from, map, merge, mergeMap, withLatestFrom } from 'rxjs';
 import { gradcam } from './components';

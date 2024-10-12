@@ -1,4 +1,4 @@
-import { select, text } from '@marcellejs/core';
+import { select, text } from '@marcellejs/gui-widgets';
 import { BehaviorSubject, map } from 'rxjs';
 
 export const skeletonImage = text('<img src="/movenet.png">');

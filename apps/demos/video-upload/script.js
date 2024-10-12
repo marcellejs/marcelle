@@ -1,17 +1,17 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
 import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import {
   dashboard,
   webcam,
   mediaRecorder,
   videoPlayer,
-  microphone,
-  button,
+  // microphone,
   dataStore,
   dataset,
   datasetTable,
-  text,
 } from '@marcellejs/core';
+import { button, text } from '@marcellejs/gui-widgets';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE

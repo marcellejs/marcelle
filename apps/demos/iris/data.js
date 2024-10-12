@@ -1,4 +1,5 @@
-import { button, dataset, datasetTable, text } from '@marcellejs/core';
+import { dataset, datasetTable } from '@marcellejs/core';
+import { button, text } from '@marcellejs/gui-widgets';
 import papaparse from 'https://cdn.jsdelivr.net/npm/papaparse@5.4.1/+esm';
 import irisData from './iris.csv?raw';
 import { store } from './common';

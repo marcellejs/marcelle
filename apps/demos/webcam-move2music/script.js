@@ -1,24 +1,28 @@
 import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
 import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import howler from 'https://cdn.jsdelivr.net/npm/howler@2.2.4/+esm';
 import {
   batchPrediction,
   datasetBrowser,
-  button,
   confusionMatrix,
   dataset,
   dataStore,
   mlpClassifier,
   mobileNet,
-  modelParameters,
   confidencePlot,
-  trainingProgress,
+  trainingPlot,
+  webcam,
+  throwError,
+} from '@marcellejs/core';
+import {
+  button,
+  modelParameters,
   text,
   textInput,
   toggle,
-  trainingPlot,
-  webcam,
-} from '@marcellejs/core';
+  trainingProgress,
+} from '@marcellejs/gui-widgets';
 import { dashboard, wizard } from '@marcellejs/layouts';
 import { filter, from, map, mergeMap, zip } from 'rxjs';
 

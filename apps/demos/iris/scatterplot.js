@@ -1,4 +1,5 @@
-import { genericChart, select } from '@marcellejs/core';
+import { genericChart } from '@marcellejs/core';
+import { select } from '@marcellejs/gui-widgets';
 import { ts } from './data';
 import './testing';
 import './batch-prediction';

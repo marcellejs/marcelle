@@ -1,4 +1,5 @@
-import { button, modelParameters, trainingPlot, trainingProgress } from '@marcellejs/core';
+import { trainingPlot } from '@marcellejs/core';
+import { button, modelParameters, trainingProgress } from '@marcellejs/gui-widgets';
 import { store } from './common';
 import { regressor } from './components';
 // Note: the demo works with the built-in mlpRegressor component:
