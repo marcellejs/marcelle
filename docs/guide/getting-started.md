@@ -178,7 +178,7 @@ const $instances = rxjs.zip([$features, input.$thumbnails]).pipe(
 $instances.subscribe(console.log);
 ```
 
-Instances have few properties. In this example, we see that the label is specified by a string that we 'hard-coded' to `test`. In an application, a label can be provided by the user through a [textInput](../api/components/widgets.html#textinput) on the interface:
+Instances have few properties. In this example, we see that the label is specified by a string that we 'hard-coded' to `test`. In an application, a label can be provided by the user through a [textInput](../api/gui-widgets/components.html#textinput) on the interface:
 
 ```js
 const label = marcelle.textInput();
@@ -232,7 +232,7 @@ const trainingSetBrowser = marcelle.datasetBrowser(trainingSet);
 myDashboard.page('Data Management').sidebar(input, featureExtractor).use(label, trainingSetBrowser);
 ```
 
-If you draw on the sketchpad, you will notice that an instance is recorded at every stroke, because the dataset is capturing all instances coming from the sketchpad. To give the user more control over what is captured as training data, we can create a [button](../api/components/widgets.html#button) to capture particular drawings.
+If you draw on the sketchpad, you will notice that an instance is recorded at every stroke, because the dataset is capturing all instances coming from the sketchpad. To give the user more control over what is captured as training data, we can create a [button](../api/gui-widgets/components.html#button) to capture particular drawings.
 
 ```js
 const capture = marcelle.button('Click to record an instance');

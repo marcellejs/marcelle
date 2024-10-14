@@ -566,7 +566,7 @@ This component allows to make predictions using pre-trained Tensorflow.js models
 - Models created with the tf.layers.\*, tf.sequential(), and tf.model() APIs of TensorFlow.js and later saved with the tf.LayersModel.save() method.
 - Models converted from Keras or TensorFlow using the tensorflowjs_converter.
 
-It supports several types of input (currently, images or arrays), as well as several types of task (classification, segmentation, generic prediction). Pre-trained models can be loaded either by URL, or through file upload, for instance using the [`fileUpload`](/api/components/widgets.html#fileupload) component.
+It supports several types of input (currently, images or arrays), as well as several types of task (classification, segmentation, generic prediction). Pre-trained models can be loaded either by URL, or through file upload, for instance using the [`fileUpload`](/api/gui-widgets/components.html#fileupload) component.
 
 Such generic models cannot be trained.
 

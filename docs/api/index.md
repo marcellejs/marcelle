@@ -15,9 +15,9 @@ This section describes all the individual APIs of Marcelle. There are three main
 Marcelle core functionality
 
 - [Marcelle Components](component.md) - Marcelle's component API
-- [Streams](streams.md) - Reactive streams API
 - [Data Storage](data-storage.md) - Data stores and services API, including server-side storage
 - [Models](models.md) - Marcelle's machine learning model API
+- [Utilities](utilities.md) - Marcelle's machine learning model API
 
 ## Components
 
@@ -29,7 +29,7 @@ Marcelle's built-in components, grouped by categories:
 - [Model Interfaces](components/model-interfaces.md) - Visualization tools for machine learning models
 - [Models](components/models.md) - Built-in machine learning models
 - [Prediction Displays](components/prediction-displays.md) - Visualization tools for model predictions
-- [Widgets](components/widgets.md) - Simple GUI widgets
+- [Widgets](gui-widgets/index.md) - Simple GUI widgets
 
 ## Layouts
 

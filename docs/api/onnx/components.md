@@ -19,7 +19,7 @@ function onnxModel({
 
 This component allows to make predictions using pre-trained models in the ONNX format, using [`onnxruntime-web`](https://github.com/microsoft/onnxruntime/tree/master/js/web). The default backend for inference is `wasm`, as it provides a wider operator support.
 
-The implementation currently supports tensors as input, formatted as nested number arrays, and two types of task (classification, generic prediction). Pre-trained models can be loaded either by URL, or through file upload, for instance using the [`fileUpload`](/api/components/widgets.html#fileupload) component.
+The implementation currently supports tensors as input, formatted as nested number arrays, and two types of task (classification, generic prediction). Pre-trained models can be loaded either by URL, or through file upload, for instance using the [`fileUpload`](/api/gui-widgets/components.html#fileupload) component.
 
 Such generic models cannot be trained.
 

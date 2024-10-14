@@ -53,7 +53,7 @@ export default defineConfig({
           collapsed: true,
           items: [
             { text: 'Guide', link: '/api/gui-widgets/' },
-            { text: 'API', link: '/api/gui-widgets/API' },
+            { text: 'API', link: '/api/gui-widgets/components' },
           ],
         },
         {
