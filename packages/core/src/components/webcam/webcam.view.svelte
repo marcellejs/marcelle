@@ -45,10 +45,10 @@
 
 <div class="webcam">
   <div class="">
-    <div class="form-control">
-      <label class="label cursor-pointer">
-        <input type="checkbox" class="toggle" bind:checked={$active} />
-        <span class="label-text ml-2">activate video</span>
+    <div class="mco-form-control">
+      <label class="mco-label cursor-pointer">
+        <input type="checkbox" class="mco-toggle" bind:checked={$active} />
+        <span class="mco-label-text ml-2">activate video</span>
       </label>
     </div>
   </div>
@@ -60,7 +60,7 @@
       width}px"
   >
     {#if $active && !$ready}
-      <span class="absolute flex flex-nowrap items-center justify-center inset-0 w-full">
+      <span class="absolute inset-0 flex w-full flex-nowrap items-center justify-center">
         <span class="loading loading-spinner loading-lg"></span>
       </span>
     {/if}
@@ -79,7 +79,7 @@
     {#if numWebcams > 1}
       <div class="absolute bottom-2 right-2 text-right">
         <button
-          class="btn btn-circle ghost"
+          class="ghost btn btn-circle"
           on:click={() =>
             facingMode.next(facingMode.getValue() === 'user' ? 'environment' : 'user')}
         >
@@ -89,7 +89,7 @@
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="w-6 h-6"
+            class="h-6 w-6"
           >
             <path
               stroke-linecap="round"
@@ -105,11 +105,11 @@
 
 <style lang="postcss">
   .webcam {
-    @apply mt-2 w-full text-center flex flex-col items-center;
+    @apply mt-2 flex w-full flex-col items-center text-center;
   }
 
   .webcam .webcam-container {
-    @apply rounded-md overflow-hidden bg-base-300 m-2 w-full flex justify-center;
+    @apply m-2 flex w-full justify-center overflow-hidden rounded-md bg-base-300;
     max-width: 350px;
   }
 

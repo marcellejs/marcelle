@@ -5,12 +5,12 @@
   export let progress: Observable<ProgressType>;
 </script>
 
-<div class="relative pt-6 w-full" style="min-width: 250px;">
-  <div class="flex mb-2 items-center justify-between">
+<div class="relative w-full pt-6" style="min-width: 250px;">
+  <div class="mb-2 flex items-center justify-between">
     <div>
       <span
-        class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-accent
-          bg-blue-200"
+        class="inline-block rounded-full bg-blue-200 px-2 py-1 text-xs font-semibold uppercase
+          text-accent"
         class:gray={$progress?.type === 'idle'}
         class:green={$progress?.type === 'success'}
         class:red={$progress?.type === 'danger'}
@@ -20,7 +20,7 @@
     </div>
     <div class="text-right">
       <span
-        class="text-xs font-semibold inline-block text-blue-600"
+        class="inline-block text-xs font-semibold text-blue-600"
         class:tgray={$progress?.type === 'idle'}
         class:tgreen={$progress?.type === 'success'}
         class:tred={$progress?.type === 'danger'}
@@ -30,12 +30,12 @@
     </div>
   </div>
   <progress
-    class="progress w-full"
+    class="mgui-progress w-full"
     value={$progress?.progress}
     max="1"
-    class:progress-accent={$progress?.type === 'default'}
-    class:progress-error={$progress?.type === 'danger'}
-    class:progress-success={$progress?.type === 'success'}
+    class:mgui-progress-accent={$progress?.type === 'default'}
+    class:mgui-progress-error={$progress?.type === 'danger'}
+    class:mgui-progress-success={$progress?.type === 'success'}
   ></progress>
 </div>
 

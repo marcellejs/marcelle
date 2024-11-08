@@ -30,13 +30,13 @@
 
 <div>
   <button
-    class="btn"
-    class:btn-disabled={$disabled}
+    class="mgui-btn"
+    class:mgui-btn-disabled={$disabled}
     disabled={$disabled}
-    class:btn-rounded={round}
-    class:btn-error={$type === 'danger'}
-    class:btn-success={$type === 'success'}
-    class:btn-warning={$type === 'warning'}
+    class:mgui-btn-rounded={round}
+    class:mgui-btn-error={$type === 'danger'}
+    class:mgui-btn-success={$type === 'success'}
+    class:mgui-btn-warning={$type === 'warning'}
     on:mousedown={startDown}
     on:touchstart|preventDefault={startDown}
     on:touchend={fireClick}

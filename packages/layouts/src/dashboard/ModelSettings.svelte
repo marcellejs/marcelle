@@ -51,9 +51,9 @@
 
 <ViewContainer title={model.title}>
   <div class="flex">
-    <button class="btn btn-outline" on:click={downloadModel}>Download Model</button>
+    <button class="mly-btn mly-btn-outline" on:click={downloadModel}>Download Model</button>
     <span class="w-1" />
     <input bind:this={uploadInput} type="file" multiple class="hidden" />
-    <button class="btn btn-outline" on:click={uploadModel}>Upload Model</button>
+    <button class="mly-btn mly-btn-outline" on:click={uploadModel}>Upload Model</button>
   </div>
 </ViewContainer>

@@ -6,9 +6,9 @@
   export let disabled: BehaviorSubject<boolean>;
 </script>
 
-<div class="form-control">
-  <label class="label cursor-pointer justify-start">
-    <input type="checkbox" class="toggle" bind:checked={$checked} disabled={$disabled} />
-    <span class="label-text ml-2">{$text}</span>
+<div class="mgui-form-control">
+  <label class="mgui-label cursor-pointer justify-start">
+    <input type="checkbox" class="mgui-toggle" bind:checked={$checked} disabled={$disabled} />
+    <span class="mgui-label-text ml-2">{$text}</span>
   </label>
 </div>

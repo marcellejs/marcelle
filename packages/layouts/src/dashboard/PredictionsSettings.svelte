@@ -43,6 +43,8 @@
   <button on:click={uploadPredictions}>Upload Predictions</button> -->
     <!-- <span class="w-1" />
   <input bind:this={uploadInput} type="file" multiple class="hidden" /> -->
-    <button class="btn btn-outline btn-error" on:click={clearPredictions}>Clear Predictions</button>
+    <button class="mly-btn mly-btn-outline mly-btn-error" on:click={clearPredictions}
+      >Clear Predictions</button
+    >
   </div>
 </ViewContainer>

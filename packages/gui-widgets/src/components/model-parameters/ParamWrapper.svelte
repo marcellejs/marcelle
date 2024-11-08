@@ -10,7 +10,7 @@
 
 <div style="flex-grow: 1;">
   {#if spec.type === 'menu' && Array.isArray(spec.options) && spec.options.length > 0}
-    <select class="select select-bordered w-full max-w-xs" bind:value={$stream}>
+    <select class="mgui-select mgui-select-bordered w-full max-w-xs" bind:value={$stream}>
       {#each spec.options as option}
         <option>{option}</option>
       {/each}
@@ -22,6 +22,6 @@
   {:else if spec.type === 'number array' || (spec.type === 'auto' && Array.isArray(stream.getValue()) && stream.getValue().length && typeof stream.getValue()[0] === 'number')}
     <NumberArray bind:value={$stream} />
   {:else}
-    <input type="text" class="input input-bordered" bind:value={$stream} />
+    <input type="text" class="mgui-input mgui-input-bordered" bind:value={$stream} />
   {/if}
 </div>

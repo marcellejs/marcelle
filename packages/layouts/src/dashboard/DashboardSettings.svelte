@@ -37,13 +37,13 @@
       {#if Array.isArray(m)}
         <div class="flex flex-row flex-wrap items-stretch">
           {#each m as { id }}
-            <div {id} class="card flex-none xl:flex-1 w-full xl:w-auto" />
+            <div {id} class="mly-card w-full flex-none xl:w-auto xl:flex-1" />
           {/each}
         </div>
       {:else if typeof m === 'string'}
         <h2>{m}</h2>
       {:else}
-        <div id={m.id} class="card" />
+        <div id={m.id} class="mly-card" />
       {/if}
     {/each}
   </div>
@@ -51,7 +51,7 @@
 
 <style type="text/postcss">
   .left {
-    @apply shrink-0 p-1 w-full;
+    @apply w-full shrink-0 p-1;
   }
 
   .right {

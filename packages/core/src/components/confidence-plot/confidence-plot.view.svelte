@@ -14,5 +14,11 @@
   });
 </script>
 
-<div><p>Predicted Label: <code style="font-size: 1.5rem;">{$predictionStream.label}</code></p></div>
+<div>
+  <p>
+    Predicted Label: <code style="font-size: 1.5rem;"
+      >{$predictionStream ? $predictionStream?.label : ''}</code
+    >
+  </p>
+</div>
 <div bind:this={confElt}></div>

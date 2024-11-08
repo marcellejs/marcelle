@@ -66,7 +66,7 @@
 
 <svelte:body on:mouseup={stopDrawing} />
 
-<div class="w-full flex flex-col items-center box-border">
+<div class="box-border flex w-full flex-col items-center">
   <canvas
     id="fxid"
     class="sketchpad-container"
@@ -77,13 +77,13 @@
     on:mousedown={startDrawing}
   />
   <div class="m-1">
-    <button class="btn btn-sm btn-error" on:click={clearDrawing}>Clear</button>
+    <button class="mco-btn mco-btn-sm mco-btn-error" on:click={clearDrawing}>Clear</button>
   </div>
 </div>
 
 <style lang="postcss">
   .sketchpad-container {
-    @apply overflow-hidden flex justify-center m-1 border border-solid border-gray-400 rounded-lg;
+    @apply m-1 flex justify-center overflow-hidden rounded-lg border border-solid border-gray-400;
     width: 300px;
     height: 300px;
   }

@@ -52,8 +52,8 @@
   }
 </script>
 
-<div class="marcelle wizard">
-  <div class="absolute min-h-screen inset-0 transition-opacity">
+<div class="wizard">
+  <div class="absolute inset-0 min-h-screen transition-opacity">
     <div
       on:click={quit}
       on:keypress|preventDefault={(e) => e.key === 'Escape' && quit()}
@@ -62,8 +62,8 @@
     />
   </div>
   <div
-    class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-3xl
-      sm:w-full"
+    class="transform overflow-hidden rounded-lg bg-white shadow-xl transition-all sm:w-full
+      sm:max-w-3xl"
   >
     <WizardPageComponent
       title={pages[$current].attr.title}
@@ -71,8 +71,10 @@
       components={pages[$current].components}
       index={$current + 1}
     />
-    <div class="bg-white border-t border-gray-300 px-4 py-2 grid grid-cols-3">
-      <div><button class="btn btn-outline btn-error" on:click={quit}>Close</button></div>
+    <div class="grid grid-cols-3 border-t border-gray-300 bg-white px-4 py-2">
+      <div>
+        <button class="mly-btn mly-btn-outline mly-btn-error" on:click={quit}>Close</button>
+      </div>
       <div class="text-center">
         <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
         {#each Array(pages.length) as _, i}
@@ -81,7 +83,7 @@
       </div>
       <div class="text-right">
         <button
-          class="btn btn-outline"
+          class="mly-btn mly-btn-outline"
           disabled={$current <= 0}
           on:click={() => {
             goToPage($current - 1);
@@ -90,8 +92,8 @@
           Previous
         </button>
         <button
-          class="btn"
-          class:btn-success={$current >= pages.length - 1}
+          class="mly-btn"
+          class:mly-btn-success={$current >= pages.length - 1}
           on:click={() => {
             if (current.getValue() < pages.length - 1) {
               goToPage($current + 1);
@@ -109,7 +111,7 @@
 
 <style lang="postcss">
   .wizard {
-    @apply absolute min-h-screen top-0 inset-x-0 p-4 pb-4  z-20;
+    @apply absolute inset-x-0 top-0 z-20 min-h-screen p-4 pb-4;
   }
 
   @screen sm {
@@ -118,12 +120,12 @@
     }
   }
 
-  .wizard :global(.card-title) {
+  .wizard :global(.mly-card-title) {
     display: none !important;
   }
 
   .page-button {
-    @apply w-2 h-2 p-0 mx-1 border-none rounded-full bg-blue-300 cursor-pointer;
+    @apply mx-1 h-2 w-2 cursor-pointer rounded-full border-none bg-blue-300 p-0;
   }
 
   .page-button.current,

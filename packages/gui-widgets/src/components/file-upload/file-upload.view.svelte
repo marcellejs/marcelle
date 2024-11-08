@@ -67,7 +67,7 @@
   <div class="overlay">
     <i>
       <svg
-        class="fill-current w-12 h-12 mb-3 text-blue-700"
+        class="mb-3 h-12 w-12 fill-current text-blue-700"
         xmlns="http://www.w3.org/2000/svg"
         width="24"
         height="24"
@@ -91,13 +91,13 @@
   role="none"
 >
   <div
-    class="border-dashed border-2 border-gray-300 py-8 flex flex-col justify-center items-center"
+    class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 py-8"
   >
-    <p class="mb-3 font-semibold text-gray-900 flex flex-wrap justify-center">
+    <p class="mb-3 flex flex-wrap justify-center font-semibold text-gray-900">
       <span>Drop Files here or:</span>
     </p>
     <input bind:this={uploadInput} type="file" multiple class="hidden" />
-    <button class="btn" on:click={clickUpload}>Upload a file</button>
+    <button class="mgui-btn" on:click={clickUpload}>Upload a file</button>
   </div>
 </div>
 
@@ -110,8 +110,7 @@
   }
 
   .overlay {
-    @apply w-full h-full absolute top-0 left-0 pointer-events-none z-50 flex flex-col items-center
-      justify-center rounded-md;
+    @apply pointer-events-none absolute left-0 top-0 z-50 flex h-full w-full flex-col items-center justify-center rounded-md;
     background-color: rgba(255, 255, 255, 0.7);
   }
 </style>

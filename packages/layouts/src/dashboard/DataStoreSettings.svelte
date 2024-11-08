@@ -21,17 +21,21 @@
 <ViewContainer title="data store ({dataStore.location})">
   {#if dataStore.requiresAuth}
     {#await dataStore.connect()}
-      <div class="w-full min-h-28 flex flex-col justify-center items-center">
-        <span class="loading loading-spinner loading-lg"></span>
+      <div class="flex min-h-28 w-full flex-col items-center justify-center">
+        <span class="mly-loading mly-loading-spinner mly-loading-lg"></span>
         <span>Connecting</span>
       </div>
     {:then user}
       {#if user.role === 'anonymous'}
         <p>You are not authenticated.</p>
-        <div class="flex"><button class="btn btn-outline" on:click={signin}> Sign in </button></div>
+        <div class="flex">
+          <button class="mly-btn mly-btn-outline" on:click={signin}> Sign in </button>
+        </div>
       {:else}
         <p class="pb-2">Hello, {user.email}</p>
-        <div class="flex"><button class="btn btn-outline" on:click={logout}> Log out </button></div>
+        <div class="flex">
+          <button class="mly-btn mly-btn-outline" on:click={logout}> Log out </button>
+        </div>
       {/if}
     {/await}
     <!-- {:else}

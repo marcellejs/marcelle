@@ -10,7 +10,7 @@
     <input
       type="text"
       placeholder="Enter a label..."
-      class="input input-bordered w-full max-w-sm"
+      class="mgui-input mgui-input-bordered w-full max-w-sm"
       bind:value={$value}
       disabled={$disabled}
     />

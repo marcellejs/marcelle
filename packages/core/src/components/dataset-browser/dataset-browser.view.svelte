@@ -249,14 +249,14 @@
         <div class="w-full">
           <div class="browser-class-header">
             <span class="browser-class-title">{label}</span>
-            <div class="dropdown dropdown-end">
+            <div class="mco-dropdown mco-dropdown-end">
               <button
                 tabindex="0"
-                class="btn btn-sm btn-circle btn-ghost"
+                class="mco-btn mco-btn-sm mco-btn-circle mco-btn-ghost"
                 on:click|stopPropagation={noop}
               >
                 <svg
-                  class="fill-current inline-block h-5 w-5"
+                  class="inline-block h-5 w-5 fill-current"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   ><path
@@ -267,7 +267,7 @@
               <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
               <ul
                 tabindex="0"
-                class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+                class="mco-menu mco-dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
               >
                 <li>
                   <button on:click={() => editClassLabel(label)}> Edit Class Label </button>
@@ -316,11 +316,11 @@
 {/if}
 {#if dataStoreError}
   <div
-    class="flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
+    class="mb-4 flex rounded-lg bg-red-100 p-4 text-sm text-red-700 dark:bg-red-200 dark:text-red-800"
     role="alert"
   >
     <svg
-      class="inline flex-shrink-0 mr-3 w-5 h-5"
+      class="mr-3 inline h-5 w-5 flex-shrink-0"
       fill="currentColor"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -339,17 +339,17 @@
 
 <style>
   .browser-class {
-    @apply relative m-2 w-1/3 grow flex flex-col items-center justify-between;
-    @apply border-gray-500 border border-solid rounded-lg;
+    @apply relative m-2 flex w-1/3 grow flex-col items-center justify-between;
+    @apply rounded-lg border border-solid border-gray-500;
     min-width: 300px;
   }
 
   .browser-class-header {
-    @apply flex flex-row justify-between items-center w-full;
+    @apply flex w-full flex-row items-center justify-between;
   }
 
   .browser-class-title {
-    @apply text-sm px-2 py-1 self-start font-semibold bg-gray-500 text-white rounded-tl-md rounded-br-md;
+    @apply self-start rounded-br-md rounded-tl-md bg-gray-500 px-2 py-1 text-sm font-semibold text-white;
   }
 
   .browser-class-body {
@@ -360,7 +360,7 @@
   .browser-class-body img {
     width: 60px;
     box-sizing: content-box;
-    @apply border-solid border-2 border-transparent rounded-md;
+    @apply rounded-md border-2 border-solid border-transparent;
   }
 
   .browser-class-body img.selected {

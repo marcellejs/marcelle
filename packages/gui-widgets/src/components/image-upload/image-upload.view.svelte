@@ -143,7 +143,7 @@
       <span>Drag and drop an image or</span>
     </p>
     <input bind:this={uploadInput} type="file" multiple class="hidden" />
-    <button class="btn" on:click={clickUpload}>Upload a file</button>
+    <button class="mgui-btn" on:click={clickUpload}>Upload a file</button>
   </div>
 
   <div class="flex flex-wrap">

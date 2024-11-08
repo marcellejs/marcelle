@@ -45,12 +45,14 @@
   </p>
   <div class="flex">
     {#if $count}
-      <button class="btn btn-outline" on:click={downloadDataset}> Download Dataset </button>
+      <button class="mly-btn mly-btn-outline" on:click={downloadDataset}> Download Dataset </button>
       <span class="w-1" />
     {/if}
-    <button class="btn btn-outline" on:click={uploadDataset}> Upload Dataset </button>
+    <button class="mly-btn mly-btn-outline" on:click={uploadDataset}> Upload Dataset </button>
     <span class="w-1" />
     <input bind:this={uploadInput} type="file" multiple class="hidden" />
-    <button class="btn btn-outline btn-error" on:click={clearDataset}> Clear Dataset </button>
+    <button class="mly-btn mly-btn-outline mly-btn-error" on:click={clearDataset}>
+      Clear Dataset
+    </button>
   </div>
 </ViewContainer>

@@ -38,11 +38,13 @@
 {#if value && Array.isArray(value)}
   <div class="flex items-center gap-2">
     {#each value as v, i}
-      <div class="join">
-        <button {disabled} class="btn btn-sm join-item" on:click={() => decrement(i)}>-</button>
+      <div class="mgui-join">
+        <button {disabled} class="mgui-btn mgui-btn-sm mgui-join-item" on:click={() => decrement(i)}
+          >-</button
+        >
         <div>
           <input
-            class="input input-sm input-bordered join-item w-20"
+            class="mgui-join-item mgui-input mgui-input-sm mgui-input-bordered w-20"
             type="number"
             inputmode="decimal"
             {disabled}
@@ -50,12 +52,18 @@
             on:change={(e) => changeValue(e, i)}
           />
         </div>
-        <button {disabled} class="btn btn-sm join-item" on:click={() => increment(i)}>+</button>
+        <button {disabled} class="mgui-btn mgui-btn-sm mgui-join-item" on:click={() => increment(i)}
+          >+</button
+        >
       </div>
     {/each}
-    <div class="join">
-      <button on:click={() => reduce()} {disabled} class="btn btn-sm join-item">-</button>
-      <button on:click={() => extend()} {disabled} class="btn btn-sm join-item">+</button>
+    <div class="mgui-join">
+      <button on:click={() => reduce()} {disabled} class="mgui-btn mgui-btn-sm mgui-join-item"
+        >-</button
+      >
+      <button on:click={() => extend()} {disabled} class="mgui-btn mgui-btn-sm mgui-join-item"
+        >+</button
+      >
     </div>
   </div>
 {/if}

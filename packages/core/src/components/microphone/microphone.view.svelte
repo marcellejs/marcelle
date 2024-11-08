@@ -72,10 +72,10 @@
 
 <div>
   <div>
-    <div class="form-control">
-      <label class="label cursor-pointer">
-        <input type="checkbox" class="toggle" bind:checked={$active} />
-        <span class="label-text ml-2">activate microphone</span>
+    <div class="mco-form-control">
+      <label class="mco-label cursor-pointer">
+        <input type="checkbox" class="mco-toggle" bind:checked={$active} />
+        <span class="mco-label-text ml-2">activate microphone</span>
       </label>
     </div>
   </div>
