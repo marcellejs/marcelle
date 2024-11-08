@@ -63,11 +63,11 @@
     "winston": "^3.16.0"
   },
   "devDependencies": {
-    "@feathersjs/cli": "5.0.29",
+    "@feathersjs/cli": "5.0.31",
     "@feathersjs/rest-client": "^5.0.31",
     "@feathersjs/typebox": "^5.0.31",
     "@types/mocha": "^10.0.9",
-    "@types/node": "^20.17.6",
+    "@types/node": "^22.9.0",
     "axios": "^1.7.7",
     "cross-env": "^7.0.3",
     "mocha": "^10.8.2",

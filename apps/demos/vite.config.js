@@ -10,8 +10,8 @@ function injectHtml({ tags = [] } = {}) {
   return {
     name: 'vite:injectHtml',
     transformIndexHtml: {
-      enforce: 'pre',
-      transform(html, { path }) {
+      order: 'pre',
+      handler(html, { path }) {
         if (subpackages_path.includes(path.split('/')[1]) && html.includes('src="/src/')) {
           const p = path.split('/index.html')[0].split('/')[1];
           return {
