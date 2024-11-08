@@ -73,6 +73,14 @@ export default defineConfig({
           ],
         },
         {
+          text: '@marcellejs/tensorflow',
+          collapsed: true,
+          items: [
+            { text: 'Guide', link: '/api/tensorflow/' },
+            { text: 'API', link: '/api/tensorflow/components' },
+          ],
+        },
+        {
           text: 'Python',
           collapsed: true,
           items: [{ text: 'API', link: '/api/python' }],

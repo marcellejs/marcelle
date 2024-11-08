@@ -7,18 +7,16 @@ import '@tensorflow/tfjs-core/dist/public/chained_ops/as1d';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/as2d';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/as_type';
 import { KNNClassifier as TfjsKNNClassifier } from '@tensorflow-models/knn-classifier';
-import {
-  Model,
-  type ClassifierResults,
-  type StoredModel,
-  type ObjectId,
-  type Instance,
-  type DataStore,
-} from '../../core';
-import { type Dataset, isDataset } from '../../core/dataset';
-import { Catch } from '../../utils/error-handling';
-import { saveBlob } from '../../utils/file-io';
-import type { LazyIterable } from '../../utils';
+import type {
+  ClassifierResults,
+  DataStore,
+  Dataset,
+  Instance,
+  LazyIterable,
+  ObjectId,
+  StoredModel,
+} from '@marcellejs/core';
+import { Catch, isDataset, Model, saveBlob } from '@marcellejs/core';
 import { BehaviorSubject } from 'rxjs';
 import { kebabCase } from 'scule';
 

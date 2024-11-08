@@ -1,12 +1,8 @@
 import { type GraphModel, loadGraphModel } from '@tensorflow/tfjs-converter';
-import type { Instance, ObjectId, StoredModel } from '../types';
-import type { DataStore } from '../data-store';
+import type { DataStore, Instance, ObjectId, StoredModel } from '@marcellejs/core';
+import { Catch, DataStoreBackend, Model, saveBlob } from '@marcellejs/core';
 import { io, ready, Tensor, tidy, zeros } from '@tensorflow/tfjs-core';
 import { LayersModel, loadLayersModel } from '@tensorflow/tfjs-layers';
-import { DataStoreBackend } from '../data-store/data-store';
-import { Catch } from '../../utils/error-handling';
-import { saveBlob } from '../../utils/file-io';
-import { Model } from './model';
 import { browserFiles, http } from './tfjs-io';
 import { kebabCase } from 'scule';
 

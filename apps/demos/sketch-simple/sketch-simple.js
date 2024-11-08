@@ -1,15 +1,8 @@
 import '@marcellejs/core/dist/marcelle.css';
 import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
 import '@marcellejs/layouts/dist/marcelle-layouts.css';
-import {
-  datasetBrowser,
-  dataset,
-  dataStore,
-  mlpClassifier,
-  mobileNet,
-  confidencePlot,
-  sketchPad,
-} from '@marcellejs/core';
+import { datasetBrowser, dataset, dataStore, confidencePlot, sketchPad } from '@marcellejs/core';
+import { mlpClassifier, mobileNet } from '@marcellejs/tensorflow';
 import { button, textInput, trainingProgress } from '@marcellejs/gui-widgets';
 import { dashboard } from '@marcellejs/layouts';
 import { from, map, mergeMap, withLatestFrom, zip } from 'rxjs';

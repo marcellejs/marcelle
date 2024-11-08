@@ -3,13 +3,18 @@ import '@tensorflow/tfjs-core/dist/public/chained_ops/gather';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/arg_max';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/squeeze';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/expand_dims';
-import { type Dataset, isDataset } from '../../core/dataset';
-import { Catch, TrainingError } from '../../utils/error-handling';
-import { throwError } from '../../utils/error-handling';
 import { TFJSCustomModel, type TFJSCustomModelOptions } from './tfjs-custom-model';
-import type { ClassifierResults } from './types';
-import type { Instance } from '../types';
-import type { LazyIterable } from '../../utils';
+import {
+  Catch,
+  isDataset,
+  throwError,
+  TrainingError,
+  type ClassifierResults,
+  type Dataset,
+  type Instance,
+  type LazyIterable,
+} from '@marcellejs/core';
+import type { TFDataset } from './tfjs-utils';
 
 export type TFJSCustomClassifierOptions = TFJSCustomModelOptions;
 
@@ -52,7 +57,7 @@ export abstract class TFJSCustomClassifier extends TFJSCustomModel<
 
     const numClasses = this.labels.length;
 
-    this.transformDataset = (ds) =>
+    this.transformDataset = (ds: TFDataset<Partial<ClassifierInstance>>) =>
       ds.map((instance) => ({
         xs: tensor(instance.x),
         ys: oneHot(this.labels.indexOf(instance.y), numClasses),

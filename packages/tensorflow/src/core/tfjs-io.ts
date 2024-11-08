@@ -1,5 +1,5 @@
+import { logger } from '@marcellejs/core';
 import { io } from '@tensorflow/tfjs-core';
-import { logger } from '../logger';
 
 interface SpecificModelArtifacts extends io.ModelArtifacts {
   modelTopology: {

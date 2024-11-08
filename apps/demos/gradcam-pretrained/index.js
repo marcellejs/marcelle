@@ -1,13 +1,14 @@
 import '@marcellejs/core/dist/marcelle.css';
 import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
 import '@marcellejs/layouts/dist/marcelle-layouts.css';
-import { confidencePlot, imageDisplay, tfjsModel } from '@marcellejs/core';
+import { confidencePlot, imageDisplay } from '@marcellejs/core';
 import { imageUpload, select } from '@marcellejs/gui-widgets';
 import { dashboard } from '@marcellejs/layouts';
 import { from, map, merge, mergeMap, withLatestFrom } from 'rxjs';
 import { gradcam } from './components';
 import imagenet_labs from './imagenet_class_index.json';
 import { preprocessImage } from './preprocess_image';
+import { tfjsModel } from '@marcellejs/tensorflow';
 const labels = Object.values(imagenet_labs).map((x) => x[1]);
 
 const input = imageUpload({ width: 224, height: 224 });

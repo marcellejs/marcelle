@@ -6,7 +6,6 @@ import {
   datasetScatter,
   dataset,
   dataStore,
-  mobileNet,
   webcam,
   kmeansClustering,
   throwError,
@@ -15,6 +14,7 @@ import {
 import { button, modelParameters, toggle } from '@marcellejs/gui-widgets';
 import { dashboard } from '@marcellejs/layouts';
 import { filter, from, map, mergeMap, Subject, zip } from 'rxjs';
+import { mobileNet } from '@marcellejs/tensorflow';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CAPTURE TO DATASET

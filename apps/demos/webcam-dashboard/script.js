@@ -7,13 +7,12 @@ import {
   confusionMatrix,
   dataset,
   dataStore,
-  mlpClassifier,
-  mobileNet,
   confidencePlot,
   trainingPlot,
   webcam,
   throwError,
 } from '@marcellejs/core';
+import { mlpClassifier, mobileNet } from '@marcellejs/tensorflow';
 import {
   button,
   modelParameters,

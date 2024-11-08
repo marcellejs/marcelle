@@ -4,12 +4,17 @@ import '@tensorflow/tfjs-core/dist/public/chained_ops/mul';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/expand_dims';
 import { loadGraphModel } from '@tensorflow/tfjs-converter';
 import { loadLayersModel } from '@tensorflow/tfjs-layers';
-import { type ClassifierResults, type Instance, TFJSBaseModel } from '../../core';
-import { Catch, TrainingError } from '../../utils/error-handling';
-import { readJSONFile } from '../../utils/file-io';
+import {
+  Catch,
+  readJSONFile,
+  TrainingError,
+  type ClassifierResults,
+  type Instance,
+} from '@marcellejs/core';
 import Component from './tfjs-model.view.svelte';
-import { browserFiles, http } from '../../core/model/tfjs-io';
 import { map } from 'rxjs';
+import { TFJSBaseModel } from '../../core';
+import { browserFiles, http } from '../../core/tfjs-io';
 
 export interface InputTypes {
   image: ImageData;

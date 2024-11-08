@@ -6,8 +6,14 @@ import {
   type MobileNetAlpha,
 } from '@tensorflow-models/mobilenet';
 import { io, ready, tidy } from '@tensorflow/tfjs-core';
-import { type ClassifierResults, type Instance, logger, Model } from '../../core';
-import { Catch, TrainingError } from '../../utils/error-handling';
+import {
+  Catch,
+  type ClassifierResults,
+  type Instance,
+  logger,
+  Model,
+  TrainingError,
+} from '@marcellejs/core';
 import Component from './mobile-net.view.svelte';
 import { BehaviorSubject } from 'rxjs';
 

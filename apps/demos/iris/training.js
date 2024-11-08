@@ -1,7 +1,8 @@
-import { mlpClassifier, trainingPlot } from '@marcellejs/core';
+import { trainingPlot } from '@marcellejs/core';
 import { button, modelParameters, trainingProgress } from '@marcellejs/gui-widgets';
 import { store } from './common';
 import { processDataset } from './preprocessing';
+import { mlpClassifier } from '@marcellejs/tensorflow';
 
 export const classifier = mlpClassifier().sync(store, 'iris-classifier');
 const params = modelParameters(classifier);

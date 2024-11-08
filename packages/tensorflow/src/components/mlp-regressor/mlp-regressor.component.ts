@@ -1,9 +1,8 @@
 import { train, tidy, type TensorLike, tensor, type Tensor } from '@tensorflow/tfjs-core';
 import { sequential, layers as tfLayers, metrics } from '@tensorflow/tfjs-layers';
-import { TFJSCustomModel, type TFJSCustomModelOptions } from '../../core/model/tfjs-custom-model';
-import type { Dataset, Instance } from '../../core';
-import type { LazyIterable } from '../../utils';
 import { BehaviorSubject } from 'rxjs';
+import { TFJSCustomModel, type TFJSCustomModelOptions } from '../../core';
+import type { Dataset, Instance, LazyIterable } from '@marcellejs/core';
 
 export interface MLPRegressorOptions extends TFJSCustomModelOptions {
   units: number[];

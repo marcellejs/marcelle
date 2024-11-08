@@ -1,4 +1,4 @@
-import { TFJSCustomModel } from '@marcellejs/core';
+import { TFJSCustomModel } from '@marcellejs/tensorflow';
 import { tidy, tensor, train } from '@tensorflow/tfjs-core';
 import { sequential, layers, metrics } from '@tensorflow/tfjs-layers';
 import { BehaviorSubject } from 'rxjs';

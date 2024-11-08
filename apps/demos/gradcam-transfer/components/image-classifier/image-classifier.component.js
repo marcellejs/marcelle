@@ -2,7 +2,6 @@ import {
   tensor2d,
   tensor4d,
   train,
-  tensor,
   tidy,
   keep,
   image,
@@ -15,8 +14,9 @@ import '@tensorflow/tfjs-core/dist/public/chained_ops/arg_max';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/div';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/sub';
 import { loadLayersModel, layers as tfLayers, model as tfModel } from '@tensorflow/tfjs-layers';
-import { logger, TFJSBaseModel, isDataset, throwError } from '@marcellejs/core';
+import { logger, isDataset, throwError } from '@marcellejs/core';
 import { BehaviorSubject } from 'rxjs';
+import { TFJSBaseModel } from '@marcellejs/tensorflow';
 
 function shuffleArray(a) {
   const b = a.slice();

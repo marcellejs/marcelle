@@ -5,12 +5,11 @@ import {
   datasetBrowser,
   dataset,
   dataStore,
-  mlpClassifier,
-  mobileNet,
   confidencePlot,
   sketchPad,
   notification,
 } from '@marcellejs/core';
+import { mlpClassifier, mobileNet } from '@marcellejs/tensorflow';
 import { button, textInput, trainingProgress } from '@marcellejs/gui-widgets';
 import { dashboard } from '@marcellejs/layouts';
 import { filter, from, map, mergeMap, mergeWith, withLatestFrom, take, zip, tap } from 'rxjs';

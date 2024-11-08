@@ -5,8 +5,6 @@ import {
   datasetBrowser,
   dataset,
   dataStore,
-  mlpClassifier,
-  mobileNet,
   confidencePlot,
   sketchPad,
   trainingPlot,
@@ -23,6 +21,7 @@ import {
 } from '@marcellejs/gui-widgets';
 import { dashboard } from '@marcellejs/layouts';
 import { filter, from, map, mergeMap, withLatestFrom, zip } from 'rxjs';
+import { mlpClassifier, mobileNet } from '@marcellejs/tensorflow';
 
 // Main components
 const input = sketchPad();

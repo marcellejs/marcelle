@@ -7,10 +7,8 @@ import {
   confusionMatrix,
   dataset,
   dataStore,
-  mlpClassifier,
   confidencePlot,
   trainingPlot,
-  poseDetection,
   throwError,
   webcam,
   imageDisplay,
@@ -37,6 +35,7 @@ import {
   switchMap,
   zip,
 } from 'rxjs';
+import { mlpClassifier, poseDetection } from '@marcellejs/tensorflow';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE

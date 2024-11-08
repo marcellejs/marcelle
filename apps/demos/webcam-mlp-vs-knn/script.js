@@ -7,13 +7,11 @@ import {
   confusionMatrix,
   dataset,
   dataStore,
-  mlpClassifier,
-  mobileNet,
   confidencePlot,
   trainingPlot,
   webcam,
-  knnClassifier,
 } from '@marcellejs/core';
+import { knnClassifier, mlpClassifier, mobileNet } from '@marcellejs/tensorflow';
 import {
   button,
   modelParameters,

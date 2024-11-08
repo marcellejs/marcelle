@@ -9,8 +9,7 @@ import {
   type Pose,
 } from '@tensorflow-models/pose-detection';
 import type { GraphModel } from '@tensorflow/tfjs-converter';
-import { type Instance, logger, Model } from '../../core';
-import { Catch, TrainingError } from '../../utils/error-handling';
+import { Catch, type Instance, logger, Model, TrainingError } from '@marcellejs/core';
 import { SkeletonRenderer } from './renderer';
 import View from './pose-detection.view.svelte';
 import { ready } from '@tensorflow/tfjs-core';

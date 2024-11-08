@@ -12,6 +12,7 @@
     "@marcellejs/core": "workspace:^0.6.5",
     "@marcellejs/gui-widgets": "workspace:^0.6.5",
     "@marcellejs/layouts": "workspace:^0.6.5",
+    "@marcellejs/tensorflow": "workspace:^0.6.5",
     "@tensorflow/tfjs-core": "^4.21.0",
     "@tensorflow/tfjs-layers": "^4.21.0",
     "rxjs": "^7.8.1"

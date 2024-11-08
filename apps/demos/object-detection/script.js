@@ -1,10 +1,11 @@
 import '@marcellejs/core/dist/marcelle.css';
 import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
 import '@marcellejs/layouts/dist/marcelle-layouts.css';
-import { cocoSsd, confidencePlot, detectionBoxes, webcam, notification } from '@marcellejs/core';
+import { confidencePlot, detectionBoxes, webcam, notification } from '@marcellejs/core';
 import { dashboard } from '@marcellejs/layouts';
 import { filter, from, interval, map, mergeMap, withLatestFrom } from 'rxjs';
 import { imageUpload } from '@marcellejs/gui-widgets';
+import { cocoSsd } from '@marcellejs/tensorflow';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & CLASSIFICATION

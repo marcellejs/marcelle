@@ -5,12 +5,16 @@ import '@tensorflow/tfjs-core/dist/public/chained_ops/arg_max';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/squeeze';
 import '@tensorflow/tfjs-core/dist/public/chained_ops/expand_dims';
 import { loadLayersModel, Sequential } from '@tensorflow/tfjs-layers';
-import { type Dataset, isDataset } from '../../core/dataset';
-import { Catch, TrainingError } from '../../utils/error-handling';
-import { dataset2tfjs, type TFDataset } from '../../core/model/tfjs-utils';
 import { TFJSBaseModel } from './tfjs-base-model';
-import type { Instance } from '../types';
-import type { LazyIterable } from '../../utils';
+import {
+  Catch,
+  isDataset,
+  TrainingError,
+  type Dataset,
+  type Instance,
+  type LazyIterable,
+} from '@marcellejs/core';
+import { dataset2tfjs, type TFDataset } from './tfjs-utils';
 
 export interface TFJSCustomModelOptions {
   epochs: number;

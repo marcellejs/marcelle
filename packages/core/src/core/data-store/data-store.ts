@@ -1,4 +1,4 @@
-import authentication from '@feathersjs/authentication-client';
+import authentication, { AuthenticationClient } from '@feathersjs/authentication-client';
 import { feathers, type Application } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio-client';
 import { BehaviorSubject } from 'rxjs';
@@ -30,7 +30,16 @@ export enum DataStoreBackend {
 }
 
 export class DataStore {
-  feathers: Application;
+  feathers: Application & {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    io: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    rest?: any;
+    authentication: AuthenticationClient;
+    authenticate: AuthenticationClient['authenticate'];
+    reAuthenticate: AuthenticationClient['reAuthenticate'];
+    logout: AuthenticationClient['logout'];
+  };
   requiresAuth = false;
   user: User;
 

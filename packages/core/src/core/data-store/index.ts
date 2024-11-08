@@ -5,5 +5,4 @@ export function dataStore(location?: string): DataStore {
 }
 
 export * from './service-iterable';
-
-export type { DataStore };
+export * from './data-store';

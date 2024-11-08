@@ -1,8 +1,13 @@
 import { load, ObjectDetection, type ObjectDetectionBaseModel } from '@tensorflow-models/coco-ssd';
 import { io, ready } from '@tensorflow/tfjs-core';
-import { type Instance, Model, type ObjectDetectorResults } from '../../core';
-import { logger } from '../../core/logger';
-import { Catch, TrainingError } from '../../utils/error-handling';
+import {
+  Catch,
+  type Instance,
+  logger,
+  Model,
+  type ObjectDetectorResults,
+  TrainingError,
+} from '@marcellejs/core';
 import Component from './coco-ssd.view.svelte';
 
 export interface CocoSsdOptions {

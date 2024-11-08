@@ -1,9 +1,6 @@
+import { isDataset, type Dataset, type Instance, type LazyIterable } from '@marcellejs/core';
 import type { Dataset as TFDataset } from '@tensorflow/tfjs-data';
 import { generator } from '@tensorflow/tfjs-data';
-import type { LazyIterable } from '../../utils';
-import type { Dataset } from '../dataset';
-import { isDataset } from '../dataset';
-import type { Instance } from '../types';
 
 export type { TFDataset };
 

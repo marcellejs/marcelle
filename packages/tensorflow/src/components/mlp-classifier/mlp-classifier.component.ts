@@ -1,10 +1,7 @@
 import { train, type Tensor } from '@tensorflow/tfjs-core';
 import { sequential, layers as tfLayers } from '@tensorflow/tfjs-layers';
-import {
-  TFJSCustomClassifier,
-  type TFJSCustomClassifierOptions,
-} from '../../core/model/tfjs-custom-classifier';
 import { BehaviorSubject } from 'rxjs';
+import { TFJSCustomClassifier, type TFJSCustomClassifierOptions } from '../../core';
 
 export interface MLPClassifierOptions extends TFJSCustomClassifierOptions {
   layers: number[];

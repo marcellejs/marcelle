@@ -1,6 +1,6 @@
 {
-  "name": "@marcellejs/core",
-  "description": "Marcelle Core API",
+  "name": "@marcellejs/tensorflow",
+  "description": "Marcelle models and components based on Tensorflow.js",
   "version": "0.6.5",
   "repository": {
     "type": "git",
@@ -15,25 +15,25 @@
     "interactive machine learning"
   ],
   "license": "MIT",
-  "main": "dist/marcelle.bundle.esm.js",
-  "module": "dist/marcelle.esm.js",
-  "browser": "dist/marcelle.bundle.umd.js",
+  "main": "dist/marcelle-tensorflow.bundle.esm.js",
+  "module": "dist/marcelle-tensorflow.esm.js",
+  "browser": "dist/marcelle-tensorflow.bundle.umd.js",
   "type": "module",
   "exports": {
     ".": {
       "browser": {
         "types": "./types/index.d.ts",
-        "import": "./dist/marcelle.esm.js",
-        "require": "./dist/marcelle.bundle.umd.js"
+        "import": "./dist/marcelle-tensorflow.esm.js",
+        "require": "./dist/marcelle-tensorflow.bundle.umd.js"
       },
       "import": {
         "types": "./types/index.d.ts",
-        "default": "./dist/marcelle.esm.js"
+        "default": "./dist/marcelle-tensorflow.esm.js"
       },
-      "require": "./dist/marcelle.bundle.umd.js",
-      "default": "./dist/marcelle.esm.js"
+      "require": "./dist/marcelle-tensorflow.bundle.umd.js",
+      "default": "./dist/marcelle-tensorflow.esm.js"
     },
-    "./dist/marcelle.css": "./dist/marcelle.css"
+    "./dist/marcelle-tensorflow.css": "./dist/marcelle-tensorflow.css"
   },
   "types": "./types/index.d.ts",
   "files": [
@@ -55,10 +55,6 @@
     "@rollup/plugin-replace": "^5.0.7",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
-    "@types/blueimp-load-image": "^5.16.6",
-    "@types/ndarray": "^1.0.14",
-    "@types/ndarray-ops": "^1.2.7",
-    "@types/recordrtc": "^5.6.14",
     "autoprefixer": "^10.4.20",
     "daisyui": "^4.12.13",
     "postcss": "^8.4.47",
@@ -77,31 +73,21 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
-    "@feathersjs/adapter-commons": "^5.0.30",
-    "@feathersjs/authentication-client": "^5.0.30",
-    "@feathersjs/feathers": "^5.0.30",
-    "@feathersjs/memory": "^5.0.30",
-    "@feathersjs/socketio-client": "^5.0.30",
-    "@kurkle/color": "^0.3.2",
-    "auto-bind": "^5.0.1",
-    "blueimp-load-image": "^5.14.0",
-    "chart.js": "^4.4.4",
-    "chartjs-adapter-luxon": "^1.3.1",
-    "chartjs-chart-matrix": "^2.0.1",
-    "chartjs-plugin-zoom": "^2.0.1",
-    "date-fns": "^3.6.0",
-    "dequal": "^2.0.3",
-    "luxon": "^3.5.0",
-    "ml-kmeans": "^6.0.0",
-    "ml-pca": "^4.1.1",
-    "recordrtc": "^5.6.2",
+    "@marcellejs/core": "workspace:^0.6.5",
+    "@tensorflow-models/coco-ssd": "^2.2.3",
+    "@tensorflow-models/knn-classifier": "^1.2.6",
+    "@tensorflow-models/mobilenet": "^2.1.1",
+    "@tensorflow-models/pose-detection": "^2.1.3",
+    "@tensorflow/tfjs-backend-cpu": "^4.21.0",
+    "@tensorflow/tfjs-backend-wasm": "^4.21.0",
+    "@tensorflow/tfjs-backend-webgl": "^4.21.0",
+    "@tensorflow/tfjs-backend-webgpu": "^4.21.0",
+    "@tensorflow/tfjs-converter": "^4.21.0",
+    "@tensorflow/tfjs-core": "^4.21.0",
+    "@tensorflow/tfjs-data": "^4.21.0",
+    "@tensorflow/tfjs-layers": "^4.21.0",
     "rxjs": "^7.8.1",
-    "scatter-gl": "^0.0.13",
     "scule": "^1.3.0",
-    "seedrandom": "~3.0.5",
-    "sift": "^17.1.3",
-    "socket.io-client": "^4.8.0",
-    "umap-js": "^1.4.0",
-    "vidstack": "1.9.8"
+    "seedrandom": "~3.0.5"
   }
 }
