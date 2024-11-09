@@ -1,12 +1,14 @@
-<script>
+<script lang="ts">
   import { Chart, CategoryScale, Title, Tooltip } from 'chart.js';
   import { MatrixElement, MatrixController } from 'chartjs-chart-matrix';
   import { onDestroy } from 'svelte';
 
-  export let accuracy;
-  export let confusion;
-  export let labels;
-  export let selected;
+  let {
+    accuracy,
+    confusion,
+    labels,
+    selected
+  } = $props();
 
   Chart.register(CategoryScale, Title, Tooltip, MatrixElement, MatrixController);
 
@@ -147,7 +149,7 @@
 
 {#if $accuracy !== undefined}
   <p class="m-2">Global Accuracy: {$accuracy.toFixed(2)}</p>
-  <div class="confusion-container"><canvas use:setup /></div>
+  <div class="confusion-container"><canvas use:setup></canvas></div>
 {:else}
   <p class="m-2">Waiting for predictions...</p>
 {/if}

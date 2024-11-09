@@ -2,10 +2,14 @@
   import { onDestroy, onMount, tick } from 'svelte';
   import type { GenericChart } from '../generic-chart';
 
-  export let charts: Record<string, GenericChart>;
+  interface Props {
+    charts: Record<string, GenericChart>;
+  }
 
-  let container: HTMLElement;
-  let refs: HTMLDivElement[] = [];
+  let { charts }: Props = $props();
+
+  let container: HTMLElement = $state();
+  let refs: HTMLDivElement[] = $state([]);
 
   onMount(async () => {
     await tick();
@@ -30,7 +34,7 @@
 <div bind:this={container} class="grid grid-cols-1 gap-1">
   <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
   {#each Object.values(charts) as _, i}
-    <div bind:this={refs[i]} class="card inner-card xl:flex-1" />
+    <div bind:this={refs[i]} class="card inner-card xl:flex-1"></div>
   {/each}
 </div>
 

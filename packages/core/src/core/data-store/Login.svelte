@@ -1,20 +1,24 @@
 <script lang="ts">
+  import { preventDefault } from 'svelte/legacy';
+
   import type { DataStore } from './data-store';
   import type { User } from '../types';
-  import { createEventDispatcher } from 'svelte';
 
-  const dispatch = createEventDispatcher<{ terminate: User }>();
+  interface Props {
+    dataStore: DataStore;
+    mode?: 'login' | 'register';
+    onterminate: (u: User) => void;
+  }
 
-  export let dataStore: DataStore;
-  export let mode: 'login' | 'register' = 'login';
+  let { dataStore, mode = $bindable('login'), onterminate }: Props = $props();
 
   interface LoginError extends Error {
     data: { email: string; password: string };
   }
-  let loginError: LoginError | undefined;
+  let loginError: LoginError | undefined = $state();
 
   export function terminate(user: User): void {
-    dispatch('terminate', user);
+    onterminate(user);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,12 +74,12 @@
     <form method="dialog">
       <button
         class="btn btn-circle btn-ghost absolute right-2 top-2"
-        on:click={() => {
+        onclick={() => {
           terminate(null);
         }}>✕</button
       >
     </form>
-    <h3 class="text-lg font-bold mb-8">
+    <h3 class="mb-8 text-lg font-bold">
       {#if mode === 'login'}Log In{:else}Register{/if}
     </h3>
 
@@ -83,7 +87,7 @@
       <div role="alert" class="alert alert-error">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="stroke-current shrink-0 h-6 w-6"
+          class="h-6 w-6 shrink-0 stroke-current"
           fill="none"
           viewBox="0 0 24 24"
           ><path
@@ -98,7 +102,7 @@
     {/if}
 
     {#if mode === 'login'}
-      <form on:submit|preventDefault={login}>
+      <form onsubmit={preventDefault(login)}>
         <div class="form-control w-full">
           <label class="label" for="email">
             <span class="label-text">Email</span>
@@ -108,7 +112,7 @@
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
               fill="currentColor"
-              class="w-4 h-4 opacity-70"
+              class="h-4 w-4 opacity-70"
               ><path
                 d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z"
               /><path
@@ -127,7 +131,7 @@
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
               fill="currentColor"
-              class="w-4 h-4 opacity-70"
+              class="h-4 w-4 opacity-70"
               ><path
                 fill-rule="evenodd"
                 d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
@@ -141,18 +145,18 @@
           <button class="btn bordered btn-primary mt-6" type="submit">Log In</button>
         </div>
       </form>
-      <div class="text-right mt-8">
+      <div class="mt-8 text-right">
         No Account?
 
         <button
           class="link"
-          on:click={() => {
+          onclick={() => {
             mode = 'register';
           }}>Create an account now</button
         >
       </div>
     {:else}
-      <form on:submit|preventDefault={signup}>
+      <form onsubmit={preventDefault(signup)}>
         <div class="form-control w-full">
           <label class="label" for="email">
             <span class="label-text">Email</span>
@@ -165,7 +169,7 @@
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
               fill="currentColor"
-              class="w-4 h-4 opacity-70"
+              class="h-4 w-4 opacity-70"
               ><path
                 d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z"
               /><path
@@ -192,7 +196,7 @@
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
               fill="currentColor"
-              class="w-4 h-4 opacity-70"
+              class="h-4 w-4 opacity-70"
               ><path
                 fill-rule="evenodd"
                 d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
@@ -211,12 +215,12 @@
           <button class="btn bordered btn-primary mt-6" type="submit">Log In</button>
         </div>
       </form>
-      <div class="text-right mt-8">
+      <div class="mt-8 text-right">
         Already have an account?
 
         <button
           class="link"
-          on:click={() => {
+          onclick={() => {
             mode = 'login';
           }}>Log In</button
         >

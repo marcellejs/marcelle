@@ -1,16 +1,20 @@
 <script lang="ts">
   import { Table, TableArrayProvider } from '../../utils/design-system';
 
-  export let runs: Array<Record<string, unknown>>;
+  interface Props {
+    runs: Array<Record<string, unknown>>;
+  }
 
-  $: columns = runs.map((_, i) => ({ name: `Run ${i + 1}` }));
-  $: rows = runs.length > 0 ? Object.keys(runs[0]).filter((x) => x !== 'logs') : [];
-  $: data = rows.map((field) =>
+  let { runs }: Props = $props();
+
+  let columns = $derived(runs.map((_, i) => ({ name: `Run ${i + 1}` })));
+  let rows = $derived(runs.length > 0 ? Object.keys(runs[0]).filter((x) => x !== 'logs') : []);
+  let data = $derived(rows.map((field) =>
     runs
       .map((x, i) => ({ [`Run ${i + 1}`]: x[field] }))
       .reduce((o, x) => ({ ...o, ...x }), { field: field }),
-  );
-  $: provider = new TableArrayProvider({ data });
+  ));
+  let provider = $derived(new TableArrayProvider({ data }));
 </script>
 
 {#if runs.length > 0}

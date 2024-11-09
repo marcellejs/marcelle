@@ -1,9 +1,17 @@
-<svelte:options accessors />
+<svelte:options />
 
 <script lang="ts">
   import type { Observable } from 'rxjs';
 
-  export let text: Observable<string>;
+  interface Props {
+    text: Observable<string>;
+  }
+
+  let { text }: Props = $props();
+
+  export {
+  	text,
+  }
 </script>
 
 <div class="grow">

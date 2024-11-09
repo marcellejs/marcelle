@@ -5,6 +5,7 @@ import { throwError } from '../../utils/error-handling';
 import View from './training-plot.view.svelte';
 import { BehaviorSubject } from 'rxjs';
 import type { ChartPoint } from '../generic-chart/generic-chart.component';
+import { mount } from "svelte";
 
 export type LogSpec = string | string[] | Record<string, string | string[]>;
 
@@ -90,11 +91,11 @@ export class TrainingPlot extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
-      target: t,
-      props: {
-        charts: this.charts,
-      },
-    });
+    this.$$.app = mount(View, {
+          target: t,
+          props: {
+            charts: this.charts,
+          },
+        });
   }
 }

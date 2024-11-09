@@ -1,5 +1,6 @@
 import { Component } from '@marcellejs/core';
 import View from './todo.view.svelte';
+import { mount } from "svelte";
 
 export interface TodoOptions {
   [key: string]: unknown;
@@ -19,12 +20,12 @@ export class Todo extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
-      target: t,
-      props: {
-        title: this.title,
-        options: this.options,
-      },
-    });
+    this.$$.app = mount(View, {
+          target: t,
+          props: {
+            title: this.title,
+            options: this.options,
+          },
+        });
   }
 }

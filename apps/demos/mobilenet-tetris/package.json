@@ -23,8 +23,8 @@
     "xmmjs": "^0.0.3"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^3.1.2",
-    "svelte": "^4.2.19",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "svelte": "^5.1.13",
     "vite": "^5.4.10"
   }
 }

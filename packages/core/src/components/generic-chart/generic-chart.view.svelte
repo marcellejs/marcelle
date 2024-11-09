@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import {
     Chart,
     ArcElement,
@@ -31,9 +33,13 @@
   import type { ChartDataset, ChartPoint } from './generic-chart.component';
   import { Subscription } from 'rxjs';
 
-  export let preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };
-  export let options: ChartJsOptions & { xlabel?: string; ylabel?: string };
-  export let datasets: ChartDataset[];
+  interface Props {
+    preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };
+    options: ChartJsOptions & { xlabel?: string; ylabel?: string };
+    datasets: ChartDataset[];
+  }
+
+  let { preset, options, datasets }: Props = $props();
 
   // Note: typings are very dirty here...
 
@@ -135,7 +141,7 @@
 
   let chart: Chart;
   let subs: Subscription[];
-  let canvasElement: HTMLCanvasElement;
+  let canvasElement: HTMLCanvasElement = $state();
 
   function setup() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -202,16 +208,16 @@
     setup();
   });
 
-  let numDatasets = datasets.length;
-  $: {
+  let numDatasets = $state(datasets.length);
+  run(() => {
     if (datasets.length !== numDatasets) {
       destroy();
       setup();
       numDatasets = datasets.length;
     }
-  }
+  });
 
   onDestroy(destroy);
 </script>
 
-<div class="h-96 w-full"><canvas bind:this={canvasElement} /></div>
+<div class="h-96 w-full"><canvas bind:this={canvasElement}></canvas></div>

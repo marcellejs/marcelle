@@ -1,11 +1,21 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
 
-  export let title: string;
-  export let items: Record<string, string>;
-  export let current: string;
-  export let closable: boolean;
-  export let showSettings = false;
+  interface Props {
+    title: string;
+    items: Record<string, string>;
+    current: string;
+    closable: boolean;
+    showSettings?: boolean;
+  }
+
+  let {
+    title,
+    items,
+    current,
+    closable,
+    showSettings = false
+  }: Props = $props();
 
   const dispatch = createEventDispatcher();
 
@@ -26,7 +36,7 @@
     }, 400);
   }
 
-  let isDark = JSON.parse(localStorage.getItem('marcelle-dark-theme')) || false;
+  let isDark = $state(JSON.parse(localStorage.getItem('marcelle-dark-theme')) || false);
   function toggleTheme() {
     isDark = !isDark;
     localStorage.setItem('marcelle-dark-theme', JSON.stringify(isDark));
@@ -52,7 +62,7 @@
           />
         </svg>
       </div>
-      <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+      <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
       <ul
         tabindex="0"
         class="mly-menu mly-dropdown-content mly-menu-sm z-[1] mt-3 w-52 rounded-box bg-base-100 p-2 shadow"
@@ -88,7 +98,7 @@
         class="theme-controller"
         value="dark"
         checked={isDark}
-        on:change={toggleTheme}
+        onchange={toggleTheme}
       />
 
       <!-- sun icon -->
@@ -113,7 +123,7 @@
         />
       </svg>
     </label>
-    <button class="mly-btn mly-btn-circle mly-btn-ghost" on:click={toggleSettings}>
+    <button class="mly-btn mly-btn-circle mly-btn-ghost" onclick={toggleSettings}>
       <div class="mly-indicator">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -132,7 +142,7 @@
       </div>
     </button>
     {#if closable}
-      <button class="mly-btn mly-btn-circle mly-btn-ghost text-error" on:click={quit}>
+      <button class="mly-btn mly-btn-circle mly-btn-ghost text-error" onclick={quit}>
         <div class="mly-indicator">
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -4,6 +4,7 @@ import { noop } from '../../utils/misc';
 import { rxBind } from '../../utils/rxjs';
 import View from './webcam.view.svelte';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { mount } from "svelte";
 
 function requestInterval(fn: () => void, delay: number) {
   let start = new Date().getTime();
@@ -101,17 +102,17 @@ export class Webcam extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
-      target: t,
-      props: {
-        width: this.#width,
-        height: this.#height,
-        facingMode: this.$facingMode,
-        active: rxBind(this.$active),
-        mediaStream: this.$mediastream,
-        ready: this.$ready,
-      },
-    });
+    this.$$.app = mount(View, {
+          target: t,
+          props: {
+            width: this.#width,
+            height: this.#height,
+            facingMode: this.$facingMode,
+            active: rxBind(this.$active),
+            mediaStream: this.$mediastream,
+            ready: this.$ready,
+          },
+        });
   }
 
   stop(): void {

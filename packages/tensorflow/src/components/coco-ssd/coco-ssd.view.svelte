@@ -1,8 +1,12 @@
 <script lang="ts">
   import type { Observable } from 'rxjs';
 
-  export let loading: Observable<boolean>;
-  export let base: string;
+  interface Props {
+    loading: Observable<boolean>;
+    base: string;
+  }
+
+  let { loading, base }: Props = $props();
 </script>
 
 <p class="p-2 text-sm text-gray-600">

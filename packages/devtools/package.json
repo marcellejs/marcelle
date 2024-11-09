@@ -24,7 +24,7 @@
     "@marcellejs/core": "workspace:^0.6.5",
     "@types/prompts": "^2.4.9",
     "sucrase": "^3.35.0",
-    "svelte": "^4.2.19",
+    "svelte": "^5.1.13",
     "svelte-preprocess": "^6.0.3",
     "tiny-glob": "^0.2.9",
     "tslib": "^2.8.1",

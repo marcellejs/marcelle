@@ -1,14 +1,17 @@
 <script lang="ts">
-  import { afterUpdate } from 'svelte';
   import type { DashboardSettings } from './dashboard_settings';
   import DatasetSettings from './DatasetSettings.svelte';
   import DataStoreSettings from './DataStoreSettings.svelte';
   import ModelSettings from './ModelSettings.svelte';
   import PredictionsSettings from './PredictionsSettings.svelte';
 
-  export let settings: DashboardSettings;
+  interface Props {
+    settings: DashboardSettings;
+  }
 
-  afterUpdate(() => {
+  let { settings }: Props = $props();
+
+  $effect(() => {
     settings.mount();
   });
 </script>
@@ -37,13 +40,13 @@
       {#if Array.isArray(m)}
         <div class="flex flex-row flex-wrap items-stretch">
           {#each m as { id }}
-            <div {id} class="mly-card w-full flex-none xl:w-auto xl:flex-1" />
+            <div {id} class="mly-card w-full flex-none xl:w-auto xl:flex-1"></div>
           {/each}
         </div>
       {:else if typeof m === 'string'}
         <h2>{m}</h2>
       {:else}
-        <div id={m.id} class="mly-card" />
+        <div id={m.id} class="mly-card"></div>
       {/if}
     {/each}
   </div>

@@ -1,6 +1,7 @@
 import { Component } from '../../core/component';
 import View from './sketch-pad.view.svelte';
 import { Subject } from 'rxjs';
+import { mount } from "svelte";
 
 export class SketchPad extends Component {
   title = 'sketchPad';
@@ -29,13 +30,13 @@ export class SketchPad extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
-      target: t,
-      props: {
-        strokeStart: this.$strokeStart,
-        strokeEnd: this.$strokeEnd,
-      },
-    });
+    this.$$.app = mount(View, {
+          target: t,
+          props: {
+            strokeStart: this.$strokeStart,
+            strokeEnd: this.$strokeEnd,
+          },
+        });
     this.$$.app.$on('canvasElement', (e) => {
       this.sketchElement = e.detail;
       this.#sketchCtx = this.sketchElement.getContext('2d');

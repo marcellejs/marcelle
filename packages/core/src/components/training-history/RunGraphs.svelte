@@ -1,34 +1,40 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { onDestroy } from 'svelte';
 
   import type { Instance, Model, TrainingStatus } from '../../core';
   import { type TrainingPlot, trainingPlot } from '../training-plot';
   import { BehaviorSubject } from 'rxjs';
 
-  export let names: string[];
-  export let logs: Array<Record<string, unknown>>;
+  interface Props {
+    names: string[];
+    logs: Array<Record<string, unknown>>;
+  }
 
-  let chartElt: HTMLDivElement;
+  let { names, logs }: Props = $props();
 
-  let logKeys: string[];
-  $: {
+  let chartElt: HTMLDivElement = $state();
+
+  let logKeys: string[] = $state();
+  run(() => {
     logKeys = Array.from(new Set(logs.map(Object.keys).flat()));
     logKeys.sort();
-  }
-  $: indexedLogs = logs
+  });
+  let indexedLogs = $derived(logs
     .map((x, i) =>
       Object.entries(x).reduce((a, [key, val]) => ({ ...a, [`${key} (${names[i]})`]: val }), {}),
     )
-    .reduce((a, b) => ({ ...a, ...b }), {});
-  $: logSpec = logKeys.reduce(
+    .reduce((a, b) => ({ ...a, ...b }), {}));
+  let logSpec = $derived(logKeys.reduce(
     (res, key) => ({
       ...res,
       [key]: Object.keys(indexedLogs).filter((k) => k.startsWith(`${key} (`)),
     }),
     {},
-  );
-  let chart: TrainingPlot;
-  $: {
+  ));
+  let chart: TrainingPlot = $state();
+  run(() => {
     if (chart) {
       chart.destroy();
     }
@@ -39,7 +45,7 @@
       logSpec,
     );
     chart.mount(chartElt);
-  }
+  });
 
   onDestroy(() => {
     if (chart) {
@@ -49,7 +55,7 @@
 </script>
 
 {#if logs.length > 0}
-  <div bind:this={chartElt} />
+  <div bind:this={chartElt}></div>
 {:else}
   <div class="empty">
     <svg

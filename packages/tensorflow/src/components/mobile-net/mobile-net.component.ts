@@ -16,6 +16,7 @@ import {
 } from '@marcellejs/core';
 import Component from './mobile-net.view.svelte';
 import { BehaviorSubject } from 'rxjs';
+import { mount } from "svelte";
 
 export interface MobileNetOptions {
   version?: MobileNetVersion;
@@ -99,14 +100,14 @@ export class MobileNet extends Model<MobileNetInstance, ClassifierResults> {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new Component({
-      target: t,
-      props: {
-        loading: this.$loading,
-        version: this.version,
-        alpha: this.alpha,
-      },
-    });
+    this.$$.app = mount(Component, {
+          target: t,
+          props: {
+            loading: this.$loading,
+            version: this.version,
+            alpha: this.alpha,
+          },
+        });
   }
 
   @Catch

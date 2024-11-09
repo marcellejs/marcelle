@@ -1,8 +1,15 @@
 <script lang="ts">
   import type { BehaviorSubject } from 'rxjs';
 
-  export let title: string;
-  export let loading: BehaviorSubject<boolean> = undefined;
+  interface Props {
+    title: string;
+    loading?: BehaviorSubject<boolean>;
+    children?: import('svelte').Snippet;
+  }
+
+  let { title, loading = undefined, children }: Props = $props();
+
+  const children_render = $derived(children);
 </script>
 
 <div
@@ -18,5 +25,5 @@
       <span class="mly-loading mly-loading-spinner mly-loading-lg"></span>
     </span>
   {/if}
-  <slot />
+  {@render children_render?.()}
 </div>

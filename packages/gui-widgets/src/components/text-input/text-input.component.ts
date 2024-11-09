@@ -1,6 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { Component, rxBind } from '@marcellejs/core';
 import View from './text-input.view.svelte';
+import { mount } from 'svelte';
 
 export class TextInput extends Component {
   title = 'text input';
@@ -19,7 +20,7 @@ export class TextInput extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
+    this.$$.app = mount(View, {
       target: t,
       props: {
         value: rxBind(this.$value),

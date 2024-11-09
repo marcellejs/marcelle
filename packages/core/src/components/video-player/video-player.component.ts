@@ -1,6 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { Component } from '../../core';
 import View from './video-player.view.svelte';
+import { mount } from "svelte";
 
 export class VideoPlayer extends Component {
   title = 'Video Player';
@@ -18,16 +19,16 @@ export class VideoPlayer extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
-      target: t,
-      props: {
-        title: this.title,
-        src: this.$src,
-        // ready: this.$ready,
-        paused: this.$paused,
-        progress: this.$progress,
-        mirror: this.$mirror,
-      },
-    });
+    this.$$.app = mount(View, {
+          target: t,
+          props: {
+            title: this.title,
+            src: this.$src,
+            // ready: this.$ready,
+            paused: this.$paused,
+            progress: this.$progress,
+            mirror: this.$mirror,
+          },
+        });
   }
 }

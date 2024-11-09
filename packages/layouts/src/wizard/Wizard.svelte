@@ -1,11 +1,17 @@
 <script lang="ts">
-  import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte';
+  import { preventDefault } from 'svelte/legacy';
+
+  import { onDestroy, createEventDispatcher } from 'svelte';
   import WizardPageComponent from './WizardPage.svelte';
   import type { WizardPage } from './wizard_page';
   import { BehaviorSubject } from 'rxjs';
 
-  export let pages: WizardPage[];
-  export let current: BehaviorSubject<number>;
+  interface Props {
+    pages: WizardPage[];
+    current: BehaviorSubject<number>;
+  }
+
+  let { pages, current }: Props = $props();
 
   function goToPage(index: number) {
     if (index >= 0 && index <= pages.length - 1) {
@@ -22,7 +28,7 @@
     }
   }
 
-  afterUpdate(() => {
+  $effect(() => {
     for (const m of pages[current.getValue()].components) {
       if (Array.isArray(m)) {
         for (const n of m) {
@@ -55,11 +61,11 @@
 <div class="wizard">
   <div class="absolute inset-0 min-h-screen transition-opacity">
     <div
-      on:click={quit}
-      on:keypress|preventDefault={(e) => e.key === 'Escape' && quit()}
+      onclick={quit}
+      onkeypress={preventDefault((e) => e.key === 'Escape' && quit())}
       class="absolute inset-0 bg-gray-500 opacity-50"
       role="none"
-    />
+    ></div>
   </div>
   <div
     class="transform overflow-hidden rounded-lg bg-white shadow-xl transition-all sm:w-full
@@ -73,19 +79,20 @@
     />
     <div class="grid grid-cols-3 border-t border-gray-300 bg-white px-4 py-2">
       <div>
-        <button class="mly-btn mly-btn-outline mly-btn-error" on:click={quit}>Close</button>
+        <button class="mly-btn mly-btn-outline mly-btn-error" onclick={quit}>Close</button>
       </div>
       <div class="text-center">
         <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
         {#each Array(pages.length) as _, i}
-          <button on:click={() => goToPage(i)} class="page-button" class:current={$current === i} />
+          <button onclick={() => goToPage(i)} class="page-button" class:current={$current === i}
+          ></button>
         {/each}
       </div>
       <div class="text-right">
         <button
           class="mly-btn mly-btn-outline"
           disabled={$current <= 0}
-          on:click={() => {
+          onclick={() => {
             goToPage($current - 1);
           }}
         >
@@ -94,7 +101,7 @@
         <button
           class="mly-btn"
           class:mly-btn-success={$current >= pages.length - 1}
-          on:click={() => {
+          onclick={() => {
             if (current.getValue() < pages.length - 1) {
               goToPage($current + 1);
             } else {

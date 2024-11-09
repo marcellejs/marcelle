@@ -1,6 +1,5 @@
 <script>
   import Select from 'svelte-select';
-  import Masonry from 'svelte-bricks';
 
   import Demo from './Demo.svelte';
   import demos from '../meta';
@@ -13,30 +12,6 @@
 
   const filters = ['data', 'training', 'task', 'layout', 'features'];
 
-  $: filterValues = filters.map(
-    (f) =>
-      // ['all'].concat(
-      sorted(
-        // eslint-disable-next-line no-undef
-        Array.from(new Set(demos.flatMap((x) => x[f] || []))),
-      ),
-    // )
-  );
-
-  $: showDemos = demos.filter((x) => {
-    const matchFilters = filters.map(
-      (f, i) =>
-        currentFilters[i].length === 0 ||
-        currentFilters[i].reduce((a, b) => a || (x[f] || []).includes(b), false),
-    );
-    return matchFilters.reduce((a, b) => a && b, true);
-  });
-
-  $: currentFilters = filters.map((_, i) => []);
-
-  let [minColWidth, maxColWidth, gap] = [300, 400, 0];
-  let width, height;
-
   const handleChange = (i) => (e) => {
     if (e.type === 'clear' && Array.isArray(e.detail)) currentFilters[i] = [];
     else
@@ -44,6 +19,20 @@
         ? (currentFilters[i] = currentFilters[i].filter((i) => i != e.detail.value))
         : (currentFilters[i] = [...currentFilters[i], e.detail.value]);
   };
+  let filterValues = $derived(
+    filters.map((f) => sorted(Array.from(new Set(demos.flatMap((x) => x[f] || []))))),
+  );
+  let currentFilters = $derived(filters.map((_, i) => []));
+  let showDemos = $derived(
+    demos.filter((x) => {
+      const matchFilters = filters.map(
+        (f, i) =>
+          currentFilters[i].length === 0 ||
+          currentFilters[i].reduce((a, b) => a || (x[f] || []).includes(b), false),
+      );
+      return matchFilters.reduce((a, b) => a && b, true);
+    }),
+  );
 </script>
 
 <div class="container">
@@ -62,25 +51,11 @@
         {/each}
       </div>
     </div>
-    <div>
-      <Masonry
-        items={showDemos}
-        {minColWidth}
-        {maxColWidth}
-        {gap}
-        idKey="path"
-        let:item
-        bind:width
-        bind:height
-      >
-        <Demo demo={item} />
-      </Masonry>
-    </div>
-    <!-- <div class="demo-container">
+    <div class="demo-container">
       {#each showDemos as demo}
         <Demo {demo} />
       {/each}
-    </div> -->
+    </div>
   </main>
   <div class="privacy">
     <strong>Privacy Notice:</strong> Cookies are necessary to run these demos. In these demos data is
@@ -161,6 +136,11 @@
   .controls > div > p {
     text-align: center;
     padding: 0;
+  }
+
+  .demo-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
   }
 
   footer {

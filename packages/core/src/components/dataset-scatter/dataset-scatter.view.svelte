@@ -30,9 +30,13 @@
   );
   Chart.register(zoomPlugin);
 
-  export let data: BehaviorSubject<ChartConfiguration['data']>;
-  export let hovered: BehaviorSubject<ObjectId[]>;
-  export let clicked: BehaviorSubject<ObjectId[]>;
+  interface Props {
+    data: BehaviorSubject<ChartConfiguration['data']>;
+    hovered: BehaviorSubject<ObjectId[]>;
+    clicked: BehaviorSubject<ObjectId[]>;
+  }
+
+  let { data, hovered, clicked }: Props = $props();
 
   const getOrCreateTooltip = (chart: Chart) => {
     let tooltipEl = chart.canvas.parentNode.querySelector('div');
@@ -148,10 +152,10 @@
     },
   };
 
-  let chart: Chart;
+  let chart: Chart = $state();
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   let sub: Subscription;
-  let canvasElement: HTMLCanvasElement;
+  let canvasElement: HTMLCanvasElement = $state();
 
   async function setup() {
     if (sub) sub.unsubscribe();
@@ -178,9 +182,9 @@
   });
 </script>
 
-<div id="scatter-container"><canvas bind:this={canvasElement} /></div>
+<div id="scatter-container"><canvas bind:this={canvasElement}></canvas></div>
 <div class="flex justify-end">
-  <button class="btn btn-sm" on:click={() => chart.resetZoom()}>Reset Zoom</button>
+  <button class="btn btn-sm" onclick={() => chart.resetZoom()}>Reset Zoom</button>
 </div>
 
 <style>

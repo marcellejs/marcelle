@@ -14,15 +14,25 @@
 
   import type { BehaviorSubject } from 'rxjs';
 
-  export let title: string;
-  export let src: BehaviorSubject<string | MediaStream>;
-  export let paused: BehaviorSubject<boolean>;
-  export let progress: BehaviorSubject<number>;
-  export let mirror: BehaviorSubject<boolean>;
+  interface Props {
+    title: string;
+    src: BehaviorSubject<string | MediaStream>;
+    paused: BehaviorSubject<boolean>;
+    progress: BehaviorSubject<number>;
+    mirror: BehaviorSubject<boolean>;
+  }
+
+  let {
+    title,
+    src,
+    paused,
+    progress,
+    mirror
+  }: Props = $props();
 
   // import { textTracks } from './tracks';
 
-  let player: MediaPlayerElement;
+  let player: MediaPlayerElement = $state();
 
   let allowProgressControl = true;
   onMount(() => {
@@ -76,8 +86,8 @@
   {title}
   src={$src || ''}
   crossorigin
-  on:provider-change={onProviderChange}
-  on:can-play={onCanPlay}
+  onprovider-change={onProviderChange}
+  oncan-play={onCanPlay}
   bind:this={player}
   paused={$paused}
 >
@@ -89,8 +99,8 @@
       /> -->
   </media-provider>
   <!-- Layouts -->
-  <media-audio-layout />
-  <media-video-layout />
+  <media-audio-layout></media-audio-layout>
+  <media-video-layout></media-video-layout>
 </media-player>
 
 <style lang="postcss">

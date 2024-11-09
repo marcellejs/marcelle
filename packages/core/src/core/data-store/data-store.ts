@@ -12,6 +12,7 @@ import { throwError } from '../../utils/error-handling';
 import { noop } from '../../utils/misc';
 import { iterableFromService } from './service-iterable';
 import type { ObjectId, Service, User } from '../types';
+import { mount, unmount } from 'svelte';
 
 function isValidUrl(str: string) {
   try {
@@ -216,19 +217,21 @@ export class DataStore {
 
   async loginWithUI(): Promise<User> {
     this.$status.next('connecting');
-    const app = new Login({
-      target: document.body,
-      props: { dataStore: this },
-    });
     return new Promise<User>((resolve, reject) => {
-      app.$on('terminate', (e: CustomEvent<User>) => {
-        app.$destroy();
-        if (e.detail) {
-          this.$status.next('connected');
-          resolve(e.detail);
-        } else {
-          reject();
-        }
+      const app = mount(Login, {
+        target: document.body,
+        props: {
+          dataStore: this,
+          onterminate: (u: User) => {
+            unmount(app);
+            if (u) {
+              this.$status.next('connected');
+              resolve(u);
+            } else {
+              reject();
+            }
+          },
+        },
       });
     });
   }

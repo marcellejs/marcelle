@@ -4,17 +4,26 @@
   import { onMount, tick } from 'svelte';
   import { TableServiceProvider, Table, type Column } from '../../utils/design-system';
 
-  export let dataset: Dataset<Instance>;
-  export let colNames: BehaviorSubject<string[]>;
-  export let singleSelection = false;
-  export let selection: BehaviorSubject<Instance[]>;
+  interface Props {
+    dataset: Dataset<Instance>;
+    colNames: BehaviorSubject<string[]>;
+    singleSelection?: boolean;
+    selection: BehaviorSubject<Instance[]>;
+  }
 
-  let columns: Column[] = [
+  let {
+    dataset,
+    colNames,
+    singleSelection = false,
+    selection
+  }: Props = $props();
+
+  let columns: Column[] = $state([
     { name: 'x' },
     { name: 'y', sortable: true },
     { name: 'thumbnail', type: 'image' },
     { name: 'updatedAt', sortable: true },
-  ];
+  ]);
 
   function getType(x: unknown): Column['type'] {
     if (typeof x === 'string' && x.includes('data:image/')) {
@@ -38,7 +47,7 @@
     return false;
   }
 
-  let provider: TableServiceProvider;
+  let provider: TableServiceProvider = $state();
   onMount(async () => {
     await tick();
     await dataset.ready;

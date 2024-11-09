@@ -14,7 +14,7 @@
   </p>
 
   <div class="marcelle">
-    <button on:click={showDashboard}>Show Dashboard</button>
+    <button onclick={showDashboard}>Show Dashboard</button>
   </div>
 </div>
 

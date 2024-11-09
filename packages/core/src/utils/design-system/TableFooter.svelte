@@ -1,25 +1,34 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import type { Action } from './table-types';
   import type { TableDataProvider } from './table-abstract-provider';
   import TableActions from './TableActions.svelte';
 
-  export let provider: TableDataProvider;
-  export let actions: Action[];
-  export let selected: number[];
+  interface Props {
+    provider: TableDataProvider;
+    actions: Action[];
+    selected: number[];
+  }
+
+  let { provider, actions, selected = $bindable() }: Props = $props();
 
   // $: total = provider.total;
-  $: itemsPerPage =
-    provider.options.itemsPerPage !== undefined ? provider.options.itemsPerPage : 10;
+  let itemsPerPage;
+  run(() => {
+    itemsPerPage =
+      provider.options.itemsPerPage !== undefined ? provider.options.itemsPerPage : 10;
+  });
 
-  let page = 1;
-  let numPages = 1;
-  let start = 0;
-  let end = 0;
-  let total = 0;
+  let page = $state(1);
+  let numPages = $state(1);
+  let start = $state(0);
+  let end = $state(0);
+  let total = $state(0);
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  let unsub = () => {};
+  let unsub = $state(() => {});
 
-  $: {
+  run(() => {
     unsub();
     unsub = provider.total.subscribe((t) => {
       if (t === undefined || t === 0) {
@@ -34,7 +43,7 @@
         total = t;
       }
     });
-  }
+  });
 
   // $: console.log('provider', provider);
   // $: console.log('total', total);
@@ -63,7 +72,7 @@
         <select
           class="select select-bordered select-sm w-full max-w-xs"
           value={itemsPerPage.toString()}
-          on:change={({ currentTarget }) => {
+          onchange={({ currentTarget }) => {
             const n = currentTarget.value === 'all' ? total : parseInt(currentTarget.value);
             provider.paginate(n);
             itemsPerPage = n;
@@ -81,7 +90,7 @@
     <button
       class="btn btn-circle"
       disabled={page === 1}
-      on:click={() => {
+      onclick={() => {
         gotoPage(page - 1);
       }}
     >
@@ -98,7 +107,7 @@
     <input
       class="marcelle w-8 rounded mr-1 mb-1 bg-white text-gray-600 border border-solid border-gray-300 text-center focus:outline-none focus:ring-blue-400 focus:ring-2 focus:ring-opacity-50 active:ring-blue-400 active:ring-4 active:ring-opacity-50"
       value={page.toString()}
-      on:blur={(e) => {
+      onblur={(e) => {
         let i = parseInt(e.currentTarget.value);
         if (isNaN(i)) return;
         gotoPage(Math.max(1, Math.min(numPages, i)));
@@ -108,7 +117,7 @@
     <button
       class="btn btn-circle"
       disabled={page === numPages}
-      on:click={() => {
+      onclick={() => {
         gotoPage(page + 1);
       }}
     >

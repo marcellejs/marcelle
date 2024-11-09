@@ -3,9 +3,14 @@
   import Number from '../number/Number.svelte';
   import NumberArray from '../number-array/NumberArray.svelte';
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export let stream: BehaviorSubject<any>;
-  export let spec: { type: string; options?: string[] };
+  
+  interface Props {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    stream: BehaviorSubject<any>;
+    spec: { type: string; options?: string[] };
+  }
+
+  let { stream, spec }: Props = $props();
 </script>
 
 <div style="flex-grow: 1;">

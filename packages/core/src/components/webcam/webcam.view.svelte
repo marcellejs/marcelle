@@ -2,17 +2,28 @@
   import { onMount, onDestroy, tick } from 'svelte';
   import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
-  export let width: number;
-  export let height: number;
-  export let facingMode: BehaviorSubject<'user' | 'environment'>;
-  export let active: Observable<boolean>;
-  export let mediaStream: Observable<MediaStream>;
-  export let ready: Observable<boolean>;
+  interface Props {
+    width: number;
+    height: number;
+    facingMode: BehaviorSubject<'user' | 'environment'>;
+    active: Observable<boolean>;
+    mediaStream: Observable<MediaStream>;
+    ready: Observable<boolean>;
+  }
 
-  let videoElement: HTMLVideoElement;
-  let webcamContainerWidth: number;
+  let {
+    width,
+    height,
+    facingMode,
+    active,
+    mediaStream,
+    ready
+  }: Props = $props();
 
-  let numWebcams = 0;
+  let videoElement: HTMLVideoElement = $state();
+  let webcamContainerWidth: number = $state();
+
+  let numWebcams = $state(0);
   let sub: Subscription;
   onMount(async () => {
     await tick();
@@ -75,12 +86,12 @@
       autoplay
       muted
       playsinline
-    />
+></video>
     {#if numWebcams > 1}
       <div class="absolute bottom-2 right-2 text-right">
         <button
           class="ghost btn btn-circle"
-          on:click={() =>
+          onclick={() =>
             facingMode.next(facingMode.getValue() === 'user' ? 'environment' : 'user')}
         >
           <svg

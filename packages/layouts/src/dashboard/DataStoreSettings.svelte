@@ -2,9 +2,13 @@
   import type { DataStore } from '@marcellejs/core';
   import ViewContainer from './ViewContainer.svelte';
 
-  export let dataStore: DataStore;
+  interface Props {
+    dataStore: DataStore;
+  }
 
-  $: services = dataStore.$services;
+  let { dataStore }: Props = $props();
+
+  let services = $derived(dataStore.$services);
 
   function logout() {
     dataStore.logout();
@@ -29,12 +33,12 @@
       {#if user.role === 'anonymous'}
         <p>You are not authenticated.</p>
         <div class="flex">
-          <button class="mly-btn mly-btn-outline" on:click={signin}> Sign in </button>
+          <button class="mly-btn mly-btn-outline" onclick={signin}> Sign in </button>
         </div>
       {:else}
         <p class="pb-2">Hello, {user.email}</p>
         <div class="flex">
-          <button class="mly-btn mly-btn-outline" on:click={logout}> Log out </button>
+          <button class="mly-btn mly-btn-outline" onclick={logout}> Log out </button>
         </div>
       {/if}
     {/await}

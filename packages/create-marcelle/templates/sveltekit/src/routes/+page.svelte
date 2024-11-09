@@ -17,10 +17,10 @@
   </p>
 
   <div class="marcelle notitles">
-    <div use:marcelle={input} />
+    <div use:marcelle={input}></div>
     <div>
-      <div use:marcelle={label} />
-      <div use:marcelle={capture} />
+      <div use:marcelle={label}></div>
+      <div use:marcelle={capture}></div>
     </div>
     <p>You recorded {$count} instances</p>
   </div>

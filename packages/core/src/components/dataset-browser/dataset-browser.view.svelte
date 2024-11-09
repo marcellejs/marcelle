@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { preventDefault, stopPropagation } from 'svelte/legacy';
+
   import type { ObjectId } from '../../core';
   import type { Dataset } from '../../core/dataset';
   import type { DBInstance } from './dataset-browser.component';
@@ -7,13 +9,22 @@
   import { BehaviorSubject } from 'rxjs';
   import { noop } from '../../utils/misc';
 
-  export let batchSize: number;
-  export let count: BehaviorSubject<number>;
-  export let dataset: Dataset<DBInstance>;
-  export let selected: BehaviorSubject<ObjectId[]>;
+  interface Props {
+    batchSize: number;
+    count: BehaviorSubject<number>;
+    dataset: Dataset<DBInstance>;
+    selected: BehaviorSubject<ObjectId[]>;
+  }
+
+  let {
+    batchSize,
+    count,
+    dataset,
+    selected
+  }: Props = $props();
 
   let loading = false;
-  let dataStoreError = false;
+  let dataStoreError = $state(false);
 
   let classes: Record<
     string,
@@ -22,7 +33,7 @@
       loaded: number;
       instances: Array<Partial<DBInstance>>;
     }
-  > = {};
+  > = $state({});
 
   async function loadMore(label: string) {
     await dataset.ready;
@@ -229,7 +240,7 @@
   });
 </script>
 
-<svelte:window on:keydown={handleKeydown} on:keyup={handleKeyup} />
+<svelte:window onkeydown={handleKeydown} onkeyup={handleKeyup} />
 
 {#if classes && !dataStoreError}
   {#if $count > 0}
@@ -238,11 +249,11 @@
     <p class="ml-3 mt-2">This dataset is empty.</p>
   {/if}
 
-  <!-- svelte-ignore a11y-no-static-element-interactions -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div
     class="flex flex-wrap"
-    on:click={() => selectInstance()}
-    on:keypress|preventDefault={(e) => e.key === 'Escape' && selectInstance()}
+    onclick={() => selectInstance()}
+    onkeypress={preventDefault((e) => e.key === 'Escape' && selectInstance())}
   >
     {#each Object.entries(classes) as [label, { loaded, total, instances }]}
       <div class="browser-class">
@@ -253,7 +264,7 @@
               <button
                 tabindex="0"
                 class="mco-btn mco-btn-sm mco-btn-circle mco-btn-ghost"
-                on:click|stopPropagation={noop}
+                onclick={stopPropagation(noop)}
               >
                 <svg
                   class="inline-block h-5 w-5 fill-current"
@@ -264,23 +275,23 @@
                   /></svg
                 >
               </button>
-              <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+              <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
               <ul
                 tabindex="0"
                 class="mco-menu mco-dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
               >
                 <li>
-                  <button on:click={() => editClassLabel(label)}> Edit Class Label </button>
+                  <button onclick={() => editClassLabel(label)}> Edit Class Label </button>
                 </li>
-                <li><button on:click={() => deleteClass(label)}> Delete class </button></li>
+                <li><button onclick={() => deleteClass(label)}> Delete class </button></li>
                 {#if $selected.length > 0}
                   <li>
-                    <button on:click={deleteSelectedInstances}>
+                    <button onclick={deleteSelectedInstances}>
                       Delete selected instance{$selected.length > 1 ? 's' : ''}
                     </button>
                   </li>
                   <li>
-                    <button on:click={relabelSelectedInstances}>
+                    <button onclick={relabelSelectedInstances}>
                       Relabel selected instance{$selected.length > 1 ? 's' : ''}
                     </button>
                   </li>
@@ -291,8 +302,8 @@
 
           <div class="browser-class-body">
             {#each instances as { id, thumbnail } (id)}
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+              <!-- svelte-ignore a11y_click_events_have_key_events -->
+              <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
               <img
                 src={thumbnail}
                 alt="thumbnail"
@@ -300,14 +311,14 @@
                 class:selected={$selected.includes(id)}
                 in:scale
                 out:scale
-                on:click|stopPropagation={() => selectInstance(id)}
+                onclick={stopPropagation(() => selectInstance(id))}
               />
             {/each}
           </div>
         </div>
         <div class="pb-1">
           {#if loaded < total}
-            <button class="btn btn-sm" on:click={() => loadMore(label)}> View More </button>
+            <button class="btn btn-sm" onclick={() => loadMore(label)}> View More </button>
           {/if}
         </div>
       </div>

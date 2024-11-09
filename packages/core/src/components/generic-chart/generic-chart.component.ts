@@ -4,6 +4,7 @@ import { Component } from '../../core/component';
 import { throwError } from '../../utils/error-handling';
 import View from './generic-chart.view.svelte';
 import { BehaviorSubject, Observable, auditTime, isObservable } from 'rxjs';
+import { mount } from "svelte";
 
 // TODO: Automatic switch to fast mode when high number of points
 
@@ -180,13 +181,13 @@ export class GenericChart extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
-      target: t,
-      props: {
-        preset: this.#preset,
-        options: this.options,
-        datasets: this.#datasets,
-      },
-    });
+    this.$$.app = mount(View, {
+          target: t,
+          props: {
+            preset: this.#preset,
+            options: this.options,
+            datasets: this.#datasets,
+          },
+        });
   }
 }

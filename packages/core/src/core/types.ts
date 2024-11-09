@@ -1,4 +1,3 @@
-import type { SvelteComponent } from 'svelte';
 import type { BehaviorSubject } from 'rxjs';
 import type { FeathersService } from '@feathersjs/feathers';
 import type { ServiceIterable } from './data-store/service-iterable';
@@ -6,7 +5,10 @@ import type { ServiceIterable } from './data-store/service-iterable';
 export interface ComponentInternals {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   // streams: Array<Stream<any>>;
-  app?: SvelteComponent;
+  app?: {
+    $on?(type: string, callback: (e: any) => void): () => void;
+    $set?(props: Partial<Record<string, any>>): void;
+  } & Record<string, any>;
   [key: string]: unknown;
 }
 

@@ -3,16 +3,20 @@
   import loadImage from 'blueimp-load-image';
   import type { Subject } from 'rxjs';
 
-  export let images: Subject<ImageData>;
-  export let thumbnails: Subject<string>;
-  export let width: number;
-  export let height: number;
+  interface Props {
+    images: Subject<ImageData>;
+    thumbnails: Subject<string>;
+    width: number;
+    height: number;
+  }
 
-  let uploadInput: HTMLInputElement;
+  let { images, thumbnails, width, height }: Props = $props();
+
+  let uploadInput: HTMLInputElement = $state();
 
   let counter = 0;
-  let draggedOver = false;
-  let objectURLs: string[] = [];
+  let draggedOver = $state(false);
+  let objectURLs: string[] = $state([]);
 
   // use to check if a file is being dragged
   const hasFiles = ({ dataTransfer: { types = [] } }: DragEvent) => types.indexOf('Files') > -1;
@@ -129,10 +133,10 @@
 {/if}
 
 <div
-  on:dragenter={handleDragEnter}
-  on:dragleave={handleDragLeave}
-  on:dragover={handleDragOver}
-  on:drop={handleDragDrop}
+  ondragenter={handleDragEnter}
+  ondragleave={handleDragLeave}
+  ondragover={handleDragOver}
+  ondrop={handleDragDrop}
   class="image-upload"
   role="none"
 >
@@ -143,7 +147,7 @@
       <span>Drag and drop an image or</span>
     </p>
     <input bind:this={uploadInput} type="file" multiple class="hidden" />
-    <button class="mgui-btn" on:click={clickUpload}>Upload a file</button>
+    <button class="mgui-btn" onclick={clickUpload}>Upload a file</button>
   </div>
 
   <div class="flex flex-wrap">

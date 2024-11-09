@@ -5,17 +5,21 @@
   import { RecordRTCPromisesHandler } from 'recordrtc';
   import { filter, type BehaviorSubject } from 'rxjs';
 
-  export let mediaStream: BehaviorSubject<MediaStream>;
-  export let active: BehaviorSubject<boolean>;
-  export let recordings: BehaviorSubject<{
+  interface Props {
+    mediaStream: BehaviorSubject<MediaStream>;
+    active: BehaviorSubject<boolean>;
+    recordings: BehaviorSubject<{
     duration: number;
     blob: Blob;
     type: string;
     thumbnail: string;
   }>;
+  }
+
+  let { mediaStream, active, recordings }: Props = $props();
 
   let recorder: RecordRTCPromisesHandler;
-  let elapsedTime = '';
+  let elapsedTime = $state('');
   let intvId: number;
   let thumbnail = '';
 
@@ -87,7 +91,7 @@
 <div class="flex flex-col items-center">
   <div class="recorder-container">
     <input type="checkbox" id="btn" bind:checked={$active} />
-    <label for="btn" />
+    <label for="btn"></label>
   </div>
   <div class="text-gray-600">{elapsedTime}</div>
 </div>

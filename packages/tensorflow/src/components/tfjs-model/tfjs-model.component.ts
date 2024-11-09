@@ -15,6 +15,7 @@ import Component from './tfjs-model.view.svelte';
 import { map } from 'rxjs';
 import { TFJSBaseModel } from '../../core';
 import { browserFiles, http } from '../../core/tfjs-io';
+import { mount } from "svelte";
 
 export interface InputTypes {
   image: ImageData;
@@ -247,11 +248,11 @@ export class TFJSModel<
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new Component({
-      target: t,
-      props: {
-        training: this.$training,
-      },
-    });
+    this.$$.app = mount(Component, {
+          target: t,
+          props: {
+            training: this.$training,
+          },
+        });
   }
 }

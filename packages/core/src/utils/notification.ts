@@ -1,8 +1,11 @@
-import type { SvelteComponent } from 'svelte';
+import { mount } from 'svelte';
 import Notification from './design-system/Notification.svelte';
 
 let notificationContainer: HTMLDivElement | undefined;
-let app: SvelteComponent | undefined;
+let app: {
+  $on?(type: string, callback: (e: any) => void): () => void;
+  $set?(props: Partial<Record<string, any>>): void;
+} & Record<string, any>;
 
 export function notification({
   title,
@@ -19,7 +22,7 @@ export function notification({
     notificationContainer = document.createElement('div');
     notificationContainer.id = 'notification-container';
     document.body.appendChild(notificationContainer);
-    app = new Notification({
+    app = mount(Notification, {
       target: notificationContainer,
     });
   }

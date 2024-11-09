@@ -1,7 +1,11 @@
 <script lang="ts">
   import { getLogStream, LogLevel } from '@marcellejs/core';
 
-  export let author: string;
+  interface Props {
+    author: string;
+  }
+
+  let { author }: Props = $props();
 
   const logStream = getLogStream();
 </script>

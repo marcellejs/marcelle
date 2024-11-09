@@ -19,6 +19,7 @@ import '@tensorflow/tfjs-core/dist/public/chained_ops/squeeze';
 import { input, loadLayersModel, model } from '@tensorflow/tfjs-layers';
 import { applyColorMap } from './colormap';
 import View from './gradcam.view.svelte';
+import { mount } from "svelte";
 
 function toArray(x) {
   return Array.isArray(x) ? x : [x];
@@ -44,13 +45,13 @@ export class Gradcam extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
-      target: t,
-      props: {
-        title: this.title,
-        options: this.options,
-      },
-    });
+    this.$$.app = mount(View, {
+          target: t,
+          props: {
+            title: this.title,
+            options: this.options,
+          },
+        });
   }
 
   getLayersNames() {

@@ -3,14 +3,18 @@
   import type { TableDataProvider } from './table-abstract-provider';
   import { createEventDispatcher } from 'svelte';
 
-  export let provider: TableDataProvider;
-  export let actions: Action[];
-  export let selected: number[];
+  interface Props {
+    provider: TableDataProvider;
+    actions: Action[];
+    selected: number[];
+  }
+
+  let { provider, actions, selected = $bindable() }: Props = $props();
 
   const dispatch = createEventDispatcher();
 
-  let modal: HTMLDialogElement;
-  let selectedAction = '';
+  let modal: HTMLDialogElement = $state();
+  let selectedAction = $state('');
 
   async function confirmAction() {
     if (selectedAction === 'delete') {
@@ -44,7 +48,7 @@
       class:btn-disabled={multiple === false && selected.length > 1}
       class:btn-error={name === 'delete'}
       disabled={multiple === false && selected.length > 1}
-      on:click={() => handleAction(name, confirm || false)}>{name}</button
+      onclick={() => handleAction(name, confirm || false)}>{name}</button
     >
   {/each}
 </div>
@@ -60,12 +64,12 @@
     <div class="w-full flex justify-end">
       <button
         class="btn btn-ghost"
-        on:click={() => {
+        onclick={() => {
           modal.close();
         }}>Cancel</button
       >
-      <span class="w-2" />
-      <button class="btn btn-primary" on:click={confirmAction}>Confirm</button>
+      <span class="w-2"></span>
+      <button class="btn btn-primary" onclick={confirmAction}>Confirm</button>
     </div>
   </div>
 </dialog>

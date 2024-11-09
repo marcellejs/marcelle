@@ -18,6 +18,7 @@ import { button, modelParameters, select, textInput, toggle } from '@marcellejs/
 import { dashboard } from '@marcellejs/layouts';
 import { setMove, reset, stop } from './tetris';
 import App from './App.svelte';
+import { mount } from "svelte";
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
@@ -134,7 +135,7 @@ const sel = select({
 });
 sel.$value.subscribe((x) => label.$value.set(x));
 
-const app = new App({
+const app = mount(App, {
   target: document.querySelector('#tetris-controls'),
   props: {
     input,

@@ -1,8 +1,12 @@
 <script lang="ts">
   import type { BehaviorSubject } from 'rxjs';
 
-  export let options: BehaviorSubject<string[]>;
-  export let value: BehaviorSubject<string>;
+  interface Props {
+    options: BehaviorSubject<string[]>;
+    value: BehaviorSubject<string>;
+  }
+
+  let { options, value }: Props = $props();
 </script>
 
 <select class="mgui-select mgui-select-bordered w-full max-w-xs" bind:value={$value}>

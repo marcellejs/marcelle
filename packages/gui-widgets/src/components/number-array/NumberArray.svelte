@@ -1,6 +1,10 @@
 <script lang="ts">
-  export let disabled = false;
-  export let value: number[];
+  interface Props {
+    disabled?: boolean;
+    value: number[];
+  }
+
+  let { disabled = false, value = $bindable() }: Props = $props();
 
   function changeValue(e: Event, i: number) {
     const target = e.target as HTMLInputElement;
@@ -39,7 +43,7 @@
   <div class="flex items-center gap-2">
     {#each value as v, i}
       <div class="mgui-join">
-        <button {disabled} class="mgui-btn mgui-btn-sm mgui-join-item" on:click={() => decrement(i)}
+        <button {disabled} class="mgui-btn mgui-btn-sm mgui-join-item" onclick={() => decrement(i)}
           >-</button
         >
         <div>
@@ -49,19 +53,19 @@
             inputmode="decimal"
             {disabled}
             value={v}
-            on:change={(e) => changeValue(e, i)}
+            onchange={(e) => changeValue(e, i)}
           />
         </div>
-        <button {disabled} class="mgui-btn mgui-btn-sm mgui-join-item" on:click={() => increment(i)}
+        <button {disabled} class="mgui-btn mgui-btn-sm mgui-join-item" onclick={() => increment(i)}
           >+</button
         >
       </div>
     {/each}
     <div class="mgui-join">
-      <button on:click={() => reduce()} {disabled} class="mgui-btn mgui-btn-sm mgui-join-item"
+      <button onclick={() => reduce()} {disabled} class="mgui-btn mgui-btn-sm mgui-join-item"
         >-</button
       >
-      <button on:click={() => extend()} {disabled} class="mgui-btn mgui-btn-sm mgui-join-item"
+      <button onclick={() => extend()} {disabled} class="mgui-btn mgui-btn-sm mgui-join-item"
         >+</button
       >
     </div>

@@ -11,7 +11,7 @@
   <h1>Your Dataset</h1>
 
   <div class="marcelle card">
-    <div use:marcelle={trainingSetBrowser} />
+    <div use:marcelle={trainingSetBrowser}></div>
   </div>
 </div>
 

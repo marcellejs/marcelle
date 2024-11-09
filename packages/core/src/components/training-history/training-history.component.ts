@@ -12,6 +12,7 @@ import { preventConcurrentCalls } from '../../utils/asynchronicity';
 import { noop } from '../../utils/misc';
 import View from './training-history.view.svelte';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
+import { mount } from "svelte";
 
 function appendLogs(logs: Record<string, unknown>, d: Record<string, unknown>) {
   const l = { ...logs };
@@ -146,15 +147,15 @@ export class TrainingHistory<T extends Instance, PredictionType> extends Compone
     if (!t) return;
     this.destroy();
     this.ready.then(() => {
-      this.$$.app = new View({
-        target: t,
-        props: {
-          service: this.runService,
-          metrics: this.options.metrics,
-          actions: this.options.actions,
-          selection: this.$selection,
-        },
-      });
+      this.$$.app = mount(View, {
+              target: t,
+              props: {
+                service: this.runService,
+                metrics: this.options.metrics,
+                actions: this.options.actions,
+                selection: this.$selection,
+              },
+            });
       for (const action of this.options.actions) {
         const name = typeof action === 'string' ? action : action.name;
         this.$$.app.$on(name, ({ detail }) => {

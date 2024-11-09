@@ -2,7 +2,11 @@
   import type { ProgressType } from './progress-bar.component';
   import { Observable } from 'rxjs';
 
-  export let progress: Observable<ProgressType>;
+  interface Props {
+    progress: Observable<ProgressType>;
+  }
+
+  let { progress }: Props = $props();
 </script>
 
 <div class="relative w-full pt-6" style="min-width: 250px;">

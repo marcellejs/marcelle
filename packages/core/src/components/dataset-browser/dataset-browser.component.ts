@@ -3,6 +3,7 @@ import type { Dataset, Instance } from '../../core';
 import type { ObjectId } from '../../core/types';
 import View from './dataset-browser.view.svelte';
 import { BehaviorSubject } from 'rxjs';
+import { mount } from "svelte";
 
 export interface DBInstance extends Instance {
   y: string;
@@ -32,14 +33,14 @@ export class DatasetBrowser extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
-      target: t,
-      props: {
-        batchSize: this.batchSize,
-        count: this.#dataset.$count,
-        dataset: this.#dataset,
-        selected: this.$selected,
-      },
-    });
+    this.$$.app = mount(View, {
+          target: t,
+          props: {
+            batchSize: this.batchSize,
+            count: this.#dataset.$count,
+            dataset: this.#dataset,
+            selected: this.$selected,
+          },
+        });
   }
 }

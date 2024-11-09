@@ -1,12 +1,13 @@
 import { BehaviorSubject, Subject, skip } from 'rxjs';
 import { Component } from '@marcellejs/core';
 import View from './button.view.svelte';
+import { mount } from 'svelte';
 
 export class Button extends Component {
   title = 'button';
 
   $text: BehaviorSubject<string>;
-  $click = new Subject<CustomEvent<unknown>>();
+  $click = new Subject<Event>();
   $pressed = new BehaviorSubject(false);
   $disabled = new BehaviorSubject(false);
   $type = new BehaviorSubject<'default' | 'success' | 'warning' | 'danger'>('default');
@@ -23,17 +24,17 @@ export class Button extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
+    this.$$.app = mount(View, {
       target: t,
       props: {
         text: this.$text,
         pressed: this.$pressed,
         disabled: this.$disabled,
         type: this.$type,
+        onclick: (e: Event) => {
+          this.$click.next(e);
+        },
       },
-    });
-    this.$$.app.$on('click', (e) => {
-      this.$click.next(e);
     });
   }
 }

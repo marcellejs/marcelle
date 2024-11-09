@@ -2,8 +2,12 @@
   import type { PoseDetectionModel } from './pose-detection.component';
   import type { Observable } from 'rxjs';
 
-  export let loading: Observable<boolean>;
-  export let model: PoseDetectionModel;
+  interface Props {
+    loading: Observable<boolean>;
+    model: PoseDetectionModel;
+  }
+
+  let { loading, model }: Props = $props();
 </script>
 
 <p class="p-2 text-sm text-gray-600">

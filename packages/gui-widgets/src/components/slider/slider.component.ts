@@ -1,6 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { Component, rxBind } from '@marcellejs/core';
 import View from './slider.view.svelte';
+import { mount } from "svelte";
 
 export interface SliderOptions {
   values: number[];
@@ -78,21 +79,21 @@ export class Slider extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
-      target: t,
-      props: {
-        values: rxBind(this.$values),
-        min: this.$min,
-        max: this.$max,
-        step: this.$step,
-        range: this.range,
-        float: this.float,
-        vertical: this.vertical,
-        pips: this.pips,
-        pipstep: this.pipstep,
-        formatter: this.formatter,
-        continuous: this.continuous,
-      },
-    });
+    this.$$.app = mount(View, {
+          target: t,
+          props: {
+            values: rxBind(this.$values),
+            min: this.$min,
+            max: this.$max,
+            step: this.$step,
+            range: this.range,
+            float: this.float,
+            vertical: this.vertical,
+            pips: this.pips,
+            pipstep: this.pipstep,
+            formatter: this.formatter,
+            continuous: this.continuous,
+          },
+        });
   }
 }

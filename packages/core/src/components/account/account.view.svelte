@@ -1,7 +1,11 @@
 <script lang="ts">
   import type { DataStore } from '../../core/data-store';
 
-  export let dataStore: DataStore;
+  interface Props {
+    dataStore: DataStore;
+  }
+
+  let { dataStore }: Props = $props();
 
   function logout() {
     dataStore.logout();
@@ -17,7 +21,7 @@
   {:then user}
     <p class="pb-2">Hello, {user.email}</p>
     <div class="flex">
-      <button class="mco-btn mco-btn-error" on:click={logout}>Log out</button>
+      <button class="mco-btn mco-btn-error" onclick={logout}>Log out</button>
     </div>
   {/await}
 {:else}

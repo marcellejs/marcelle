@@ -2,6 +2,7 @@ import ort from 'onnxruntime-web';
 import Component from './onnx-model.view.svelte';
 import { BehaviorSubject, map } from 'rxjs';
 import { type ClassifierResults, Catch, Instance, Model, TrainingError } from '@marcellejs/core';
+import { mount } from "svelte";
 
 type RegularArray<T> = T[] | T[][] | T[][][] | T[][][][] | T[][][][][] | T[][][][][][];
 
@@ -242,12 +243,12 @@ export class OnnxModel<
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new Component({
-      target: t,
-      props: {
-        training: this.$training,
-      },
-    });
+    this.$$.app = mount(Component, {
+          target: t,
+          props: {
+            training: this.$training,
+          },
+        });
   }
 
   @Catch

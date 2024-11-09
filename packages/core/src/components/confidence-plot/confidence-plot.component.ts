@@ -3,6 +3,7 @@ import { Component } from '../../core/component';
 import { genericChart, type GenericChart } from '../generic-chart';
 import { map, Observable } from 'rxjs';
 import View from './confidence-plot.view.svelte';
+import { mount } from "svelte";
 
 export class ConfidencePlot extends Component {
   title = 'confidence plot';
@@ -40,12 +41,12 @@ export class ConfidencePlot extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
-      target: t,
-      props: {
-        predictionStream: this.$predictionStream,
-        plotConfidences: this.#plotConfidences,
-      },
-    });
+    this.$$.app = mount(View, {
+          target: t,
+          props: {
+            predictionStream: this.$predictionStream,
+            plotConfidences: this.#plotConfidences,
+          },
+        });
   }
 }

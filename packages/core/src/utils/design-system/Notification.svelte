@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { preventDefault } from 'svelte/legacy';
+
   import { blur } from 'svelte/transition';
   import { flip } from 'svelte/animate';
 
@@ -9,7 +11,11 @@
     type: 'default' | 'danger';
   }
 
-  export let notifications: Notification[] = [];
+  interface Props {
+    notifications?: Notification[];
+  }
+
+  let { notifications = $bindable([]) }: Props = $props();
 
   function close(id: number) {
     notifications = notifications.filter((x) => x.id !== id);
@@ -85,8 +91,8 @@
             class="notification-svg ml-4 cursor-pointer"
             class:default={type === 'default'}
             class:danger={type === 'danger'}
-            on:click={() => close(id)}
-            on:keypress|preventDefault={(e) => e.key === 'Escape' && close(id)}
+            onclick={() => close(id)}
+            onkeypress={preventDefault((e) => e.key === 'Escape' && close(id))}
             role="button"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"

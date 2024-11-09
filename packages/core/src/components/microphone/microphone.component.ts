@@ -2,6 +2,7 @@ import { Component } from '../../core/component';
 import View from './microphone.view.svelte';
 import { throwError } from '../../utils';
 import { BehaviorSubject } from 'rxjs';
+import { mount } from "svelte";
 
 export class Microphone extends Component {
   title: string;
@@ -46,12 +47,12 @@ export class Microphone extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
-      target: t,
-      props: {
-        active: this.$active,
-        mediaStream: this.$mediastream,
-      },
-    });
+    this.$$.app = mount(View, {
+          target: t,
+          props: {
+            active: this.$active,
+            mediaStream: this.$mediastream,
+          },
+        });
   }
 }

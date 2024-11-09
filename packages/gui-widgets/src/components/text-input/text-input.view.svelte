@@ -1,8 +1,12 @@
 <script lang="ts">
   import type { Subject } from 'rxjs';
 
-  export let value: Subject<string>;
-  export let disabled: Subject<boolean>;
+  interface Props {
+    value: Subject<string>;
+    disabled: Subject<boolean>;
+  }
+
+  let { value, disabled }: Props = $props();
 </script>
 
 <div class="w-full max-w-sm">

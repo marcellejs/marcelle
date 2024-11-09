@@ -2,10 +2,14 @@
   import type { BehaviorSubject } from 'rxjs';
   import { onDestroy, onMount } from 'svelte';
 
-  export let active: BehaviorSubject<boolean>;
-  export let mediaStream: BehaviorSubject<MediaStream>;
+  interface Props {
+    active: BehaviorSubject<boolean>;
+    mediaStream: BehaviorSubject<MediaStream>;
+  }
 
-  let canvasElt: HTMLCanvasElement;
+  let { active, mediaStream }: Props = $props();
+
+  let canvasElt: HTMLCanvasElement = $state();
 
   let unSub;
   let drawRequest = 0;
@@ -80,7 +84,7 @@
     </div>
   </div>
   <div>
-    <canvas bind:this={canvasElt} class="w-full" />
+    <canvas bind:this={canvasElt} class="w-full"></canvas>
   </div>
 </div>
 

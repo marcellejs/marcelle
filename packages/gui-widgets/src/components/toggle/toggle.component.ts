@@ -1,6 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { Component, rxBind } from '@marcellejs/core';
 import View from './toggle.view.svelte';
+import { mount } from "svelte";
 
 export class Toggle extends Component {
   title = 'toggle';
@@ -18,13 +19,13 @@ export class Toggle extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
-      target: t,
-      props: {
-        text: this.$text,
-        checked: rxBind(this.$checked),
-        disabled: this.$disabled,
-      },
-    });
+    this.$$.app = mount(View, {
+          target: t,
+          props: {
+            text: this.$text,
+            checked: rxBind(this.$checked),
+            disabled: this.$disabled,
+          },
+        });
   }
 }

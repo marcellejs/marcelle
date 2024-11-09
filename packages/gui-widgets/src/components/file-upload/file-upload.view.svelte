@@ -2,12 +2,16 @@
   import { onMount, tick } from 'svelte';
   import type { Subject } from 'rxjs';
 
-  export let fileStream: Subject<File[]>;
+  interface Props {
+    fileStream: Subject<File[]>;
+  }
 
-  let uploadInput: HTMLInputElement;
+  let { fileStream }: Props = $props();
+
+  let uploadInput: HTMLInputElement = $state();
 
   let counter = 0;
-  let draggedOver = false;
+  let draggedOver = $state(false);
 
   // use to check if a file is being dragged
   const hasFiles = ({ dataTransfer: { types = [] } }: DragEvent) => types.indexOf('Files') > -1;
@@ -83,10 +87,10 @@
 {/if}
 
 <div
-  on:dragenter={handleDragEnter}
-  on:dragleave={handleDragLeave}
-  on:dragover={handleDragOver}
-  on:drop={handleDragDrop}
+  ondragenter={handleDragEnter}
+  ondragleave={handleDragLeave}
+  ondragover={handleDragOver}
+  ondrop={handleDragDrop}
   class="file-upload"
   role="none"
 >
@@ -97,7 +101,7 @@
       <span>Drop Files here or:</span>
     </p>
     <input bind:this={uploadInput} type="file" multiple class="hidden" />
-    <button class="mgui-btn" on:click={clickUpload}>Upload a file</button>
+    <button class="mgui-btn" onclick={clickUpload}>Upload a file</button>
   </div>
 </div>
 

@@ -9,6 +9,7 @@ import {
   TrainingError,
 } from '@marcellejs/core';
 import Component from './coco-ssd.view.svelte';
+import { mount } from "svelte";
 
 export interface CocoSsdOptions {
   base?: ObjectDetectionBaseModel;
@@ -77,13 +78,13 @@ export class CocoSsd extends Model<CocoInstance, ObjectDetectorResults> {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new Component({
-      target: t,
-      props: {
-        loading: this.$loading,
-        base: this.#base,
-      },
-    });
+    this.$$.app = mount(Component, {
+          target: t,
+          props: {
+            loading: this.$loading,
+            base: this.#base,
+          },
+        });
   }
 
   @Catch

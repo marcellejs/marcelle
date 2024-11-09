@@ -1,10 +1,19 @@
 <script lang="ts">
   import type { Component } from '@marcellejs/core';
 
-  export let index: number;
-  export let title: string;
-  export let description: string;
-  export let components: Array<Component[] | Component> = [];
+  interface Props {
+    index: number;
+    title: string;
+    description: string;
+    components?: Array<Component[] | Component>;
+  }
+
+  let {
+    index,
+    title,
+    description,
+    components = []
+  }: Props = $props();
 </script>
 
 <div class="bg-white px-4 pt-2 pb-4 sm:px-6 sm:pb-4 flex">
@@ -24,11 +33,11 @@
           {#if Array.isArray(m)}
             <div class="flex flex-row flex-wrap items-stretch">
               {#each m as { id }}
-                <div {id} class="flex-none xl:flex-1 w-full xl:w-auto" />
+                <div {id} class="flex-none xl:flex-1 w-full xl:w-auto"></div>
               {/each}
             </div>
           {:else}
-            <div id={m.id} />
+            <div id={m.id}></div>
           {/if}
         {/each}
       </div>

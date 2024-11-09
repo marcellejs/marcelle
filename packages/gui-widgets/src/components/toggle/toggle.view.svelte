@@ -1,9 +1,13 @@
 <script lang="ts">
   import { BehaviorSubject } from 'rxjs';
 
-  export let text: BehaviorSubject<string>;
-  export let checked: BehaviorSubject<boolean>;
-  export let disabled: BehaviorSubject<boolean>;
+  interface Props {
+    text: BehaviorSubject<string>;
+    checked: BehaviorSubject<boolean>;
+    disabled: BehaviorSubject<boolean>;
+  }
+
+  let { text, checked, disabled }: Props = $props();
 </script>
 
 <div class="mgui-form-control">

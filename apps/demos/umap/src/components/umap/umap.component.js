@@ -2,6 +2,7 @@ import { Component } from '@marcellejs/core';
 import { BehaviorSubject } from 'rxjs';
 import { UMAP } from 'umap-js';
 import View from './umap.view.svelte';
+import { mount } from "svelte";
 
 export class Umap extends Component {
   constructor(dataset, supervised = false) {
@@ -32,13 +33,13 @@ export class Umap extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
-      target: t,
-      props: {
-        title: this.title,
-        embedding: this.$embedding,
-        labels: this.$labels,
-      },
-    });
+    this.$$.app = mount(View, {
+          target: t,
+          props: {
+            title: this.title,
+            embedding: this.$embedding,
+            labels: this.$labels,
+          },
+        });
   }
 }

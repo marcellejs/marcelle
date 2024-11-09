@@ -14,6 +14,7 @@ import { SkeletonRenderer } from './renderer';
 import View from './pose-detection.view.svelte';
 import { ready } from '@tensorflow/tfjs-core';
 import { BehaviorSubject } from 'rxjs';
+import { mount } from "svelte";
 
 export type PoseDetectionModel = keyof typeof SupportedModels;
 
@@ -99,13 +100,13 @@ export class PoseDetection extends Model<PoseDetectionInstance, Pose[]> {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
-      target: t,
-      props: {
-        loading: this.$loading,
-        model: this.model,
-      },
-    });
+    this.$$.app = mount(View, {
+          target: t,
+          props: {
+            loading: this.$loading,
+            model: this.model,
+          },
+        });
   }
 
   @Catch

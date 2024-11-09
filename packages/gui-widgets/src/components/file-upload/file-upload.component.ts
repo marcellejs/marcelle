@@ -1,6 +1,7 @@
 import { Component } from '@marcellejs/core';
 import View from './file-upload.view.svelte';
 import { Subject } from 'rxjs';
+import { mount } from "svelte";
 
 export class FileUpload extends Component {
   title = 'file upload';
@@ -11,11 +12,11 @@ export class FileUpload extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
-      target: t,
-      props: {
-        fileStream: this.$files,
-      },
-    });
+    this.$$.app = mount(View, {
+          target: t,
+          props: {
+            fileStream: this.$files,
+          },
+        });
   }
 }

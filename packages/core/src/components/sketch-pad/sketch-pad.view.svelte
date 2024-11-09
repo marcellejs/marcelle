@@ -2,10 +2,14 @@
   import type { Subject } from 'rxjs';
   import { onMount, createEventDispatcher, tick } from 'svelte';
 
-  export let strokeStart: Subject<void>;
-  export let strokeEnd: Subject<void>;
+  interface Props {
+    strokeStart: Subject<void>;
+    strokeEnd: Subject<void>;
+  }
 
-  let canvasElement: HTMLCanvasElement;
+  let { strokeStart, strokeEnd }: Props = $props();
+
+  let canvasElement: HTMLCanvasElement = $state();
   let isDrawing = false;
   let offset = { left: 0, top: 0 };
   let previous = { x: 0, y: 0 };
@@ -64,7 +68,7 @@
   }
 </script>
 
-<svelte:body on:mouseup={stopDrawing} />
+<svelte:body onmouseup={stopDrawing} />
 
 <div class="box-border flex w-full flex-col items-center">
   <canvas
@@ -73,11 +77,11 @@
     width="300"
     height="300"
     bind:this={canvasElement}
-    on:mousemove={draw}
-    on:mousedown={startDrawing}
-  />
+    onmousemove={draw}
+    onmousedown={startDrawing}
+></canvas>
   <div class="m-1">
-    <button class="mco-btn mco-btn-sm mco-btn-error" on:click={clearDrawing}>Clear</button>
+    <button class="mco-btn mco-btn-sm mco-btn-error" onclick={clearDrawing}>Clear</button>
   </div>
 </div>
 

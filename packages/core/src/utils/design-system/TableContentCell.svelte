@@ -3,9 +3,15 @@
   import { createEventDispatcher } from 'svelte';
   import type { Column } from './table-types';
 
-  export let type: Column['type'] = 'generic';
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export let value: any = null;
+  
+  interface Props {
+    type?: Column['type'];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    value?: any;
+    children?: import('svelte').Snippet;
+  }
+
+  let { type = 'generic', value = null, children }: Props = $props();
 
   const dispatch = createEventDispatcher();
 
@@ -26,6 +32,8 @@
       return v;
     }
   }
+
+  const children_render = $derived(children);
 </script>
 
 <td>
@@ -34,17 +42,17 @@
   {:else if type === 'link'}
     <button
       class="btn btn-sm btn-outline"
-      on:click={() => {
+      onclick={() => {
         // eslint-disable-next-line no-console
         console.log('GOTO:', value.href);
       }}>{value.text}</button
     >
   {:else if type === 'action'}
-    <button class="btn btn-sm btn-outline" on:click={() => dispatch('action', value)}>
+    <button class="btn btn-sm btn-outline" onclick={() => dispatch('action', value)}>
       {value}
     </button>
   {:else if type === 'slot'}
-    <slot />
+    {@render children_render?.()}
   {:else if type === 'date'}
     {formatDate(value)}
   {:else if type === 'array'}

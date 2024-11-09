@@ -1,6 +1,11 @@
-<script>
+<script lang="ts">
   import { getContext } from 'svelte';
   import { TABS } from './Tabs.svelte';
+  interface Props {
+    children?: import('svelte').Snippet;
+  }
+
+  let { children }: Props = $props();
 
   const panel = {};
   const { registerPanel, selectedPanel } = getContext(TABS);
@@ -9,5 +14,5 @@
 </script>
 
 {#if $selectedPanel === panel}
-  <slot />
+  {@render children?.()}
 {/if}

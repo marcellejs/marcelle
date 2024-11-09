@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
   import GithubLogo from './GithubLogo.svelte';
 
-  export let demo;
+  let { demo } = $props();
 </script>
 
 <div class="demo">

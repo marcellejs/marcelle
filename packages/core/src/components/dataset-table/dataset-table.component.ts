@@ -1,6 +1,7 @@
 import { Component, type Dataset, type Instance } from '../../core';
 import { BehaviorSubject } from 'rxjs';
 import View from './dataset-table.view.svelte';
+import { mount } from "svelte";
 
 export class DatasetTable<T extends Instance> extends Component {
   title = 'dataset table';
@@ -36,15 +37,15 @@ export class DatasetTable<T extends Instance> extends Component {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
     this.destroy();
-    this.$$.app = new View({
-      target: t,
-      props: {
-        dataset: this.#dataset,
-        colNames: this.$columns,
-        singleSelection: this.singleSelection,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        selection: this.$selection as any,
-      },
-    });
+    this.$$.app = mount(View, {
+          target: t,
+          props: {
+            dataset: this.#dataset,
+            colNames: this.$columns,
+            singleSelection: this.singleSelection,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            selection: this.$selection as any,
+          },
+        });
   }
 }

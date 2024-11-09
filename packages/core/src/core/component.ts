@@ -1,6 +1,7 @@
 import autoBind from 'auto-bind';
 import type { ComponentInternals } from './types';
 import { BehaviorSubject } from 'rxjs';
+import { unmount } from 'svelte';
 
 let nextId = 0;
 
@@ -22,7 +23,9 @@ export abstract class Component {
   abstract mount(target?: HTMLElement): void;
 
   destroy(): void {
-    this.$$.app?.$destroy();
+    if (this.$$.app) {
+      unmount(this.$$.app);
+    }
     this.$$.app = undefined;
   }
 

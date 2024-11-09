@@ -3,11 +3,15 @@
   import { map } from 'rxjs';
   import ViewContainer from './ViewContainer.svelte';
 
-  export let prediction: BatchPrediction;
+  interface Props {
+    prediction: BatchPrediction;
+  }
+
+  let { prediction }: Props = $props();
 
   // let uploadInput: HTMLInputElement;
 
-  $: count = prediction.$status.pipe(map((x) => x.count || 0));
+  let count = $derived(prediction.$status.pipe(map((x) => x.count || 0)));
 
   function clearPredictions() {
     prediction.clear();
@@ -43,7 +47,7 @@
   <button on:click={uploadPredictions}>Upload Predictions</button> -->
     <!-- <span class="w-1" />
   <input bind:this={uploadInput} type="file" multiple class="hidden" /> -->
-    <button class="mly-btn mly-btn-outline mly-btn-error" on:click={clearPredictions}
+    <button class="mly-btn mly-btn-outline mly-btn-error" onclick={clearPredictions}
       >Clear Predictions</button
     >
   </div>

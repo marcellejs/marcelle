@@ -1,9 +1,13 @@
 <script lang="ts">
   import { Subject } from 'rxjs';
 
-  export let value: Subject<string>;
-  export let placeholder: string;
-  export let disabled;
+  interface Props {
+    value: Subject<string>;
+    placeholder: string;
+    disabled: any;
+  }
+
+  let { value, placeholder, disabled }: Props = $props();
 </script>
 
 <div class="w-full">
@@ -12,7 +16,7 @@
     {placeholder}
     bind:value={$value}
     disabled={$disabled}
-  />
+></textarea>
 </div>
 
 <style>
