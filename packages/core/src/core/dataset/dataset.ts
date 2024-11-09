@@ -10,6 +10,7 @@ import { mergeDeep } from '../../utils';
 import sift from 'sift';
 import { addScope, dataURL2ImageData, imageData2DataURL, limitToScope } from '../data-store/hooks';
 import { kebabCase } from 'scule';
+import { noop } from '../../utils/misc';
 
 interface DatasetChange {
   level: 'instance' | 'dataset';
@@ -117,6 +118,7 @@ export class Dataset<T extends Instance> extends Component {
           },
         ]);
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       this.#updatedCreate.add(context.id as string);
     }
@@ -264,7 +266,7 @@ export class Dataset<T extends Instance> extends Component {
     await Promise.all(addPromises);
   }
 
-  mount(): void {
-    // Nothing to show
+  mount() {
+    return noop;
   }
 }

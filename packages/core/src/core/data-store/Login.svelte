@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { preventDefault } from 'svelte/legacy';
-
   import type { DataStore } from './data-store';
   import type { User } from '../types';
 
@@ -40,6 +38,7 @@
   }
 
   async function login(e: Event) {
+    e.preventDefault();
     const data = new FormData(e.target as HTMLFormElement);
     try {
       const user = await dataStore.login(
@@ -54,6 +53,7 @@
   }
 
   async function signup(e: Event) {
+    e.preventDefault();
     const data = new FormData(e.target as HTMLFormElement);
     try {
       const user = await dataStore.signup({
@@ -102,7 +102,7 @@
     {/if}
 
     {#if mode === 'login'}
-      <form onsubmit={preventDefault(login)}>
+      <form onsubmit={login}>
         <div class="form-control w-full">
           <label class="label" for="email">
             <span class="label-text">Email</span>
@@ -156,7 +156,7 @@
         >
       </div>
     {:else}
-      <form onsubmit={preventDefault(signup)}>
+      <form onsubmit={signup}>
         <div class="form-control w-full">
           <label class="label" for="email">
             <span class="label-text">Email</span>

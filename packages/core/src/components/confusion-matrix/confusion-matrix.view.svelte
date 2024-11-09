@@ -1,14 +1,18 @@
 <script lang="ts">
-  import { Chart, CategoryScale, Title, Tooltip } from 'chart.js';
+  import { Chart, CategoryScale, Title, Tooltip, type ChartConfiguration } from 'chart.js';
   import { MatrixElement, MatrixController } from 'chartjs-chart-matrix';
+  import type { BehaviorSubject, Subscription } from 'rxjs';
   import { onDestroy } from 'svelte';
+  import type { ConfusionMatrixT } from './confusion-matrix.component';
 
-  let {
-    accuracy,
-    confusion,
-    labels,
-    selected
-  } = $props();
+  interface Props {
+    accuracy: BehaviorSubject<number>;
+    confusion: BehaviorSubject<ConfusionMatrixT>;
+    labels: BehaviorSubject<string[]>;
+    selected: BehaviorSubject<{ x: string; y: string; v: number }>;
+  }
+
+  let { accuracy, confusion, labels, selected }: Props = $props();
 
   Chart.register(CategoryScale, Title, Tooltip, MatrixElement, MatrixController);
 
@@ -17,7 +21,7 @@
 
   let selectedDataIndex = -1;
 
-  const defaultOptions = {
+  const defaultOptions: ChartConfiguration = {
     type: 'matrix',
     data: {
       datasets: [
@@ -111,16 +115,15 @@
             e.chart.update();
           }
         } catch (error) {
-          // eslint-disable-next-line no-console
           console.log('[confusion matrix] selection error:', error);
         }
       },
     },
   };
 
-  let chart;
-  let subs = [];
-  function setup(canvasElement) {
+  let chart: Chart;
+  let subs: Subscription[] = [];
+  function setup(canvasElement: HTMLCanvasElement) {
     const ctx = canvasElement.getContext('2d');
     chart = new Chart(ctx, defaultOptions);
     subs.push(

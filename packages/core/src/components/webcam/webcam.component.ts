@@ -4,7 +4,7 @@ import { noop } from '../../utils/misc';
 import { rxBind } from '../../utils/rxjs';
 import View from './webcam.view.svelte';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { mount } from "svelte";
+import { mount, unmount } from 'svelte';
 
 function requestInterval(fn: () => void, delay: number) {
   let start = new Date().getTime();
@@ -98,21 +98,21 @@ export class Webcam extends Component {
     return this.#width;
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = mount(View, {
-          target: t,
-          props: {
-            width: this.#width,
-            height: this.#height,
-            facingMode: this.$facingMode,
-            active: rxBind(this.$active),
-            mediaStream: this.$mediastream,
-            ready: this.$ready,
-          },
-        });
+    const app = mount(View, {
+      target: t,
+      props: {
+        width: this.#width,
+        height: this.#height,
+        facingMode: this.$facingMode,
+        active: rxBind(this.$active),
+        mediaStream: this.$mediastream,
+        ready: this.$ready,
+      },
+    });
+    return () => unmount(app);
   }
 
   stop(): void {
@@ -144,6 +144,7 @@ export class Webcam extends Component {
       this.#webcamWidth = mediaStream.getVideoTracks()[0].getSettings().width;
       this.#webcamHeight = mediaStream.getVideoTracks()[0].getSettings().height;
       this.loadSrcStream(mediaStream);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throwError(new Error('Webcam not supported'));
     }

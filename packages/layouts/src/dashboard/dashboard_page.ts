@@ -11,6 +11,7 @@ function isComponentArray(x: Component | Component[] | string): x is Component[]
 export class DashboardPage {
   components: Array<Component | Component[] | string> = [];
   componentsLeft: Component[] = [];
+  unmount: Array<() => void> = [];
 
   constructor(
     public name: string,
@@ -28,32 +29,24 @@ export class DashboardPage {
   }
 
   mount(): void {
+    this.unmount = [];
     for (const m of this.components) {
       if (isComponentArray(m)) {
         for (const n of m) {
-          n.mount();
+          this.unmount.push(n.mount());
         }
       } else if (!isTitle(m)) {
-        m.mount();
+        this.unmount.push(m.mount());
       }
     }
     for (const m of this.componentsLeft) {
-      m.mount();
+      this.unmount.push(m.mount());
     }
   }
 
   destroy(): void {
-    for (const m of this.components) {
-      if (isComponentArray(m)) {
-        for (const n of m) {
-          n.destroy();
-        }
-      } else if (!isTitle(m)) {
-        m.destroy();
-      }
-    }
-    for (const m of this.componentsLeft) {
-      m.destroy();
+    for (const f of this.unmount) {
+      f();
     }
   }
 }

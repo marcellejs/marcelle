@@ -1,5 +1,3 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable max-classes-per-file */
 // Simple router inspired by Routie: https://github.com/jgallen23/routie
 interface RoutieKey {
   name: string;

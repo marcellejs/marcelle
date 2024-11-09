@@ -112,7 +112,6 @@ export abstract class TFJSBaseModel<T extends Instance, PredictionType> extends 
       });
       return storedModel;
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.log('[tfjs-model] Loading error', error);
       this.$training.next({
         status: 'error',

@@ -37,7 +37,6 @@
         <h2>{m}</h2>
       {:else}
         <ViewContainer title={m.title} loading={m.$loading}>
-          {m.id}
           <div id={m.id}></div>
         </ViewContainer>
       {/if}

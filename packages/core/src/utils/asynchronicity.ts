@@ -6,7 +6,6 @@ export const preventConcurrentCalls = (propertyName: string) =>
   ): PropertyDescriptor {
     const originalMethod = descriptor.value;
 
-    // eslint-disable-next-line no-param-reassign
     descriptor.value = function checkMethod(...args: unknown[]): unknown {
       const res = ((this as Record<string, unknown>)[propertyName] as Promise<unknown>).then(() =>
         originalMethod.apply(this, args),

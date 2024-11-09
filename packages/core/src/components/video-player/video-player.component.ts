@@ -1,7 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { Component } from '../../core';
 import View from './video-player.view.svelte';
-import { mount } from "svelte";
+import { mount, unmount } from 'svelte';
 
 export class VideoPlayer extends Component {
   title = 'Video Player';
@@ -15,20 +15,20 @@ export class VideoPlayer extends Component {
     this.$src = new BehaviorSubject<string | MediaStream>(src);
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = mount(View, {
-          target: t,
-          props: {
-            title: this.title,
-            src: this.$src,
-            // ready: this.$ready,
-            paused: this.$paused,
-            progress: this.$progress,
-            mirror: this.$mirror,
-          },
-        });
+    const app = mount(View, {
+      target: t,
+      props: {
+        title: this.title,
+        src: this.$src,
+        // ready: this.$ready,
+        paused: this.$paused,
+        progress: this.$progress,
+        mirror: this.$mirror,
+      },
+    });
+    return () => unmount(app);
   }
 }

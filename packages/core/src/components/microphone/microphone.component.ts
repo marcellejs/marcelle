@@ -2,7 +2,7 @@ import { Component } from '../../core/component';
 import View from './microphone.view.svelte';
 import { throwError } from '../../utils';
 import { BehaviorSubject } from 'rxjs';
-import { mount } from "svelte";
+import { mount, unmount } from 'svelte';
 
 export class Microphone extends Component {
   title: string;
@@ -38,21 +38,22 @@ export class Microphone extends Component {
       });
       this.$mediastream.next(mediaStream);
       this.$ready.next(true);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throwError(new Error('Webcam not supported'));
     }
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = mount(View, {
-          target: t,
-          props: {
-            active: this.$active,
-            mediaStream: this.$mediastream,
-          },
-        });
+    const app = mount(View, {
+      target: t,
+      props: {
+        active: this.$active,
+        mediaStream: this.$mediastream,
+      },
+    });
+    return () => unmount(app);
   }
 }

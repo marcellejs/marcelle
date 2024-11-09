@@ -1,7 +1,7 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Component } from '../../core/component';
 import View from './scatter-plot.view.svelte';
-import { mount } from "svelte";
+import { mount, unmount } from 'svelte';
 
 export class ScatterPlot extends Component {
   title = 'Scatter plot';
@@ -15,16 +15,16 @@ export class ScatterPlot extends Component {
     labels.subscribe(this.$labels);
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = mount(View, {
-          target: t,
-          props: {
-            embedding: this.$data,
-            labels: this.$labels as BehaviorSubject<number[]>,
-          },
-        });
+    const app = mount(View, {
+      target: t,
+      props: {
+        embedding: this.$data,
+        labels: this.$labels as BehaviorSubject<number[]>,
+      },
+    });
+    return () => unmount(app);
   }
 }

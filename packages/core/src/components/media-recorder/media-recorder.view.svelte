@@ -9,11 +9,11 @@
     mediaStream: BehaviorSubject<MediaStream>;
     active: BehaviorSubject<boolean>;
     recordings: BehaviorSubject<{
-    duration: number;
-    blob: Blob;
-    type: string;
-    thumbnail: string;
-  }>;
+      duration: number;
+      blob: Blob;
+      type: string;
+      thumbnail: string;
+    }>;
   }
 
   let { mediaStream, active, recordings }: Props = $props();
@@ -78,6 +78,7 @@
         try {
           checkRecorder();
           startRecording();
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
           active.next(false);
         }
@@ -118,7 +119,7 @@
     }
   }
   .recorder-container {
-    @apply relative w-full flex items-center justify-center;
+    @apply relative flex w-full items-center justify-center;
     width: 80px;
     height: 80px;
   }

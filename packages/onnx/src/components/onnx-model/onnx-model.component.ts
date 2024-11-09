@@ -2,7 +2,7 @@ import ort from 'onnxruntime-web';
 import Component from './onnx-model.view.svelte';
 import { BehaviorSubject, map } from 'rxjs';
 import { type ClassifierResults, Catch, Instance, Model, TrainingError } from '@marcellejs/core';
-import { mount } from "svelte";
+import { mount, unmount } from 'svelte';
 
 type RegularArray<T> = T[] | T[][] | T[][][] | T[][][][] | T[][][][][] | T[][][][][][];
 
@@ -77,7 +77,6 @@ export class OnnxModel<
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   train(): never {
     throw new TrainingError('Model `OnnxModel` cannot be trained');
   }
@@ -173,7 +172,6 @@ export class OnnxModel<
     try {
       await this.warmup();
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.log('ONNX Model warmup failed', error);
     }
     this.ready = true;
@@ -239,38 +237,34 @@ export class OnnxModel<
     await this.#session.run({ [this.#session.inputNames[0]]: warmupTensor });
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = mount(Component, {
-          target: t,
-          props: {
-            training: this.$training,
-          },
-        });
+    const app = mount(Component, {
+      target: t,
+      props: {
+        training: this.$training,
+      },
+    });
+    return () => unmount(app);
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   save(): never {
     throw new Error('OnnxModel does not support saving');
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   load(): never {
     throw new Error('OnnxModel does not support loading');
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   download(): never {
     throw new Error('OnnxModel does not support downloading');
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   upload(): never {
     throw new Error('OnnxModel does not support uploading');
   }

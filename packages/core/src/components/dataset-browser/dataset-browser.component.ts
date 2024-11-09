@@ -3,7 +3,7 @@ import type { Dataset, Instance } from '../../core';
 import type { ObjectId } from '../../core/types';
 import View from './dataset-browser.view.svelte';
 import { BehaviorSubject } from 'rxjs';
-import { mount } from "svelte";
+import { mount, unmount } from 'svelte';
 
 export interface DBInstance extends Instance {
   y: string;
@@ -29,18 +29,18 @@ export class DatasetBrowser extends Component {
     this.batchSize = batchSize;
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = mount(View, {
-          target: t,
-          props: {
-            batchSize: this.batchSize,
-            count: this.#dataset.$count,
-            dataset: this.#dataset,
-            selected: this.$selected,
-          },
-        });
+    const app = mount(View, {
+      target: t,
+      props: {
+        batchSize: this.batchSize,
+        count: this.#dataset.$count,
+        dataset: this.#dataset,
+        selected: this.$selected,
+      },
+    });
+    return () => unmount(app);
   }
 }

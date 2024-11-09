@@ -18,7 +18,6 @@ export function mergeDeep<T, U>(target: T, ...sources: U[]): T & Partial<U> {
 
   const result: T & Partial<U> = { ...target } as T & Partial<U>;
   if (isObject(target) && isObject(source)) {
-    // eslint-disable-next-line no-restricted-syntax
     for (const key in source) {
       if (isObject(source[key])) {
         if (!result[key]) Object.assign(result, { [key]: {} });

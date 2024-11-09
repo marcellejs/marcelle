@@ -3,7 +3,6 @@
   import { createEventDispatcher } from 'svelte';
   import type { Column } from './table-types';
 
-  
   interface Props {
     type?: Column['type'];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,7 +26,6 @@
     try {
       return formatDistanceToNow(Date.parse(v), { includeSeconds: true, addSuffix: true });
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.log('Date Parsing Error', v, error);
       return v;
     }
@@ -43,7 +41,6 @@
     <button
       class="btn btn-sm btn-outline"
       onclick={() => {
-        // eslint-disable-next-line no-console
         console.log('GOTO:', value.href);
       }}>{value.text}</button
     >

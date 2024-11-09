@@ -3,9 +3,20 @@ import Notification from './design-system/Notification.svelte';
 
 let notificationContainer: HTMLDivElement | undefined;
 let app: {
-  $on?(type: string, callback: (e: any) => void): () => void;
-  $set?(props: Partial<Record<string, any>>): void;
-} & Record<string, any>;
+  $on?(type: string, callback: (e: unknown) => void): () => void;
+  $set?(props: Partial<Record<string, unknown>>): void;
+  add?: ({
+    title,
+    message,
+    type,
+    duration,
+  }: {
+    title: string;
+    message: string;
+    type: 'default' | 'danger';
+    duration: number;
+  }) => void;
+} & Record<string, unknown>;
 
 export function notification({
   title,

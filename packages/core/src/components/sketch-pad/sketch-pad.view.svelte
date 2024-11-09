@@ -1,21 +1,20 @@
 <script lang="ts">
   import type { Subject } from 'rxjs';
-  import { onMount, createEventDispatcher, tick } from 'svelte';
+  import { onMount, tick } from 'svelte';
 
   interface Props {
     strokeStart: Subject<void>;
     strokeEnd: Subject<void>;
+    oncanvas: (c: HTMLCanvasElement) => void;
   }
 
-  let { strokeStart, strokeEnd }: Props = $props();
+  let { strokeStart, strokeEnd, oncanvas }: Props = $props();
 
   let canvasElement: HTMLCanvasElement = $state();
   let isDrawing = false;
   let offset = { left: 0, top: 0 };
   let previous = { x: 0, y: 0 };
   let ctx: CanvasRenderingContext2D;
-
-  const dispatch = createEventDispatcher();
 
   function clearDrawing() {
     ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -29,7 +28,7 @@
     await tick();
     ctx = canvasElement.getContext('2d');
     clearDrawing();
-    dispatch('canvasElement', canvasElement);
+    oncanvas(canvasElement);
   });
 
   function draw(e: MouseEvent) {
@@ -79,9 +78,9 @@
     bind:this={canvasElement}
     onmousemove={draw}
     onmousedown={startDrawing}
-></canvas>
+  ></canvas>
   <div class="m-1">
-    <button class="mco-btn mco-btn-sm mco-btn-error" onclick={clearDrawing}>Clear</button>
+    <button class="mco-btn mco-btn-error mco-btn-sm" onclick={clearDrawing}>Clear</button>
   </div>
 </div>
 

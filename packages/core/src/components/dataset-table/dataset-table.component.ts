@@ -1,7 +1,7 @@
 import { Component, type Dataset, type Instance } from '../../core';
 import { BehaviorSubject } from 'rxjs';
 import View from './dataset-table.view.svelte';
-import { mount } from "svelte";
+import { mount, unmount } from 'svelte';
 
 export class DatasetTable<T extends Instance> extends Component {
   title = 'dataset table';
@@ -27,25 +27,24 @@ export class DatasetTable<T extends Instance> extends Component {
           }
         })
         .catch((error) => {
-          // eslint-disable-next-line no-console
           console.log('An error occured while fetching the first instance.', error);
         });
     }
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = mount(View, {
-          target: t,
-          props: {
-            dataset: this.#dataset,
-            colNames: this.$columns,
-            singleSelection: this.singleSelection,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            selection: this.$selection as any,
-          },
-        });
+    const app = mount(View, {
+      target: t,
+      props: {
+        dataset: this.#dataset,
+        colNames: this.$columns,
+        singleSelection: this.singleSelection,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        selection: this.$selection as any,
+      },
+    });
+    return () => unmount(app);
   }
 }

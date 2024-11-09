@@ -11,7 +11,10 @@ interface ServiceIterableParams {
 export class ServiceIterable<T> extends LazyIterable<T> {
   params: ServiceIterableParams;
 
-  constructor(private readonly service: Service<T>, params: Partial<ServiceIterableParams> = {}) {
+  constructor(
+    private readonly service: Service<T>,
+    params: Partial<ServiceIterableParams> = {},
+  ) {
     super(async function* () {
       const p = { query: {}, skip: 0, take: -1, ...params };
       const take = p.take;
@@ -22,7 +25,7 @@ export class ServiceIterable<T> extends LazyIterable<T> {
         $skip: p.skip,
         $limit: 10,
       };
-      // eslint-disable-next-line no-constant-condition
+
       while (true) {
         try {
           if (take > 0 && took >= take) {

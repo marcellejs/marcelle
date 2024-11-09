@@ -1,7 +1,7 @@
 import { Component } from '@marcellejs/core';
 import View from './image-upload.view.svelte';
 import { Subject } from 'rxjs';
-import { mount } from "svelte";
+import { mount, unmount } from 'svelte';
 
 export interface ImageUploadOptions {
   width?: number;
@@ -23,18 +23,18 @@ export class ImageUpload extends Component {
     this.#height = height;
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = mount(View, {
-          target: t,
-          props: {
-            images: this.$images,
-            thumbnails: this.$thumbnails,
-            width: this.#width,
-            height: this.#height,
-          },
-        });
+    const app = mount(View, {
+      target: t,
+      props: {
+        images: this.$images,
+        thumbnails: this.$thumbnails,
+        width: this.#width,
+        height: this.#height,
+      },
+    });
+    return () => unmount(app);
   }
 }

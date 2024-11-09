@@ -6,7 +6,7 @@
   interface Props {
     name?: string;
     sortable?: boolean;
-    sorting?: any;
+    sorting?: unknown;
   }
 
   let { name = 'name', sortable = false, sorting = { col: '', ascending: true } }: Props = $props();
@@ -50,7 +50,7 @@
           </svg>
         </button>
       {:else}
-        <button class="btn btn-circle btn-sm" onclick={sort}>
+        <button class="btn btn-circle btn-sm" onclick={sort} aria-label="sort">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-6 w-6"

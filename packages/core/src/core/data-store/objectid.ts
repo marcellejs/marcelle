@@ -1,4 +1,3 @@
-/* eslint-disable no-bitwise */
 let oidIndex = ~~(Math.random() * 0xffffff);
 const MACHINE_ID = parseInt((Math.random() * 0xffffff).toString(), 10);
 

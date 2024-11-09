@@ -218,14 +218,14 @@ When using svelte, the mount method has the following form:
   mount(target) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = new Component({
+    const app = mount(Component, {
       target: t,
       props: {
         title: this.title,
         options: this.options,
       },
     });
+    return () => unmount(app);
   }
 ```
 
@@ -400,14 +400,14 @@ export class Umap extends Component {
   mount(target) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = new View({
+    const app = mount(View, {
       target: t,
       props: {
         title: this.title,
         embedding: this.$embedding,
       },
     });
+    return () => unmount(app);
   }
 }
 ```
@@ -513,8 +513,7 @@ export class Umap extends Component {
   mount(target) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = new View({
+    const app = mount(View, {
       target: t,
       props: {
         title: this.title,
@@ -522,6 +521,7 @@ export class Umap extends Component {
         labels: this.$labels,
       },
     });
+    return () => unmount(app);
   }
 }
 ```

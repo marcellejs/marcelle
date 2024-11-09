@@ -5,7 +5,7 @@ import { throwError } from '../../utils/error-handling';
 import View from './training-plot.view.svelte';
 import { BehaviorSubject } from 'rxjs';
 import type { ChartPoint } from '../generic-chart/generic-chart.component';
-import { mount } from "svelte";
+import { mount, unmount } from 'svelte';
 
 export type LogSpec = string | string[] | Record<string, string | string[]>;
 
@@ -87,15 +87,15 @@ export class TrainingPlot extends Component {
     });
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = mount(View, {
-          target: t,
-          props: {
-            charts: this.charts,
-          },
-        });
+    const app = mount(View, {
+      target: t,
+      props: {
+        charts: this.charts,
+      },
+    });
+    return () => unmount(app);
   }
 }

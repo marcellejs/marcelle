@@ -1,14 +1,14 @@
 import { BehaviorSubject } from 'rxjs';
 import WizardComponent from './Wizard.svelte';
 import { WizardPage } from './wizard_page';
-import { mount } from 'svelte';
+import { mount, unmount } from 'svelte';
 
 export class Wizard {
   pages: WizardPage[] = [];
   app: {
-    $on?(type: string, callback: (e: any) => void): () => void;
-    $set?(props: Partial<Record<string, any>>): void;
-  } & Record<string, any> = undefined;
+    $on?(type: string, callback: (e: unknown) => void): () => void;
+    $set?(props: Partial<Record<string, unknown>>): void;
+  } & Record<string, unknown> = undefined;
 
   $current = new BehaviorSubject(0);
 
@@ -24,16 +24,21 @@ export class Wizard {
       props: {
         pages: this.pages,
         current: this.$current,
-        // onquit: () => {
-        //   this.app?.$destroy();
-        //   this.app = undefined;
-        // },
+        onquit: () => {
+          if (this.app) {
+            unmount(this.app);
+          }
+          this.app = undefined;
+        },
       },
     });
   }
 
   hide(): void {
-    this.app?.quit();
+    if (this.app) {
+      unmount(this.app);
+    }
+    this.app = undefined;
   }
 }
 

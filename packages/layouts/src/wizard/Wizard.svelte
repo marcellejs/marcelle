@@ -1,60 +1,64 @@
 <script lang="ts">
-  import { preventDefault } from 'svelte/legacy';
-
-  import { onDestroy, createEventDispatcher } from 'svelte';
+  import { onDestroy, onMount, tick } from 'svelte';
   import WizardPageComponent from './WizardPage.svelte';
   import type { WizardPage } from './wizard_page';
-  import { BehaviorSubject } from 'rxjs';
+  import { BehaviorSubject, Subscription } from 'rxjs';
 
   interface Props {
     pages: WizardPage[];
     current: BehaviorSubject<number>;
+    onquit: () => void;
   }
 
-  let { pages, current }: Props = $props();
+  let { pages, current, onquit }: Props = $props();
 
   function goToPage(index: number) {
     if (index >= 0 && index <= pages.length - 1) {
-      for (const m of pages[current.getValue()].components) {
-        if (Array.isArray(m)) {
-          for (const n of m) {
-            n.destroy();
-          }
-        } else {
-          m.destroy();
-        }
-      }
+      dispose();
       current.next(index);
     }
   }
 
-  $effect(() => {
-    for (const m of pages[current.getValue()].components) {
-      if (Array.isArray(m)) {
-        for (const n of m) {
-          n.mount();
-        }
-      } else {
-        m.mount();
-      }
+  let destroy: Array<() => void> = [];
+  function dispose() {
+    console.log('destroy', destroy);
+    for (const f of destroy) {
+      f();
     }
+    sub.unsubscribe();
+  }
+
+  let sub: Subscription;
+  onMount(() => {
+    sub = current.subscribe(async (c) => {
+      await tick();
+      console.log('HERE', c, pages[c]);
+      destroy = [];
+      for (const m of pages[c].components) {
+        if (Array.isArray(m)) {
+          for (const n of m) {
+            destroy.push(n.mount());
+          }
+        } else {
+          destroy.push(m.mount());
+        }
+      }
+    });
   });
 
   onDestroy(() => {
-    for (const m of pages[current.getValue()].components) {
-      if (Array.isArray(m)) {
-        for (const n of m) {
-          n.destroy();
-        }
-      } else {
-        m.destroy();
-      }
-    }
+    dispose();
   });
 
-  const dispatch = createEventDispatcher();
   export function quit(): void {
-    dispatch('quit');
+    onquit();
+  }
+
+  function handleKeyPress(e: KeyboardEvent) {
+    e.preventDefault();
+    if (e.key === 'Escape') {
+      quit();
+    }
   }
 </script>
 
@@ -62,7 +66,7 @@
   <div class="absolute inset-0 min-h-screen transition-opacity">
     <div
       onclick={quit}
-      onkeypress={preventDefault((e) => e.key === 'Escape' && quit())}
+      onkeypress={handleKeyPress}
       class="absolute inset-0 bg-gray-500 opacity-50"
       role="none"
     ></div>
@@ -84,7 +88,11 @@
       <div class="text-center">
         <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
         {#each Array(pages.length) as _, i}
-          <button onclick={() => goToPage(i)} class="page-button" class:current={$current === i}
+          <button
+            onclick={() => goToPage(i)}
+            class="page-button"
+            class:current={$current === i}
+            aria-label="Go to page {i}"
           ></button>
         {/each}
       </div>

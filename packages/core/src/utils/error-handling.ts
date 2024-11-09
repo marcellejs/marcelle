@@ -8,7 +8,6 @@ export function Catch(
 ): PropertyDescriptor {
   const originalMethod = descriptor.value;
 
-  // eslint-disable-next-line no-param-reassign
   descriptor.value = function safeMethod(...args: unknown[]): unknown {
     try {
       return originalMethod.apply(this, args);
@@ -35,7 +34,6 @@ export const checkProperty = (propertyName: string) =>
   ): PropertyDescriptor {
     const originalMethod = descriptor.value;
 
-    // eslint-disable-next-line no-param-reassign
     descriptor.value = function checkMethod(...args: unknown[]): unknown {
       if (!(this as Record<string, unknown>)[propertyName]) {
         throw new Error(

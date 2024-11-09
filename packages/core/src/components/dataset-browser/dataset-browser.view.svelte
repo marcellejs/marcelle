@@ -1,13 +1,10 @@
 <script lang="ts">
-  import { preventDefault, stopPropagation } from 'svelte/legacy';
-
   import type { ObjectId } from '../../core';
   import type { Dataset } from '../../core/dataset';
   import type { DBInstance } from './dataset-browser.component';
   import { onMount } from 'svelte';
   import { scale } from 'svelte/transition';
   import { BehaviorSubject } from 'rxjs';
-  import { noop } from '../../utils/misc';
 
   interface Props {
     batchSize: number;
@@ -16,12 +13,7 @@
     selected: BehaviorSubject<ObjectId[]>;
   }
 
-  let {
-    batchSize,
-    count,
-    dataset,
-    selected
-  }: Props = $props();
+  let { batchSize, count, dataset, selected }: Props = $props();
 
   let loading = false;
   let dataStoreError = $state(false);
@@ -54,6 +46,7 @@
     try {
       dataStoreError = false;
       await dataset.ready;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       loading = false;
       dataStoreError = true;
@@ -97,7 +90,6 @@
   async function deleteSelectedInstances() {
     let p: Promise<unknown> = Promise.resolve();
     for (const id of selected.getValue()) {
-      // eslint-disable-next-line no-loop-func
       p = p.then(() => dataset.remove(id));
     }
     await p;
@@ -109,7 +101,6 @@
     if (!newLabel) return;
     let p: Promise<unknown> = Promise.resolve();
     for (const id of selected.getValue()) {
-      // eslint-disable-next-line no-loop-func
       p = p.then(() => dataset.patch(id, { y: newLabel }));
     }
     await p;
@@ -207,7 +198,6 @@
               ({ id }) => id !== data.id,
             );
             if (classes[originalLabel].total === 0) {
-              // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
               delete classes[originalLabel];
               classes = classes;
             }
@@ -229,7 +219,6 @@
               ({ id }) => id !== data.id,
             );
             if (classes[data.y].total === 0) {
-              // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
               delete classes[data.y];
               classes = classes;
             }
@@ -238,6 +227,13 @@
       }
     });
   });
+
+  function handleKeyPress(e: KeyboardEvent) {
+    e.preventDefault();
+    if (e.key === 'Escape') {
+      selectInstance();
+    }
+  }
 </script>
 
 <svelte:window onkeydown={handleKeydown} onkeyup={handleKeyup} />
@@ -250,11 +246,7 @@
   {/if}
 
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div
-    class="flex flex-wrap"
-    onclick={() => selectInstance()}
-    onkeypress={preventDefault((e) => e.key === 'Escape' && selectInstance())}
-  >
+  <div class="flex flex-wrap" onclick={() => selectInstance()} onkeypress={handleKeyPress}>
     {#each Object.entries(classes) as [label, { loaded, total, instances }]}
       <div class="browser-class">
         <div class="w-full">
@@ -263,8 +255,8 @@
             <div class="mco-dropdown mco-dropdown-end">
               <button
                 tabindex="0"
-                class="mco-btn mco-btn-sm mco-btn-circle mco-btn-ghost"
-                onclick={stopPropagation(noop)}
+                class="mco-btn mco-btn-circle mco-btn-ghost mco-btn-sm"
+                aria-label="class actions"
               >
                 <svg
                   class="inline-block h-5 w-5 fill-current"
@@ -311,7 +303,10 @@
                 class:selected={$selected.includes(id)}
                 in:scale
                 out:scale
-                onclick={stopPropagation(() => selectInstance(id))}
+                onclick={(e) => {
+                  e.stopPropagation();
+                  selectInstance(id);
+                }}
               />
             {/each}
           </div>

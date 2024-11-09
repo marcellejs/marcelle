@@ -2,16 +2,6 @@ import type { BehaviorSubject } from 'rxjs';
 import type { FeathersService } from '@feathersjs/feathers';
 import type { ServiceIterable } from './data-store/service-iterable';
 
-export interface ComponentInternals {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // streams: Array<Stream<any>>;
-  app?: {
-    $on?(type: string, callback: (e: any) => void): () => void;
-    $set?(props: Partial<Record<string, any>>): void;
-  } & Record<string, any>;
-  [key: string]: unknown;
-}
-
 export interface Parametrable {
   parameters: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

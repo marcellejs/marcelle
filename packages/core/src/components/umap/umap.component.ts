@@ -88,22 +88,18 @@ export class Umap extends Model<UmapInstance, number[]> {
     return this.model.transform([x])[0];
   }
 
-  // eslint-disable-next-line class-methods-use-this
   save(): never {
     throw new Error('Umap does not support saving');
   }
 
-  // eslint-disable-next-line class-methods-use-this
   load(): never {
     throw new Error('Umap does not support loading');
   }
 
-  // eslint-disable-next-line class-methods-use-this
   download(): never {
     throw new Error('Umap does not support downloading');
   }
 
-  // eslint-disable-next-line class-methods-use-this
   upload(): never {
     throw new Error('Umap does not support uploading');
   }

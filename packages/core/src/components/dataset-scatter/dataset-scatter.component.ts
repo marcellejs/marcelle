@@ -3,7 +3,7 @@ import colorLib from '@kurkle/color';
 import { Component, type Dataset, type Instance, type ObjectId } from '../../core';
 import View from './dataset-scatter.view.svelte';
 import { BehaviorSubject } from 'rxjs';
-import { mount } from "svelte";
+import { mount, unmount } from 'svelte';
 
 const defaultColors = [
   'rgb(54, 162, 235)',
@@ -75,17 +75,17 @@ export class DatasetScatter<T extends Instance> extends Component {
     this.$data.next(data);
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = mount(View, {
-          target: t,
-          props: {
-            data: this.$data,
-            hovered: this.$hovered,
-            clicked: this.$clicked,
-          },
-        });
+    const app = mount(View, {
+      target: t,
+      props: {
+        data: this.$data,
+        hovered: this.$hovered,
+        clicked: this.$clicked,
+      },
+    });
+    return () => unmount(app);
   }
 }

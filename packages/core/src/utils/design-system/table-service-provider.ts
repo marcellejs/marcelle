@@ -58,6 +58,7 @@ export class TableServiceProvider<
           .map(([target, f]) => {
             try {
               return { [target]: f(x, i) };
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
               return { [target]: 'transform error' };
             }

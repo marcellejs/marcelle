@@ -16,9 +16,9 @@ import { mount, unmount } from 'svelte';
 
 function isValidUrl(str: string) {
   try {
-    // eslint-disable-next-line no-new
     new URL(str);
-  } catch (_) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (e) {
     return false;
   }
   return true;

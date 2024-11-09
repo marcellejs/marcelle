@@ -12,7 +12,7 @@ import { preventConcurrentCalls } from '../../utils/asynchronicity';
 import { noop } from '../../utils/misc';
 import View from './training-history.view.svelte';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
-import { mount } from "svelte";
+import { mount, unmount } from 'svelte';
 
 function appendLogs(logs: Record<string, unknown>, d: Record<string, unknown>) {
   const l = { ...logs };
@@ -142,26 +142,27 @@ export class TrainingHistory<T extends Instance, PredictionType> extends Compone
     }
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
+    let app: Record<string, unknown>;
     this.ready.then(() => {
-      this.$$.app = mount(View, {
-              target: t,
-              props: {
-                service: this.runService,
-                metrics: this.options.metrics,
-                actions: this.options.actions,
-                selection: this.$selection,
-              },
-            });
-      for (const action of this.options.actions) {
-        const name = typeof action === 'string' ? action : action.name;
-        this.$$.app.$on(name, ({ detail }) => {
-          this.$actions.next({ name, data: detail });
-        });
-      }
+      app = mount(View, {
+        target: t,
+        props: {
+          service: this.runService,
+          metrics: this.options.metrics,
+          actions: this.options.actions,
+          selection: this.$selection,
+        },
+      });
+      // for (const action of this.options.actions) {
+      //   const name = typeof action === 'string' ? action : action.name;
+      //   this.$$.app.$on(name, ({ detail }) => {
+      //     this.$actions.next({ name, data: detail });
+      //   });
+      // }
     });
+    return () => unmount(app);
   }
 }

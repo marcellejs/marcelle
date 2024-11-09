@@ -3,12 +3,7 @@
 
   const dispatch = createEventDispatcher();
 
-  let {
-    input,
-    sel,
-    browser,
-    predictedLabel
-  } = $props();
+  let { input, sel, browser, predictedLabel } = $props();
   let msg = $state('');
 
   function record() {
@@ -30,17 +25,18 @@
   }
 
   let mobilenetElt = $state();
+  const destroy = [];
   onMount(async () => {
     await tick();
-    input.mount(mobilenetElt);
-    browser.mount();
-    sel.mount();
+    destroy.push(input.mount(mobilenetElt));
+    destroy.push(browser.mount());
+    destroy.push(sel.mount());
   });
 
   onDestroy(() => {
-    input.destroy();
-    browser.destroy();
-    sel.destroy();
+    for (const f of destroy) {
+      f();
+    }
   });
 
   function clearDataset() {

@@ -13,9 +13,9 @@ export interface DashboardOptions {
 export class Dashboard {
   panels: Record<string, DashboardPage> = {};
   app?: {
-    $on?(type: string, callback: (e: any) => void): () => void;
-    $set?(props: Partial<Record<string, any>>): void;
-  } & Record<string, any>;
+    $on?(type: string, callback: (e: unknown) => void): () => void;
+    $set?(props: Partial<Record<string, unknown>>): void;
+  } & Record<string, unknown>;
   settings = new DashboardSettings();
 
   $active = new BehaviorSubject(false as boolean);
@@ -65,18 +65,17 @@ export class Dashboard {
       },
     });
     this.$active.next(true);
-    // this.app.$on('quit', () => {
-    //   this.$active.next(false);
-    //   this.app?.$destroy();
-    //   for (const panel of Object.values(this.panels)) {
-    //     panel.destroy();
-    //   }
-    //   this.app = undefined;
-    // });
   }
 
   hide(): void {
-    this.app?.quit();
+    this.$active.next(false);
+    if (this.app) {
+      unmount(this.app);
+    }
+    for (const panel of Object.values(this.panels)) {
+      panel.destroy();
+    }
+    this.app = undefined;
   }
 }
 

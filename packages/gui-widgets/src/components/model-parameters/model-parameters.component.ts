@@ -1,6 +1,6 @@
 import { Component, type Parametrable } from '@marcellejs/core';
 import View from './model-parameters.view.svelte';
-import { mount } from "svelte";
+import { mount, unmount } from 'svelte';
 
 type WidgetType = 'menu' | 'text' | 'boolean' | 'number' | 'number array' | 'auto';
 export type ParamConfig = Record<string, { type: WidgetType | 'auto'; options?: string[] }>;
@@ -17,16 +17,16 @@ export class ModelParameters extends Component {
     this.config = config;
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = mount(View, {
-          target: t,
-          props: {
-            parameters: this.#component.parameters,
-            config: this.config,
-          },
-        });
+    const app = mount(View, {
+      target: t,
+      props: {
+        parameters: this.#component.parameters,
+        config: this.config,
+      },
+    });
+    return () => unmount(app);
   }
 }

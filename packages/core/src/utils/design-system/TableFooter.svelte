@@ -13,19 +13,13 @@
 
   let { provider, actions, selected = $bindable() }: Props = $props();
 
-  // $: total = provider.total;
-  let itemsPerPage;
-  run(() => {
-    itemsPerPage =
-      provider.options.itemsPerPage !== undefined ? provider.options.itemsPerPage : 10;
-  });
+  let itemsPerPage = $state(provider.options.itemsPerPage || 10);
 
   let page = $state(1);
   let numPages = $state(1);
   let start = $state(0);
   let end = $state(0);
   let total = $state(0);
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   let unsub = $state(() => {});
 
   run(() => {
@@ -45,13 +39,6 @@
     });
   });
 
-  // $: console.log('provider', provider);
-  // $: console.log('total', total);
-  // $: console.log('$total', $total);
-  // $: numPages = $total ? Math.ceil($total / itemsPerPage) : 1;
-  // $: start = $total ? (page - 1) * itemsPerPage + 1 : 0;
-  // $: end = Math.min($total || 0, page * itemsPerPage);
-
   function gotoPage(i: number): void {
     page = i;
     provider.page(i);
@@ -66,9 +53,9 @@
   </div>
 
   <div class="flex items-center">
-    <div class="flex items-center mx-4">
+    <div class="mx-4 flex items-center">
       Items per page:
-      <div class="w-12 ml-2">
+      <div class="ml-2 w-12">
         <select
           class="select select-bordered select-sm w-full max-w-xs"
           value={itemsPerPage.toString()}
@@ -93,6 +80,7 @@
       onclick={() => {
         gotoPage(page - 1);
       }}
+      aria-label="previous page"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -105,7 +93,7 @@
       </svg>
     </button>
     <input
-      class="marcelle w-8 rounded mr-1 mb-1 bg-white text-gray-600 border border-solid border-gray-300 text-center focus:outline-none focus:ring-blue-400 focus:ring-2 focus:ring-opacity-50 active:ring-blue-400 active:ring-4 active:ring-opacity-50"
+      class="marcelle mb-1 mr-1 w-8 rounded border border-solid border-gray-300 bg-white text-center text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 active:ring-4 active:ring-blue-400 active:ring-opacity-50"
       value={page.toString()}
       onblur={(e) => {
         let i = parseInt(e.currentTarget.value);
@@ -120,6 +108,7 @@
       onclick={() => {
         gotoPage(page + 1);
       }}
+      aria-label="next page"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

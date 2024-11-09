@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import type { Paginated } from '@feathersjs/feathers';
 import { BehaviorSubject } from 'rxjs';
 import type { Dataset } from '../dataset';
@@ -14,6 +13,7 @@ import type { DataStore } from '../data-store';
 import { Component } from '../component';
 import { logger } from '../logger';
 import { LazyIterable, throwError } from '../../utils';
+import { noop } from '../../utils/misc';
 
 export abstract class Model<T extends Instance, PredictionType>
   extends Component
@@ -145,6 +145,7 @@ export abstract class Model<T extends Instance, PredictionType>
     let model;
     try {
       model = await service.get(idOrName);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       const { data } = (await service.find({
         query: {
@@ -166,7 +167,7 @@ export abstract class Model<T extends Instance, PredictionType>
     return model;
   }
 
-  mount(): void {
-    // Nothing to show
+  mount() {
+    return noop;
   }
 }

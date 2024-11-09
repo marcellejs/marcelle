@@ -153,7 +153,6 @@
   };
 
   let chart: Chart = $state();
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   let sub: Subscription;
   let canvasElement: HTMLCanvasElement = $state();
 

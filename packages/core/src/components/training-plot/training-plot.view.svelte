@@ -10,6 +10,7 @@
 
   let container: HTMLElement = $state();
   let refs: HTMLDivElement[] = $state([]);
+  let destroy: Array<() => void> = [];
 
   onMount(async () => {
     await tick();
@@ -20,13 +21,13 @@
     }
 
     for (const [i, chart] of Object.values(charts).entries()) {
-      chart.mount(refs[i]);
+      destroy.push(chart.mount(refs[i]));
     }
   });
 
   onDestroy(() => {
-    for (const chart of Object.values(charts)) {
-      chart.destroy();
+    for (const f of destroy) {
+      f();
     }
   });
 </script>
@@ -40,6 +41,6 @@
 
 <style lang="postcss">
   .inner-card {
-    @apply shadow-none flex-none  w-full;
+    @apply w-full flex-none shadow-none;
   }
 </style>

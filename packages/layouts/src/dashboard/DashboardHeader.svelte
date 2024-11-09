@@ -9,13 +9,7 @@
     showSettings?: boolean;
   }
 
-  let {
-    title,
-    items,
-    current,
-    closable,
-    showSettings = false
-  }: Props = $props();
+  let { title, items, current, closable, showSettings = false }: Props = $props();
 
   const dispatch = createEventDispatcher();
 
@@ -123,7 +117,11 @@
         />
       </svg>
     </label>
-    <button class="mly-btn mly-btn-circle mly-btn-ghost" onclick={toggleSettings}>
+    <button
+      class="mly-btn mly-btn-circle mly-btn-ghost"
+      onclick={toggleSettings}
+      aria-label="toggle settings"
+    >
       <div class="mly-indicator">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -142,7 +140,11 @@
       </div>
     </button>
     {#if closable}
-      <button class="mly-btn mly-btn-circle mly-btn-ghost text-error" onclick={quit}>
+      <button
+        class="mly-btn mly-btn-circle mly-btn-ghost text-error"
+        onclick={quit}
+        aria-label="quit"
+      >
         <div class="mly-indicator">
           <svg
             xmlns="http://www.w3.org/2000/svg"

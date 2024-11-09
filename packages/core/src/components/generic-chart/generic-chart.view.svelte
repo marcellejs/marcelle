@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import {
     Chart,
     ArcElement,
@@ -28,15 +26,15 @@
   } from 'chart.js';
   import 'chartjs-adapter-luxon';
   import type { ChartOptions as ChartJsOptions, ChartConfiguration } from 'chart.js';
-  import { onDestroy, onMount, tick } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { mergeDeep } from '../../utils/merge-deep';
   import type { ChartDataset, ChartPoint } from './generic-chart.component';
-  import { Subscription } from 'rxjs';
+  import { BehaviorSubject, Subscription } from 'rxjs';
 
   interface Props {
     preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };
     options: ChartJsOptions & { xlabel?: string; ylabel?: string };
-    datasets: ChartDataset[];
+    datasets: BehaviorSubject<ChartDataset[]>;
   }
 
   let { preset, options, datasets }: Props = $props();
@@ -140,14 +138,14 @@
   }
 
   let chart: Chart;
-  let subs: Subscription[];
+  let subs: Subscription[] = [];
   let canvasElement: HTMLCanvasElement = $state();
 
-  function setup() {
+  function setup(ds: ChartDataset[]) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let chartOptions: Partial<ChartConfiguration> = mergeDeep(defaultOptions, preset.global) as any;
     chartOptions = mergeDeep(chartOptions, {
-      data: transformDatasets(datasets, preset.datasets, chartOptions),
+      data: transformDatasets(ds, preset.datasets, chartOptions),
       options,
     });
     if (options.xlabel) {
@@ -161,8 +159,8 @@
       });
     }
 
-    const pointsPerSeries = datasets.map(({ dataStream }) => dataStream.getValue()?.length || 0);
-    subs = datasets.map(({ dataStream, options: localOptions }, i) =>
+    const pointsPerSeries = ds.map(({ dataStream }) => dataStream.getValue()?.length || 0);
+    subs = ds.map(({ dataStream, options: localOptions }, i) =>
       dataStream.subscribe((values: Array<ChartPoint>) => {
         if (values && chart) {
           const prevMaxPoint = pointsPerSeries.reduce((m, x) => Math.max(m, x));
@@ -184,7 +182,6 @@
           try {
             chart.update();
           } catch (error) {
-            // eslint-disable-next-line no-console
             console.log(error);
           }
         }
@@ -195,7 +192,9 @@
     chart = new Chart(ctx, chartOptions as ChartConfiguration);
   }
 
+  let sub: Subscription;
   function destroy() {
+    sub?.unsubscribe();
     for (const s of subs) {
       s.unsubscribe();
     }
@@ -203,18 +202,10 @@
   }
 
   onMount(async () => {
-    await tick();
-    await tick();
-    setup();
-  });
-
-  let numDatasets = $state(datasets.length);
-  run(() => {
-    if (datasets.length !== numDatasets) {
+    sub = datasets.subscribe((ds) => {
       destroy();
-      setup();
-      numDatasets = datasets.length;
-    }
+      setup(ds);
+    });
   });
 
   onDestroy(destroy);

@@ -1,7 +1,7 @@
 import { BehaviorSubject, Subject, skip } from 'rxjs';
 import { Component } from '@marcellejs/core';
 import View from './button.view.svelte';
-import { mount } from 'svelte';
+import { mount, unmount } from 'svelte';
 
 export class Button extends Component {
   title = 'button';
@@ -20,11 +20,10 @@ export class Button extends Component {
     });
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = mount(View, {
+    const app = mount(View, {
       target: t,
       props: {
         text: this.$text,
@@ -36,5 +35,6 @@ export class Button extends Component {
         },
       },
     });
+    return () => unmount(app);
   }
 }

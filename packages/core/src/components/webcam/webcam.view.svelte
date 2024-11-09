@@ -11,14 +11,7 @@
     ready: Observable<boolean>;
   }
 
-  let {
-    width,
-    height,
-    facingMode,
-    active,
-    mediaStream,
-    ready
-  }: Props = $props();
+  let { width, height, facingMode, active, mediaStream, ready }: Props = $props();
 
   let videoElement: HTMLVideoElement = $state();
   let webcamContainerWidth: number = $state();
@@ -40,7 +33,6 @@
             numWebcams = videoDevices.length;
           })
           .catch((err) => {
-            // eslint-disable-next-line no-console
             console.error(`${err.name}: ${err.message}`);
           });
       }
@@ -86,13 +78,13 @@
       autoplay
       muted
       playsinline
-></video>
+    ></video>
     {#if numWebcams > 1}
       <div class="absolute bottom-2 right-2 text-right">
         <button
           class="ghost btn btn-circle"
-          onclick={() =>
-            facingMode.next(facingMode.getValue() === 'user' ? 'environment' : 'user')}
+          onclick={() => facingMode.next(facingMode.getValue() === 'user' ? 'environment' : 'user')}
+          aria-label="switch camera"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

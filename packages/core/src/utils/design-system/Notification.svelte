@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { preventDefault } from 'svelte/legacy';
-
   import { blur } from 'svelte/transition';
   import { flip } from 'svelte/animate';
 
@@ -45,6 +43,13 @@
       setTimeout(() => {
         close(n.id);
       }, duration);
+    }
+  }
+
+  function handleKeyPress(e: KeyboardEvent, id: number) {
+    e.preventDefault();
+    if (e.key === 'Escape') {
+      close(id);
     }
   }
 </script>
@@ -92,7 +97,7 @@
             class:default={type === 'default'}
             class:danger={type === 'danger'}
             onclick={() => close(id)}
-            onkeypress={preventDefault((e) => e.key === 'Escape' && close(id))}
+            onkeypress={(e) => handleKeyPress(e, id)}
             role="button"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
@@ -114,23 +119,23 @@
 
 <style type="text/postcss">
   .notification-container {
-    @apply fixed top-0 right-0 m-2 z-50 max-w-md justify-end flex flex-col items-end;
+    @apply fixed right-0 top-0 z-50 m-2 flex max-w-md flex-col items-end justify-end;
   }
 
   .notification-card {
-    @apply border-t-4 rounded-lg px-4 py-3 shadow-md w-auto mt-2;
+    @apply mt-2 w-auto rounded-lg border-t-4 px-4 py-3 shadow-md;
   }
 
   .notification-card.default {
-    @apply bg-teal-100 border-teal-500 text-teal-900;
+    @apply border-teal-500 bg-teal-100 text-teal-900;
   }
 
   .notification-card.danger {
-    @apply bg-red-100 border-red-500 text-red-900;
+    @apply border-red-500 bg-red-100 text-red-900;
   }
 
   .notification-svg {
-    @apply fill-current h-6 w-6;
+    @apply h-6 w-6 fill-current;
   }
 
   .notification-svg.default {

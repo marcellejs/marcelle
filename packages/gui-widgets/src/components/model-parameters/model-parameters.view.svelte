@@ -1,11 +1,8 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import ParamWrapper from './ParamWrapper.svelte';
   import { rxBind } from '@marcellejs/core';
-  import { BehaviorSubject, Subscription } from 'rxjs';
+  import { BehaviorSubject } from 'rxjs';
 
-  
   interface Props {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parameters: Record<string, BehaviorSubject<any>>;
@@ -13,14 +10,6 @@
   }
 
   let { parameters, config = {} }: Props = $props();
-
-  let sub: Subscription[] = $state([]);
-  run(() => {
-    for (const u of sub) {
-      u.unsubscribe();
-    }
-    sub = Object.values(parameters).map((s) => s.subscribe());
-  });
 </script>
 
 <div class="m-2">
