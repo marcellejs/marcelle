@@ -21,18 +21,22 @@
     logKeys = Array.from(new Set(logs.map(Object.keys).flat()));
     logKeys.sort();
   });
-  let indexedLogs = $derived(logs
-    .map((x, i) =>
-      Object.entries(x).reduce((a, [key, val]) => ({ ...a, [`${key} (${names[i]})`]: val }), {}),
-    )
-    .reduce((a, b) => ({ ...a, ...b }), {}));
-  let logSpec = $derived(logKeys.reduce(
-    (res, key) => ({
-      ...res,
-      [key]: Object.keys(indexedLogs).filter((k) => k.startsWith(`${key} (`)),
-    }),
-    {},
-  ));
+  let indexedLogs = $derived(
+    logs
+      .map((x, i) =>
+        Object.entries(x).reduce((a, [key, val]) => ({ ...a, [`${key} (${names[i]})`]: val }), {}),
+      )
+      .reduce((a, b) => ({ ...a, ...b }), {}),
+  );
+  let logSpec = $derived(
+    logKeys.reduce(
+      (res, key) => ({
+        ...res,
+        [key]: Object.keys(indexedLogs).filter((k) => k.startsWith(`${key} (`)),
+      }),
+      {},
+    ),
+  );
   let chart: TrainingPlot = $state();
   run(() => {
     if (chart) {
@@ -60,7 +64,7 @@
   <div class="empty">
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="h-6 w-6"
+      class="mcl-h-6 mcl-w-6"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"

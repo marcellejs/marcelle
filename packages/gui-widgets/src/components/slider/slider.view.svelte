@@ -27,7 +27,7 @@
     pips,
     pipstep,
     formatter,
-    continuous
+    continuous,
   }: Props = $props();
 
   function dispatchValues({ detail }: CustomEvent) {
@@ -72,11 +72,11 @@
   :global(.rangeSlider > .rangeBar),
   :global(.rangeSlider > .rangeHandle > .rangeNub),
   :global(.rangeSlider > .rangeHandle > .rangeFloat) {
-    @apply bg-teal-500;
+    @apply mgui-bg-teal-500;
   }
   :global(.rangeSlider.focus > .rangeBar),
   :global(.rangeSlider > .rangeHandle.active > .rangeNub),
   :global(.rangeSlider > .rangeHandle.active > .rangeFloat) {
-    @apply bg-teal-400;
+    @apply mgui-bg-teal-400;
   }
 </style>

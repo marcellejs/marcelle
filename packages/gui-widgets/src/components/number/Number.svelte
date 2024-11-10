@@ -27,7 +27,7 @@
   >
   <div>
     <input
-      class="mgui-input mgui-input-sm mgui-input-bordered mgui-join-item w-20"
+      class="mgui-input mgui-input-sm mgui-input-bordered mgui-join-item mgui-w-20"
       type="number"
       inputmode="decimal"
       {disabled}

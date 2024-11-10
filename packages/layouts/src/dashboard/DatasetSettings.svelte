@@ -40,21 +40,21 @@
 </script>
 
 <ViewContainer title={dataset.title}>
-  <p class="pb-2">
+  <p class="mly-pb-2">
     {#if $count}
       This dataset contains {$count} instance{$count ? 's' : ''}.
     {:else}
       This dataset is empty
     {/if}
   </p>
-  <div class="flex">
+  <div class="mly-flex">
     {#if $count}
       <button class="mly-btn mly-btn-outline" onclick={downloadDataset}> Download Dataset </button>
-      <span class="w-1"></span>
+      <span class="mly-w-1"></span>
     {/if}
     <button class="mly-btn mly-btn-outline" onclick={uploadDataset}> Upload Dataset </button>
-    <span class="w-1"></span>
-    <input bind:this={uploadInput} type="file" multiple class="hidden" />
+    <span class="mly-w-1"></span>
+    <input bind:this={uploadInput} type="file" multiple class="mly-hidden" />
     <button class="mly-btn mly-btn-outline mly-btn-error" onclick={clearDataset}>
       Clear Dataset
     </button>

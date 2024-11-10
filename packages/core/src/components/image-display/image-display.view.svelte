@@ -33,9 +33,7 @@
     if (sub) sub.unsubscribe();
   });
 
-  export {
-  	imageStream,
-  }
+  export { imageStream };
 </script>
 
-<canvas bind:this={canvas} class="w-full max-w-full"></canvas>
+<canvas bind:this={canvas} class="mcl-w-full mcl-max-w-full"></canvas>

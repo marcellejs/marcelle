@@ -11,12 +11,7 @@
     selection: BehaviorSubject<Instance[]>;
   }
 
-  let {
-    dataset,
-    colNames,
-    singleSelection = false,
-    selection
-  }: Props = $props();
+  let { dataset, colNames, singleSelection = false, selection }: Props = $props();
 
   let columns: Column[] = $state([
     { name: 'x' },
@@ -83,8 +78,8 @@
 </script>
 
 {#await dataset.ready}
-  <div class="w-full min-h-28 flex flex-col justify-center items-center">
-    <span class="loading loading-spinner loading-lg"></span>
+  <div class="mcl-flex mcl-min-h-28 mcl-w-full mcl-flex-col mcl-items-center mcl-justify-center">
+    <span class="mcl-loading mcl-loading-spinner mcl-loading-lg"></span>
   </div>
 {:then}
   {#if provider}

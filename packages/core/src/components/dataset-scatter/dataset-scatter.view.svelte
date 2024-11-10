@@ -182,8 +182,8 @@
 </script>
 
 <div id="scatter-container"><canvas bind:this={canvasElement}></canvas></div>
-<div class="flex justify-end">
-  <button class="btn btn-sm" onclick={() => chart.resetZoom()}>Reset Zoom</button>
+<div class="mcl-flex mcl-justify-end">
+  <button class="mcl-btn mcl-btn-sm" onclick={() => chart.resetZoom()}>Reset Zoom</button>
 </div>
 
 <style>

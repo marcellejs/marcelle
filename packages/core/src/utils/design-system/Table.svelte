@@ -24,7 +24,7 @@
     actions = [],
     selectable = true,
     singleSelection = false,
-    selection = $bindable([])
+    selection = $bindable([]),
   }: Props = $props();
 
   let selected: number[] = $state([]);
@@ -96,7 +96,7 @@
     </sl-alert>
   </div>
 {/if}
-<div class="marcelle table-container">
+<div class="table-container">
   <table>
     <thead>
       <tr>

@@ -9,11 +9,13 @@
 
   let columns = $derived(runs.map((_, i) => ({ name: `Run ${i + 1}` })));
   let rows = $derived(runs.length > 0 ? Object.keys(runs[0]).filter((x) => x !== 'logs') : []);
-  let data = $derived(rows.map((field) =>
-    runs
-      .map((x, i) => ({ [`Run ${i + 1}`]: x[field] }))
-      .reduce((o, x) => ({ ...o, ...x }), { field: field }),
-  ));
+  let data = $derived(
+    rows.map((field) =>
+      runs
+        .map((x, i) => ({ [`Run ${i + 1}`]: x[field] }))
+        .reduce((o, x) => ({ ...o, ...x }), { field: field }),
+    ),
+  );
   let provider = $derived(new TableArrayProvider({ data }));
 </script>
 
@@ -23,7 +25,7 @@
   <div class="empty">
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="h-6 w-6"
+      class="mcl-h-6 mcl-w-6"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"

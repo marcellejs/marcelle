@@ -11,7 +11,7 @@
 </script>
 
 <footer
-  class="bg-white text-gray-600 border-t px-5 py-1 flex items-center justify-between flex-col sm:flex-row"
+  class="mly-bg-white mly-text-gray-600 mly-border-t mly-px-5 mly-py-1 mly-flex mly-items-center mly-justify-between mly-flex-col sm:mly-flex-row"
 >
   <p
     class="console"
@@ -28,22 +28,22 @@
       {:else}{$logStream[1] || ''}{/if}
     {:else}&nbsp;{/if}
   </p>
-  <p class="text-sm text-gray-500 sm:ml-4 sm:pl-4 sm:border-gray-200">
+  <p class="mly-text-sm mly-text-gray-500 sm:mly-ml-4 sm:mly-pl-4 sm:mly-border-gray-200">
     © 2021 {author}
   </p>
 </footer>
 
 <style lang="postcss">
   .console {
-    @apply text-xs text-gray-600 relative pl-3;
+    @apply mly-text-xs mly-text-gray-600 mly-relative mly-pl-3;
   }
 
   .console.warning {
-    @apply text-yellow-600;
+    @apply mly-text-yellow-600;
   }
 
   .console.error {
-    @apply text-red-700;
+    @apply mly-text-red-700;
   }
 
   .console::before {

@@ -50,4 +50,4 @@
   });
 </script>
 
-<canvas id="can" class="w-full max-w-full"></canvas>
+<canvas id="can" class="mcl-w-full mcl-max-w-full"></canvas>

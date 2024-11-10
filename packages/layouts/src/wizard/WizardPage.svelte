@@ -8,32 +8,27 @@
     components?: Array<Component[] | Component>;
   }
 
-  let {
-    index,
-    title,
-    description,
-    components = []
-  }: Props = $props();
+  let { index, title, description, components = [] }: Props = $props();
 </script>
 
-<div class="bg-white px-4 pt-2 pb-4 sm:px-6 sm:pb-4 flex">
-  <div class="flex flex-col w-full">
+<div class="mly-bg-white mly-px-4 mly-pt-2 mly-pb-4 sm:mly-px-6 sm:mly-pb-4 mly-flex">
+  <div class="mly-flex mly-flex-col mly-w-full">
     <div class="desc">
-      <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
+      <h3 class="mly-text-lg mly-leading-6 mly-font-medium mly-text-gray-900" id="modal-headline">
         {index}.
         {title}
       </h3>
-      <div class="mt-2">
-        <p class="text-sm leading-5 text-gray-500">{description}</p>
+      <div class="mly-mt-2">
+        <p class="mly-text-sm mly-leading-5 mly-text-gray-500">{description}</p>
       </div>
     </div>
     <div class="components">
-      <div class="text-center">
+      <div class="mly-text-center">
         {#each components as m}
           {#if Array.isArray(m)}
-            <div class="flex flex-row flex-wrap items-stretch">
+            <div class="mly-flex mly-flex-row mly-flex-wrap mly-items-stretch">
               {#each m as { id }}
-                <div {id} class="flex-none xl:flex-1 w-full xl:w-auto"></div>
+                <div {id} class="mly-flex-none xl:mly-flex-1 mly-w-full xl:mly-w-auto"></div>
               {/each}
             </div>
           {:else}
@@ -47,10 +42,10 @@
 
 <style type="text/postcss">
   .components {
-    @apply grow p-1;
+    @apply mly-grow mly-p-1;
   }
 
   .desc {
-    @apply shrink-0 p-4;
+    @apply mly-shrink-0 mly-p-4;
   }
 </style>

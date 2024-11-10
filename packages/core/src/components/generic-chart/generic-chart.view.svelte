@@ -211,4 +211,4 @@
   onDestroy(destroy);
 </script>
 
-<div class="h-96 w-full"><canvas bind:this={canvasElement}></canvas></div>
+<div class="mcl-h-96 mcl-w-full"><canvas bind:this={canvasElement}></canvas></div>

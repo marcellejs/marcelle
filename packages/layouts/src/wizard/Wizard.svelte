@@ -21,18 +21,15 @@
 
   let destroy: Array<() => void> = [];
   function dispose() {
-    console.log('destroy', destroy);
     for (const f of destroy) {
       f();
     }
-    sub.unsubscribe();
   }
 
   let sub: Subscription;
   onMount(() => {
     sub = current.subscribe(async (c) => {
       await tick();
-      console.log('HERE', c, pages[c]);
       destroy = [];
       for (const m of pages[c].components) {
         if (Array.isArray(m)) {
@@ -48,6 +45,7 @@
 
   onDestroy(() => {
     dispose();
+    sub.unsubscribe();
   });
 
   export function quit(): void {
@@ -63,7 +61,7 @@
 </script>
 
 <div class="wizard">
-  <div class="absolute inset-0 min-h-screen transition-opacity">
+  <div class="mly-absolute mly-inset-0 mly-min-h-screen mly-transition-opacity">
     <div
       onclick={quit}
       onkeypress={handleKeyPress}
@@ -72,8 +70,7 @@
     ></div>
   </div>
   <div
-    class="transform overflow-hidden rounded-lg bg-white shadow-xl transition-all sm:w-full
-      sm:max-w-3xl"
+    class="mly-transform mly-overflow-hidden mly-rounded-lg mly-bg-white mly-shadow-xl mly-transition-all sm:mly-w-full sm:mly-max-w-3xl"
   >
     <WizardPageComponent
       title={pages[$current].attr.title}
@@ -81,11 +78,13 @@
       components={pages[$current].components}
       index={$current + 1}
     />
-    <div class="grid grid-cols-3 border-t border-gray-300 bg-white px-4 py-2">
+    <div
+      class="mly-grid mly-grid-cols-3 mly-border-t mly-border-gray-300 mly-bg-white mly-px-4 mly-py-2"
+    >
       <div>
         <button class="mly-btn mly-btn-outline mly-btn-error" onclick={quit}>Close</button>
       </div>
-      <div class="text-center">
+      <div class="mly-text-center">
         <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
         {#each Array(pages.length) as _, i}
           <button
@@ -96,7 +95,7 @@
           ></button>
         {/each}
       </div>
-      <div class="text-right">
+      <div class="mly-text-right">
         <button
           class="mly-btn mly-btn-outline"
           disabled={$current <= 0}
@@ -126,12 +125,12 @@
 
 <style lang="postcss">
   .wizard {
-    @apply absolute inset-x-0 top-0 z-20 min-h-screen p-4 pb-4;
+    @apply mly-absolute mly-inset-x-0 mly-top-0 mly-z-20 mly-min-h-screen mly-p-4 mly-pb-4;
   }
 
   @screen sm {
     .wizard {
-      @apply flex items-center justify-center;
+      @apply mly-flex mly-items-center mly-justify-center;
     }
   }
 
@@ -140,11 +139,11 @@
   }
 
   .page-button {
-    @apply mx-1 h-2 w-2 cursor-pointer rounded-full border-none bg-blue-300 p-0;
+    @apply mly-mx-1 mly-h-2 mly-w-2 mly-cursor-pointer mly-rounded-full mly-border-none mly-bg-blue-300 mly-p-0;
   }
 
   .page-button.current,
   .page-button:hover {
-    @apply bg-blue-500;
+    @apply mly-bg-blue-500;
   }
 </style>

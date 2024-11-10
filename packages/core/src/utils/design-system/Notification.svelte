@@ -54,7 +54,7 @@
   }
 </script>
 
-<div class="marcelle notification-container">
+<div class="notification-container">
   {#each notifications.slice(0, 10) as { title, message, type, id } (id)}
     <div
       transition:blur={{ amount: 10 }}
@@ -64,10 +64,10 @@
       class:default={type === 'default'}
       class:danger={type === 'danger'}
     >
-      <div class="flex items-start">
-        <div class="py-1">
+      <div class="mcl-flex mcl-items-start">
+        <div class="mcl-py-1">
           <svg
-            class="notification-svg mr-4"
+            class="notification-svg mcl-mr-4"
             class:default={type === 'default'}
             class:danger={type === 'danger'}
             xmlns="http://www.w3.org/2000/svg"
@@ -87,13 +87,12 @@
           </svg>
         </div>
         <div>
-          <p class="my-1 font-bold">{title}</p>
-          <p class="my-1 text-sm">{message}</p>
+          <p class="mcl-my-1 mcl-font-bold">{title}</p>
+          <p class="mcl-my-1 mcl-text-sm">{message}</p>
         </div>
-        <!-- <span class="absolute top-0 bottom-0 right-0 px-4 py-3"> -->
         <div>
           <svg
-            class="notification-svg ml-4 cursor-pointer"
+            class="notification-svg mcl-ml-4 mcl-cursor-pointer"
             class:default={type === 'default'}
             class:danger={type === 'danger'}
             onclick={() => close(id)}
@@ -119,30 +118,30 @@
 
 <style type="text/postcss">
   .notification-container {
-    @apply fixed right-0 top-0 z-50 m-2 flex max-w-md flex-col items-end justify-end;
+    @apply mcl-fixed mcl-right-0 mcl-top-0 mcl-z-50 mcl-m-2 mcl-flex mcl-max-w-md mcl-flex-col mcl-items-end mcl-justify-end;
   }
 
   .notification-card {
-    @apply mt-2 w-auto rounded-lg border-t-4 px-4 py-3 shadow-md;
+    @apply mcl-mt-2 mcl-w-auto mcl-rounded-lg mcl-border-t-4 mcl-px-4 mcl-py-3 mcl-shadow-md;
   }
 
   .notification-card.default {
-    @apply border-teal-500 bg-teal-100 text-teal-900;
+    @apply mcl-border-teal-500 mcl-bg-teal-100 mcl-text-teal-900;
   }
 
   .notification-card.danger {
-    @apply border-red-500 bg-red-100 text-red-900;
+    @apply mcl-border-red-500 mcl-bg-red-100 mcl-text-red-900;
   }
 
   .notification-svg {
-    @apply h-6 w-6 fill-current;
+    @apply mcl-h-6 mcl-w-6 mcl-fill-current;
   }
 
   .notification-svg.default {
-    @apply text-teal-500;
+    @apply mcl-text-teal-500;
   }
 
   .notification-svg.danger {
-    @apply text-red-500;
+    @apply mcl-text-red-500;
   }
 </style>

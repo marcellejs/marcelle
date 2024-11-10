@@ -36,16 +36,16 @@
 
 <td>
   {#if type === 'image'}
-    <img alt="thumbnail" src={value} width="30" height="30" class="rounded-md" />
+    <img alt="thumbnail" src={value} width="30" height="30" class="mcl-rounded-md" />
   {:else if type === 'link'}
     <button
-      class="btn btn-sm btn-outline"
+      class="mcl-btn mcl-btn-outline mcl-btn-sm"
       onclick={() => {
         console.log('GOTO:', value.href);
       }}>{value.text}</button
     >
   {:else if type === 'action'}
-    <button class="btn btn-sm btn-outline" onclick={() => dispatch('action', value)}>
+    <button class="mcl-btn mcl-btn-outline mcl-btn-sm" onclick={() => dispatch('action', value)}>
       {value}
     </button>
   {:else if type === 'slot'}

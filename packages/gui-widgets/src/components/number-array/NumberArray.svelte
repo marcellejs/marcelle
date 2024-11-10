@@ -40,7 +40,7 @@
 </script>
 
 {#if value && Array.isArray(value)}
-  <div class="flex items-center gap-2">
+  <div class="mgui-flex mgui-items-center mgui-gap-2">
     {#each value as v, i}
       <div class="mgui-join">
         <button {disabled} class="mgui-btn mgui-btn-sm mgui-join-item" onclick={() => decrement(i)}
@@ -48,7 +48,7 @@
         >
         <div>
           <input
-            class="mgui-join-item mgui-input mgui-input-sm mgui-input-bordered w-20"
+            class="mgui-join-item mgui-input mgui-input-sm mgui-input-bordered mgui-w-20"
             type="number"
             inputmode="decimal"
             {disabled}

@@ -12,10 +12,10 @@
   let { parameters, config = {} }: Props = $props();
 </script>
 
-<div class="m-2">
+<div class="mgui-m-2">
   {#each Object.entries(parameters) as [key, stream]}
-    <div class="my-1 flex items-center">
-      <p class="my-2 w-32">{key}</p>
+    <div class="mgui-my-1 mgui-flex mgui-items-center">
+      <p class="mgui-my-2 mgui-w-32">{key}</p>
       {#if key in config}
         <ParamWrapper stream={rxBind(stream)} spec={config[key]} />
       {:else}

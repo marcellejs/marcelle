@@ -80,10 +80,7 @@
     });
   });
 
-  export {
-  	embedding,
-  	labels,
-  }
+  export { embedding, labels };
 </script>
 
 <div id="scatter-container"></div>

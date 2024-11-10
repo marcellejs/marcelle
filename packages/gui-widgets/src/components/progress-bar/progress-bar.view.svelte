@@ -9,12 +9,11 @@
   let { progress }: Props = $props();
 </script>
 
-<div class="relative w-full pt-6" style="min-width: 250px;">
-  <div class="mb-2 flex items-center justify-between">
+<div class="mgui-relative mgui-w-full mgui-pt-6" style="min-width: 250px;">
+  <div class="mgui-mb-2 mgui-flex mgui-items-center mgui-justify-between">
     <div>
       <span
-        class="inline-block rounded-full bg-blue-200 px-2 py-1 text-xs font-semibold uppercase
-          text-accent"
+        class="mgui-inline-block mgui-rounded-full mgui-bg-blue-200 mgui-px-2 mgui-py-1 mgui-text-xs mgui-font-semibold mgui-uppercase mgui-text-accent"
         class:gray={$progress?.type === 'idle'}
         class:green={$progress?.type === 'success'}
         class:red={$progress?.type === 'danger'}
@@ -22,9 +21,9 @@
         {$progress?.message}
       </span>
     </div>
-    <div class="text-right">
+    <div class="mgui-text-right">
       <span
-        class="inline-block text-xs font-semibold text-blue-600"
+        class="mgui-inline-block mgui-text-xs mgui-font-semibold mgui-text-blue-600"
         class:tgray={$progress?.type === 'idle'}
         class:tgreen={$progress?.type === 'success'}
         class:tred={$progress?.type === 'danger'}
@@ -34,7 +33,7 @@
     </div>
   </div>
   <progress
-    class="mgui-progress w-full"
+    class="mgui-progress mgui-w-full"
     value={$progress?.progress}
     max="1"
     class:mgui-progress-accent={$progress?.type === 'default'}
@@ -45,24 +44,24 @@
 
 <style>
   .tgray {
-    @apply text-gray-600;
+    @apply mgui-text-gray-600;
   }
   .tgreen {
-    @apply text-green-600;
+    @apply mgui-text-green-600;
   }
   .tred {
-    @apply text-red-600;
+    @apply mgui-text-red-600;
   }
 
   .gray {
-    @apply bg-gray-200 text-gray-600;
+    @apply mgui-bg-gray-200 mgui-text-gray-600;
   }
 
   .green {
-    @apply bg-green-200 text-green-600;
+    @apply mgui-bg-green-200 mgui-text-green-600;
   }
 
   .red {
-    @apply bg-red-200 text-red-600;
+    @apply mgui-bg-red-200 mgui-text-red-600;
   }
 </style>

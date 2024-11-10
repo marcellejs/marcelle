@@ -56,6 +56,6 @@
   const children_render = $derived(children);
 </script>
 
-<div class="tabs">
+<div class="mcl-tabs">
   {@render children_render?.()}
 </div>

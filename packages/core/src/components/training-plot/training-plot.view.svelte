@@ -32,15 +32,12 @@
   });
 </script>
 
-<div bind:this={container} class="grid grid-cols-1 gap-1">
+<div bind:this={container} class="mcl-grid mcl-grid-cols-1 mcl-gap-1">
   <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
   {#each Object.values(charts) as _, i}
-    <div bind:this={refs[i]} class="card inner-card xl:flex-1"></div>
+    <div
+      bind:this={refs[i]}
+      class="mcl-card mcl-w-full mcl-flex-none mcl-shadow-none xl:mcl-flex-1"
+    ></div>
   {/each}
 </div>
-
-<style lang="postcss">
-  .inner-card {
-    @apply w-full flex-none shadow-none;
-  }
-</style>

@@ -9,12 +9,10 @@
 
   let { text }: Props = $props();
 
-  export {
-  	text,
-  }
+  export { text };
 </script>
 
-<div class="grow">
+<div class="mgui-grow">
   {#if $text}
     <!-- eslint-disable-next-line svelte/no-at-html-tags -->
     {@html $text}

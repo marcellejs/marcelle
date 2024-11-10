@@ -11,8 +11,8 @@
 </script>
 
 <div class="mgui-form-control">
-  <label class="mgui-label cursor-pointer justify-start">
+  <label class="mgui-label mgui-cursor-pointer mgui-justify-start">
     <input type="checkbox" class="mgui-toggle" bind:checked={$checked} disabled={$disabled} />
-    <span class="mgui-label-text ml-2">{$text}</span>
+    <span class="mgui-label-text mgui-ml-2">{$text}</span>
   </label>
 </div>

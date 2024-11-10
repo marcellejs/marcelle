@@ -26,7 +26,7 @@
   <div class="right" class:fullw={!dashboard.showSidebar}>
     {#each dashboard.components as m, i (i)}
       {#if Array.isArray(m)}
-        <div class="flex flex-row flex-wrap items-stretch gap-1">
+        <div class="mly-flex mly-flex-row mly-flex-wrap mly-items-stretch mly-gap-1">
           {#each m as { id, title, $loading: loading } (id)}
             <ViewContainer {title} {loading}>
               <div {id}></div>
@@ -46,11 +46,11 @@
 
 <style type="text/postcss">
   .left {
-    @apply w-full shrink-0 p-1;
+    @apply mly-w-full mly-shrink-0 mly-p-1;
   }
 
   .right {
-    @apply grow p-1;
+    @apply mly-grow mly-p-1;
   }
 
   @screen lg {
@@ -68,6 +68,6 @@
   }
 
   h2 {
-    @apply ml-2 text-2xl font-medium text-gray-700;
+    @apply mly-ml-2 mly-text-2xl mly-font-medium mly-text-gray-700;
   }
 </style>

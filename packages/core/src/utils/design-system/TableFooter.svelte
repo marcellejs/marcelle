@@ -52,12 +52,12 @@
     {/if}
   </div>
 
-  <div class="flex items-center">
-    <div class="mx-4 flex items-center">
+  <div class="mcl-flex mcl-items-center">
+    <div class="mcl-mx-4 mcl-flex mcl-items-center">
       Items per page:
-      <div class="ml-2 w-12">
+      <div class="mcl-ml-2 mcl-w-12">
         <select
-          class="select select-bordered select-sm w-full max-w-xs"
+          class="mcl-select mcl-select-bordered mcl-select-sm mcl-w-full mcl-max-w-xs"
           value={itemsPerPage.toString()}
           onchange={({ currentTarget }) => {
             const n = currentTarget.value === 'all' ? total : parseInt(currentTarget.value);
@@ -71,11 +71,11 @@
         </select>
       </div>
     </div>
-    <div class="mx-3">
+    <div class="mcl-mx-3">
       {start}-{end} of {total}
     </div>
     <button
-      class="btn btn-circle"
+      class="mcl-btn mcl-btn-circle"
       disabled={page === 1}
       onclick={() => {
         gotoPage(page - 1);
@@ -84,7 +84,7 @@
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="h-3 w-3"
+        class="mcl-h-3 mcl-w-3"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -93,7 +93,7 @@
       </svg>
     </button>
     <input
-      class="marcelle mb-1 mr-1 w-8 rounded border border-solid border-gray-300 bg-white text-center text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 active:ring-4 active:ring-blue-400 active:ring-opacity-50"
+      class="mcl-active:ring-4 mcl-active:ring-blue-400 mcl-active:ring-opacity-50 mcl-mb-1 mcl-mr-1 mcl-w-8 mcl-rounded mcl-border mcl-border-solid mcl-border-gray-300 mcl-bg-white mcl-text-center mcl-text-gray-600 focus:mcl-outline-none focus:mcl-ring-2 focus:mcl-ring-blue-400 focus:mcl-ring-opacity-50"
       value={page.toString()}
       onblur={(e) => {
         let i = parseInt(e.currentTarget.value);
@@ -103,7 +103,7 @@
     />
 
     <button
-      class="btn btn-circle"
+      class="mcl-btn mcl-btn-circle"
       disabled={page === numPages}
       onclick={() => {
         gotoPage(page + 1);
@@ -112,7 +112,7 @@
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="h-3 w-3"
+        class="mcl-h-3 mcl-w-3"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
