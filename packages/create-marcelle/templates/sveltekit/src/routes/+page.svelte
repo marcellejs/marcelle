@@ -1,6 +1,6 @@
 <script lang="ts">
   import { capture, input, label, trainingSet } from '$lib/marcelle';
-  import { marcelle } from '$lib/utils';
+  import { marcelle } from '$lib/utils.svelte';
 
   const count = trainingSet.$count;
 </script>

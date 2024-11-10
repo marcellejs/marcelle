@@ -1,4 +1,4 @@
-import { dashboard } from '@marcellejs/core';
+import { dashboard } from '@marcellejs/layouts';
 import { capture, input, label, trainingSetBrowser } from '.';
 
 const dash = dashboard({

@@ -1,6 +1,6 @@
 <script>
   import { trainingSetBrowser } from '$lib/marcelle';
-  import { marcelle } from '$lib/utils';
+  import { marcelle } from '$lib/utils.svelte';
 </script>
 
 <svelte:head>

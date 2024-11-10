@@ -57,18 +57,14 @@ async function generate_templates(shared) {
         let contents = fs.readFileSync(path.join(cwd, name), 'utf8');
         // TODO package-specific versions
         const thisPkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-        contents = contents.replace(
-          '"@marcellejs/core": "workspace:*"',
-          `"@marcellejs/core": "${
-            thisPkg.devDependencies['@marcellejs/core'].split('workspace:')[1]
-          }"`,
-        );
-        contents = contents.replace(
-          '"@marcellejs/devtools": "workspace:*"',
-          `"@marcellejs/devtools": "${
-            thisPkg.devDependencies['@marcellejs/devtools'].split('workspace:')[1]
-          }"`,
-        );
+        for (const mclPkg of ['core', 'devtools', 'gui-widgets', 'layouts']) {
+          contents = contents.replace(
+            `"@marcellejs/${mclPkg}": "workspace:*"`,
+            `"@marcellejs/${mclPkg}": "${
+              thisPkg.devDependencies['@marcellejs/' + mclPkg].split('workspace:')[1]
+            }"`,
+          );
+        }
         fs.writeFileSync(`${dir}/package.json`, contents);
         continue;
       }
