@@ -23,7 +23,7 @@ const $instances = zip(input.$images, input.$thumbnails).pipe(
     y: label.$value.getValue(),
     thumbnail,
   })),
-  mergeMap((x) => from(x)),
+  mergeMap((x) => from(x))
 );
 
 $instances.subscribe(trainingSet.create);

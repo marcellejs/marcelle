@@ -1,126 +1,95 @@
 <script lang="ts">
-  import { page } from '$app/stores';
-  import logo from './svelte-logo.svg';
+  import { base } from '$app/paths';
+  import UserMenu from './UserMenu.svelte';
+
+  const navItems = [
+    { name: 'Home', href: `${base}/` },
+    { name: 'Dataset', href: `${base}/dataset` },
+    { name: 'Dashboard', href: `${base}/dashboard` },
+  ];
+
+  let isDark = $state(
+    JSON.parse(localStorage.getItem('marcelle-dark-theme') || 'false')
+  );
+  function toggleTheme() {
+    isDark = !isDark;
+    localStorage.setItem('marcelle-dark-theme', JSON.stringify(isDark));
+  }
 </script>
 
-<header>
-  <div class="corner">
-    <a href="https://kit.svelte.dev">
-      <img src={logo} alt="SvelteKit" />
-    </a>
-  </div>
+<header class="w-full">
+  <div class="navbar bg-base-100">
+    <div class="navbar-start">
+      <!-- Mobile Menu -->
+      <div class="dropdown">
+        <div tabindex="0" role="button" class="btn btn-ghost md:hidden">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h8m-8 6h16"
+            /></svg
+          >
+        </div>
+        <ul
+          class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+        >
+          {#each navItems as { name, href }}
+            <li><a {href}>{name}</a></li>
+          {/each}
+        </ul>
+      </div>
+      <!-- Logo -->
+      <div>
+        <a class="btn btn-ghost text-xl" href="{base}/">MarcelleKit</a>
+      </div>
+      <!-- Desktop menu -->
+      <ul class="menu menu-horizontal px-1 hidden md:flex">
+        {#each navItems as { name, href }}
+          <li><a {href}>{name}</a></li>
+        {/each}
+      </ul>
+    </div>
+    <div class="navbar-end">
+      <label class="mly-swap mly-swap-rotate">
+        <!-- this hidden checkbox controls the state -->
+        <input
+          type="checkbox"
+          class="theme-controller"
+          value="dark"
+          checked={isDark}
+          onchange={toggleTheme}
+        />
 
-  <nav>
-    <svg viewBox="0 0 2 3" aria-hidden="true">
-      <path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
-    </svg>
-    <ul>
-      <li class:active={$page.url.pathname === '/'}>
-        <a data-sveltekit-prefetch href="/">Home</a>
-      </li>
-      <li class:active={$page.url.pathname === '/dataset'}>
-        <a data-sveltekit-prefetch href="/dataset">Dataset</a>
-      </li>
-      <li class:active={$page.url.pathname === '/dashboard'}>
-        <a data-sveltekit-prefetch href="/dashboard">Dashboard (dev)</a>
-      </li>
-    </ul>
-    <svg viewBox="0 0 2 3" aria-hidden="true">
-      <path d="M0,0 L0,3 C0.5,3 0.5,3 1,2 L2,0 Z" />
-    </svg>
-  </nav>
+        <!-- sun icon -->
+        <svg
+          class="mly-swap-off mly-h-6 mly-w-6 mly-fill-current"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"
+          />
+        </svg>
 
-  <div class="corner">
-    <!-- TODO put something else here? github link? -->
+        <!-- moon icon -->
+        <svg
+          class="mly-swap-on mly-h-6 mly-w-6 mly-fill-current"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"
+          />
+        </svg>
+      </label>
+      <UserMenu />
+    </div>
   </div>
 </header>
-
-<style>
-  header {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .corner {
-    width: 3em;
-    height: 3em;
-  }
-
-  .corner a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-  }
-
-  .corner img {
-    width: 2em;
-    height: 2em;
-    object-fit: contain;
-  }
-
-  nav {
-    display: flex;
-    justify-content: center;
-    --background: rgba(255, 255, 255, 0.7);
-  }
-
-  svg {
-    width: 2em;
-    height: 3em;
-    display: block;
-  }
-
-  path {
-    fill: var(--background);
-  }
-
-  ul {
-    position: relative;
-    padding: 0;
-    margin: 0;
-    height: 3em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    list-style: none;
-    background: var(--background);
-    background-size: contain;
-  }
-
-  li {
-    position: relative;
-    height: 100%;
-  }
-
-  li.active::before {
-    --size: 6px;
-    content: '';
-    width: 0;
-    height: 0;
-    position: absolute;
-    top: 0;
-    left: calc(50% - var(--size));
-    border: var(--size) solid transparent;
-    border-top: var(--size) solid var(--accent-color);
-  }
-
-  nav a {
-    display: flex;
-    height: 100%;
-    align-items: center;
-    padding: 0 1em;
-    color: var(--heading-color);
-    font-weight: 700;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    text-decoration: none;
-    transition: color 0.2s linear;
-  }
-
-  a:hover {
-    color: var(--accent-color);
-  }
-</style>

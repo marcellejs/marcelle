@@ -10,15 +10,17 @@
 </svelte:head>
 
 <section>
-  <h1>Welcome to Marcelle!</h1>
-  <p>
-    This template application illustrates how to integrate Marcelle pipelines and component in a web
-    application.
-  </p>
+  <div class="prose">
+    <h1>Welcome to Marcelle!</h1>
+    <p>
+      This template application illustrates how to integrate Marcelle pipelines
+      and component in a web application.
+    </p>
+  </div>
 
-  <div class="marcelle notitles">
+  <div class="flex flex-col justify-center items-center flex-1">
     <div use:marcelle={input}></div>
-    <div>
+    <div class="flex gap-2">
       <div use:marcelle={label}></div>
       <div use:marcelle={capture}></div>
     </div>
@@ -28,18 +30,8 @@
 
 <style>
   section {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    flex: 1;
-  }
-
-  h1 {
     width: 100%;
-  }
-
-  :global(.notitles .card-title) {
-    display: none;
+    max-width: var(--column-width);
+    margin: var(--column-margin-top) auto 0 auto;
   }
 </style>
