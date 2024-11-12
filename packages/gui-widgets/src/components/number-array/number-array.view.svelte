@@ -2,12 +2,16 @@
   import { BehaviorSubject } from 'rxjs';
   import NumberArray from './NumberArray.svelte';
 
-  export let value: BehaviorSubject<number[]>;
-  export let disabled: BehaviorSubject<boolean>;
+  interface Props {
+    value: BehaviorSubject<number[]>;
+    disabled: BehaviorSubject<boolean>;
+  }
+
+  let { value, disabled }: Props = $props();
 </script>
 
-<div class="w-full max-w-sm">
-  <div class="md:flex md:items-center mb-2">
+<div class="mgui-w-full mgui-max-w-sm">
+  <div class="md:mgui-flex md:mgui-items-center mgui-mb-2">
     <NumberArray bind:value={$value} disabled={$disabled} />
   </div>
 </div>

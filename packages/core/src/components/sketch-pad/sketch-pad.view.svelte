@@ -1,17 +1,20 @@
 <script lang="ts">
   import type { Subject } from 'rxjs';
-  import { onMount, createEventDispatcher, tick } from 'svelte';
+  import { onMount, tick } from 'svelte';
 
-  export let strokeStart: Subject<void>;
-  export let strokeEnd: Subject<void>;
+  interface Props {
+    strokeStart: Subject<void>;
+    strokeEnd: Subject<void>;
+    oncanvas: (c: HTMLCanvasElement) => void;
+  }
 
-  let canvasElement: HTMLCanvasElement;
+  let { strokeStart, strokeEnd, oncanvas }: Props = $props();
+
+  let canvasElement: HTMLCanvasElement = $state();
   let isDrawing = false;
   let offset = { left: 0, top: 0 };
   let previous = { x: 0, y: 0 };
   let ctx: CanvasRenderingContext2D;
-
-  const dispatch = createEventDispatcher();
 
   function clearDrawing() {
     ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -25,7 +28,7 @@
     await tick();
     ctx = canvasElement.getContext('2d');
     clearDrawing();
-    dispatch('canvasElement', canvasElement);
+    oncanvas(canvasElement);
   });
 
   function draw(e: MouseEvent) {
@@ -64,26 +67,26 @@
   }
 </script>
 
-<svelte:body on:mouseup={stopDrawing} />
+<svelte:body onmouseup={stopDrawing} />
 
-<div class="box-border flex w-full flex-col items-center">
+<div class="mcl-box-border mcl-flex mcl-w-full mcl-flex-col mcl-items-center">
   <canvas
     id="fxid"
     class="sketchpad-container"
     width="300"
     height="300"
     bind:this={canvasElement}
-    on:mousemove={draw}
-    on:mousedown={startDrawing}
-  />
-  <div class="m-1">
-    <button class="mco-btn mco-btn-sm mco-btn-error" on:click={clearDrawing}>Clear</button>
+    onmousemove={draw}
+    onmousedown={startDrawing}
+  ></canvas>
+  <div class="mcl-m-1">
+    <button class="mcl-btn mcl-btn-error mcl-btn-sm" onclick={clearDrawing}>Clear</button>
   </div>
 </div>
 
 <style lang="postcss">
   .sketchpad-container {
-    @apply m-1 flex justify-center overflow-hidden rounded-lg border border-solid border-gray-400;
+    @apply mcl-m-1 mcl-flex mcl-justify-center mcl-overflow-hidden mcl-rounded-lg mcl-border mcl-border-solid mcl-border-gray-400;
     width: 300px;
     height: 300px;
   }

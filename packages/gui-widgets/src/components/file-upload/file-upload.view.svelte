@@ -2,12 +2,16 @@
   import { onMount, tick } from 'svelte';
   import type { Subject } from 'rxjs';
 
-  export let fileStream: Subject<File[]>;
+  interface Props {
+    fileStream: Subject<File[]>;
+  }
 
-  let uploadInput: HTMLInputElement;
+  let { fileStream }: Props = $props();
+
+  let uploadInput: HTMLInputElement = $state();
 
   let counter = 0;
-  let draggedOver = false;
+  let draggedOver = $state(false);
 
   // use to check if a file is being dragged
   const hasFiles = ({ dataTransfer: { types = [] } }: DragEvent) => types.indexOf('Files') > -1;
@@ -67,7 +71,7 @@
   <div class="overlay">
     <i>
       <svg
-        class="mb-3 h-12 w-12 fill-current text-blue-700"
+        class="mgui-mb-3 mgui-h-12 mgui-w-12 mgui-fill-current mgui-text-blue-700"
         xmlns="http://www.w3.org/2000/svg"
         width="24"
         height="24"
@@ -78,39 +82,41 @@
         />
       </svg>
     </i>
-    <p class="text-lg text-blue-700">Drop files to upload</p>
+    <p class="mgui-text-lg mgui-text-blue-700">Drop files to upload</p>
   </div>
 {/if}
 
 <div
-  on:dragenter={handleDragEnter}
-  on:dragleave={handleDragLeave}
-  on:dragover={handleDragOver}
-  on:drop={handleDragDrop}
+  ondragenter={handleDragEnter}
+  ondragleave={handleDragLeave}
+  ondragover={handleDragOver}
+  ondrop={handleDragDrop}
   class="file-upload"
   role="none"
 >
   <div
-    class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 py-8"
+    class="mgui-flex mgui-flex-col mgui-items-center mgui-justify-center mgui-border-2 mgui-border-dashed mgui-border-gray-300 mgui-py-8"
   >
-    <p class="mb-3 flex flex-wrap justify-center font-semibold text-gray-900">
+    <p
+      class="mgui-mb-3 mgui-flex mgui-flex-wrap mgui-justify-center mgui-font-semibold mgui-text-gray-900"
+    >
       <span>Drop Files here or:</span>
     </p>
-    <input bind:this={uploadInput} type="file" multiple class="hidden" />
-    <button class="mgui-btn" on:click={clickUpload}>Upload a file</button>
+    <input bind:this={uploadInput} type="file" multiple class="mgui-hidden" />
+    <button class="mgui-btn" onclick={clickUpload}>Upload a file</button>
   </div>
 </div>
 
 <style lang="postcss">
   .file-upload {
-    @apply mt-2;
+    @apply mgui-mt-2;
     width: 100%;
     display: flex;
     flex-direction: column;
   }
 
   .overlay {
-    @apply pointer-events-none absolute left-0 top-0 z-50 flex h-full w-full flex-col items-center justify-center rounded-md;
+    @apply mgui-pointer-events-none mgui-absolute mgui-left-0 mgui-top-0 mgui-z-50 mgui-flex mgui-h-full mgui-w-full mgui-flex-col mgui-items-center mgui-justify-center mgui-rounded-md;
     background-color: rgba(255, 255, 255, 0.7);
   }
 </style>

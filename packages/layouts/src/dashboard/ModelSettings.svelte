@@ -4,9 +4,13 @@
   import { throwError } from '@marcellejs/core';
   import ViewContainer from './ViewContainer.svelte';
 
-  export let model: Model<Instance, unknown>;
+  interface Props {
+    model: Model<Instance, unknown>;
+  }
 
-  let uploadInput: HTMLInputElement;
+  let { model }: Props = $props();
+
+  let uploadInput: HTMLInputElement = $state();
 
   type SaveableModel = Model<Instance, unknown> & {
     download(): void;
@@ -50,10 +54,10 @@
 </script>
 
 <ViewContainer title={model.title}>
-  <div class="flex">
-    <button class="mly-btn mly-btn-outline" on:click={downloadModel}>Download Model</button>
-    <span class="w-1" />
-    <input bind:this={uploadInput} type="file" multiple class="hidden" />
-    <button class="mly-btn mly-btn-outline" on:click={uploadModel}>Upload Model</button>
+  <div class="mly-flex">
+    <button class="mly-btn mly-btn-outline" onclick={downloadModel}>Download Model</button>
+    <span class="mly-w-1"></span>
+    <input bind:this={uploadInput} type="file" multiple class="mly-hidden" />
+    <button class="mly-btn mly-btn-outline" onclick={uploadModel}>Upload Model</button>
   </div>
 </ViewContainer>

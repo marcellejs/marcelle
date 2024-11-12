@@ -1,6 +1,6 @@
 <script>
   import { trainingSetBrowser } from '$lib/marcelle';
-  import { marcelle } from '$lib/utils';
+  import { marcelle } from '$lib/utils.svelte';
 </script>
 
 <svelte:head>
@@ -8,10 +8,11 @@
 </svelte:head>
 
 <div class="content">
-  <h1>Your Dataset</h1>
-
-  <div class="marcelle card">
-    <div use:marcelle={trainingSetBrowser} />
+  <div class="prose">
+    <h1>Your Dataset</h1>
+  </div>
+  <div class="card">
+    <div use:marcelle={trainingSetBrowser}></div>
   </div>
 </div>
 

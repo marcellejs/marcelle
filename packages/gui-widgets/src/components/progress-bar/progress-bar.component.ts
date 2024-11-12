@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 import { Component } from '@marcellejs/core';
 import View from './progress-bar.view.svelte';
+import { mount, unmount } from 'svelte';
 
 export interface ProgressType {
   message: string;
@@ -15,15 +16,15 @@ export class ProgressBar extends Component {
     super();
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = new View({
+    const app = mount(View, {
       target: t,
       props: {
         progress: this.$progress,
       },
     });
+    return () => unmount(app);
   }
 }

@@ -1,12 +1,18 @@
-<script>
-  import { Chart, CategoryScale, Title, Tooltip } from 'chart.js';
+<script lang="ts">
+  import { Chart, CategoryScale, Title, Tooltip, type ChartConfiguration } from 'chart.js';
   import { MatrixElement, MatrixController } from 'chartjs-chart-matrix';
+  import type { BehaviorSubject, Subscription } from 'rxjs';
   import { onDestroy } from 'svelte';
+  import type { ConfusionMatrixT } from './confusion-matrix.component';
 
-  export let accuracy;
-  export let confusion;
-  export let labels;
-  export let selected;
+  interface Props {
+    accuracy: BehaviorSubject<number>;
+    confusion: BehaviorSubject<ConfusionMatrixT>;
+    labels: BehaviorSubject<string[]>;
+    selected: BehaviorSubject<{ x: string; y: string; v: number }>;
+  }
+
+  let { accuracy, confusion, labels, selected }: Props = $props();
 
   Chart.register(CategoryScale, Title, Tooltip, MatrixElement, MatrixController);
 
@@ -15,7 +21,7 @@
 
   let selectedDataIndex = -1;
 
-  const defaultOptions = {
+  const defaultOptions: ChartConfiguration = {
     type: 'matrix',
     data: {
       datasets: [
@@ -109,16 +115,15 @@
             e.chart.update();
           }
         } catch (error) {
-          // eslint-disable-next-line no-console
           console.log('[confusion matrix] selection error:', error);
         }
       },
     },
   };
 
-  let chart;
-  let subs = [];
-  function setup(canvasElement) {
+  let chart: Chart;
+  let subs: Subscription[] = [];
+  function setup(canvasElement: HTMLCanvasElement) {
     const ctx = canvasElement.getContext('2d');
     chart = new Chart(ctx, defaultOptions);
     subs.push(
@@ -146,10 +151,10 @@
 </script>
 
 {#if $accuracy !== undefined}
-  <p class="m-2">Global Accuracy: {$accuracy.toFixed(2)}</p>
-  <div class="confusion-container"><canvas use:setup /></div>
+  <p class="mcl-m-2">Global Accuracy: {$accuracy.toFixed(2)}</p>
+  <div class="confusion-container"><canvas use:setup></canvas></div>
 {:else}
-  <p class="m-2">Waiting for predictions...</p>
+  <p class="mcl-m-2">Waiting for predictions...</p>
 {/if}
 
 <style>

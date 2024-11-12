@@ -2,7 +2,7 @@
   import GithubLogo from './GithubLogo.svelte';
   import GlitchLogo from './GlitchLogo.svelte';
 
-  export let demo;
+  let { demo } = $props();
 </script>
 
 <div class="demo">

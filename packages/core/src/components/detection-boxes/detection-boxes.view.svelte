@@ -3,8 +3,12 @@
   import type { ObjectDetectorResults } from '../../core';
   import { filter, type Observable } from 'rxjs';
 
-  export let imageStream: Observable<ImageData>;
-  export let objectDetectionResults: Observable<ObjectDetectorResults>;
+  interface Props {
+    imageStream: Observable<ImageData>;
+    objectDetectionResults: Observable<ObjectDetectorResults>;
+  }
+
+  let { imageStream, objectDetectionResults }: Props = $props();
 
   onMount(() => {
     const mycan = document.getElementById('can') as HTMLCanvasElement;
@@ -46,4 +50,4 @@
   });
 </script>
 
-<canvas id="can" class="w-full max-w-full" />
+<canvas id="can" class="mcl-w-full mcl-max-w-full"></canvas>

@@ -1,5 +1,5 @@
 <script>
-  export let options;
+  let { options } = $props();
 </script>
 
 <div>This is a <span class="my-color">custom</span> component with the following options:</div>

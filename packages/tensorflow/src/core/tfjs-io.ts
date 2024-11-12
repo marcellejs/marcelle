@@ -37,7 +37,7 @@ function fixSeparableConv2D(artifacts: SpecificModelArtifacts): io.ModelArtifact
           ) {
             removeKernels = true;
           }
-          // eslint-disable-next-line no-param-reassign, @typescript-eslint/no-dynamic-delete
+
           delete artifacts.modelTopology.model_config.config.layers[i].config[field];
         }
       }

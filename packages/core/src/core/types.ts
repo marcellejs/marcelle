@@ -1,14 +1,6 @@
-import type { SvelteComponent } from 'svelte';
 import type { BehaviorSubject } from 'rxjs';
 import type { FeathersService } from '@feathersjs/feathers';
 import type { ServiceIterable } from './data-store/service-iterable';
-
-export interface ComponentInternals {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // streams: Array<Stream<any>>;
-  app?: SvelteComponent;
-  [key: string]: unknown;
-}
 
 export interface Parametrable {
   parameters: {

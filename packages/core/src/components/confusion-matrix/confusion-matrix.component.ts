@@ -4,6 +4,7 @@ import { Component } from '../../core/component';
 import type { ClassifierPrediction } from '../../core/types';
 import View from './confusion-matrix.view.svelte';
 import { BehaviorSubject, map } from 'rxjs';
+import { mount, unmount } from 'svelte';
 
 export type ConfusionMatrixT = Array<{
   x: string;
@@ -94,11 +95,10 @@ export class ConfusionMatrix extends Component {
     }
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = new View({
+    const app = mount(View, {
       target: t,
       props: {
         // progress: this.$progress,
@@ -108,5 +108,6 @@ export class ConfusionMatrix extends Component {
         selected: this.$selected,
       },
     });
+    return () => unmount(app);
   }
 }

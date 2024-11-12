@@ -3,11 +3,15 @@
   import type { Dataset, Instance } from '@marcellejs/core';
   import ViewContainer from './ViewContainer.svelte';
 
-  export let dataset: Dataset<Instance>;
+  interface Props {
+    dataset: Dataset<Instance>;
+  }
 
-  let uploadInput: HTMLInputElement;
+  let { dataset }: Props = $props();
 
-  $: count = dataset.$count;
+  let uploadInput: HTMLInputElement = $state();
+
+  let count = $derived(dataset.$count);
 
   function downloadDataset() {
     dataset.download();
@@ -36,22 +40,22 @@
 </script>
 
 <ViewContainer title={dataset.title}>
-  <p class="pb-2">
+  <p class="mly-pb-2">
     {#if $count}
       This dataset contains {$count} instance{$count ? 's' : ''}.
     {:else}
       This dataset is empty
     {/if}
   </p>
-  <div class="flex">
+  <div class="mly-flex">
     {#if $count}
-      <button class="mly-btn mly-btn-outline" on:click={downloadDataset}> Download Dataset </button>
-      <span class="w-1" />
+      <button class="mly-btn mly-btn-outline" onclick={downloadDataset}> Download Dataset </button>
+      <span class="mly-w-1"></span>
     {/if}
-    <button class="mly-btn mly-btn-outline" on:click={uploadDataset}> Upload Dataset </button>
-    <span class="w-1" />
-    <input bind:this={uploadInput} type="file" multiple class="hidden" />
-    <button class="mly-btn mly-btn-outline mly-btn-error" on:click={clearDataset}>
+    <button class="mly-btn mly-btn-outline" onclick={uploadDataset}> Upload Dataset </button>
+    <span class="mly-w-1"></span>
+    <input bind:this={uploadInput} type="file" multiple class="mly-hidden" />
+    <button class="mly-btn mly-btn-outline mly-btn-error" onclick={clearDataset}>
       Clear Dataset
     </button>
   </div>

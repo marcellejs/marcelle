@@ -11,10 +11,19 @@
   import Tab from './Tab.svelte';
   import TabPanel from './TabPanel.svelte';
 
-  export let service: Service<TrainingRun>;
-  export let metrics: string[];
-  export let actions: Array<string | { name: string }>;
-  export let selection: BehaviorSubject<TrainingRun[]>;
+  interface Props {
+    service: Service<TrainingRun>;
+    metrics: string[];
+    actions: Array<string | { name: string }>;
+    selection: BehaviorSubject<TrainingRun[]>;
+  }
+
+  let {
+    service,
+    metrics,
+    actions,
+    selection
+  }: Props = $props();
 
   const dispatch = createEventDispatcher();
 
@@ -63,7 +72,7 @@
     ),
   ];
 
-  let mainTable: Table;
+  let mainTable: Table = $state();
 
   onMount(async () => {
     await tick();

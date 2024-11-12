@@ -1,5 +1,4 @@
-/* eslint-env node */
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-require-imports */
 const colors = require('tailwindcss/colors');
 const daisyui = require('daisyui');
 
@@ -7,7 +6,8 @@ const production = !process.env.ROLLUP_WATCH;
 process.env.NODE_ENV = production ? JSON.stringify('production') : JSON.stringify('development');
 
 module.exports = {
-  content: ['./src/**/*.{css,js,jsx,ts,tsx,svelte}'],
+  content: ['./src/**/*.{css,js,ts,svelte}'],
+  prefix: 'mtf-',
   theme: {
     colors: {
       transparent: 'transparent',
@@ -30,11 +30,11 @@ module.exports = {
     base: false, // applies background color and foreground color for root element by default
     styled: true, // include daisyUI colors and design decisions for all components
     utils: true, // adds responsive and modifier utility classes
-    prefix: 'mtf-', // prefix for daisyUI classnames (components, modifiers and responsive class names. Not colors)
+    prefix: '', // prefix for daisyUI classnames (components, modifiers and responsive class names. Not colors)
     logs: true, // Shows info about daisyUI version and used config in the console when building your CSS
     themeRoot: ':root', // The element that receives theme color CSS variables
   },
   corePlugins: {
-    preflight: true,
+    preflight: false,
   },
 };

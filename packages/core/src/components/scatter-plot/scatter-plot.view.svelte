@@ -1,12 +1,16 @@
-<svelte:options accessors />
+<svelte:options />
 
 <script lang="ts">
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
   import type { BehaviorSubject } from 'rxjs';
 
-  export let embedding: BehaviorSubject<number[][]>;
-  export let labels: BehaviorSubject<number[]>;
+  interface Props {
+    embedding: BehaviorSubject<number[][]>;
+    labels: BehaviorSubject<number[]>;
+  }
+
+  let { embedding, labels }: Props = $props();
 
   let scatterGL: ScatterGL;
 
@@ -75,9 +79,11 @@
       });
     });
   });
+
+  export { embedding, labels };
 </script>
 
-<div id="scatter-container" />
+<div id="scatter-container"></div>
 
 <style>
   #scatter-container {

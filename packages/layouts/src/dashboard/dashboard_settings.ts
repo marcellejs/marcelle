@@ -18,8 +18,8 @@ function isComponentArray(x: Component | Component[] | string): x is Component[]
 export class DashboardSettings {
   name = 'settings';
   components: Array<Component | Component[] | string> = [];
+  unmount: Array<() => void> = [];
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   xModels: Array<Model<Instance, unknown>> = [];
   xDatasets: Array<Dataset<Instance>> = [];
   xPredictions: BatchPrediction[] = [];
@@ -51,26 +51,21 @@ export class DashboardSettings {
   }
 
   mount(): void {
+    this.unmount = [];
     for (const m of this.components) {
       if (isComponentArray(m)) {
         for (const n of m) {
-          n.mount();
+          this.unmount.push(n.mount());
         }
       } else if (!isTitle(m)) {
-        m.mount();
+        this.unmount.push(m.mount());
       }
     }
   }
 
   destroy(): void {
-    for (const m of this.components) {
-      if (isComponentArray(m)) {
-        for (const n of m) {
-          n.destroy();
-        }
-      } else if (!isTitle(m)) {
-        m.destroy();
-      }
+    for (const f of this.unmount) {
+      f();
     }
   }
 }

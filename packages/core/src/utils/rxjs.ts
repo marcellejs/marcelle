@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import type { BehaviorSubject as RxSubject } from 'rxjs';
 
 interface BindableSubject<T> extends RxSubject<T> {

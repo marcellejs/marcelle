@@ -16,6 +16,7 @@ import {
 } from '@marcellejs/core';
 import Component from './mobile-net.view.svelte';
 import { BehaviorSubject } from 'rxjs';
+import { mount, unmount } from 'svelte';
 
 export interface MobileNetOptions {
   version?: MobileNetVersion;
@@ -61,6 +62,7 @@ export class MobileNet extends Model<MobileNetInstance, ClassifierResults> {
         version: this.version,
         alpha: this.alpha,
       });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       if (cachedMobilenet.length > 0) {
         await io.removeModel(cachedMobilenet[0]);
@@ -95,11 +97,10 @@ export class MobileNet extends Model<MobileNetInstance, ClassifierResults> {
     };
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = new Component({
+    const app = mount(Component, {
       target: t,
       props: {
         loading: this.$loading,
@@ -107,34 +108,30 @@ export class MobileNet extends Model<MobileNetInstance, ClassifierResults> {
         alpha: this.alpha,
       },
     });
+    return () => unmount(app);
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   train(): never {
     throw new TrainingError('Model `MobileNet` cannot be trained');
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   save(): never {
     throw new Error('MobileNet does not support saving');
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   load(): never {
     throw new Error('MobileNet does not support loading');
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   download(): never {
     throw new Error('MobileNet does not support downloading');
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   upload(): never {
     throw new Error('MobileNet does not support uploading');
   }

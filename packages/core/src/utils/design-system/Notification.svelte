@@ -9,7 +9,11 @@
     type: 'default' | 'danger';
   }
 
-  export let notifications: Notification[] = [];
+  interface Props {
+    notifications?: Notification[];
+  }
+
+  let { notifications = $bindable([]) }: Props = $props();
 
   function close(id: number) {
     notifications = notifications.filter((x) => x.id !== id);
@@ -41,9 +45,16 @@
       }, duration);
     }
   }
+
+  function handleKeyPress(e: KeyboardEvent, id: number) {
+    e.preventDefault();
+    if (e.key === 'Escape') {
+      close(id);
+    }
+  }
 </script>
 
-<div class="marcelle notification-container">
+<div class="notification-container">
   {#each notifications.slice(0, 10) as { title, message, type, id } (id)}
     <div
       transition:blur={{ amount: 10 }}
@@ -53,10 +64,10 @@
       class:default={type === 'default'}
       class:danger={type === 'danger'}
     >
-      <div class="flex items-start">
-        <div class="py-1">
+      <div class="mcl-flex mcl-items-start">
+        <div class="mcl-py-1">
           <svg
-            class="notification-svg mr-4"
+            class="notification-svg mcl-mr-4"
             class:default={type === 'default'}
             class:danger={type === 'danger'}
             xmlns="http://www.w3.org/2000/svg"
@@ -76,17 +87,16 @@
           </svg>
         </div>
         <div>
-          <p class="my-1 font-bold">{title}</p>
-          <p class="my-1 text-sm">{message}</p>
+          <p class="mcl-my-1 mcl-font-bold">{title}</p>
+          <p class="mcl-my-1 mcl-text-sm">{message}</p>
         </div>
-        <!-- <span class="absolute top-0 bottom-0 right-0 px-4 py-3"> -->
         <div>
           <svg
-            class="notification-svg ml-4 cursor-pointer"
+            class="notification-svg mcl-ml-4 mcl-cursor-pointer"
             class:default={type === 'default'}
             class:danger={type === 'danger'}
-            on:click={() => close(id)}
-            on:keypress|preventDefault={(e) => e.key === 'Escape' && close(id)}
+            onclick={() => close(id)}
+            onkeypress={(e) => handleKeyPress(e, id)}
             role="button"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
@@ -108,30 +118,30 @@
 
 <style type="text/postcss">
   .notification-container {
-    @apply fixed top-0 right-0 m-2 z-50 max-w-md justify-end flex flex-col items-end;
+    @apply mcl-fixed mcl-right-0 mcl-top-0 mcl-z-50 mcl-m-2 mcl-flex mcl-max-w-md mcl-flex-col mcl-items-end mcl-justify-end;
   }
 
   .notification-card {
-    @apply border-t-4 rounded-lg px-4 py-3 shadow-md w-auto mt-2;
+    @apply mcl-mt-2 mcl-w-auto mcl-rounded-lg mcl-border-t-4 mcl-px-4 mcl-py-3 mcl-shadow-md;
   }
 
   .notification-card.default {
-    @apply bg-teal-100 border-teal-500 text-teal-900;
+    @apply mcl-border-teal-500 mcl-bg-teal-100 mcl-text-teal-900;
   }
 
   .notification-card.danger {
-    @apply bg-red-100 border-red-500 text-red-900;
+    @apply mcl-border-red-500 mcl-bg-red-100 mcl-text-red-900;
   }
 
   .notification-svg {
-    @apply fill-current h-6 w-6;
+    @apply mcl-h-6 mcl-w-6 mcl-fill-current;
   }
 
   .notification-svg.default {
-    @apply text-teal-500;
+    @apply mcl-text-teal-500;
   }
 
   .notification-svg.danger {
-    @apply text-red-500;
+    @apply mcl-text-red-500;
   }
 </style>

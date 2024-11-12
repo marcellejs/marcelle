@@ -1,6 +1,7 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Component, type ObjectDetectorResults } from '../../core';
 import View from './detection-boxes.view.svelte';
+import { mount, unmount } from 'svelte';
 
 export class DetectionBoxes extends Component {
   title = 'Visualize Object Detections';
@@ -17,16 +18,16 @@ export class DetectionBoxes extends Component {
     objDectectionRes.subscribe(this.$objectDetectionResults);
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = new View({
+    const app = mount(View, {
       target: t,
       props: {
         imageStream: this.$imgStream,
         objectDetectionResults: this.$objectDetectionResults,
       },
     });
+    return () => unmount(app);
   }
 }

@@ -1,6 +1,10 @@
 <script lang="ts">
-  export let disabled = false;
-  export let value: number;
+  interface Props {
+    disabled?: boolean;
+    value: number;
+  }
+
+  let { disabled = false, value = $bindable() }: Props = $props();
 
   function changeValue(e: Event) {
     const target = e.target as HTMLInputElement;
@@ -17,24 +21,24 @@
   <button
     {disabled}
     class="mgui-btn mgui-btn-sm mgui-join-item"
-    on:click={() => {
+    onclick={() => {
       value -= 1;
     }}>-</button
   >
   <div>
     <input
-      class="mgui-input mgui-input-sm mgui-input-bordered mgui-join-item w-20"
+      class="mgui-input mgui-input-sm mgui-input-bordered mgui-join-item mgui-w-20"
       type="number"
       inputmode="decimal"
       {disabled}
       {value}
-      on:change={changeValue}
+      onchange={changeValue}
     />
   </div>
   <button
     {disabled}
     class="mgui-btn mgui-btn-sm mgui-join-item"
-    on:click={() => {
+    onclick={() => {
       value += 1;
     }}>+</button
   >

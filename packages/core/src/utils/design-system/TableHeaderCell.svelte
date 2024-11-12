@@ -1,16 +1,24 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { createEventDispatcher } from 'svelte';
 
-  export let name = 'name';
-  export let sortable = false;
-  export let sorting = { col: '', ascending: true };
+  interface Props {
+    name?: string;
+    sortable?: boolean;
+    sorting?: unknown;
+  }
+
+  let { name = 'name', sortable = false, sorting = { col: '', ascending: true } }: Props = $props();
 
   const dispatch = createEventDispatcher();
 
-  let sortAscending = true;
-  $: if (sorting.col === name) {
-    sortAscending = sorting.ascending;
-  }
+  let sortAscending = $state(true);
+  run(() => {
+    if (sorting.col === name) {
+      sortAscending = sorting.ascending;
+    }
+  });
 
   function sort() {
     sortAscending = !sortAscending;
@@ -23,12 +31,12 @@
     <span style="margin-top: 0.5rem; margin-bottom: 0.5rem;">{name}</span>
     {#if sortable}
       {#if sortAscending}
-        <button class="btn btn-circle btn-sm" on:click={sort}>
+        <button class="mcl-btn mcl-btn-circle mcl-btn-sm" onclick={sort}>
           <!-- class:hover={hovering} -->
           <!-- class:active={isSorting} -->
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
+            class="mcl-h-6 mcl-w-6"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -42,10 +50,10 @@
           </svg>
         </button>
       {:else}
-        <button class="btn btn-circle btn-sm" on:click={sort}>
+        <button class="mcl-btn mcl-btn-circle mcl-btn-sm" onclick={sort} aria-label="sort">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
+            class="mcl-h-6 mcl-w-6"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

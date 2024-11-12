@@ -1,16 +1,20 @@
 <script lang="ts">
   import type { Subject } from 'rxjs';
 
-  export let value: Subject<string>;
-  export let disabled: Subject<boolean>;
+  interface Props {
+    value: Subject<string>;
+    disabled: Subject<boolean>;
+  }
+
+  let { value, disabled }: Props = $props();
 </script>
 
-<div class="w-full max-w-sm">
-  <div class="mb-2 md:flex md:items-center">
+<div class="mgui-w-full mgui-max-w-sm">
+  <div class="mgui-mb-2 md:mgui-flex md:mgui-items-center">
     <input
       type="text"
       placeholder="Enter a label..."
-      class="mgui-input mgui-input-bordered w-full max-w-sm"
+      class="mgui-input mgui-input-bordered mgui-w-full mgui-max-w-sm"
       bind:value={$value}
       disabled={$disabled}
     />

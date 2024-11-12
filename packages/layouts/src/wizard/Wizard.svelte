@@ -1,69 +1,76 @@
 <script lang="ts">
-  import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte';
+  import { onDestroy, onMount, tick } from 'svelte';
   import WizardPageComponent from './WizardPage.svelte';
   import type { WizardPage } from './wizard_page';
-  import { BehaviorSubject } from 'rxjs';
+  import { BehaviorSubject, Subscription } from 'rxjs';
 
-  export let pages: WizardPage[];
-  export let current: BehaviorSubject<number>;
+  interface Props {
+    pages: WizardPage[];
+    current: BehaviorSubject<number>;
+    onquit: () => void;
+  }
+
+  let { pages, current, onquit }: Props = $props();
 
   function goToPage(index: number) {
     if (index >= 0 && index <= pages.length - 1) {
-      for (const m of pages[current.getValue()].components) {
-        if (Array.isArray(m)) {
-          for (const n of m) {
-            n.destroy();
-          }
-        } else {
-          m.destroy();
-        }
-      }
+      dispose();
       current.next(index);
     }
   }
 
-  afterUpdate(() => {
-    for (const m of pages[current.getValue()].components) {
-      if (Array.isArray(m)) {
-        for (const n of m) {
-          n.mount();
-        }
-      } else {
-        m.mount();
-      }
+  let destroy: Array<() => void> = [];
+  function dispose() {
+    for (const f of destroy) {
+      f();
     }
+  }
+
+  let sub: Subscription;
+  onMount(() => {
+    sub = current.subscribe(async (c) => {
+      await tick();
+      destroy = [];
+      for (const m of pages[c].components) {
+        if (Array.isArray(m)) {
+          for (const n of m) {
+            destroy.push(n.mount());
+          }
+        } else {
+          destroy.push(m.mount());
+        }
+      }
+    });
   });
 
   onDestroy(() => {
-    for (const m of pages[current.getValue()].components) {
-      if (Array.isArray(m)) {
-        for (const n of m) {
-          n.destroy();
-        }
-      } else {
-        m.destroy();
-      }
-    }
+    dispose();
+    sub.unsubscribe();
   });
 
-  const dispatch = createEventDispatcher();
   export function quit(): void {
-    dispatch('quit');
+    onquit();
+  }
+
+  function handleKeyPress(e: KeyboardEvent) {
+    e.preventDefault();
+    if (e.key === 'Escape') {
+      quit();
+    }
   }
 </script>
 
 <div class="wizard">
-  <div class="absolute inset-0 min-h-screen transition-opacity">
+  <div class="mly-absolute mly-inset-0 mly-min-h-screen mly-transition-opacity">
     <div
-      on:click={quit}
-      on:keypress|preventDefault={(e) => e.key === 'Escape' && quit()}
+      onclick={quit}
+      onkeypress={handleKeyPress}
       class="absolute inset-0 bg-gray-500 opacity-50"
       role="none"
-    />
+    ></div>
   </div>
   <div
-    class="transform overflow-hidden rounded-lg bg-white shadow-xl transition-all sm:w-full
-      sm:max-w-3xl"
+    class="mly-transform mly-overflow-hidden mly-rounded-lg mly-bg-white mly-shadow-xl mly-transition-all sm:mly-w-full sm:mly-max-w-3xl"
   >
     <WizardPageComponent
       title={pages[$current].attr.title}
@@ -71,21 +78,28 @@
       components={pages[$current].components}
       index={$current + 1}
     />
-    <div class="grid grid-cols-3 border-t border-gray-300 bg-white px-4 py-2">
+    <div
+      class="mly-grid mly-grid-cols-3 mly-border-t mly-border-gray-300 mly-bg-white mly-px-4 mly-py-2"
+    >
       <div>
-        <button class="mly-btn mly-btn-outline mly-btn-error" on:click={quit}>Close</button>
+        <button class="mly-btn mly-btn-outline mly-btn-error" onclick={quit}>Close</button>
       </div>
-      <div class="text-center">
+      <div class="mly-text-center">
         <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
         {#each Array(pages.length) as _, i}
-          <button on:click={() => goToPage(i)} class="page-button" class:current={$current === i} />
+          <button
+            onclick={() => goToPage(i)}
+            class="page-button"
+            class:current={$current === i}
+            aria-label="Go to page {i}"
+          ></button>
         {/each}
       </div>
-      <div class="text-right">
+      <div class="mly-text-right">
         <button
           class="mly-btn mly-btn-outline"
           disabled={$current <= 0}
-          on:click={() => {
+          onclick={() => {
             goToPage($current - 1);
           }}
         >
@@ -94,7 +108,7 @@
         <button
           class="mly-btn"
           class:mly-btn-success={$current >= pages.length - 1}
-          on:click={() => {
+          onclick={() => {
             if (current.getValue() < pages.length - 1) {
               goToPage($current + 1);
             } else {
@@ -111,12 +125,12 @@
 
 <style lang="postcss">
   .wizard {
-    @apply absolute inset-x-0 top-0 z-20 min-h-screen p-4 pb-4;
+    @apply mly-absolute mly-inset-x-0 mly-top-0 mly-z-20 mly-min-h-screen mly-p-4 mly-pb-4;
   }
 
   @screen sm {
     .wizard {
-      @apply flex items-center justify-center;
+      @apply mly-flex mly-items-center mly-justify-center;
     }
   }
 
@@ -125,11 +139,11 @@
   }
 
   .page-button {
-    @apply mx-1 h-2 w-2 cursor-pointer rounded-full border-none bg-blue-300 p-0;
+    @apply mly-mx-1 mly-h-2 mly-w-2 mly-cursor-pointer mly-rounded-full mly-border-none mly-bg-blue-300 mly-p-0;
   }
 
   .page-button.current,
   .page-button:hover {
-    @apply bg-blue-500;
+    @apply mly-bg-blue-500;
   }
 </style>

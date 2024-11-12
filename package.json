@@ -5,6 +5,7 @@
   "description": "Monorepo for all Marcelle things (or at least some)",
   "author": "Jules Françoise <me@julesfrancoise.com>",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "pnpm --recursive --filter @marcellejs/* --filter create-marcelle run build",
@@ -16,11 +17,12 @@
     "eslint": "^9.7.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-svelte": "^2.36.0",
+    "globals": "^15.12.0",
     "prettier": "^3.3.3",
     "prettier-plugin-svelte": "^3.2.7",
     "prettier-plugin-tailwindcss": "^0.6.8",
     "rimraf": "^5.0.10",
-    "svelte": "^4.2.19",
+    "svelte": "^5.1.13",
     "svelte-eslint-parser": "^0.43.0",
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.0.0"

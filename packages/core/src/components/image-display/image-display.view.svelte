@@ -1,12 +1,16 @@
-<svelte:options accessors />
+<svelte:options />
 
 <script lang="ts">
   import { onDestroy, onMount, tick } from 'svelte';
   import { Observable, Subscription } from 'rxjs';
 
-  export let imageStream: Observable<ImageData | ImageData[]>;
+  interface Props {
+    imageStream: Observable<ImageData | ImageData[]>;
+  }
 
-  let canvas: HTMLCanvasElement;
+  let { imageStream }: Props = $props();
+
+  let canvas: HTMLCanvasElement = $state();
 
   let sub: Subscription;
   onMount(async () => {
@@ -28,6 +32,8 @@
   onDestroy(() => {
     if (sub) sub.unsubscribe();
   });
+
+  export { imageStream };
 </script>
 
-<canvas bind:this={canvas} class="w-full max-w-full" />
+<canvas bind:this={canvas} class="mcl-w-full mcl-max-w-full"></canvas>

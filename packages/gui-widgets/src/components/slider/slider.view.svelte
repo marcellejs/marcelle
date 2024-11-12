@@ -2,17 +2,33 @@
   import type { BehaviorSubject } from 'rxjs';
   import RangeSlider from 'svelte-range-slider-pips';
 
-  export let values: BehaviorSubject<number[]>;
-  export let min: BehaviorSubject<number>;
-  export let max: BehaviorSubject<number>;
-  export let step: BehaviorSubject<number>;
-  export let range: boolean | 'min' | 'max';
-  export let float: boolean;
-  export let vertical: boolean;
-  export let pips: boolean;
-  export let pipstep: number;
-  export let formatter: (x: number) => unknown;
-  export let continuous: boolean;
+  interface Props {
+    values: BehaviorSubject<number[]>;
+    min: BehaviorSubject<number>;
+    max: BehaviorSubject<number>;
+    step: BehaviorSubject<number>;
+    range: boolean | 'min' | 'max';
+    float: boolean;
+    vertical: boolean;
+    pips: boolean;
+    pipstep: number;
+    formatter: (x: number) => unknown;
+    continuous: boolean;
+  }
+
+  let {
+    values,
+    min,
+    max,
+    step,
+    range,
+    float,
+    vertical,
+    pips,
+    pipstep,
+    formatter,
+    continuous,
+  }: Props = $props();
 
   function dispatchValues({ detail }: CustomEvent) {
     values.next(detail.values);
@@ -56,11 +72,11 @@
   :global(.rangeSlider > .rangeBar),
   :global(.rangeSlider > .rangeHandle > .rangeNub),
   :global(.rangeSlider > .rangeHandle > .rangeFloat) {
-    @apply bg-teal-500;
+    @apply mgui-bg-teal-500;
   }
   :global(.rangeSlider.focus > .rangeBar),
   :global(.rangeSlider > .rangeHandle.active > .rangeNub),
   :global(.rangeSlider > .rangeHandle.active > .rangeFloat) {
-    @apply bg-teal-400;
+    @apply mgui-bg-teal-400;
   }
 </style>

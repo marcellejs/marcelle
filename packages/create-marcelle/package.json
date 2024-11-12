@@ -17,6 +17,7 @@
 	"devDependencies": {
 		"@marcellejs/core": "workspace:^0.6.5",
 		"@marcellejs/devtools": "workspace:^0.6.5",
+		"@marcellejs/gui-widgets": "workspace:^0.6.5",
 		"@marcellejs/layouts": "workspace:^0.6.5",
 		"@types/gitignore-parser": "^0.0.3",
 		"@types/prompts": "^2.4.4",
@@ -24,7 +25,7 @@
 		"prettier": "^3.3.3",
 		"prettier-plugin-svelte": "^3.2.7",
 		"sucrase": "^3.35.0",
-		"svelte": "^4.2.19",
+		"svelte": "^5.1.13",
 		"svelte-preprocess": "^6.0.3",
 		"tiny-glob": "^0.2.9"
 	},

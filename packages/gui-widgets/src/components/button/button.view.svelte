@@ -1,17 +1,19 @@
 <script lang="ts">
   import type { Subject } from 'rxjs';
-  import { createEventDispatcher } from 'svelte';
 
-  export let text: Subject<string>;
-  export let pressed: Subject<boolean>;
-  export let disabled: Subject<boolean>;
-  export let type: Subject<'default' | 'success' | 'warning' | 'danger'>;
+  interface Props {
+    text: Subject<string>;
+    pressed: Subject<boolean>;
+    disabled: Subject<boolean>;
+    type: Subject<'default' | 'success' | 'warning' | 'danger'>;
+    round?: boolean;
+    onclick: (e: Event) => void;
+  }
 
-  export let round = false;
+  let { text, pressed, disabled, type, round = false, onclick }: Props = $props();
 
-  const dispatch = createEventDispatcher();
-
-  function startDown() {
+  function startDown(e: Event) {
+    e.preventDefault();
     pressed.next(true);
   }
 
@@ -22,11 +24,11 @@
   }
 
   function fireClick(e: Event) {
-    dispatch('click', e);
+    onclick(e);
   }
 </script>
 
-<svelte:body on:mouseup={stopDown} on:touchend={stopDown} />
+<svelte:body onmouseup={stopDown} ontouchend={stopDown} />
 
 <div>
   <button
@@ -37,9 +39,11 @@
     class:mgui-btn-error={$type === 'danger'}
     class:mgui-btn-success={$type === 'success'}
     class:mgui-btn-warning={$type === 'warning'}
-    on:mousedown={startDown}
-    on:touchstart|preventDefault={startDown}
-    on:touchend={fireClick}
-    on:click>{$text}</button
+    onmousedown={startDown}
+    ontouchstart={startDown}
+    ontouchend={fireClick}
+    {onclick}
   >
+    {$text}
+  </button>
 </div>

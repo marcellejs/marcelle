@@ -2,10 +2,15 @@
   import { onDestroy, onMount, tick } from 'svelte';
   import type { GenericChart } from '../generic-chart';
 
-  export let charts: Record<string, GenericChart>;
+  interface Props {
+    charts: Record<string, GenericChart>;
+  }
 
-  let container: HTMLElement;
-  let refs: HTMLDivElement[] = [];
+  let { charts }: Props = $props();
+
+  let container: HTMLElement = $state();
+  let refs: HTMLDivElement[] = $state([]);
+  let destroy: Array<() => void> = [];
 
   onMount(async () => {
     await tick();
@@ -16,26 +21,23 @@
     }
 
     for (const [i, chart] of Object.values(charts).entries()) {
-      chart.mount(refs[i]);
+      destroy.push(chart.mount(refs[i]));
     }
   });
 
   onDestroy(() => {
-    for (const chart of Object.values(charts)) {
-      chart.destroy();
+    for (const f of destroy) {
+      f();
     }
   });
 </script>
 
-<div bind:this={container} class="grid grid-cols-1 gap-1">
+<div bind:this={container} class="mcl-grid mcl-grid-cols-1 mcl-gap-1">
   <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
   {#each Object.values(charts) as _, i}
-    <div bind:this={refs[i]} class="card inner-card xl:flex-1" />
+    <div
+      bind:this={refs[i]}
+      class="mcl-card mcl-w-full mcl-flex-none mcl-shadow-none xl:mcl-flex-1"
+    ></div>
   {/each}
 </div>
-
-<style lang="postcss">
-  .inner-card {
-    @apply shadow-none flex-none  w-full;
-  }
-</style>

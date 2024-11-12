@@ -1,6 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { Component, rxBind } from '@marcellejs/core';
 import View from './text-area.view.svelte';
+import { mount, unmount } from 'svelte';
 
 export class TextArea extends Component {
   title = 'text area';
@@ -15,11 +16,10 @@ export class TextArea extends Component {
     this.placeholder = placeholder;
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = new View({
+    const app = mount(View, {
       target: t,
       props: {
         value: rxBind(this.$value),
@@ -27,5 +27,6 @@ export class TextArea extends Component {
         disabled: this.$disabled,
       },
     });
+    return () => unmount(app);
   }
 }

@@ -12,7 +12,6 @@ export class TableArrayProvider<T extends Record<string, unknown>> extends Table
     this.data.set(this.rawData.slice(0, this.options.itemsPerPage));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async update(): Promise<void> {
     this.page(this.currentPage);
   }

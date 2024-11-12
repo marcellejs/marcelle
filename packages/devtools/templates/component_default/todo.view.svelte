@@ -1,5 +1,9 @@
 <script lang="ts">
-  export let options: Record<string, unknown>;
+  interface Props {
+    options: Record<string, unknown>;
+  }
+
+  let { options }: Props = $props();
 </script>
 
 <div>This is a <span class="my-color">custom</span> component with the following options:</div>

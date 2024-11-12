@@ -1,25 +1,25 @@
 <script lang="ts">
-  import { Subject } from 'rxjs';
+  import { BehaviorSubject, Subject } from 'rxjs';
 
-  export let value: Subject<string>;
-  export let placeholder: string;
-  export let disabled;
+  interface Props {
+    value: Subject<string>;
+    placeholder: string;
+    disabled: BehaviorSubject<boolean>;
+  }
+
+  let { value, placeholder, disabled }: Props = $props();
 </script>
 
-<div class="w-full">
+<div class="mgui-w-full">
   <textarea
-    class="w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+    class="mgui-m-0 mgui-w-full mgui-rounded mgui-border mgui-border-solid mgui-border-gray-300 mgui-bg-white mgui-bg-clip-padding mgui-px-3 mgui-py-1.5 mgui-text-base mgui-font-normal mgui-text-gray-700 mgui-transition mgui-ease-in-out focus:mgui-border-blue-600 focus:mgui-bg-white focus:mgui-text-gray-700 focus:mgui-outline-none"
     {placeholder}
     bind:value={$value}
     disabled={$disabled}
-  />
+  ></textarea>
 </div>
 
 <style>
-  .w-full {
-    width: 100%;
-  }
-
   textarea {
     font-family: inherit;
     padding: 0.5rem;

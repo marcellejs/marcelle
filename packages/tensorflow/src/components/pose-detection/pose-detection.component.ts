@@ -14,6 +14,7 @@ import { SkeletonRenderer } from './renderer';
 import View from './pose-detection.view.svelte';
 import { ready } from '@tensorflow/tfjs-core';
 import { BehaviorSubject } from 'rxjs';
+import { mount, unmount } from 'svelte';
 
 export type PoseDetectionModel = keyof typeof SupportedModels;
 
@@ -95,45 +96,40 @@ export class PoseDetection extends Model<PoseDetectionInstance, Pose[]> {
 
   // https://colab.research.google.com/drive/19txHpN8exWhstO6WVkfmYYVC6uug_oVR#scrollTo=0L6HLFd9AXmh
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = new View({
+    const app = mount(View, {
       target: t,
       props: {
         loading: this.$loading,
         model: this.model,
       },
     });
+    return () => unmount(app);
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   train(): never {
     throw new TrainingError('Model `MobileNet` cannot be trained');
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   save(): never {
     throw new Error('MobileNet does not support saving');
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   load(): never {
     throw new Error('MobileNet does not support loading');
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   download(): never {
     throw new Error('MobileNet does not support downloading');
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   upload(): never {
     throw new Error('MobileNet does not support uploading');
   }

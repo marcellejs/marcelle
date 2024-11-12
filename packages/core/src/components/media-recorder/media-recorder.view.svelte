@@ -5,17 +5,21 @@
   import { RecordRTCPromisesHandler } from 'recordrtc';
   import { filter, type BehaviorSubject } from 'rxjs';
 
-  export let mediaStream: BehaviorSubject<MediaStream>;
-  export let active: BehaviorSubject<boolean>;
-  export let recordings: BehaviorSubject<{
-    duration: number;
-    blob: Blob;
-    type: string;
-    thumbnail: string;
-  }>;
+  interface Props {
+    mediaStream: BehaviorSubject<MediaStream>;
+    active: BehaviorSubject<boolean>;
+    recordings: BehaviorSubject<{
+      duration: number;
+      blob: Blob;
+      type: string;
+      thumbnail: string;
+    }>;
+  }
+
+  let { mediaStream, active, recordings }: Props = $props();
 
   let recorder: RecordRTCPromisesHandler;
-  let elapsedTime = '';
+  let elapsedTime = $state('');
   let intvId: number;
   let thumbnail = '';
 
@@ -74,6 +78,7 @@
         try {
           checkRecorder();
           startRecording();
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
           active.next(false);
         }
@@ -84,12 +89,12 @@
   });
 </script>
 
-<div class="flex flex-col items-center">
+<div class="mcl-flex mcl-flex-col mcl-items-center">
   <div class="recorder-container">
     <input type="checkbox" id="btn" bind:checked={$active} />
-    <label for="btn" />
+    <label for="btn"></label>
   </div>
-  <div class="text-gray-600">{elapsedTime}</div>
+  <div class="mcl-text-gray-600">{elapsedTime}</div>
 </div>
 
 <style lang="postcss">
@@ -114,7 +119,7 @@
     }
   }
   .recorder-container {
-    @apply relative w-full flex items-center justify-center;
+    @apply mcl-relative mcl-flex mcl-w-full mcl-items-center mcl-justify-center;
     width: 80px;
     height: 80px;
   }

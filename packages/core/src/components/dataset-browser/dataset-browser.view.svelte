@@ -5,15 +5,18 @@
   import { onMount } from 'svelte';
   import { scale } from 'svelte/transition';
   import { BehaviorSubject } from 'rxjs';
-  import { noop } from '../../utils/misc';
 
-  export let batchSize: number;
-  export let count: BehaviorSubject<number>;
-  export let dataset: Dataset<DBInstance>;
-  export let selected: BehaviorSubject<ObjectId[]>;
+  interface Props {
+    batchSize: number;
+    count: BehaviorSubject<number>;
+    dataset: Dataset<DBInstance>;
+    selected: BehaviorSubject<ObjectId[]>;
+  }
+
+  let { batchSize, count, dataset, selected }: Props = $props();
 
   let loading = false;
-  let dataStoreError = false;
+  let dataStoreError = $state(false);
 
   let classes: Record<
     string,
@@ -22,7 +25,7 @@
       loaded: number;
       instances: Array<Partial<DBInstance>>;
     }
-  > = {};
+  > = $state({});
 
   async function loadMore(label: string) {
     await dataset.ready;
@@ -43,6 +46,7 @@
     try {
       dataStoreError = false;
       await dataset.ready;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       loading = false;
       dataStoreError = true;
@@ -86,7 +90,6 @@
   async function deleteSelectedInstances() {
     let p: Promise<unknown> = Promise.resolve();
     for (const id of selected.getValue()) {
-      // eslint-disable-next-line no-loop-func
       p = p.then(() => dataset.remove(id));
     }
     await p;
@@ -98,7 +101,6 @@
     if (!newLabel) return;
     let p: Promise<unknown> = Promise.resolve();
     for (const id of selected.getValue()) {
-      // eslint-disable-next-line no-loop-func
       p = p.then(() => dataset.patch(id, { y: newLabel }));
     }
     await p;
@@ -196,7 +198,6 @@
               ({ id }) => id !== data.id,
             );
             if (classes[originalLabel].total === 0) {
-              // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
               delete classes[originalLabel];
               classes = classes;
             }
@@ -218,7 +219,6 @@
               ({ id }) => id !== data.id,
             );
             if (classes[data.y].total === 0) {
-              // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
               delete classes[data.y];
               classes = classes;
             }
@@ -227,9 +227,16 @@
       }
     });
   });
+
+  function handleKeyPress(e: KeyboardEvent) {
+    e.preventDefault();
+    if (e.key === 'Escape') {
+      selectInstance();
+    }
+  }
 </script>
 
-<svelte:window on:keydown={handleKeydown} on:keyup={handleKeyup} />
+<svelte:window onkeydown={handleKeydown} onkeyup={handleKeyup} />
 
 {#if classes && !dataStoreError}
   {#if $count > 0}
@@ -238,22 +245,18 @@
     <p class="ml-3 mt-2">This dataset is empty.</p>
   {/if}
 
-  <!-- svelte-ignore a11y-no-static-element-interactions -->
-  <div
-    class="flex flex-wrap"
-    on:click={() => selectInstance()}
-    on:keypress|preventDefault={(e) => e.key === 'Escape' && selectInstance()}
-  >
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div class="mcl-flex mcl-flex-wrap" onclick={() => selectInstance()} onkeypress={handleKeyPress}>
     {#each Object.entries(classes) as [label, { loaded, total, instances }]}
       <div class="browser-class">
-        <div class="w-full">
+        <div class="mcl-w-full">
           <div class="browser-class-header">
             <span class="browser-class-title">{label}</span>
-            <div class="mco-dropdown mco-dropdown-end">
+            <div class="mcl-dropdown mcl-dropdown-end">
               <button
                 tabindex="0"
-                class="mco-btn mco-btn-sm mco-btn-circle mco-btn-ghost"
-                on:click|stopPropagation={noop}
+                class="mcl-btn mcl-btn-circle mcl-btn-ghost mcl-btn-sm"
+                aria-label="class actions"
               >
                 <svg
                   class="inline-block h-5 w-5 fill-current"
@@ -264,23 +267,23 @@
                   /></svg
                 >
               </button>
-              <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+              <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
               <ul
                 tabindex="0"
-                class="mco-menu mco-dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
+                class="mcl-menu mcl-dropdown-content mcl-z-[1] mcl-w-52 mcl-rounded-box mcl-bg-base-100 mcl-p-2 mcl-shadow"
               >
                 <li>
-                  <button on:click={() => editClassLabel(label)}> Edit Class Label </button>
+                  <button onclick={() => editClassLabel(label)}> Edit Class Label </button>
                 </li>
-                <li><button on:click={() => deleteClass(label)}> Delete class </button></li>
+                <li><button onclick={() => deleteClass(label)}> Delete class </button></li>
                 {#if $selected.length > 0}
                   <li>
-                    <button on:click={deleteSelectedInstances}>
+                    <button onclick={deleteSelectedInstances}>
                       Delete selected instance{$selected.length > 1 ? 's' : ''}
                     </button>
                   </li>
                   <li>
-                    <button on:click={relabelSelectedInstances}>
+                    <button onclick={relabelSelectedInstances}>
                       Relabel selected instance{$selected.length > 1 ? 's' : ''}
                     </button>
                   </li>
@@ -291,23 +294,26 @@
 
           <div class="browser-class-body">
             {#each instances as { id, thumbnail } (id)}
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+              <!-- svelte-ignore a11y_click_events_have_key_events -->
+              <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
               <img
                 src={thumbnail}
                 alt="thumbnail"
-                class="m-1"
+                class="mcl-m-1"
                 class:selected={$selected.includes(id)}
                 in:scale
                 out:scale
-                on:click|stopPropagation={() => selectInstance(id)}
+                onclick={(e) => {
+                  e.stopPropagation();
+                  selectInstance(id);
+                }}
               />
             {/each}
           </div>
         </div>
         <div class="pb-1">
           {#if loaded < total}
-            <button class="btn btn-sm" on:click={() => loadMore(label)}> View More </button>
+            <button class="mcl-btn mcl-btn-sm" onclick={() => loadMore(label)}> View More </button>
           {/if}
         </div>
       </div>
@@ -316,11 +322,11 @@
 {/if}
 {#if dataStoreError}
   <div
-    class="mb-4 flex rounded-lg bg-red-100 p-4 text-sm text-red-700 dark:bg-red-200 dark:text-red-800"
+    class="mcl-dark:bg-red-200 mcl-dark:text-red-800 mcl-mb-4 mcl-flex mcl-rounded-lg mcl-bg-red-100 mcl-p-4 mcl-text-sm mcl-text-red-700"
     role="alert"
   >
     <svg
-      class="mr-3 inline h-5 w-5 flex-shrink-0"
+      class="mcl-mr-3 mcl-inline mcl-h-5 mcl-w-5 mcl-flex-shrink-0"
       fill="currentColor"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -331,7 +337,7 @@
       /></svg
     >
     <div>
-      <span class="font-medium">Data Store connection Error!</span> This data store probably requires
+      <span class="mcl-font-medium">Data Store connection Error!</span> This data store probably requires
       authentication
     </div>
   </div>
@@ -339,31 +345,31 @@
 
 <style>
   .browser-class {
-    @apply relative m-2 flex w-1/3 grow flex-col items-center justify-between;
-    @apply rounded-lg border border-solid border-gray-500;
+    @apply mcl-relative mcl-m-2 mcl-flex mcl-w-1/3 mcl-grow mcl-flex-col mcl-items-center mcl-justify-between;
+    @apply mcl-rounded-lg mcl-border mcl-border-solid mcl-border-gray-500;
     min-width: 300px;
   }
 
   .browser-class-header {
-    @apply flex w-full flex-row items-center justify-between;
+    @apply mcl-flex mcl-w-full mcl-flex-row mcl-items-center mcl-justify-between;
   }
 
   .browser-class-title {
-    @apply self-start rounded-br-md rounded-tl-md bg-gray-500 px-2 py-1 text-sm font-semibold text-white;
+    @apply mcl-self-start mcl-rounded-br-md mcl-rounded-tl-md mcl-bg-gray-500 mcl-px-2 mcl-py-1 mcl-text-sm mcl-font-semibold mcl-text-white;
   }
 
   .browser-class-body {
-    @apply flex flex-wrap justify-center;
-    @apply p-1;
+    @apply mcl-flex mcl-flex-wrap mcl-justify-center;
+    @apply mcl-p-1;
   }
 
   .browser-class-body img {
     width: 60px;
     box-sizing: content-box;
-    @apply rounded-md border-2 border-solid border-transparent;
+    @apply mcl-rounded-md mcl-border-2 mcl-border-solid mcl-border-transparent;
   }
 
   .browser-class-body img.selected {
-    @apply border-gray-600;
+    @apply mcl-border-gray-600;
   }
 </style>

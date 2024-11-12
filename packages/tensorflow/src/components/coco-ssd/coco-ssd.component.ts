@@ -9,6 +9,7 @@ import {
   TrainingError,
 } from '@marcellejs/core';
 import Component from './coco-ssd.view.svelte';
+import { mount, unmount } from 'svelte';
 
 export interface CocoSsdOptions {
   base?: ObjectDetectionBaseModel;
@@ -41,6 +42,7 @@ export class CocoSsd extends Model<CocoInstance, ObjectDetectorResults> {
     const cachedCoco = Object.keys(cachedModels).filter((x) => x.includes('cocossd'));
     try {
       this.#coco = await load({ base: this.#base, modelUrl: `indexeddb://cocossd-${this.#base}` });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       if (cachedCoco.length > 0) {
         await io.removeModel(cachedCoco[0]);
@@ -54,7 +56,6 @@ export class CocoSsd extends Model<CocoInstance, ObjectDetectorResults> {
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   train(): never {
     throw new TrainingError('Model `CocoSsd` cannot be trained');
   }
@@ -73,39 +74,35 @@ export class CocoSsd extends Model<CocoInstance, ObjectDetectorResults> {
     return { outputs };
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = new Component({
+    const app = mount(Component, {
       target: t,
       props: {
         loading: this.$loading,
         base: this.#base,
       },
     });
+    return () => unmount(app);
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   save(): never {
     throw new Error('CocoSsd does not support saving');
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   load(): never {
     throw new Error('CocoSsd does not support loading');
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   download(): never {
     throw new Error('CocoSsd does not support downloading');
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   upload(): never {
     throw new Error('CocoSsd does not support uploading');
   }

@@ -1,6 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { Component } from '@marcellejs/core';
 import View from './text.view.svelte';
+import { mount, unmount } from 'svelte';
 
 export class Text extends Component {
   title = 'text';
@@ -12,15 +13,15 @@ export class Text extends Component {
     this.$value = new BehaviorSubject(initial);
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = new View({
+    const app = mount(View, {
       target: t,
       props: {
         text: this.$value,
       },
     });
+    return () => unmount(app);
   }
 }

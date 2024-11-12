@@ -8,6 +8,7 @@ import { dataStore, Model } from '../../core';
 import { LazyIterable, throwError } from '../../utils';
 import { BehaviorSubject } from 'rxjs';
 import { kebabCase } from 'scule';
+import { noop } from '../../utils/misc';
 
 export interface BatchPredictionStatus {
   status: 'idle' | 'start' | 'running' | 'success' | 'error' | 'loaded' | 'loading';
@@ -90,6 +91,7 @@ export class BatchPrediction extends Component {
     return this.predictionService.items();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  mount(): void {}
+  mount() {
+    return noop;
+  }
 }

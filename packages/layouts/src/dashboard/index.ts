@@ -2,6 +2,7 @@ import { DashboardPage } from './dashboard_page';
 import DashboardComponent from './Dashboard.svelte';
 import { DashboardSettings } from './dashboard_settings';
 import { BehaviorSubject } from 'rxjs';
+import { mount, unmount } from 'svelte';
 
 export interface DashboardOptions {
   title: string;
@@ -11,7 +12,10 @@ export interface DashboardOptions {
 
 export class Dashboard {
   panels: Record<string, DashboardPage> = {};
-  app?: DashboardComponent;
+  app?: {
+    $on?(type: string, callback: (e: unknown) => void): () => void;
+    $set?(props: Partial<Record<string, unknown>>): void;
+  } & Record<string, unknown>;
   settings = new DashboardSettings();
 
   $active = new BehaviorSubject(false as boolean);
@@ -39,7 +43,7 @@ export class Dashboard {
   }
 
   show(): void {
-    this.app = new DashboardComponent({
+    this.app = mount(DashboardComponent, {
       target: document.body,
       props: {
         title: this.title,
@@ -48,21 +52,30 @@ export class Dashboard {
         settings: this.settings,
         page: this.$page,
         closable: this.closable,
+        onquit: () => {
+          this.$active.next(false);
+          if (this.app) {
+            unmount(this.app);
+          }
+          for (const panel of Object.values(this.panels)) {
+            panel.destroy();
+          }
+          this.app = undefined;
+        },
       },
     });
     this.$active.next(true);
-    this.app.$on('quit', () => {
-      this.$active.next(false);
-      this.app?.$destroy();
-      for (const panel of Object.values(this.panels)) {
-        panel.destroy();
-      }
-      this.app = undefined;
-    });
   }
 
   hide(): void {
-    this.app?.quit();
+    this.$active.next(false);
+    if (this.app) {
+      unmount(this.app);
+    }
+    for (const panel of Object.values(this.panels)) {
+      panel.destroy();
+    }
+    this.app = undefined;
   }
 }
 

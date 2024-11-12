@@ -1,6 +1,6 @@
 <script lang="ts">
   import { BehaviorSubject } from 'rxjs';
-  import { onMount, createEventDispatcher } from 'svelte';
+  import { onMount } from 'svelte';
   import { blur } from 'svelte/transition';
   import Routie from './routie';
   import DashboardPageComponent from './DashboardPage.svelte';
@@ -10,16 +10,19 @@
   import DashboardHeader from './DashboardHeader.svelte';
   import DashboardFooter from './DashboardFooter.svelte';
 
-  const dispatch = createEventDispatcher();
+  interface Props {
+    title: string;
+    author: string;
+    dashboards?: Record<string, DashboardPage>;
+    settings: DashboardSettings;
+    page: BehaviorSubject<string>;
+    closable: boolean;
+    onquit: () => void;
+  }
 
-  export let title: string;
-  export let author: string;
-  export let dashboards: Record<string, DashboardPage> = {};
-  export let settings: DashboardSettings;
-  export let page: BehaviorSubject<string>;
-  export let closable: boolean;
+  let { title, author, dashboards = {}, settings, page, closable, onquit }: Props = $props();
 
-  let showApp = false;
+  let showApp = $state(false);
 
   onMount(() => {
     showApp = true;
@@ -28,12 +31,12 @@
   export function quit(): void {
     showApp = false;
     setTimeout(() => {
-      dispatch('quit');
+      onquit();
     }, 400);
   }
 
-  let showSettings = false;
-  let currentDashboard = Object.keys(dashboards)[0] || undefined;
+  let showSettings = $state(false);
+  let currentDashboard = $state(Object.keys(dashboards)[0] || undefined);
 
   function string2slug(str: string) {
     let s = str.replace(/^\s+|\s+$/g, ''); // trim
@@ -54,8 +57,8 @@
     return s;
   }
 
-  $: dashboardNames = Object.keys(dashboards);
-  $: dashboardSlugs = [''].concat(dashboardNames.slice(1).map(string2slug));
+  let dashboardNames = $derived(Object.keys(dashboards));
+  let dashboardSlugs = $derived([''].concat(dashboardNames.slice(1).map(string2slug)));
 
   // Routing
   onMount(() => {
@@ -76,7 +79,6 @@
         });
       });
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.log('Could not enable router', error);
     }
   });
@@ -88,7 +90,7 @@
 
 {#if showApp}
   <div
-    class="marcelle fixed h-screen w-full max-w-full overflow-y-scroll overflow-x-hidden top-0 left-0 z-40"
+    class="mly-fixed mly-left-0 mly-top-0 mly-z-40 mly-h-screen mly-w-full mly-max-w-full mly-overflow-x-hidden mly-overflow-y-scroll"
   >
     <div class="app-container" transition:blur={{ amount: 10, duration: closable ? 400 : 0 }}>
       <DashboardHeader
@@ -115,16 +117,16 @@
 
 <style lang="postcss">
   .app-container {
-    @apply flex flex-col absolute top-0 left-0 w-full min-h-screen z-10;
+    @apply mly-absolute mly-left-0 mly-top-0 mly-z-10 mly-flex mly-min-h-screen mly-w-full mly-flex-col;
   }
 
   .main-container {
-    @apply box-border w-full p-1 flex flex-col flex-nowrap grow bg-base-200;
+    @apply mly-box-border mly-flex mly-w-full mly-grow mly-flex-col mly-flex-nowrap mly-bg-base-200 mly-p-1;
   }
 
   @screen lg {
     .main-container {
-      @apply flex-row;
+      @apply mly-flex-row;
     }
   }
 </style>

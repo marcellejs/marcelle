@@ -4,6 +4,7 @@ import { Component } from '../../core/component';
 import { throwError } from '../../utils/error-handling';
 import View from './generic-chart.view.svelte';
 import { BehaviorSubject, Observable, auditTime, isObservable } from 'rxjs';
+import { mount, unmount } from 'svelte';
 
 // TODO: Automatic switch to fast mode when high number of points
 
@@ -112,7 +113,7 @@ export class GenericChart extends Component {
 
   #presetName: string;
   #preset: { global: Record<string, unknown>; datasets?: Record<string, unknown> };
-  #datasets: ChartDataset[] = [];
+  #datasets = new BehaviorSubject<ChartDataset[]>([]);
   options: ChartJsOptions & { xlabel?: string; ylabel?: string };
 
   constructor({ preset = 'line', options = {} }: GenericChartOptions = {}) {
@@ -141,46 +142,43 @@ export class GenericChart extends Component {
       } else {
         series.subscribe(points);
       }
-      this.#datasets.push({ dataStream: points, label, options });
-      this.updateView();
+      this.#datasets.next([...this.#datasets.getValue(), { dataStream: points, label, options }]);
     } else {
       series.toArray().then((values) => {
         const dataStream = new BehaviorSubject(values);
-        this.#datasets.push({ dataStream, label, options });
-        this.updateView();
+        this.#datasets.next([...this.#datasets.getValue(), { dataStream, label, options }]);
       });
     }
   }
 
   setColors(colorStream: BehaviorSubject<number[]>): void {
-    this.#datasets[0].label = 'clusters';
-    this.#datasets[0].options.backgroundColor = colorStream.getValue();
-    this.#datasets[0].options.color = colorStream.getValue(); //alternatePointStyles;
+    const d = this.#datasets.getValue();
+    d[0].label = 'clusters';
+    d[0].options.backgroundColor = colorStream.getValue();
+    d[0].options.color = colorStream.getValue(); //alternatePointStyles;
+    this.#datasets.next(d);
   }
 
   removeSeries(dataStream: BehaviorSubject<ChartPoint[]>): void {
-    const index = this.#datasets.map((x) => x.dataStream).indexOf(dataStream);
+    const index = this.#datasets
+      .getValue()
+      .map((x) => x.dataStream)
+      .indexOf(dataStream);
     if (index > -1) {
-      this.#datasets.splice(index, 1);
+      const d = this.#datasets.getValue();
+      d.splice(index, 1);
+      this.#datasets.next(d);
     }
   }
 
   clear(): void {
-    this.#datasets = [];
-    this.updateView();
+    this.#datasets.next([]);
   }
 
-  updateView(): void {
-    if (this.$$.app) {
-      this.$$.app.$set({ datasets: this.#datasets });
-    }
-  }
-
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = new View({
+    const app = mount(View, {
       target: t,
       props: {
         preset: this.#preset,
@@ -188,5 +186,6 @@ export class GenericChart extends Component {
         datasets: this.#datasets,
       },
     });
+    return () => unmount(app);
   }
 }

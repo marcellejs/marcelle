@@ -1,6 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { Component, rxBind } from '@marcellejs/core';
 import View from './select.view.svelte';
+import { mount, unmount } from 'svelte';
 
 export class Select extends Component {
   title = 'select';
@@ -14,16 +15,16 @@ export class Select extends Component {
     this.$value = new BehaviorSubject(value !== undefined ? value : options[0]);
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = new View({
+    const app = mount(View, {
       target: t,
       props: {
         options: this.$options,
         value: rxBind(this.$value),
       },
     });
+    return () => unmount(app);
   }
 }

@@ -39,7 +39,6 @@ export function convertImageDataToBlob(imageData: ImageData, type = 'image/png')
   conversionCanvas2.height = h;
   conversionCtx2.putImageData(imageData, 0, 0); // synchronous
 
-  // eslint-disable-next-line no-undef
   return new Promise<Blob>((resolve) => {
     conversionCanvas2.toBlob(resolve, type); // implied image/png format
   });

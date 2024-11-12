@@ -3,9 +3,14 @@
   import { createEventDispatcher } from 'svelte';
   import type { Column } from './table-types';
 
-  export let type: Column['type'] = 'generic';
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export let value: any = null;
+  interface Props {
+    type?: Column['type'];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    value?: any;
+    children?: import('svelte').Snippet;
+  }
+
+  let { type = 'generic', value = null, children }: Props = $props();
 
   const dispatch = createEventDispatcher();
 
@@ -21,30 +26,30 @@
     try {
       return formatDistanceToNow(Date.parse(v), { includeSeconds: true, addSuffix: true });
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.log('Date Parsing Error', v, error);
       return v;
     }
   }
+
+  const children_render = $derived(children);
 </script>
 
 <td>
   {#if type === 'image'}
-    <img alt="thumbnail" src={value} width="30" height="30" class="rounded-md" />
+    <img alt="thumbnail" src={value} width="30" height="30" class="mcl-rounded-md" />
   {:else if type === 'link'}
     <button
-      class="btn btn-sm btn-outline"
-      on:click={() => {
-        // eslint-disable-next-line no-console
+      class="mcl-btn mcl-btn-outline mcl-btn-sm"
+      onclick={() => {
         console.log('GOTO:', value.href);
       }}>{value.text}</button
     >
   {:else if type === 'action'}
-    <button class="btn btn-sm btn-outline" on:click={() => dispatch('action', value)}>
+    <button class="mcl-btn mcl-btn-outline mcl-btn-sm" onclick={() => dispatch('action', value)}>
       {value}
     </button>
   {:else if type === 'slot'}
-    <slot />
+    {@render children_render?.()}
   {:else if type === 'date'}
     {formatDate(value)}
   {:else if type === 'array'}

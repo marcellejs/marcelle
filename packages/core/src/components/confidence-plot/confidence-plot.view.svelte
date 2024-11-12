@@ -4,10 +4,14 @@
   import { onMount } from 'svelte';
   import type { ClassifierResults } from '../../core';
 
-  export let predictionStream: Observable<ClassifierResults>;
-  export let plotConfidences: GenericChart;
+  interface Props {
+    predictionStream: Observable<ClassifierResults>;
+    plotConfidences: GenericChart;
+  }
 
-  let confElt: HTMLDivElement;
+  let { predictionStream, plotConfidences }: Props = $props();
+
+  let confElt: HTMLDivElement = $state();
 
   onMount(() => {
     plotConfidences.mount(confElt);

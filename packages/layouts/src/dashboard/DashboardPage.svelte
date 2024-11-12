@@ -1,11 +1,14 @@
 <script lang="ts">
-  import { afterUpdate } from 'svelte';
   import type { DashboardPage } from './dashboard_page';
   import ViewContainer from './ViewContainer.svelte';
 
-  export let dashboard: DashboardPage;
+  interface Props {
+    dashboard: DashboardPage;
+  }
 
-  afterUpdate(() => {
+  let { dashboard }: Props = $props();
+
+  $effect(() => {
     dashboard.mount();
   });
 </script>
@@ -13,30 +16,28 @@
 {#if dashboard}
   {#if dashboard.showSidebar}
     <div class="left">
-      {#each dashboard.componentsLeft as { id, title, $loading: loading }}
+      {#each dashboard.componentsLeft as { id, title, $loading: loading } (id)}
         <ViewContainer {title} {loading}>
-          <div {id} />
+          <div {id}></div>
         </ViewContainer>
       {/each}
     </div>
   {/if}
   <div class="right" class:fullw={!dashboard.showSidebar}>
-    {#each dashboard.components as m}
+    {#each dashboard.components as m, i (i)}
       {#if Array.isArray(m)}
-        <div class="flex flex-row flex-wrap items-stretch gap-1">
-          {#each m as { id, title, $loading: loading }}
-            <!-- <div class="flex-none xl:flex-1 w-full xl:w-auto"> -->
+        <div class="mly-flex mly-flex-row mly-flex-wrap mly-items-stretch mly-gap-1">
+          {#each m as { id, title, $loading: loading } (id)}
             <ViewContainer {title} {loading}>
-              <div {id} />
+              <div {id}></div>
             </ViewContainer>
-            <!-- </div> -->
           {/each}
         </div>
       {:else if typeof m === 'string'}
         <h2>{m}</h2>
       {:else}
         <ViewContainer title={m.title} loading={m.$loading}>
-          <div id={m.id} />
+          <div id={m.id}></div>
         </ViewContainer>
       {/if}
     {/each}
@@ -45,11 +46,11 @@
 
 <style type="text/postcss">
   .left {
-    @apply shrink-0 p-1 w-full;
+    @apply mly-w-full mly-shrink-0 mly-p-1;
   }
 
   .right {
-    @apply grow p-1;
+    @apply mly-grow mly-p-1;
   }
 
   @screen lg {
@@ -67,6 +68,6 @@
   }
 
   h2 {
-    @apply font-medium text-gray-700 ml-2 text-2xl;
+    @apply mly-ml-2 mly-text-2xl mly-font-medium mly-text-gray-700;
   }
 </style>

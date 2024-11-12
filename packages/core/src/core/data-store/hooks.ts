@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import type { HookContext, Paginated } from '@feathersjs/feathers';
 import genId from './objectid';
 import { convertURIToImageData } from '../../utils/image';

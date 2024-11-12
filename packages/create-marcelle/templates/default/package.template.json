@@ -11,14 +11,15 @@
   },
   "dependencies": {
     "@marcellejs/core": "workspace:*",
+    "@marcellejs/gui-widgets": "workspace:*",
     "@marcellejs/layouts": "workspace:*",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@marcellejs/devtools": "workspace:*",
-    "@sveltejs/vite-plugin-svelte": "^3.1.1",
-    "svelte": "^4.2.0",
-    "svelte-preprocess": "^5.0.4",
-    "vite": "^5.3.1"
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "svelte": "^5.1.13",
+    "svelte-preprocess": "^6.0.3",
+    "vite": "^5.4.10"
   }
 }

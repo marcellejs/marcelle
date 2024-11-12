@@ -11,7 +11,6 @@ const $log = new Subject<[LogLevel, string]>();
 
 export const logger = {
   log(...messages: unknown[]): void {
-    // eslint-disable-next-line no-console
     console.log(...messages);
     $log.next([
       LogLevel.Info,
@@ -43,7 +42,6 @@ export const logger = {
     ]);
   },
   error(...messages: unknown[]): void {
-    // eslint-disable-next-line no-console
     console.error(...messages);
     $log.next([
       LogLevel.Error,

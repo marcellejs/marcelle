@@ -15,6 +15,7 @@ import Component from './tfjs-model.view.svelte';
 import { map } from 'rxjs';
 import { TFJSBaseModel } from '../../core';
 import { browserFiles, http } from '../../core/tfjs-io';
+import { mount, unmount } from 'svelte';
 
 export interface InputTypes {
   image: ImageData;
@@ -92,7 +93,6 @@ export class TFJSModel<
   }
 
   @Catch
-  // eslint-disable-next-line class-methods-use-this
   train(): never {
     throw new TrainingError('Model `TfModel` cannot be trained');
   }
@@ -234,7 +234,6 @@ export class TFJSModel<
         },
       });
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.log('[tf-model] Loading error', error);
       this.$training.next({
         status: 'error',
@@ -243,15 +242,15 @@ export class TFJSModel<
     }
   }
 
-  mount(target?: HTMLElement): void {
+  mount(target?: HTMLElement) {
     const t = target || document.querySelector(`#${this.id}`);
     if (!t) return;
-    this.destroy();
-    this.$$.app = new Component({
+    const app = mount(Component, {
       target: t,
       props: {
         training: this.$training,
       },
     });
+    return () => unmount(app);
   }
 }

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import type { Action, Column } from './table-types';
   import type { TableDataProvider } from './table-abstract-provider';
   import { createEventDispatcher } from 'svelte';
@@ -7,22 +9,35 @@
   import TableFooter from './TableFooter.svelte';
   import { get } from 'svelte/store';
 
-  export let columns: Column[];
-  export let provider: TableDataProvider;
-  export let actions: Action[] = [];
-  export let selectable = true;
-  export let singleSelection = false;
-  export let selection: Array<Record<string, unknown>> = [];
+  interface Props {
+    columns: Column[];
+    provider: TableDataProvider;
+    actions?: Action[];
+    selectable?: boolean;
+    singleSelection?: boolean;
+    selection?: Array<Record<string, unknown>>;
+  }
 
-  let selected: number[] = [];
+  let {
+    columns,
+    provider,
+    actions = [],
+    selectable = true,
+    singleSelection = false,
+    selection = $bindable([]),
+  }: Props = $props();
 
-  $: data = provider.data;
-  $: error = provider.error;
-  $: selected = selection.map((x) => get(data).indexOf(x));
+  let selected: number[] = $state([]);
+
+  let data = $derived(provider.data);
+  let error = $derived(provider.error);
+  run(() => {
+    selected = selection.map((x) => get(data).indexOf(x));
+  });
 
   const dispatch = createEventDispatcher();
 
-  let sorting = { col: '', ascending: true };
+  let sorting = $state({ col: '', ascending: true });
   function sort({ detail }: { detail: { col: string; ascending: boolean } }) {
     sorting = detail;
     provider.sort(detail);
@@ -75,13 +90,13 @@
 {#if $error}
   <div class="service-error">
     <sl-alert type="danger" open>
-      <sl-icon slot="icon" name="check2-circle" />
+      <sl-icon slot="icon" name="check2-circle"></sl-icon>
       <strong>Table Data Error</strong><br />
       {$error}
     </sl-alert>
   </div>
 {/if}
-<div class="marcelle table-container">
+<div class="table-container">
   <table>
     <thead>
       <tr>
@@ -91,7 +106,7 @@
               <input
                 type="checkbox"
                 checked={selected.length > 0 && selected.length === $data.length}
-                on:click={selectAll}
+                onclick={selectAll}
               />
             {/if}
           </th>
@@ -109,7 +124,7 @@
               <input
                 type="checkbox"
                 checked={selected.includes(i)}
-                on:click={(e) => selectOne(i, e)}
+                onclick={(e) => selectOne(i, e)}
               />
             </TableContentCell>
           {/if}

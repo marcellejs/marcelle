@@ -1,14 +1,13 @@
-<svelte:options accessors />
+<svelte:options />
 
 <script>
   import { ScatterGL } from 'scatter-gl';
   import { onMount } from 'svelte';
   import { auditTime } from 'rxjs';
 
-  export let embedding;
-  export let labels;
+  let { embedding, labels } = $props();
 
-  let scatterContainer;
+  let scatterContainer = $state();
   let scatterGL;
   onMount(() => {
     scatterGL = new ScatterGL(scatterContainer, {
@@ -44,9 +43,14 @@
       }
     });
   });
+
+  export {
+  	embedding,
+  	labels,
+  }
 </script>
 
-<div id="scatter-container" bind:this={scatterContainer} />
+<div id="scatter-container" bind:this={scatterContainer}></div>
 
 <style>
   #scatter-container {

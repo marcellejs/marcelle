@@ -2,17 +2,21 @@
   import { onMount, onDestroy, tick } from 'svelte';
   import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
-  export let width: number;
-  export let height: number;
-  export let facingMode: BehaviorSubject<'user' | 'environment'>;
-  export let active: Observable<boolean>;
-  export let mediaStream: Observable<MediaStream>;
-  export let ready: Observable<boolean>;
+  interface Props {
+    width: number;
+    height: number;
+    facingMode: BehaviorSubject<'user' | 'environment'>;
+    active: Observable<boolean>;
+    mediaStream: Observable<MediaStream>;
+    ready: Observable<boolean>;
+  }
 
-  let videoElement: HTMLVideoElement;
-  let webcamContainerWidth: number;
+  let { width, height, facingMode, active, mediaStream, ready }: Props = $props();
 
-  let numWebcams = 0;
+  let videoElement: HTMLVideoElement = $state();
+  let webcamContainerWidth: number = $state();
+
+  let numWebcams = $state(0);
   let sub: Subscription;
   onMount(async () => {
     await tick();
@@ -29,7 +33,6 @@
             numWebcams = videoDevices.length;
           })
           .catch((err) => {
-            // eslint-disable-next-line no-console
             console.error(`${err.name}: ${err.message}`);
           });
       }
@@ -44,11 +47,11 @@
 </script>
 
 <div class="webcam">
-  <div class="">
-    <div class="mco-form-control">
-      <label class="mco-label cursor-pointer">
-        <input type="checkbox" class="mco-toggle" bind:checked={$active} />
-        <span class="mco-label-text ml-2">activate video</span>
+  <div>
+    <div class="mcl-form-control">
+      <label class="mcl-label mcl-cursor-pointer">
+        <input type="checkbox" class="mcl-toggle" bind:checked={$active} />
+        <span class="mcl-label-text mcl-ml-2">activate video</span>
       </label>
     </div>
   </div>
@@ -60,13 +63,15 @@
       width}px"
   >
     {#if $active && !$ready}
-      <span class="absolute inset-0 flex w-full flex-nowrap items-center justify-center">
-        <span class="loading loading-spinner loading-lg"></span>
+      <span
+        class="mcl-absolute mcl-inset-0 mcl-flex mcl-w-full mcl-flex-nowrap mcl-items-center mcl-justify-center"
+      >
+        <span class="mcl-loading mcl-loading-spinner mcl-loading-lg"></span>
       </span>
     {/if}
     <video
       id="webcam-video"
-      class="max-w-none"
+      class="mcl-max-w-none"
       class:mirror={$facingMode === 'user'}
       style="width: {width > height ? `${webcamContainerWidth}px` : 'auto'}; height: {width > height
         ? 'auto'
@@ -75,13 +80,13 @@
       autoplay
       muted
       playsinline
-    />
+    ></video>
     {#if numWebcams > 1}
-      <div class="absolute bottom-2 right-2 text-right">
+      <div class="mcl-absolute mcl-bottom-2 mcl-right-2 mcl-text-right">
         <button
-          class="ghost btn btn-circle"
-          on:click={() =>
-            facingMode.next(facingMode.getValue() === 'user' ? 'environment' : 'user')}
+          class="mcl-btn mcl-btn-circle mcl-btn-ghost"
+          onclick={() => facingMode.next(facingMode.getValue() === 'user' ? 'environment' : 'user')}
+          aria-label="switch camera"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -89,7 +94,7 @@
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="h-6 w-6"
+            class="mcl-h-6 mcl-w-6"
           >
             <path
               stroke-linecap="round"
@@ -105,11 +110,11 @@
 
 <style lang="postcss">
   .webcam {
-    @apply mt-2 flex w-full flex-col items-center text-center;
+    @apply mcl-mt-2 mcl-flex mcl-w-full mcl-flex-col mcl-items-center mcl-text-center;
   }
 
   .webcam .webcam-container {
-    @apply m-2 flex w-full justify-center overflow-hidden rounded-md bg-base-300;
+    @apply mcl-m-2 mcl-flex mcl-w-full mcl-justify-center mcl-overflow-hidden mcl-rounded-md mcl-bg-base-300;
     max-width: 350px;
   }
 
