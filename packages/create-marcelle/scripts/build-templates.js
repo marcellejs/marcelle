@@ -112,7 +112,7 @@ async function generate_templates(shared) {
         // possible (e.g. preserving double line breaks). Sucrase is the best
         // tool for the job because it just removes the types; Prettier then
         // tidies up the end result
-        const contents = replaceAsync(
+        const contents = await replaceAsync(
           file.contents,
           /<script([^>]+)>([\s\S]+?)<\/script>/g,
           async (m, attrs, typescript) => {
