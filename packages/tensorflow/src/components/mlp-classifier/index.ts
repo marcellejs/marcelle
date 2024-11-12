@@ -4,4 +4,4 @@ export function mlpClassifier(...args: ConstructorParameters<typeof MLPClassifie
   return new MLPClassifier(...args);
 }
 
-export type { MLPClassifier };
+export * from './mlp-classifier.component';

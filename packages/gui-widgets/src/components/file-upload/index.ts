@@ -4,4 +4,4 @@ export function fileUpload(...args: ConstructorParameters<typeof FileUpload>): F
   return new FileUpload(...args);
 }
 
-export type { FileUpload } from './file-upload.component';
+export * from './file-upload.component';

@@ -4,4 +4,4 @@ export function sketchPad(...args: ConstructorParameters<typeof SketchPad>): Ske
   return new SketchPad(...args);
 }
 
-export type { SketchPad };
+export * from './sketch-pad.component';

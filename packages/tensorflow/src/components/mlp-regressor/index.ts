@@ -4,4 +4,4 @@ export function mlpRegressor(...args: ConstructorParameters<typeof MLPRegressor>
   return new MLPRegressor(...args);
 }
 
-export type { MLPRegressor };
+export * from './mlp-regressor.component';

@@ -4,4 +4,4 @@ export function knnClassifier(...args: ConstructorParameters<typeof KNNClassifie
   return new KNNClassifier(...args);
 }
 
-export type { KNNClassifier };
+export * from './knn-classifier.component';

@@ -13,4 +13,4 @@ export function textField(): TextInput {
   return textInput();
 }
 
-export type { TextInput };
+export * from './text-input.component';

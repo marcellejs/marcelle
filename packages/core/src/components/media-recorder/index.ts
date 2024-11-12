@@ -5,4 +5,4 @@ export function mediaRecorder(...args: ConstructorParameters<typeof MediaRecorde
   return new MediaRecorder(...args);
 }
 
-export type { MediaRecorder };
+export * from './media-recorder.component';

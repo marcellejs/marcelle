@@ -4,4 +4,4 @@ export function pca(...args: ConstructorParameters<typeof PCA>): PCA {
   return new PCA(...args);
 }
 
-export type { PCA };
+export * from './pca.component';

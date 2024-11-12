@@ -4,4 +4,4 @@ export function account(...args: ConstructorParameters<typeof Account>): Account
   return new Account(...args);
 }
 
-export type { Account };
+export * from './account.component';

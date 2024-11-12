@@ -4,4 +4,4 @@ export function webcam(...args: ConstructorParameters<typeof Webcam>): Webcam {
   return new Webcam(...args);
 }
 
-export type { Webcam };
+export * from './webcam.component';

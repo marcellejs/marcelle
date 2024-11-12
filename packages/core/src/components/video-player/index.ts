@@ -4,4 +4,4 @@ export function videoPlayer(...args: ConstructorParameters<typeof VideoPlayer>):
   return new VideoPlayer(...args);
 }
 
-export type { VideoPlayer };
+export * from './video-player.component';

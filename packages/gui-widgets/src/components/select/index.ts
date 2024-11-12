@@ -4,4 +4,4 @@ export function select(...args: ConstructorParameters<typeof Select>): Select {
   return new Select(...args);
 }
 
-export type { Select };
+export * from './select.component';

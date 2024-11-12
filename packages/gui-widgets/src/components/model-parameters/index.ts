@@ -9,4 +9,4 @@ export function modelParameters(m: Parametrable, config: ParamConfig = {}): Mode
   return new ModelParameters(m, config);
 }
 
-export type { ModelParameters };
+export * from './model-parameters.component';

@@ -6,4 +6,4 @@ export function batchPrediction(
   return new BatchPrediction(...args);
 }
 
-export type { BatchPrediction };
+export * from './batch-prediction.component';

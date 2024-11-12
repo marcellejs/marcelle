@@ -4,4 +4,4 @@ export function textArea(...args: ConstructorParameters<typeof TextArea>): TextA
   return new TextArea(...args);
 }
 
-export type { TextArea };
+export * from './text-area.component';

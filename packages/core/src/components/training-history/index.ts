@@ -7,4 +7,4 @@ export function trainingHistory<T extends Instance, PredictionType>(
   return new TrainingHistory(...args);
 }
 
-export type { TrainingHistory };
+export * from './training-history.component';

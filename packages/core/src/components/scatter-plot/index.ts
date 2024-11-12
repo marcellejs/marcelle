@@ -4,4 +4,4 @@ export function scatterPlot(...args: ConstructorParameters<typeof ScatterPlot>):
   return new ScatterPlot(...args);
 }
 
-export type { ScatterPlot };
+export * from './scatter-plot.component';

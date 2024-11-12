@@ -4,4 +4,4 @@ export function numberArray(...args: ConstructorParameters<typeof NumberArray>):
   return new NumberArray(...args);
 }
 
-export type { NumberArray };
+export * from './number-array.component';

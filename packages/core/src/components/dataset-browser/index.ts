@@ -6,4 +6,4 @@ export function datasetBrowser(
   return new DatasetBrowser(...args);
 }
 
-export type { DatasetBrowser };
+export * from './dataset-browser.component';

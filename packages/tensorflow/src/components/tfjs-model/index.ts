@@ -7,4 +7,4 @@ export function tfjsModel<InputType extends keyof InputTypes, TaskType extends k
   return new TFJSModel<InputType, TaskType>(options);
 }
 
-export type { TFJSModel, TFJSModelOptions };
+export * from './tfjs-model.component';

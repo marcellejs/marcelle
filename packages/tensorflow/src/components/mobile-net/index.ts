@@ -4,4 +4,4 @@ export function mobileNet(...args: ConstructorParameters<typeof MobileNet>): Mob
   return new MobileNet(...args);
 }
 
-export type { MobileNet };
+export * from './mobile-net.component';

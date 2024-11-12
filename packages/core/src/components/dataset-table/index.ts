@@ -8,4 +8,4 @@ export function datasetTable<T extends Instance>(
   return new DatasetTable(dataset, columns);
 }
 
-export type { DatasetTable };
+export * from './dataset-table.component';

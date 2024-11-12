@@ -11,4 +11,4 @@ export function isDataset<T extends Instance>(x: unknown): x is Dataset<T> {
   return typeof x === 'object' && x !== null && (x as any).isDataset;
 }
 
-export type { Dataset };
+export * from './dataset';

@@ -4,4 +4,4 @@ export function umap(...args: ConstructorParameters<typeof Umap>): Umap {
   return new Umap(...args);
 }
 
-export type { Umap };
+export * from './umap.component';

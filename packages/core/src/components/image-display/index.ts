@@ -4,4 +4,4 @@ export function imageDisplay(...args: ConstructorParameters<typeof ImageDisplay>
   return new ImageDisplay(...args);
 }
 
-export type { ImageDisplay };
+export * from './image-display.component';

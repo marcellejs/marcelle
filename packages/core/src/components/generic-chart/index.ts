@@ -4,4 +4,4 @@ export function genericChart(...args: ConstructorParameters<typeof GenericChart>
   return new GenericChart(...args);
 }
 
-export type { GenericChart };
+export * from './generic-chart.component';

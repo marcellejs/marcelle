@@ -4,4 +4,4 @@ export function microphone(...args: ConstructorParameters<typeof Microphone>): M
   return new Microphone(...args);
 }
 
-export type { Microphone };
+export * from './microphone.component';

@@ -6,4 +6,4 @@ export function kmeansClustering(
   return new KMeansClustering(...args);
 }
 
-export type { KMeansClustering };
+export * from './kmeans-clustering.component';

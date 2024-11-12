@@ -1,7 +1,7 @@
-import { PoseDetection, type Pose } from './pose-detection.component';
+import { PoseDetection } from './pose-detection.component';
 
 export function poseDetection(...args: ConstructorParameters<typeof PoseDetection>): PoseDetection {
   return new PoseDetection(...args);
 }
 
-export type { PoseDetection, Pose };
+export * from './pose-detection.component';

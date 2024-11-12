@@ -7,4 +7,4 @@ export function datasetScatter<T extends Instance>(
   return new DatasetScatter<T>(...args);
 }
 
-export type { DatasetScatter };
+export * from './dataset-scatter.component';

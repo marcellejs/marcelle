@@ -4,4 +4,4 @@ export function imageUpload(...args: ConstructorParameters<typeof ImageUpload>):
   return new ImageUpload(...args);
 }
 
-export type { ImageUpload, ImageUploadOptions } from './image-upload.component';
+export * from './image-upload.component';

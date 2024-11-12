@@ -4,4 +4,4 @@ export function number(...args: ConstructorParameters<typeof NumberComponent>): 
   return new NumberComponent(...args);
 }
 
-export type { NumberComponent as Number };
+export * from './number.component';

@@ -7,4 +7,4 @@ export function onnxModel<InputType extends keyof InputTypes, TaskType extends k
   return new OnnxModel<InputType, TaskType>(options);
 }
 
-export type { OnnxModel, ONNXModelOptions };
+export * from './onnx-model.component';

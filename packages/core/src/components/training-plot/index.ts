@@ -4,4 +4,4 @@ export function trainingPlot(...args: ConstructorParameters<typeof TrainingPlot>
   return new TrainingPlot(...args);
 }
 
-export type { TrainingPlot };
+export * from './training-plot.component';

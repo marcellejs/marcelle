@@ -4,4 +4,4 @@ export function slider(...args: ConstructorParameters<typeof Slider>): Slider {
   return new Slider(...args);
 }
 
-export type { Slider };
+export * from './slider.component';

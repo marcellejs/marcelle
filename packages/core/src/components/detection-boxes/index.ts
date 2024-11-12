@@ -6,4 +6,4 @@ export function detectionBoxes(
   return new DetectionBoxes(...args);
 }
 
-export type { DetectionBoxes };
+export * from './detection-boxes.component';

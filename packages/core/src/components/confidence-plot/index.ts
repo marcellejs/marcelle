@@ -6,4 +6,4 @@ export function confidencePlot(
   return new ConfidencePlot(...args);
 }
 
-export type { ConfidencePlot };
+export * from './confidence-plot.component';
