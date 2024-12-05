@@ -12,7 +12,7 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /guide/
+      link: /guides/
     - theme: alt
       text: Try the demos
       link: https://marcelle-demos-next.netlify.app/
@@ -44,7 +44,7 @@ Marcelle provides a high-level API enabling rapid prototyping of applications wh
 </span>
 <!-- <span class="teaser-desc"></span> -->
 
-![GIF Webcam recognition](./public/images/sketch-gif.gif)
+![GIF Webcam recognition](/images/sketch-gif.gif)
 
 </div>
 
@@ -59,7 +59,7 @@ Marcelle is built around various components providing a graphical user interface
 Components can typically be data sources (for instance a webcam capturing images), data structures (such as datasets), models, or visualization.
 </span>
 
-![Component-based architecture Animation](./guide/images/principle-01.gif)
+![Component-based architecture Animation](./guides/images/principle-01.gif)
 
 </div>
 
@@ -69,7 +69,7 @@ Components can typically be data sources (for instance a webcam capturing images
 Marcelle provides two layout mechanisms for user interface composition: dashboards and wizards.
 </span>
 
-![Composable Interfaces Animation](./guide/images/principle-02.png)
+![Composable Interfaces Animation](./guides/images/principle-02.png)
 
 </div>
 
@@ -79,7 +79,7 @@ Marcelle provides two layout mechanisms for user interface composition: dashboar
 Marcelle emphasizes machine learning pipelines driven by user interactions, through reactive programming.
 </span>
 
-![Interaction-driven pipelines Animation](./guide/images/principle-03.gif)
+![Interaction-driven pipelines Animation](./guides/images/principle-03.gif)
 
 </div>
 
@@ -89,6 +89,6 @@ Marcelle emphasizes machine learning pipelines driven by user interactions, thro
 Marcelle's data stores enable sharing data and models among stakeholders
 </span>
 
-![Collaboration](./public/images/teaser-pres.jpg)
+![Collaboration](/images/teaser-pres.jpg)
 
 </div>

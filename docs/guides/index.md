@@ -7,7 +7,7 @@
 <div class="home" style="padding-top: 1rem">
   <div class="hero" >
     <p class="action" style="margin-top: 0">
-      <a href="/guide/getting-started.html" class="action-button primary">Get Started →</a>
+      <a href="/guides/getting-started.html" class="action-button primary">Get Started →</a>
     </p>
   </div>
 </div>

@@ -1,5 +1,11 @@
 # Getting started
 
+::: warning TODO
+
+Update!
+
+:::
+
 In this tutorial, you will learn how to build a simple Marcelle application that allows the user to train a classifier to recognize drawings.
 
 ## Setting up

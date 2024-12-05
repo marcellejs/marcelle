@@ -1,5 +1,11 @@
 # Creating Components
 
+::: warning TODO
+
+Update!
+
+:::
+
 Marcelle can be extended using custom components, that can be created locally in an application.
 
 In this tutorial, we will create a custom component for the visualization of datasets using Uniform Manifold Approximation and Projection (UMAP). UMAP is a dimension reduction technique that can be used for visualisation similarly to t-SNE, but also for general non-linear dimension reduction.
@@ -335,7 +341,7 @@ The application should now log the UMAP fitting process in the console when clic
 
 ## Exposing the results as a stream
 
-For now, the results of the UMAP computation are limited to our component. In Marcelle, we use reactive streams to expose data to the outside world. Components can expose streams that can be used by other components in a pipeline. We will create a stream called `$embedding` that produce events along the fitting process. Such a stream could be used by other components for further processing, but it will also help updating the visualization in the component's view in real-time. In practice, the stream is implemented with a RxJS [`BehaviorSubject`](https://rxjs.dev/guide/subject#behaviorsubject).
+For now, the results of the UMAP computation are limited to our component. In Marcelle, we use reactive streams to expose data to the outside world. Components can expose streams that can be used by other components in a pipeline. We will create a stream called `$embedding` that produce events along the fitting process. Such a stream could be used by other components for further processing, but it will also help updating the visualization in the component's view in real-time. In practice, the stream is implemented with a RxJS [`BehaviorSubject`](https://rxjs.dev/guides/subject#behaviorsubject).
 
 First, we initialize the subject in the constructor. Then, we will imperatively push values into the stream at each iteration of the UMAP fitting process.
 

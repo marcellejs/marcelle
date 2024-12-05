@@ -8,8 +8,8 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       {
-        text: 'Guide',
-        link: '/guide/',
+        text: 'Guides',
+        link: '/guides/',
       },
       {
         text: 'API Reference',
@@ -87,17 +87,76 @@ export default defineConfig({
         },
       ],
       '/': [
-        { text: 'Installation', link: '/installation' },
         {
-          text: 'Guide',
+          text: 'Getting Started',
           items: [
-            { text: 'Introduction', link: '/guide/' },
-            { text: 'Getting Started', link: '/guide/getting-started' },
-            { text: 'Creating Components', link: '/guide/creating-components' },
-            // '/guide/adding-a-backend',
+            { text: 'Introduction', link: '/guides/' },
+            { text: 'Quickstart', link: '/guides/quickstart' },
+            { text: 'Creating Marcelle Apps', link: '/guides/installation' },
+            {
+              text: 'Using components',
+              link: '/guides/using-components',
+            },
+            { text: 'Reactive pipelines', link: '/guides/reactive-pipelines' },
+            { text: 'Creating a new component', link: '/guides/creating-components' },
+            {
+              text: 'Adding server-side data storage',
+              link: '/guides/data-storage',
+            },
           ],
         },
-        { text: 'CLI', link: '/cli' },
+        {
+          text: 'Machine Learning Models',
+          collapsed: true,
+          items: [
+            { text: 'Introduction', link: '/guides/machine-learning-models/' },
+            { text: 'Decision Tree', link: '/guides/machine-learning-models/model-decision-tree' },
+            {
+              text: 'Client-side inference with Tensorflow.js',
+              link: '/guides/machine-learning-models/tfjs',
+            },
+            {
+              text: 'Client-side inference with ONNX',
+              link: '/guides/machine-learning-models/onnx',
+            },
+            {
+              text: 'Server-side inference with Python (Ray or Starlette)',
+              link: '/guides/machine-learning-models/python-serving',
+            },
+            {
+              text: 'Server-side processing: using the backend',
+              link: '/guides/machine-learning-models/python-backend',
+            },
+          ],
+        },
+        {
+          text: 'Data Management',
+          collapsed: true,
+          items: [
+            { text: 'Server-side data storage', link: '/guides/data-management/' },
+            { text: 'Authentication', link: '/guides/data-management/authentication' },
+            { text: 'Security', link: '/guides/data-management/security' },
+          ],
+        },
+        {
+          text: 'Deployment',
+          collapsed: true,
+          items: [
+            { text: 'Overview', link: '/guides/deployment/' },
+            { text: 'Example using Nginx and PM2', link: '/guides/deployment/nginx-pm2' },
+            { text: 'Example using Docker', link: '/guides/deployment/docker' },
+          ],
+        },
+        {
+          text: 'Development Tools',
+          collapsed: true,
+          items: [
+            { text: 'Overview', link: '/guides/devtools/' },
+            { text: 'Creating an App', link: '/guides/devtools/' },
+            { text: 'Creating components', link: '/guides/devtools/' },
+            { text: 'Managing the backend', link: '/guides/devtools/' },
+          ],
+        },
       ],
     },
 
