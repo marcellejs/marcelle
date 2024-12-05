@@ -10,7 +10,7 @@ import sizes from 'rollup-plugin-sizes';
 import svelte from 'rollup-plugin-svelte';
 import typescript from '@rollup/plugin-typescript';
 import path from 'path';
-import pkg from './package.json' assert { type: 'json' };
+import pkg from './package.json' with { type: 'json' };
 
 const production = !process.env.ROLLUP_WATCH;
 const analyze = false;
