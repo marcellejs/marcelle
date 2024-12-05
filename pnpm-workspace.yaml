@@ -4,3 +4,4 @@ packages:
   - 'packages/*'
   - 'apps/**'
   - '!**/test/**'
+  - '!packages/python'

@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "marcelle"
+version = "0.1.0"
+description = "Python package for interacting with Marcelle"
+authors = ["Jules Françoise <me@julesfrancoise.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://marcelle.dev/"
+repository = "https://github.com/marcellejs/python/"
+documentation = "https://marcelle.dev/api/python.html"
+keywords = [
+    "Marcelle",
+    "Interactive Machine Learning",
+    "Tensorflow",
+    "Tensorflow.js",
+    "Keras",
+    "ONNX"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha"
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+python-socketio = {extras = ["client"], version = "^5.11.4"}
+requests = "^2.32.3"
+numpy = "^2.1.3"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.10.0"
+flake8 = "^7.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
