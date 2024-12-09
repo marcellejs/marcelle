@@ -151,10 +151,9 @@ export default defineConfig({
           text: 'Development Tools',
           collapsed: true,
           items: [
-            { text: 'Overview', link: '/guides/devtools/' },
-            { text: 'Creating an App', link: '/guides/devtools/' },
-            { text: 'Creating components', link: '/guides/devtools/' },
-            { text: 'Managing the backend', link: '/guides/devtools/' },
+            { text: 'App Generation', link: '/guides/devtools/app-generation' },
+            { text: 'DevTools', link: '/guides/devtools/devtools' },
+            { text: 'Setting Up a Development Environment', link: '/guides/devtools/setting-up' },
           ],
         },
       ],
