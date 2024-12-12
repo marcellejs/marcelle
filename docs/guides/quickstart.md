@@ -10,7 +10,7 @@ In this tutorial, you will learn how to build a simple Marcelle application that
 
 ## Setting up
 
-The best way to set up your application is by using the Marcelle's dedicated [CLI tools](/cli). You will need a recent version of [Node.js](https://nodejs.org/) installed (v14 or later).
+The best way to set up your application is by using the Marcelle's dedicated [CLI tools](/guides/devtools/app-generation). You will need a recent version of [Node.js](https://nodejs.org/) installed (v14 or later).
 
 To create a new project:
 
