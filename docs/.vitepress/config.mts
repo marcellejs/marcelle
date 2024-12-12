@@ -89,6 +89,7 @@ export default defineConfig({
       '/': [
         {
           text: 'Getting Started',
+          collapsed: true,
           items: [
             { text: 'Introduction', link: '/guides/' },
             { text: 'Quickstart', link: '/guides/quickstart' },
@@ -110,22 +111,21 @@ export default defineConfig({
           collapsed: true,
           items: [
             { text: 'Introduction', link: '/guides/machine-learning-models/' },
-            { text: 'Decision Tree', link: '/guides/machine-learning-models/model-decision-tree' },
             {
-              text: 'Client-side inference with Tensorflow.js',
-              link: '/guides/machine-learning-models/tfjs',
+              text: 'How to use my model?',
+              link: '/guides/machine-learning-models/model-decision-tree',
             },
             {
-              text: 'Client-side inference with ONNX',
-              link: '/guides/machine-learning-models/onnx',
+              text: 'Client-side inference',
+              link: '/guides/machine-learning-models/client-side-inference',
             },
             {
-              text: 'Server-side inference with Python (Ray or Starlette)',
-              link: '/guides/machine-learning-models/python-serving',
+              text: 'Server-side inference',
+              link: '/guides/machine-learning-models/server-side-inference',
             },
             {
-              text: 'Server-side processing: using the backend',
-              link: '/guides/machine-learning-models/python-backend',
+              text: 'Training Models with Marcelle Data',
+              link: '/guides/machine-learning-models/train-models-marcelle',
             },
           ],
         },
