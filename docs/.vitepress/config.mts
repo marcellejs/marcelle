@@ -120,8 +120,8 @@ export default defineConfig({
               link: '/guides/machine-learning-models/client-side-inference',
             },
             {
-              text: 'Server-side inference with Ray Serve',
-              link: '/guides/machine-learning-models/python-serving-with-ray',
+              text: 'Server-side inference',
+              link: '/guides/machine-learning-models/server-side-inference',
             },
             {
               text: 'Training Models with Marcelle Data',

@@ -24,7 +24,7 @@ Cons:
   size="medium"
   theme="brand"
   text="See the guide"
-  href="/guides/machine-learning-models/python-serving-with-ray"
+  href="/guides/machine-learning-models/server-side-inference.html#serving-a-python-model-with-ray"
 />
 
 ### Solution 2: server-side inference through the backend <span :class="$style.tip">Recommended&nbsp;for&nbsp;long&nbsp;inference</span>
