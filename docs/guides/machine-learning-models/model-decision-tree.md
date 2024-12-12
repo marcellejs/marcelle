@@ -4,19 +4,25 @@ We propose a simple decision tree to to help you understand how to integrate a m
 
 <script setup>
 import VPButton from '../../components/VPButton.vue'
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
-const path = ref(location.hash ? location.hash.slice(1).split('-') : []);
+const path = ref([]);
 const existing = computed(() => path.value.length > 0 ? path.value[0] === 'true' : undefined);
 const inference = computed(() => (existing.value && path.value.length > 1) ? path.value[1] === 'inference' : undefined);
 const inferenceFramework = computed(() => inference.value && path.value[2]);
 const dataset = computed(() => existing.value !== undefined && existing.value === false && path.value[1]);
 const trainLanguage = computed(() => dataset.value  !== undefined && dataset.value === 'marcelle' && path.value[2]);
 
+onMounted(() => {
+  path.value = window?.location?.hash ? window?.location.hash.slice(1).split('-') : [];
+})
+
 watch(path, async (newPath, oldPath) => {
   // const newLoc = location.split('#')[0] + '#' + newPath.join('-');
   // console.log('path', newPath.join('-'), location, newLoc);
-  location.hash = '#' + newPath.join('-');
+  if (window !== undefined) {
+    window.location.hash = '#' + newPath.join('-');
+  }
 });
 </script>
 
@@ -209,15 +215,5 @@ Train your model and come back to the start.
 
 .button.active:hover {
   background-color: rgb(217, 93, 1);
-}
-
-.tip {
-  background-color: SlateGray;
-  font-size: 0.9rem;
-  color: white;
-  margin-left: 1rem;
-  margin-top: -0.5rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 0.5rem;
 }
 </style>

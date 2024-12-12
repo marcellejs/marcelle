@@ -48,3 +48,15 @@ Cons:
   text="See the guide"
   href="/guides/machine-learning-models/"
 />
+
+<style module>
+.tip {
+  background-color: SlateGray;
+  font-size: 0.9rem;
+  color: white;
+  margin-left: 1rem;
+  margin-top: -0.5rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.5rem;
+}
+</style>

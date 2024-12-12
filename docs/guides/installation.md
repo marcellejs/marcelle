@@ -36,7 +36,7 @@ pnpm i
 
 :::
 
-See the [CLI's documentation](/cli.html) for more information about available options.
+See the [CLI's documentation](/guides/devtools/app-generation) for more information about available options.
 
 ## Using a package manager
 

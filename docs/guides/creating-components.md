@@ -124,7 +124,7 @@ You should obtain the following application:
 
 ## Generating a Component
 
-Components are essentially JavaScript objects exposing a set of streams for communicating with other Marcelle components, and optionally providing a view. The easiest way to generate a new component is using the [CLI](/cli):
+Components are essentially JavaScript objects exposing a set of streams for communicating with other Marcelle components, and optionally providing a view. The easiest way to generate a new component is using the [CLI](/guides/devtools/devtools):
 
 ::: code-group
 

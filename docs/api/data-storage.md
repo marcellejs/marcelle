@@ -416,7 +416,7 @@ The backend package is under active development and is not yet stable. It is not
 
 ### Adding a backend to an existing application
 
-A backend can be added to a Marcelle application using the [CLI](/cli.html):
+A backend can be added to a Marcelle application using the [CLI](/guides/devtools/devtools):
 
 <CodeGroup>
 <CodeGroupItem title="npm">
