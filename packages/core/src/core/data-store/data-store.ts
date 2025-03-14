@@ -65,7 +65,8 @@ export class DataStore {
       const locUrl = new URL(location);
       const host = locUrl.host;
       this.apiPrefix = locUrl.pathname.replace(/\/$/, '');
-      const socket = io(host, {
+      const prefix = `${locUrl.protocol === 'https:' ? 'wss' : 'ws'}://`;
+      const socket = io(prefix + host, {
         transports: ['websocket'],
         reconnectionAttempts: 5,
         path: this.apiPrefix + '/socket.io',
