@@ -15,13 +15,13 @@
     "@marcellejs/tensorflow": "workspace:^0.6.5",
     "@tensorflow/tfjs-core": "^4.22.0",
     "@tensorflow/tfjs-layers": "^4.22.0",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@marcellejs/devtools": "workspace:^0.6.5",
-    "@sveltejs/vite-plugin-svelte": "^4.0.0",
-    "svelte": "^5.1.13",
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "svelte": "^5.23.0",
     "svelte-select": "^5.8.3",
-    "vite": "^5.4.10"
+    "vite": "^6.2.2"
   }
 }

@@ -50,32 +50,32 @@
     "clean": "rimraf dist types"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.1",
-    "@rollup/plugin-node-resolve": "^15.3.0",
-    "@rollup/plugin-replace": "^6.0.1",
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^12.1.1",
+    "@rollup/plugin-typescript": "^12.1.2",
     "@types/blueimp-load-image": "^5.16.6",
-    "autoprefixer": "^10.4.20",
-    "daisyui": "^4.12.14",
-    "postcss": "^8.4.47",
+    "autoprefixer": "^10.4.21",
+    "daisyui": "^4.12.24",
+    "postcss": "^8.5.3",
     "postcss-load-config": "^6.0.1",
-    "rollup": "^4.25.0",
+    "rollup": "^4.35.0",
     "rollup-plugin-filesize": "^10.0.0",
     "rollup-plugin-postcss": "^4.0.0",
     "rollup-plugin-progress": "^1.1.2",
-    "rollup-plugin-sizes": "^1.0.6",
+    "rollup-plugin-sizes": "^1.1.0",
     "rollup-plugin-svelte": "^7.2.2",
-    "svelte": "^5.1.13",
+    "svelte": "^5.23.0",
     "svelte-preprocess": "^6.0.3",
-    "svelte-range-slider-pips": "^3.1.4",
-    "tailwindcss": "^3.4.14",
+    "svelte-range-slider-pips": "^3.2.2",
+    "tailwindcss": "^3.4.17",
     "tslib": "^2.8.1",
-    "typescript": "^5.6.3"
+    "typescript": "^5.8.2"
   },
   "dependencies": {
     "@marcellejs/core": "workspace:^0.6.5",
     "blueimp-load-image": "^5.14.0",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.2"
   }
 }
