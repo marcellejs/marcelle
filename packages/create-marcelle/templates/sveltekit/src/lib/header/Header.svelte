@@ -38,7 +38,7 @@
           >
         </div>
         <ul
-          class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+          class="menu menu-sm dropdown-content mt-3 z-1 p-2 shadow-sm bg-base-100 rounded-box w-52"
         >
           {#each navItems as { name, href }}
             <li><a {href}>{name}</a></li>
@@ -57,7 +57,7 @@
       </ul>
     </div>
     <div class="navbar-end">
-      <label class="mly-swap mly-swap-rotate">
+      <label class="mly:swap mly:swap-rotate">
         <!-- this hidden checkbox controls the state -->
         <input
           type="checkbox"
@@ -69,7 +69,7 @@
 
         <!-- sun icon -->
         <svg
-          class="mly-swap-off mly-h-6 mly-w-6 mly-fill-current"
+          class="mly:swap-off mly:h-6 mly:w-6 mly:fill-current"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
         >
@@ -80,7 +80,7 @@
 
         <!-- moon icon -->
         <svg
-          class="mly-swap-on mly-h-6 mly-w-6 mly-fill-current"
+          class="mly:swap-on mly:h-6 mly:w-6 mly:fill-current"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
         >

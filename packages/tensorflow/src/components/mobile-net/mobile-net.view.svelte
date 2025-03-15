@@ -11,6 +11,6 @@
   let { loading, version, alpha }: Props = $props();
 </script>
 
-<p class="mtf-p-2 mtf-text-sm mtf-text-gray-600">
+<p class="mtf:p-2 mtf:text-sm mtf:text-gray-600">
   {#if $loading}&nbsp;{:else}Using Mobilenet v{version} with alpha = {alpha}.{/if}
 </p>

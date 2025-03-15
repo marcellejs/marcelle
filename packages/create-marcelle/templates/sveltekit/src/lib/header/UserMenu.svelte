@@ -44,7 +44,7 @@
     </div>
   </div>
   <ul
-    class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-64"
+    class="mt-3 z-1 p-2 shadow-sm menu menu-sm dropdown-content bg-base-100 rounded-box w-64"
   >
     {#if !user || user?.role === 'anonymous'}
       <li><a href="{base}/login">Login</a></li>

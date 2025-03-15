@@ -13,16 +13,16 @@
 </script>
 
 <div
-  class="mly-card mly-my-2 mly-w-full mly-flex-none mly-overflow-hidden mly-bg-base-100 mly-p-3 mly-shadow-md xl:mly-w-auto xl:mly-flex-1"
+  class="mly:card mly:my-2 mly:w-full mly:flex-none mly:overflow-hidden mly:bg-base-100 mly:p-3 mly:shadow-md mly:xl:w-auto mly:xl:flex-1"
 >
   {#if title}
-    <h2 class="mly-card-title mly-mb-4">{title}</h2>
+    <h2 class="mly:card-title mly:mb-4">{title}</h2>
   {/if}
   {#if loading && $loading}
     <span
-      class="mly-absolute mly-inset-0 mly-z-50 mly-flex mly-w-full mly-flex-nowrap mly-items-center mly-justify-center mly-bg-white mly-bg-opacity-50"
+      class="mly:absolute mly:inset-0 mly:z-50 mly:flex mly:w-full mly:flex-nowrap mly:items-center mly:justify-center mly:bg-white mly:bg-opacity-50"
     >
-      <span class="mly-loading mly-loading-spinner mly-loading-lg"></span>
+      <span class="mly:loading mly:loading-spinner mly:loading-lg"></span>
     </span>
   {/if}
   {@render children_render?.()}

@@ -5,6 +5,5 @@ export default {
   printWidth: 100,
   tabWidth: 2,
   plugins: ['prettier-plugin-svelte', 'prettier-plugin-tailwindcss'],
-  tailwindConfig: './packages/core/tailwind.config.cjs',
   overrides: [{ files: '*.svelte', options: { parser: 'svelte' } }],
 };

@@ -151,10 +151,10 @@
 </script>
 
 {#if $accuracy !== undefined}
-  <p class="mcl-m-2">Global Accuracy: {$accuracy.toFixed(2)}</p>
+  <p class="mcl:m-2">Global Accuracy: {$accuracy.toFixed(2)}</p>
   <div class="confusion-container"><canvas use:setup></canvas></div>
 {:else}
-  <p class="mcl-m-2">Waiting for predictions...</p>
+  <p class="mcl:m-2">Waiting for predictions...</p>
 {/if}
 
 <style>

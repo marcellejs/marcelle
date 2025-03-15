@@ -17,7 +17,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
-  class="mcl-hover:text-gray-800 mcl-mx-4 mcl-cursor-pointer mcl-p-2 mcl-text-sm mcl-font-semibold mcl-text-gray-600"
+  class="mcl:hover:text-gray-800 mcl:mx-4 mcl:cursor-pointer mcl:p-2 mcl:text-sm mcl:font-semibold mcl:text-gray-600"
   class:selected={$selectedTab === tab}
   role="tab"
   onclick={() => selectTab(tab)}
@@ -26,8 +26,10 @@
   {@render children_render?.()}
 </div>
 
-<style>
+<style lang="postcss">
+  @reference "../../styles.css";
+
   .selected {
-    @apply mcl-border-0 mcl-border-b-2 mcl-border-solid mcl-border-green-400 mcl-text-black;
+    @apply mcl:border-0 mcl:border-b-2 mcl:border-solid mcl:border-green-400 mcl:text-black;
   }
 </style>

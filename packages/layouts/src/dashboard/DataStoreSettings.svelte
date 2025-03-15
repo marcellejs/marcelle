@@ -26,21 +26,21 @@
   {#if dataStore.requiresAuth}
     {#await dataStore.connect()}
       <div
-        class="mly-flex mly-min-h-28 mly-w-full mly-flex-col mly-items-center mly-justify-center"
+        class="mly:flex mly:min-h-28 mly:w-full mly:flex-col mly:items-center mly:justify-center"
       >
-        <span class="mly-loading mly-loading-spinner mly-loading-lg"></span>
+        <span class="mly:loading mly:loading-spinner mly:loading-lg"></span>
         <span>Connecting</span>
       </div>
     {:then user}
       {#if user.role === 'anonymous'}
         <p>You are not authenticated.</p>
-        <div class="mly-flex">
-          <button class="mly-btn mly-btn-outline" onclick={signin}> Sign in </button>
+        <div class="mly:flex">
+          <button class="mly:btn mly:btn-outline" onclick={signin}> Sign in </button>
         </div>
       {:else}
-        <p class="mly-pb-2">Hello, {user.email}</p>
-        <div class="mly-flex">
-          <button class="mly-btn mly-btn-outline" onclick={logout}> Log out </button>
+        <p class="mly:pb-2">Hello, {user.email}</p>
+        <div class="mly:flex">
+          <button class="mly:btn mly:btn-outline" onclick={logout}> Log out </button>
         </div>
       {/if}
     {/await}
@@ -48,7 +48,7 @@
     <div>This dataStore does not require authentication</div> -->
   {/if}
   {#if $services}
-    <div class="mly-mt-6">
+    <div class="mly:mt-6">
       This data store contains the following services: {$services.join(', ')}
     </div>
   {/if}

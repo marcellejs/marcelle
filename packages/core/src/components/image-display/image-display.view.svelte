@@ -36,4 +36,4 @@
   export { imageStream };
 </script>
 
-<canvas bind:this={canvas} class="mcl-w-full mcl-max-w-full"></canvas>
+<canvas bind:this={canvas} class="mcl:w-full mcl:max-w-full"></canvas>

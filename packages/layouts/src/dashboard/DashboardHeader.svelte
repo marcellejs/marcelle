@@ -37,13 +37,13 @@
   }
 </script>
 
-<div class="mly-navbar mly-bg-base-100">
-  <div class="mly-navbar-start mly-w-full">
-    <div class="mly-dropdown">
-      <div tabindex="0" role="button" class="mly-btn mly-btn-ghost lg:mly-hidden">
+<div class="mly:navbar mly:bg-base-100">
+  <div class="mly:navbar-start mly:w-full">
+    <div class="mly:dropdown">
+      <div tabindex="0" role="button" class="mly:btn mly:btn-ghost mly:lg:hidden">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="mly-h-5 mly-w-5"
+          class="mly:h-5 mly:w-5"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -59,24 +59,24 @@
       <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
       <ul
         tabindex="0"
-        class="mly-menu mly-dropdown-content mly-menu-sm mly-z-[1] mly-mt-3 mly-w-52 mly-rounded-box mly-bg-base-100 mly-p-2 mly-shadow"
+        class="mly:menu mly:dropdown-content mly:menu-sm mly:z-1 mly:mt-3 mly:w-52 mly:rounded-box mly:bg-base-100 mly:p-2 mly:shadow"
       >
         {#each Object.entries(items) as [slug, name]}
           <li>
-            <a href={`#${slug}`} class:mly-active={!showSettings && current === name}>
+            <a href={`#${slug}`} class:mly:active={!showSettings && current === name}>
               {name}
             </a>
           </li>
         {/each}
       </ul>
     </div>
-    <a href="#/" class="mly-btn mly-btn-ghost mly-text-xl">{title}</a>
+    <a href="#/" class="mly:btn mly:btn-ghost mly:text-xl">{title}</a>
     <!-- </div> -->
-    <div class="mly-hidden lg:mly-flex">
-      <ul class="mly-menu mly-menu-horizontal mly-my-0 mly-gap-1 mly-px-1">
+    <div class="mly:hidden mly:lg:flex">
+      <ul class="mly:menu mly:menu-horizontal mly:my-0 mly:gap-1 mly:px-1">
         {#each Object.entries(items) as [slug, name]}
           <li>
-            <a href={`#${slug}`} class:mly-active={!showSettings && current === name}>
+            <a href={`#${slug}`} class:mly:active={!showSettings && current === name}>
               {name}
             </a>
           </li>
@@ -84,8 +84,8 @@
       </ul>
     </div>
   </div>
-  <div class="mly-navbar-end">
-    <label class="mly-swap mly-swap-rotate">
+  <div class="mly:navbar-end">
+    <label class="mly:swap mly:swap-rotate">
       <!-- this hidden checkbox controls the state -->
       <input
         type="checkbox"
@@ -97,7 +97,7 @@
 
       <!-- sun icon -->
       <svg
-        class="mly-swap-off mly-h-6 mly-w-6 mly-fill-current"
+        class="mly:swap-off mly:h-6 mly:w-6 mly:fill-current"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
       >
@@ -108,7 +108,7 @@
 
       <!-- moon icon -->
       <svg
-        class="mly-swap-on mly-h-6 mly-w-6 mly-fill-current"
+        class="mly:swap-on mly:h-6 mly:w-6 mly:fill-current"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
       >
@@ -118,18 +118,18 @@
       </svg>
     </label>
     <button
-      class="mly-btn mly-btn-circle mly-btn-ghost"
+      class="mly:btn mly:btn-circle mly:btn-ghost"
       onclick={toggleSettings}
       aria-label="toggle settings"
     >
-      <div class="mly-indicator">
+      <div class="mly:indicator">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="mly-size-6"
+          class="mly:size-6"
         >
           <path
             stroke-linecap="round"
@@ -141,11 +141,11 @@
     </button>
     {#if closable}
       <button
-        class="mly-btn mly-btn-circle mly-btn-ghost mly-text-error"
+        class="mly:btn mly:btn-circle mly:btn-ghost mly:text-error"
         onclick={quit}
         aria-label="quit"
       >
-        <div class="mly-indicator">
+        <div class="mly:indicator">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -167,12 +167,14 @@
 </div>
 
 <style lang="postcss">
+  @reference "../styles.css";
+
   a {
     color: inherit;
     text-decoration: inherit;
   }
 
   .active {
-    @apply mly-border-green-500 mly-text-gray-900;
+    @apply mly:border-green-500 mly:text-gray-900;
   }
 </style>

@@ -112,11 +112,11 @@
 
 {#if draggedOver}
   <div
-    class="mgui-pointer-events-none mgui-absolute mgui-left-0 mgui-top-0 mgui-z-50 mgui-flex mgui-h-full mgui-w-full mgui-flex-col mgui-items-center mgui-justify-center mgui-rounded-md mgui-bg-base-100 mgui-opacity-90"
+    class="mgui:pointer-events-none mgui:absolute mgui:left-0 mgui:top-0 mgui:z-50 mgui:flex mgui:h-full mgui:w-full mgui:flex-col mgui:items-center mgui:justify-center mgui:rounded-md mgui:bg-base-100 mgui:opacity-90"
   >
     <i>
       <svg
-        class="mgui-mb-3 mgui-h-12 mgui-w-12 mgui-fill-current mgui-text-accent"
+        class="mgui:mb-3 mgui:h-12 mgui:w-12 mgui:fill-current mgui:text-accent"
         xmlns="http://www.w3.org/2000/svg"
         width="24"
         height="24"
@@ -127,7 +127,7 @@
         />
       </svg>
     </i>
-    <p class="mgui-text-lg mgui-text-accent">Drop files to upload</p>
+    <p class="mgui:text-lg mgui:text-accent">Drop files to upload</p>
   </div>
 {/if}
 
@@ -140,19 +140,19 @@
   role="none"
 >
   <div
-    class="mgui-flex mgui-flex-col mgui-items-center mgui-justify-center mgui-border-2 mgui-border-dashed mgui-border-gray-300 mgui-py-8"
+    class="mgui:flex mgui:flex-col mgui:items-center mgui:justify-center mgui:border-2 mgui:border-dashed mgui:border-gray-300 mgui:py-8"
   >
-    <p class="mgui-mb-3 mgui-flex mgui-flex-wrap mgui-justify-center mgui-font-semibold">
+    <p class="mgui:mb-3 mgui:flex mgui:flex-wrap mgui:justify-center mgui:font-semibold">
       <span>Drag and drop an image or</span>
     </p>
-    <input bind:this={uploadInput} type="file" multiple class="mgui-hidden" />
-    <button class="mgui-btn" onclick={clickUpload}>Upload a file</button>
+    <input bind:this={uploadInput} type="file" multiple class="mgui:hidden" />
+    <button class="mgui:btn" onclick={clickUpload}>Upload a file</button>
   </div>
 
-  <div class="mgui-flex mgui-flex-wrap">
+  <div class="mgui:flex mgui:flex-wrap">
     {#each objectURLs as src}
       <img
-        class="mgui-mx-auto mgui-my-2 mgui-w-32"
+        class="mgui:mx-auto mgui:my-2 mgui:w-32"
         src={src ||
           'https://user-images.githubusercontent.com/507615/54591670-ac0a0180-4a65-11e9-846c-e55ffce0fe7b.png'}
         alt="no data"
@@ -162,8 +162,10 @@
 </div>
 
 <style lang="postcss">
+  @reference "../../styles.css";
+
   .image-upload {
-    @apply mgui-mt-2;
+    @apply mgui:mt-2;
     width: 100%;
     display: flex;
     flex-direction: column;

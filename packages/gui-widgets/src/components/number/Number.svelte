@@ -17,17 +17,17 @@
   }
 </script>
 
-<div class="mgui-join">
+<div class="mgui:join">
   <button
     {disabled}
-    class="mgui-btn mgui-btn-sm mgui-join-item"
+    class="mgui:btn mgui:btn-sm mgui:join-item"
     onclick={() => {
       value -= 1;
     }}>-</button
   >
   <div>
     <input
-      class="mgui-input mgui-input-sm mgui-input-bordered mgui-join-item mgui-w-20"
+      class="mgui:input mgui:input-sm mgui:input-bordered mgui:join-item mgui:w-20"
       type="number"
       inputmode="decimal"
       {disabled}
@@ -37,7 +37,7 @@
   </div>
   <button
     {disabled}
-    class="mgui-btn mgui-btn-sm mgui-join-item"
+    class="mgui:btn mgui:btn-sm mgui:join-item"
     onclick={() => {
       value += 1;
     }}>+</button

@@ -78,8 +78,8 @@
 </script>
 
 {#await dataset.ready}
-  <div class="mcl-flex mcl-min-h-28 mcl-w-full mcl-flex-col mcl-items-center mcl-justify-center">
-    <span class="mcl-loading mcl-loading-spinner mcl-loading-lg"></span>
+  <div class="mcl:flex mcl:min-h-28 mcl:w-full mcl:flex-col mcl:items-center mcl:justify-center">
+    <span class="mcl:loading mcl:loading-spinner mcl:loading-lg"></span>
   </div>
 {:then}
   {#if provider}

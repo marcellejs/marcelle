@@ -48,10 +48,10 @@
 
 <div class="webcam">
   <div>
-    <div class="mcl-form-control">
-      <label class="mcl-label mcl-cursor-pointer">
-        <input type="checkbox" class="mcl-toggle" bind:checked={$active} />
-        <span class="mcl-label-text mcl-ml-2">activate video</span>
+    <div class="mcl:form-control">
+      <label class="mcl:label mcl:cursor-pointer">
+        <input type="checkbox" class="mcl:toggle" bind:checked={$active} />
+        <span class="mcl:label-text mcl:ml-2">activate video</span>
       </label>
     </div>
   </div>
@@ -64,14 +64,14 @@
   >
     {#if $active && !$ready}
       <span
-        class="mcl-absolute mcl-inset-0 mcl-flex mcl-w-full mcl-flex-nowrap mcl-items-center mcl-justify-center"
+        class="mcl:absolute mcl:inset-0 mcl:flex mcl:w-full mcl:flex-nowrap mcl:items-center mcl:justify-center"
       >
-        <span class="mcl-loading mcl-loading-spinner mcl-loading-lg"></span>
+        <span class="mcl:loading mcl:loading-spinner mcl:loading-lg"></span>
       </span>
     {/if}
     <video
       id="webcam-video"
-      class="mcl-max-w-none"
+      class="mcl:max-w-none"
       class:mirror={$facingMode === 'user'}
       style="width: {width > height ? `${webcamContainerWidth}px` : 'auto'}; height: {width > height
         ? 'auto'
@@ -82,9 +82,9 @@
       playsinline
     ></video>
     {#if numWebcams > 1}
-      <div class="mcl-absolute mcl-bottom-2 mcl-right-2 mcl-text-right">
+      <div class="mcl:absolute mcl:bottom-2 mcl:right-2 mcl:text-right">
         <button
-          class="mcl-btn mcl-btn-circle mcl-btn-ghost"
+          class="mcl:btn mcl:btn-circle mcl:btn-ghost"
           onclick={() => facingMode.next(facingMode.getValue() === 'user' ? 'environment' : 'user')}
           aria-label="switch camera"
         >
@@ -94,7 +94,7 @@
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="mcl-h-6 mcl-w-6"
+            class="mcl:h-6 mcl:w-6"
           >
             <path
               stroke-linecap="round"
@@ -109,12 +109,14 @@
 </div>
 
 <style lang="postcss">
+  @reference "../../styles.css";
+
   .webcam {
-    @apply mcl-mt-2 mcl-flex mcl-w-full mcl-flex-col mcl-items-center mcl-text-center;
+    @apply mcl:mt-2 mcl:flex mcl:w-full mcl:flex-col mcl:items-center mcl:text-center;
   }
 
   .webcam .webcam-container {
-    @apply mcl-m-2 mcl-flex mcl-w-full mcl-justify-center mcl-overflow-hidden mcl-rounded-md mcl-bg-base-300;
+    @apply mcl:m-2 mcl:flex mcl:w-full mcl:justify-center mcl:overflow-hidden mcl:rounded-md mcl:bg-base-300;
     max-width: 350px;
   }
 

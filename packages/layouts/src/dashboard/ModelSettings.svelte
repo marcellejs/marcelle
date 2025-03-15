@@ -54,10 +54,10 @@
 </script>
 
 <ViewContainer title={model.title}>
-  <div class="mly-flex">
-    <button class="mly-btn mly-btn-outline" onclick={downloadModel}>Download Model</button>
-    <span class="mly-w-1"></span>
-    <input bind:this={uploadInput} type="file" multiple class="mly-hidden" />
-    <button class="mly-btn mly-btn-outline" onclick={uploadModel}>Upload Model</button>
+  <div class="mly:flex">
+    <button class="mly:btn mly:btn-outline" onclick={downloadModel}>Download Model</button>
+    <span class="mly:w-1"></span>
+    <input bind:this={uploadInput} type="file" multiple class="mly:hidden" />
+    <button class="mly:btn mly:btn-outline" onclick={uploadModel}>Upload Model</button>
   </div>
 </ViewContainer>

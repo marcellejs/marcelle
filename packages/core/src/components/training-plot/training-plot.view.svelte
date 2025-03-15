@@ -32,12 +32,12 @@
   });
 </script>
 
-<div bind:this={container} class="mcl-grid mcl-grid-cols-1 mcl-gap-1">
+<div bind:this={container} class="mcl:grid mcl:grid-cols-1 mcl:gap-1">
   <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
-  {#each Object.values(charts) as _, i}
+  {#each Object.values(charts) as _, i (i)}
     <div
       bind:this={refs[i]}
-      class="mcl-card mcl-w-full mcl-flex-none mcl-shadow-none xl:mcl-flex-1"
+      class="mcl:card mcl:w-full mcl:flex-none mcl:shadow-none mcl:xl:flex-1"
     ></div>
   {/each}
 </div>

@@ -90,7 +90,7 @@
 
 {#if showApp}
   <div
-    class="mly-fixed mly-left-0 mly-top-0 mly-z-40 mly-h-screen mly-w-full mly-max-w-full mly-overflow-x-hidden mly-overflow-y-scroll"
+    class="mly:fixed mly:left-0 mly:top-0 mly:z-40 mly:h-screen mly:w-full mly:max-w-full mly:overflow-x-hidden mly:overflow-y-scroll"
   >
     <div class="app-container" transition:blur={{ amount: 10, duration: closable ? 400 : 0 }}>
       <DashboardHeader
@@ -116,17 +116,13 @@
 {/if}
 
 <style lang="postcss">
+  @reference "../styles.css";
+
   .app-container {
-    @apply mly-absolute mly-left-0 mly-top-0 mly-z-10 mly-flex mly-min-h-screen mly-w-full mly-flex-col;
+    @apply mly:absolute mly:left-0 mly:top-0 mly:z-10 mly:flex mly:min-h-screen mly:w-full mly:flex-col;
   }
 
   .main-container {
-    @apply mly-box-border mly-flex mly-w-full mly-grow mly-flex-col mly-flex-nowrap mly-bg-base-200 mly-p-1;
-  }
-
-  @screen lg {
-    .main-container {
-      @apply mly-flex-row;
-    }
+    @apply mly:box-border mly:flex mly:w-full mly:grow mly:flex-col mly:flex-nowrap mly:bg-base-200 mly:p-1 mly:lg:flex-row;
   }
 </style>

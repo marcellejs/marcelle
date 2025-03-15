@@ -111,13 +111,13 @@
             {/if}
           </th>
         {/if}
-        {#each columns as { name, sortable }}
+        {#each columns as { name, sortable }, i (i)}
           <TableHeaderCell {name} {sortable} {sorting} on:sort={sort} />
         {/each}
       </tr>
     </thead>
     <tbody>
-      {#each $data as item, i}
+      {#each $data as item, i (i)}
         <tr>
           {#if selectable}
             <TableContentCell type="slot">
@@ -128,7 +128,7 @@
               />
             </TableContentCell>
           {/if}
-          {#each columns as { type, name }}
+          {#each columns as { type, name }, j (j)}
             <TableContentCell
               {type}
               value={item[name]}

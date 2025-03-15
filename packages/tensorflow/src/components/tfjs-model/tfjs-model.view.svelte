@@ -20,7 +20,7 @@
   );
 </script>
 
-<div class="mtf-p-2 mtf-text-sm mtf-text-gray-600">
+<div class="mtf:p-2 mtf:text-sm mtf:text-gray-600">
   {#if status === 'loading'}
     <p>Loading Model...</p>
   {:else if status === 'loaded'}

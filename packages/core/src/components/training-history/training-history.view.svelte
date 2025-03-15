@@ -18,12 +18,7 @@
     selection: BehaviorSubject<TrainingRun[]>;
   }
 
-  let {
-    service,
-    metrics,
-    actions,
-    selection
-  }: Props = $props();
+  let { service, metrics, actions, selection }: Props = $props();
 
   const dispatch = createEventDispatcher();
 
@@ -122,7 +117,7 @@
 
   <TabPanel>
     <div class="summaries">
-      {#each $selection.map((x) => x.model?.summary || 'No summary available') as summary, i}
+      {#each $selection.map((x) => x.model?.summary || 'No summary available') as summary, i (i)}
         <div>
           <h2>Model {i + 1}</h2>
           <div class="summary"><pre>{summary}<br /></pre></div>
@@ -133,6 +128,8 @@
 </Tabs>
 
 <style lang="postcss">
+  @reference "../../styles.css";
+
   .summaries {
     display: flex;
     overflow: scroll;

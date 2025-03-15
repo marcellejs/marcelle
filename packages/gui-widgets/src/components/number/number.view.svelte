@@ -10,8 +10,8 @@
   let { value, disabled }: Props = $props();
 </script>
 
-<div class="mgui-w-full mgui-max-w-sm">
-  <div class="md:mgui-flex md:mgui-items-center mgui-mb-2">
+<div class="mgui:w-full mgui:max-w-sm">
+  <div class="mgui:md:flex mgui:md:items-center mgui:mb-2">
     <Number bind:value={$value} disabled={$disabled} />
   </div>
 </div>

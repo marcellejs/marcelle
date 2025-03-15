@@ -17,58 +17,37 @@
 </script>
 
 {#if settings}
-  <div class="left">
-    <h2 class="mly-text-2xl mly-font-bold">Data Stores</h2>
-    {#each settings.xDataStores as dataStore}
+  <div class="mly:w-full mly:shrink-0 mly:p-1 mly:lg:w-1/2">
+    <h2 class="mly:text-2xl mly:font-bold">Data Stores</h2>
+    {#each settings.xDataStores as dataStore, i (i)}
       <DataStoreSettings {dataStore} />
     {/each}
-    <h2 class="mly-text-2xl mly-font-bold">Models</h2>
-    {#each settings.xModels as model}
+    <h2 class="mly:text-2xl mly:font-bold">Models</h2>
+    {#each settings.xModels as model, i (i)}
       <ModelSettings {model} />
     {/each}
-    <h2 class="mly-text-2xl mly-font-bold">Datasets</h2>
-    {#each settings.xDatasets as dataset}
+    <h2 class="mly:text-2xl mly:font-bold">Datasets</h2>
+    {#each settings.xDatasets as dataset, i (i)}
       <DatasetSettings {dataset} />
     {/each}
-    <h2 class="mly-text-2xl mly-font-bold">Predictions</h2>
-    {#each settings.xPredictions as prediction}
+    <h2 class="mly:text-2xl mly:font-bold">Predictions</h2>
+    {#each settings.xPredictions as prediction, i (i)}
       <PredictionsSettings {prediction} />
     {/each}
   </div>
-  <div class="right">
-    {#each settings.components as m}
+  <div class="mly:grow mly:p-1 mly:lg:w-1/2">
+    {#each settings.components as m, i (i)}
       {#if Array.isArray(m)}
-        <div class="mly-flex mly-flex-row mly-flex-wrap mly-items-stretch">
-          {#each m as { id }}
-            <div {id} class="mly-card mly-w-full mly-flex-none xl:mly-w-auto xl:mly-flex-1"></div>
+        <div class="mly:flex mly:flex-row mly:flex-wrap mly:items-stretch">
+          {#each m as { id }, j (j)}
+            <div {id} class="mly:card mly:w-full mly:flex-none mly:xl:w-auto mly:xl:flex-1"></div>
           {/each}
         </div>
       {:else if typeof m === 'string'}
         <h2>{m}</h2>
       {:else}
-        <div id={m.id} class="mly-card"></div>
+        <div id={m.id} class="mly:card"></div>
       {/if}
     {/each}
   </div>
 {/if}
-
-<style type="text/postcss">
-  .left {
-    @apply mly-w-full mly-shrink-0 mly-p-1;
-  }
-
-  .right {
-    @apply mly-grow mly-p-1;
-  }
-
-  @screen lg {
-    .left {
-      width: 50%;
-    }
-
-    .right {
-      width: 50%;
-      /* max-width: calc(100% - 350px); */
-    }
-  }
-</style>

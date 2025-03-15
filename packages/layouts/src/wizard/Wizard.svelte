@@ -61,7 +61,7 @@
 </script>
 
 <div class="wizard">
-  <div class="mly-absolute mly-inset-0 mly-min-h-screen mly-transition-opacity">
+  <div class="mly:absolute mly:inset-0 mly:min-h-screen mly:transition-opacity">
     <div
       onclick={quit}
       onkeypress={handleKeyPress}
@@ -70,7 +70,7 @@
     ></div>
   </div>
   <div
-    class="mly-transform mly-overflow-hidden mly-rounded-lg mly-bg-white mly-shadow-xl mly-transition-all sm:mly-w-full sm:mly-max-w-3xl"
+    class="mly:transform mly:overflow-hidden mly:rounded-lg mly:bg-white mly:shadow-xl mly:transition-all mly:sm:w-full mly:sm:max-w-3xl"
   >
     <WizardPageComponent
       title={pages[$current].attr.title}
@@ -79,12 +79,12 @@
       index={$current + 1}
     />
     <div
-      class="mly-grid mly-grid-cols-3 mly-border-t mly-border-gray-300 mly-bg-white mly-px-4 mly-py-2"
+      class="mly:grid mly:grid-cols-3 mly:border-t mly:border-gray-300 mly:bg-white mly:px-4 mly:py-2"
     >
       <div>
-        <button class="mly-btn mly-btn-outline mly-btn-error" onclick={quit}>Close</button>
+        <button class="mly:btn mly:btn-outline mly:btn-error" onclick={quit}>Close</button>
       </div>
-      <div class="mly-text-center">
+      <div class="mly:text-center">
         <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
         {#each Array(pages.length) as _, i}
           <button
@@ -95,9 +95,9 @@
           ></button>
         {/each}
       </div>
-      <div class="mly-text-right">
+      <div class="mly:text-right">
         <button
-          class="mly-btn mly-btn-outline"
+          class="mly:btn mly:btn-outline"
           disabled={$current <= 0}
           onclick={() => {
             goToPage($current - 1);
@@ -106,8 +106,8 @@
           Previous
         </button>
         <button
-          class="mly-btn"
-          class:mly-btn-success={$current >= pages.length - 1}
+          class="mly:btn"
+          class:mly:btn-success={$current >= pages.length - 1}
           onclick={() => {
             if (current.getValue() < pages.length - 1) {
               goToPage($current + 1);
@@ -124,26 +124,28 @@
 </div>
 
 <style lang="postcss">
+  @reference "../styles.css";
+
   .wizard {
-    @apply mly-absolute mly-inset-x-0 mly-top-0 mly-z-20 mly-min-h-screen mly-p-4 mly-pb-4;
+    @apply mly:absolute mly:inset-x-0 mly:top-0 mly:z-20 mly:min-h-screen mly:p-4 mly:pb-4;
   }
 
   @screen sm {
     .wizard {
-      @apply mly-flex mly-items-center mly-justify-center;
+      @apply mly:flex mly:items-center mly:justify-center;
     }
   }
 
-  .wizard :global(.mly-card-title) {
+  .wizard :global(.mly:card-title) {
     display: none !important;
   }
 
   .page-button {
-    @apply mly-mx-1 mly-h-2 mly-w-2 mly-cursor-pointer mly-rounded-full mly-border-none mly-bg-blue-300 mly-p-0;
+    @apply mly:mx-1 mly:h-2 mly:w-2 mly:cursor-pointer mly:rounded-full mly:border-none mly:bg-blue-300 mly:p-0;
   }
 
   .page-button.current,
   .page-button:hover {
-    @apply mly-bg-blue-500;
+    @apply mly:bg-blue-500;
   }
 </style>

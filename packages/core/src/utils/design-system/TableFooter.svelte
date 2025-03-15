@@ -52,12 +52,12 @@
     {/if}
   </div>
 
-  <div class="mcl-flex mcl-items-center">
-    <div class="mcl-mx-4 mcl-flex mcl-items-center">
+  <div class="mcl:flex mcl:items-center">
+    <div class="mcl:mx-4 mcl:flex mcl:items-center">
       Items per page:
-      <div class="mcl-ml-2 mcl-w-12">
+      <div class="mcl:ml-2 mcl:w-12">
         <select
-          class="mcl-select mcl-select-bordered mcl-select-sm mcl-w-full mcl-max-w-xs"
+          class="mcl:select mcl:select-bordered mcl:select-sm mcl:w-full mcl:max-w-xs"
           value={itemsPerPage.toString()}
           onchange={({ currentTarget }) => {
             const n = currentTarget.value === 'all' ? total : parseInt(currentTarget.value);
@@ -65,17 +65,17 @@
             itemsPerPage = n;
           }}
         >
-          {#each ['10', '20', '50', 'all'] as option}
+          {#each ['10', '20', '50', 'all'] as option (option)}
             <option>{option}</option>
           {/each}
         </select>
       </div>
     </div>
-    <div class="mcl-mx-3">
+    <div class="mcl:mx-3">
       {start}-{end} of {total}
     </div>
     <button
-      class="mcl-btn mcl-btn-circle"
+      class="mcl:btn mcl:btn-circle"
       disabled={page === 1}
       onclick={() => {
         gotoPage(page - 1);
@@ -84,7 +84,7 @@
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="mcl-h-3 mcl-w-3"
+        class="mcl:h-3 mcl:w-3"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -93,7 +93,7 @@
       </svg>
     </button>
     <input
-      class="mcl-active:ring-4 mcl-active:ring-blue-400 mcl-active:ring-opacity-50 mcl-mb-1 mcl-mr-1 mcl-w-8 mcl-rounded mcl-border mcl-border-solid mcl-border-gray-300 mcl-bg-white mcl-text-center mcl-text-gray-600 focus:mcl-outline-none focus:mcl-ring-2 focus:mcl-ring-blue-400 focus:mcl-ring-opacity-50"
+      class="mcl:active:ring-4 mcl:active:ring-blue-400 mcl:active:ring-opacity-50 mcl:mb-1 mcl:mr-1 mcl:w-8 mcl:rounded mcl:border mcl:border-solid mcl:border-gray-300 mcl:bg-white mcl:text-center mcl:text-gray-600 mcl:focus:outline-hidden mcl:focus:ring-2 mcl:focus:ring-blue-400 mcl:focus:ring-opacity-50"
       value={page.toString()}
       onblur={(e) => {
         let i = parseInt(e.currentTarget.value);
@@ -103,7 +103,7 @@
     />
 
     <button
-      class="mcl-btn mcl-btn-circle"
+      class="mcl:btn mcl:btn-circle"
       disabled={page === numPages}
       onclick={() => {
         gotoPage(page + 1);
@@ -112,7 +112,7 @@
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="mcl-h-3 mcl-w-3"
+        class="mcl:h-3 mcl:w-3"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"

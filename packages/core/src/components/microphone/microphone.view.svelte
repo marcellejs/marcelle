@@ -76,14 +76,14 @@
 
 <div>
   <div>
-    <div class="mcl-form-control">
-      <label class="mcl-label mcl-cursor-pointer">
-        <input type="checkbox" class="mcl-toggle" bind:checked={$active} />
-        <span class="mcl-label-text mcl-ml-2">activate microphone</span>
+    <div class="mcl:form-control">
+      <label class="mcl:label mcl:cursor-pointer">
+        <input type="checkbox" class="mcl:toggle" bind:checked={$active} />
+        <span class="mcl:label-text mcl:ml-2">activate microphone</span>
       </label>
     </div>
   </div>
   <div>
-    <canvas bind:this={canvasElt} class="mcl-w-full"></canvas>
+    <canvas bind:this={canvasElt} class="mcl:w-full"></canvas>
   </div>
 </div>

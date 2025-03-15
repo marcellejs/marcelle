@@ -89,15 +89,17 @@
   });
 </script>
 
-<div class="mcl-flex mcl-flex-col mcl-items-center">
+<div class="mcl:flex mcl:flex-col mcl:items-center">
   <div class="recorder-container">
     <input type="checkbox" id="btn" bind:checked={$active} />
     <label for="btn"></label>
   </div>
-  <div class="mcl-text-gray-600">{elapsedTime}</div>
+  <div class="mcl:text-gray-600">{elapsedTime}</div>
 </div>
 
 <style lang="postcss">
+  @reference "../../styles.css";
+
   @keyframes stop {
     70% {
       border-radius: 6px;
@@ -119,7 +121,7 @@
     }
   }
   .recorder-container {
-    @apply mcl-relative mcl-flex mcl-w-full mcl-items-center mcl-justify-center;
+    @apply mcl:relative mcl:flex mcl:w-full mcl:items-center mcl:justify-center;
     width: 80px;
     height: 80px;
   }

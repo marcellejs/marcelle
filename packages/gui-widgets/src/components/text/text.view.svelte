@@ -12,7 +12,7 @@
   export { text };
 </script>
 
-<div class="mgui-grow">
+<div class="mgui:grow">
   {#if $text}
     <!-- eslint-disable-next-line svelte/no-at-html-tags -->
     {@html $text}
