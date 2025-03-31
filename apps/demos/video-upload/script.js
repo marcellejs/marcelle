@@ -2,7 +2,6 @@ import '@marcellejs/core/dist/marcelle.css';
 import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
 import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import {
-  dashboard,
   webcam,
   mediaRecorder,
   videoPlayer,
@@ -11,7 +10,9 @@ import {
   dataset,
   datasetTable,
 } from '@marcellejs/core';
+import { dashboard } from '@marcellejs/layouts';
 import { button, text } from '@marcellejs/gui-widgets';
+import { filter, from, map, mergeMap, tap, withLatestFrom } from 'rxjs';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE
@@ -29,11 +30,10 @@ const upload = button('Upload');
 const store = dataStore('http://localhost:3030');
 const ds = dataset('videos', store);
 const dst = datasetTable(ds, ['id', 'thumbnail', 'duration', 'createdAt']);
-dst.$selection.subscribe;
 
 upload.$click.subscribe(async () => {
-  upload.$loading.set(true);
-  upload.$text.set('Uploading...');
+  upload.$loading.next(true);
+  upload.$text.next('Uploading...');
   try {
     const { blob, type, duration, thumbnail } = recorder.$recordings.get();
     const filePath = await store.uploadAsset(blob);
@@ -47,33 +47,37 @@ upload.$click.subscribe(async () => {
   } catch (err) {
     console.log(err.message);
   } finally {
-    upload.$loading.set(false);
-    upload.$text.set('Upload');
+    upload.$loading.next(false);
+    upload.$text.next('Upload');
   }
 });
 
 const player = videoPlayer();
 
 const loadVideo = button('Load Selected Video');
-dst.$selection
-  .map((x) => x.length !== 1)
-  .subscribe((disabled) => {
-    loadVideo.$disabled.set(disabled);
-  });
+dst.$selection.pipe(map((x) => x.length !== 1)).subscribe((disabled) => {
+  loadVideo.$disabled.next(disabled);
+});
 loadVideo.$click
-  .sample(dst.$selection)
-  .map((x) => x[0])
-  .map((x) => ds.get(x.id))
-  .awaitPromises()
+  .pipe(
+    withLatestFrom(dst.$selection),
+    map((x) => x[1][0]),
+    map((x) => x[0]),
+    map((x) => ds.get(x.id)),
+    mergeMap((x) => from(x)),
+  )
   .subscribe((x) => {
     console.log('x', x);
-    player.$src.set(store.location + x.file);
+    player.$src.next(store.location + x.file);
   });
 
 recorder.$recordings
-  .map(({ blob }) => URL.createObjectURL(blob))
+  .pipe(
+    filter((x) => !!x),
+    map(({ blob }) => URL.createObjectURL(blob)),
+  )
   .subscribe((x) => {
-    player.$src.set(x);
+    player.$src.next(x);
   });
 
 const dash = dashboard({

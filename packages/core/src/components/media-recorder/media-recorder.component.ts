@@ -2,6 +2,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Component } from '../../core/component';
 import View from './media-recorder.view.svelte';
 import { mount, unmount } from 'svelte';
+import { rxBind } from '../../utils';
 
 export interface MediaRecording {
   duration: number;
@@ -29,7 +30,7 @@ export class MediaRecorder extends Component {
       target: t,
       props: {
         mediaStream: this.$mediaStream,
-        active: this.$active,
+        active: rxBind(this.$active),
         recordings: this.$recordings,
       },
     });
