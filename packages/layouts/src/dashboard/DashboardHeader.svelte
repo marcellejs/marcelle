@@ -30,7 +30,11 @@
     }, 400);
   }
 
-  let isDark = $state(JSON.parse(localStorage.getItem('marcelle-dark-theme')) || false);
+  let isDark = $state(
+    localStorage.getItem('marcelle-dark-theme') !== null
+      ? JSON.parse(localStorage.getItem('marcelle-dark-theme'))
+      : window.matchMedia('(prefers-color-scheme: dark)').matches,
+  );
   function toggleTheme() {
     isDark = !isDark;
     localStorage.setItem('marcelle-dark-theme', JSON.stringify(isDark));
@@ -61,7 +65,7 @@
         tabindex="0"
         class="mly:menu mly:dropdown-content mly:menu-sm mly:z-1 mly:mt-3 mly:w-52 mly:rounded-box mly:bg-base-100 mly:p-2 mly:shadow"
       >
-        {#each Object.entries(items) as [slug, name]}
+        {#each Object.entries(items) as [slug, name] (slug)}
           <li>
             <a href={`#${slug}`} class:mly:active={!showSettings && current === name}>
               {name}
@@ -74,7 +78,7 @@
     <!-- </div> -->
     <div class="mly:hidden mly:lg:flex">
       <ul class="mly:menu mly:menu-horizontal mly:my-0 mly:gap-1 mly:px-1">
-        {#each Object.entries(items) as [slug, name]}
+        {#each Object.entries(items) as [slug, name] (slug)}
           <li>
             <a href={`#${slug}`} class:mly:active={!showSettings && current === name}>
               {name}
