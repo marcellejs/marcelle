@@ -164,7 +164,9 @@ export class TFJSModel<
       const mask =
         this.segmentationOptions.output === 'image'
           ? new ImageData(
-              await browser.toPixels(processedOutputs as Tensor2D | Tensor3D),
+              (await browser.toPixels(
+                processedOutputs as Tensor2D | Tensor3D | TensorLike,
+              )) as ImageDataArray,
               width,
               height,
             )
