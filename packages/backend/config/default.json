@@ -2,14 +2,13 @@
   "host": "localhost",
   "port": 3030,
   "public": "./backend/public/",
-  "origins": [
-    "http://localhost:3030"
-  ],
+  "client": "http://localhost:5173/",
+  "origins": ["http://localhost:3030"],
+  "mongodb": "mongodb://127.0.0.1:27017/backend-neu",
   "paginate": {
     "default": 10,
     "max": 50
   },
-  "mongodb": "mongodb://127.0.0.1:27017/backend-neu",
   "whitelist": {
     "services": "*",
     "assets": ["jpg", "jpeg", "png", "wav"]
@@ -20,11 +19,7 @@
     "entity": "user",
     "service": "users",
     "secret": "QnksTHWnxvIcN74yeDHf18sMYGr8565j",
-    "authStrategies": [
-      "jwt",
-      "local",
-      "anonymous"
-    ],
+    "authStrategies": ["jwt", "local", "anonymous"],
     "jwtOptions": {
       "header": {
         "typ": "access"
@@ -36,12 +31,23 @@
     "local": {
       "usernameField": "email",
       "passwordField": "password"
+    },
+    "email-validation": {
+      "enabled": false,
+      "validateEmail": true,
+      "validateTokenURL": "http://localhost:5173/verify",
+      "resetPasswordURL": "http://localhost:5173/reset-password",
+      "smtp": {
+        "host": "localhost",
+        "port": 587,
+        "user": "",
+        "password": "",
+        "from": "test@localhost"
+      }
     }
   },
   "permissions": {
-    "superadmin": [
-      {"action": "manage", "subject": "all"}
-    ],
+    "superadmin": [{ "action": "manage", "subject": "all" }],
     "admin": [
       { "action": "manage", "subject": "all", "conditions": { "userId": "${user._id}" } },
       { "action": "manage", "subject": "all", "conditions": { "public": "${true}" } },
@@ -52,10 +58,13 @@
       { "action": "manage", "subject": "all", "conditions": { "public": "${true}" } },
       { "action": "read", "subject": "users", "conditions": { "_id": "${user._id}" } },
       { "action": "update", "subject": "users", "conditions": { "_id": "${user._id}" } },
-      { "action": "delete", "subject": "users", "conditions": { "_id": "${user._id}" }, "inverted": "true" }
+      {
+        "action": "delete",
+        "subject": "users",
+        "conditions": { "_id": "${user._id}" },
+        "inverted": "true"
+      }
     ],
-    "anonymous": [
-      { "action": "read", "subject": "all", "conditions": { "public": "${true}" } }
-    ]
+    "anonymous": [{ "action": "read", "subject": "all", "conditions": { "public": "${true}" } }]
   }
 }

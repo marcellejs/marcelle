@@ -10,6 +10,15 @@
     "assets": "WHITELIST_ASSETS"
   },
   "authentication": {
-    "secret": "FEATHERS_SECRET"
+    "secret": "FEATHERS_SECRET",
+    "mailing": {
+      "smtp": {
+        "host": "SMTP_HOST",
+        "port": "SMTP_PORT",
+        "user": "SMTP_USER",
+        "password": "SMPT_PWD",
+        "from": "SMTP_FROM"
+      }
+    }
   }
 }

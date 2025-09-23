@@ -21,6 +21,7 @@ export interface Configuration {
     max: number;
   };
   public: string;
+  client: string;
   origins: string[];
   authentication: {
     enabled: boolean;
@@ -40,6 +41,19 @@ export interface Configuration {
     local: {
       usernameField: string;
       passwordField: string;
+    };
+    'email-validation': {
+      enabled: boolean;
+      validateEmail: boolean;
+      validateTokenURL: string;
+      resetPasswordURL: string;
+      smtp: {
+        host: string;
+        port: number;
+        user: string;
+        password: string;
+        from: string;
+      };
     };
   };
   permissions: Record<string, unknown>;

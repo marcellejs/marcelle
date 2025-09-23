@@ -57,6 +57,11 @@ export default defineConfig({
           ],
         },
         {
+          text: '@marcellejs/backend',
+          collapsed: true,
+          items: [{ text: 'Configuration', link: '/api/backend/' }],
+        },
+        {
           text: '@marcellejs/layouts',
           collapsed: true,
           items: [
@@ -133,7 +138,11 @@ export default defineConfig({
           text: 'Data Management',
           collapsed: true,
           items: [
-            { text: 'Server-side data storage', link: '/guides/data-management/' },
+            { text: 'Overview', link: '/guides/data-management/' },
+            {
+              text: 'Server-side data storage',
+              link: '/guides/data-management/server-side-data-storage',
+            },
             { text: 'Authentication', link: '/guides/data-management/authentication' },
             { text: 'Security', link: '/guides/data-management/security' },
           ],

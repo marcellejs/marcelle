@@ -5,10 +5,16 @@ import { assets } from './assets/assets';
 import { mlModels } from './ml-models/ml-models';
 import { dynamic } from './dynamic/dynamic';
 import { info } from './info/info';
+import { authManagement } from './auth-management/auth-management.service';
+import { mailer } from './auth-management/mailer.service';
 
 export const services = (app: Application) => {
   if (app.get('authentication').enabled) {
     app.configure(user);
+    if (app.get('authentication')['email-validation'].enabled) {
+      app.configure(mailer);
+      app.configure(authManagement);
+    }
   }
   app.configure(assets);
   app.configure(mlModels('tfjs'));

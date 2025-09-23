@@ -124,6 +124,17 @@ export async function configureBackend(cwd: string, pkg: PackageJson): Promise<v
     console.log(`\tadded: ${green('backend/public/' + srcname)}`);
   }
 
+  mkdirp(path.join(dst, 'email-templates'));
+
+  const files3 = fs.readdirSync(path.join(dir, 'email-templates'));
+  for (const srcname of files3) {
+    copy(
+      path.join(dir, 'email-templates', srcname),
+      path.join(dst, 'config', 'email-templates', srcname),
+    );
+    console.log(`\tadded: ${green('backend/config/email-templates/' + srcname)}`);
+  }
+
   let dependencies: PackageJson['dependencies'] = {
     ...pkg.dependencies,
     '@marcellejs/backend': backendVersion,

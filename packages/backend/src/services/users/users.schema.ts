@@ -17,6 +17,14 @@ export const userSchema = Type.Object(
     password: Type.Optional(Type.String({ minLength: 8 })),
     createdAt: Type.Number(),
     updatedAt: Type.Number(),
+    isVerified: Type.Boolean(),
+    verifyToken: Type.Union([Type.Null(), Type.String()]),
+    verifyShortToken: Type.Union([Type.Null(), Type.String()]),
+    verifyExpires: Type.Union([Type.Null(), Type.Number()]),
+    verifyChanges: Type.Any(),
+    resetExpires: Type.Union([Type.Null(), Type.Number()]),
+    resetShortToken: Type.Union([Type.Null(), Type.String()]),
+    resetToken: Type.Union([Type.Null(), Type.String()]),
   },
   { $id: 'User', additionalProperties: true },
 );
@@ -50,7 +58,13 @@ export const userPatchResolver = resolve<User, HookContext>({
 });
 
 // Schema for allowed query properties
-export const userQueryProperties = Type.Pick(userSchema, ['_id', 'email', 'username']);
+export const userQueryProperties = Type.Pick(userSchema, [
+  '_id',
+  'email',
+  'username',
+  'verifyToken',
+  'verifyShortToken',
+]);
 export const userQuerySchema = Type.Intersect(
   [
     querySyntax(userQueryProperties),

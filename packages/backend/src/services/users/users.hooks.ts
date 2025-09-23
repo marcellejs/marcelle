@@ -4,6 +4,8 @@ import { defineAbilitiesFor } from '../../authentication/authentication.abilitie
 import { Application } from '../../declarations';
 import { authenticate } from '@feathersjs/authentication';
 import { hooks as schemaHooks } from '@feathersjs/schema';
+import { addVerification, removeVerification } from 'feathers-authentication-management';
+import authNotifier from '../auth-management/notifier';
 import {
   userDataValidator,
   userPatchValidator,
@@ -15,14 +17,25 @@ import {
   userQueryResolver,
 } from './users.schema';
 import { logger } from '../../logger';
+import { disallow, iff, isProvider, preventChanges } from 'feathers-hooks-common';
 // Don't remove this comment. It's needed to format import lines nicely.
+
+const sendVerify = () => {
+  return async (context: HookContext<Application>) => {
+    const notifier = authNotifier(context.app);
+    const users = Array.isArray(context.result) ? context.result : [context.result];
+    await Promise.all(users.map(async (user) => notifier('resendVerifySignup', user)));
+  };
+};
 
 const authorizeHook = authorize({
   adapter: '@feathersjs/mongodb',
   availableFields: ['email', 'role'],
 });
 
-export async function setRole(context: HookContext): Promise<HookContext> {
+export async function setRole(
+  context: HookContext<Application>,
+): Promise<HookContext<Application>> {
   const { type, data, service } = context;
   if (type !== 'before') {
     throw new Error('The "setRole" hook should only be used as a "before" hook.');
@@ -44,7 +57,9 @@ export async function setRole(context: HookContext): Promise<HookContext> {
   return context;
 }
 
-export function authenticateIfNecessary(context: HookContext): Promise<HookContext> {
+export function authenticateIfNecessary(
+  context: HookContext<Application>,
+): Promise<HookContext<Application>> {
   if (!context.app.get('authentication').allowSignup) {
     return authenticate('jwt')(context).then((c) => authorizeHook(c));
   }
@@ -78,16 +93,38 @@ export default {
       schemaHooks.validateData(userDataValidator),
       schemaHooks.resolveData(userDataResolver),
       setRole,
+      iff(
+        (context: HookContext<Application>) =>
+          context.app.get('authentication')['email-validation']?.enabled &&
+          context.app.get('authentication')['email-validation']?.validateEmail,
+        addVerification('auth-management'),
+      ),
     ],
     update: [
       authenticate('jwt'),
       authorizeHook,
+      disallow('external'),
       schemaHooks.validateData(userDataValidator),
       schemaHooks.resolveData(userDataResolver),
     ],
     patch: [
       authenticate('jwt'),
       authorizeHook,
+      iff(
+        isProvider('external'),
+        preventChanges(
+          true,
+          'email',
+          'isVerified',
+          'resetExpires',
+          'resetShortToken',
+          'resetToken',
+          'verifyChanges',
+          'verifyExpires',
+          'verifyShortToken',
+          'verifyToken',
+        ),
+      ),
       schemaHooks.validateData(userPatchValidator),
       schemaHooks.resolveData(userPatchResolver),
     ],
@@ -97,7 +134,7 @@ export default {
   after: {
     all: [],
     create: [
-      (context: HookContext): HookContext => {
+      (context: HookContext<Application>): HookContext<Application> => {
         const user = context.data;
         if (!user) return context;
         const ability = defineAbilitiesFor(user, context.app as Application);
@@ -105,7 +142,14 @@ export default {
         context.params.rules = ability.rules;
         return context;
       },
-      (context: HookContext): HookContext => {
+      iff(
+        (context: HookContext<Application>) =>
+          context.app.get('authentication')['email-validation']?.enabled &&
+          context.app.get('authentication')['email-validation']?.validateEmail,
+        sendVerify(),
+        removeVerification(),
+      ),
+      (context: HookContext<Application>): HookContext<Application> => {
         const user = context.data;
         logger.debug(`created user ${user.id} with role '${user.role}'`);
         return context;
@@ -115,7 +159,7 @@ export default {
   error: {
     all: [],
     create: [
-      (context: HookContext): HookContext => {
+      (context: HookContext<Application>): HookContext<Application> => {
         const { data } = context.error;
         if (data?.code === 11000) {
           context.error.code = 409;

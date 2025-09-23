@@ -57,9 +57,12 @@
     "@feathersjs/schema": "^5.0.34",
     "@feathersjs/socketio": "^5.0.34",
     "@feathersjs/transport-commons": "^5.0.34",
+    "feathers-authentication-management": "^5.1.0",
     "feathers-casl": "^2.2.1",
     "feathers-hooks-common": "^8.2.1",
+    "feathers-mailer": "^4.2.0",
     "mongodb": "^6.18.0",
+    "nodemailer": "^7.0.6",
     "winston": "^3.17.0"
   },
   "devDependencies": {
@@ -68,6 +71,7 @@
     "@feathersjs/typebox": "^5.0.34",
     "@types/mocha": "^10.0.10",
     "@types/node": "^24.3.0",
+    "@types/nodemailer": "^7.0.1",
     "axios": "^1.11.0",
     "cross-env": "^10.0.0",
     "mocha": "^11.7.1",
