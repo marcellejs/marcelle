@@ -3,7 +3,7 @@
     "sourceMap": true,
     "target": "ES2018",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "allowJs": false,
     "strict": true,
     "strictNullChecks": false,

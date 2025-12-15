@@ -4,3 +4,21 @@ packages:
   - 'packages/*'
   - 'apps/**'
   - '!**/test/**'
+
+strictDepBuilds: true
+# onlyBuiltDependencies:
+#   - package-with-necessary-build-scripts
+
+# ignoredBuiltDependencies:
+#   - package-with-unnecessary-build-scripts
+
+minimumReleaseAge: 4320
+# minimumReleaseAgeExclude:
+#   - package-with-critical-hotfix@1.2.3
+
+trustPolicy: no-downgrade
+trustPolicyExclude:
+  - semver@5.7.2
+  - rxjs@7.8.2
+  - vite@5.4.21
+  - chokidar@4.0.3

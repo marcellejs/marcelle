@@ -106,7 +106,7 @@ export const mlModels = (modelType: ModelType) => (app: Application) => {
                   response.push([name, (x as any)._writeStream.id]);
                 });
               }
-              ctx.request.body.files = response;
+              (ctx.request.body as Record<string, unknown>).files = response;
               await next();
             }
           },
