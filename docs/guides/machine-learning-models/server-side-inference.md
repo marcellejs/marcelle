@@ -1,6 +1,6 @@
 # Server-side Inference
 
-TODO: Intro
+Running inference in the browser can be quite expensive and not doable on smaller configurations. This chapter focuses on doing running inference of a model on a server then serving the answer to the Marcelle application.
 
 ## Serving a Python Model with Ray
 
@@ -10,9 +10,30 @@ In this guide, we will implement the scenario where a pre-trained model translat
 
 To do this, we'll be using the [🤗 HuggingFace's Transformers](https://huggingface.co/docs/transformers/v4.17.0/en/index) python library.
 
+*Note : As for every Python application, it is recommended to create a dedicated virtual environment (like a conda environment for instance) to better manage the dependencies and run the application.*
+
 ### Step 1: Serve a model with Ray
 
 In this first step we will create two python files: `serve_model.py` and `test_query.py`.
+
+#### Dependencies
+
+For this example the following parts will need to install the following dependencies :
+
+
+```sh
+pip install serve[ray]
+```
+
+*Note : this one is to be installed with pip and not snap or apt (not to be confused with an existing Unix package called 'serve')"*
+
+```sh
+pip install transformers
+```
+
+```sh
+pip install pytorch
+```
 
 #### Create a translation model
 
@@ -32,6 +53,14 @@ class MyModel:
         return result[0]["translation_text"]
 
 ```
+
+The pipeline function is defining :
+- the task we want to make the model perform
+- the model we want to use from Hugginface
+- extra optional parameters (like the temperature)
+
+More info on this function can be found [here](https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.pipeline)
+
 
 #### Use Ray to serve the model
 
