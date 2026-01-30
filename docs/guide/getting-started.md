@@ -61,8 +61,8 @@ This will scaffold a new Marcelle project with the following structure:
 ::: tip Alternative
 It is also possible (and easy) to get started without any install!
 
-Just go to [https://glitch.com/edit/#!/marcelle-v2-blank](https://glitch.com/edit/#!/marcelle-v2-blank)
-and click on "Remix to Edit" in the top right, then start editing the script.
+Just go to [https://codesandbox.io/p/sandbox/marcelle-template-qyf287](https://codesandbox.io/p/sandbox/marcelle-template-qyf287)
+and click on "Fork" in the top right, then start editing the script. An account will be necessary.
 :::
 
 ## App basics
