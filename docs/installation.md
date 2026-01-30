@@ -2,7 +2,7 @@
 
 There are several ways to start using Marcelle:
 
-- If you just want to check out simple examples and edit them, use [Glitch](https://glitch.com/@marcelle.crew/marcelle-examples)
+- If you just want to check out simple examples and edit them, use [CodeSandbox](https://codesandbox.io/p/sandbox/marcelle-template-qyf287)
 - If you want to generate an application template, use [Marcelle CLI](#using-marcelle-cli)
 - Otherwise, you can either use the marcelle package through [direct download or CDN ](#direct-download-cdn), or using [a package manager](#using-a-package-manager)
 
