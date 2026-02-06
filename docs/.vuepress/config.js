@@ -1,7 +1,12 @@
-import { defaultTheme } from 'vuepress';
+import { defaultTheme } from '@vuepress/theme-default';
+import { defineUserConfig } from 'vuepress';
+import { viteBundler } from '@vuepress/bundler-vite';
 import { searchPlugin } from '@vuepress/plugin-search';
+import { prismjsPlugin } from '@vuepress/plugin-prismjs';
 
-export default {
+export default defineUserConfig({
+  lang: 'en-US',
+
   title: 'Marcelle',
   description: 'An Interactive Machine Learning Toolkit',
   head: [
@@ -10,15 +15,23 @@ export default {
     // ['link', { rel: 'mask-icon', href: '/icons/safari-pinned-tab.svg', color: '#3eaf7c' }],
     // ['meta', { name: 'msapplication-TileImage', content: '/icons/msapplication-icon-144x144.png' }],
   ],
-  serviceWorker: false,
+
   plugins: [
     searchPlugin({
       // options
     }),
+    prismjsPlugin({
+      theme: 'one-light',
+    }),
   ],
+
   theme: defaultTheme({
+    // logo: 'https://vuejs.press/images/hero.png',
+    // navbar: ['/', '/get-started'],
     repo: 'marcellejs/marcelle',
     docsDir: 'docs',
+    colorMode: 'light',
+    colorModeSwitch: false,
     navbar: [
       {
         text: 'Guide',
@@ -87,4 +100,6 @@ export default {
       ],
     },
   }),
-};
+
+  bundler: viteBundler(),
+});
