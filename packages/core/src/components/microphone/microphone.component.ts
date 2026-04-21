@@ -1,6 +1,6 @@
 import { Component } from '../../core/component';
 import View from './microphone.view.svelte';
-import { throwError } from '../../utils';
+import { rxBind, throwError } from '../../utils';
 import { BehaviorSubject } from 'rxjs';
 import { mount, unmount } from 'svelte';
 
@@ -50,7 +50,8 @@ export class Microphone extends Component {
     const app = mount(View, {
       target: t,
       props: {
-        active: this.$active,
+        //active: this.$active,
+        active: rxBind(this.$active),
         mediaStream: this.$mediastream,
       },
     });
