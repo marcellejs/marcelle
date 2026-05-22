@@ -22,7 +22,7 @@ For this example the following parts will need to install the following dependen
 
 
 ```sh
-pip install serve[ray]
+pip install ray[serve]
 ```
 
 *Note : this one is to be installed with pip and not snap or apt (not to be confused with an existing Unix package called 'serve')"*
