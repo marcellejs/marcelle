@@ -13,19 +13,19 @@
     "clean": "pnpm --recursive run clean"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.29.8",
-    "eslint": "^9.39.1",
+    "@changesets/cli": "^2.31.1",
+    "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-svelte": "^3.13.1",
+    "eslint-plugin-svelte": "^3.24.1",
     "globals": "^16.5.0",
-    "prettier": "^3.7.4",
-    "prettier-plugin-svelte": "^3.4.0",
-    "prettier-plugin-tailwindcss": "^0.7.2",
-    "rimraf": "^6.1.2",
-    "svelte": "^5.45.10",
-    "svelte-eslint-parser": "^1.4.1",
+    "prettier": "^3.10.1",
+    "prettier-plugin-svelte": "^4.1.1",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "rimraf": "^6.1.4",
+    "svelte": "^5.57.3",
+    "svelte-eslint-parser": "^1.10.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.49.0"
+    "typescript-eslint": "^8.72.2"
   },
   "engines": {
     "node": ">=18",
