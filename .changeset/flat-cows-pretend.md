@@ -5,7 +5,6 @@
 '@marcellejs/layouts': major
 '@marcellejs/core': major
 '@marcellejs/onnx': major
-'demos': major
 ---
 
 Upgrade to Svelte v5

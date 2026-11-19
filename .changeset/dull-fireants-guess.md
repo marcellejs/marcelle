@@ -1,5 +1,4 @@
 ---
-'@marcellejs/design-system': major
 '@marcellejs/core': major
 '@marcellejs/devtools': patch
 ---

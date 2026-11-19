@@ -22,3 +22,7 @@ trustPolicyExclude:
   - rxjs@7.8.2
   - vite@5.4.21
   - chokidar@4.0.3
+allowBuilds:
+  esbuild: set this to true or false
+  protobufjs: set this to true or false
+  svelte-preprocess: set this to true or false

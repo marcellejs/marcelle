@@ -1,7 +1,5 @@
 ---
 '@marcellejs/core': major
-'demos': major
-'docs': major
 ---
 
 Replace Most.js by RxJs for reactive streams
