@@ -1,5 +1,5 @@
 // import { makeAbilityFromRules } from 'feathers-casl';
-import { createMongoAbility, AbilityBuilder, Ability, createAliasResolver } from '@casl/ability';
+import { createMongoAbility, AbilityBuilder, createAliasResolver } from '@casl/ability';
 import { Application } from '../declarations';
 
 // don't forget this, as `read` is used internally
@@ -60,7 +60,7 @@ export const defineRulesFor = (user: User, app: Application) => {
           true: true,
           false: false,
         });
-        const abs = new Ability(xx);
+        const abs = createMongoAbility(xx);
         return abs.rules;
       } catch (error) {
         console.log(error);

@@ -29,19 +29,7 @@
   },
   "engines": {
     "node": ">=18",
-    "pnpm": ">=9"
+    "pnpm": ">=12"
   },
-  "packageManager": "pnpm@12.21.0",
-  "pnpm": {
-    "peerDependencyRules": {
-      "ignoreMissing": [
-        "react-is"
-      ]
-    },
-    "ignoredBuiltDependencies": [
-      "esbuild",
-      "protobufjs",
-      "svelte-preprocess"
-    ]
-  }
+  "packageManager": "pnpm@12.21.0"
 }

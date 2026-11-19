@@ -45,7 +45,7 @@
     "bundle:client": "npm run build && npm pack --pack-destination ./public"
   },
   "dependencies": {
-    "@casl/ability": "^6.8.4",
+    "@casl/ability": "^7.1.3",
     "@feathersjs/authentication": "^5.0.51",
     "@feathersjs/authentication-client": "^5.0.51",
     "@feathersjs/authentication-local": "^5.0.51",
@@ -57,9 +57,9 @@
     "@feathersjs/schema": "^5.0.51",
     "@feathersjs/socketio": "^5.0.51",
     "@feathersjs/transport-commons": "^5.0.50",
-    "feathers-casl": "^2.2.4",
+    "feathers-casl": "^3.2.1",
     "feathers-hooks-common": "^8.2.1",
-    "mongodb": "^6.22.0",
+    "mongodb": "^7.9.0",
     "winston": "^3.19.0"
   },
   "devDependencies": {
