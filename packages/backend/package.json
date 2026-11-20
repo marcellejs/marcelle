@@ -57,7 +57,7 @@
     "@feathersjs/schema": "^5.0.51",
     "@feathersjs/socketio": "^5.0.51",
     "@feathersjs/transport-commons": "^5.0.50",
-    "feathers-casl": "^3.2.1",
+    "feathers-casl": "^3.3.0",
     "feathers-hooks-common": "^8.2.1",
     "mongodb": "^7.9.0",
     "winston": "^3.19.0"

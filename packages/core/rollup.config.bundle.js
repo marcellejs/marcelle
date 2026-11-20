@@ -1,6 +1,5 @@
 /* eslint-env node */
 import commonjs from '@rollup/plugin-commonjs';
-import filesize from 'rollup-plugin-filesize';
 import postcss from 'rollup-plugin-postcss';
 import progress from 'rollup-plugin-progress';
 import replace from '@rollup/plugin-replace';
@@ -40,7 +39,7 @@ const plugins = [
 
 const browserBuild = {
   input: 'src/index.ts',
-  plugins: plugins.concat([production && terser(), production && filesize()]),
+  plugins: plugins.concat([production && terser()]),
   output: [
     {
       file: pkg.main,

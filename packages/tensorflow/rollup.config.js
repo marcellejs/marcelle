@@ -1,6 +1,5 @@
 /* eslint-env node */
 import commonjs from '@rollup/plugin-commonjs';
-import filesize from 'rollup-plugin-filesize';
 import postcss from 'rollup-plugin-postcss';
 import progress from 'rollup-plugin-progress';
 import replace from '@rollup/plugin-replace';
@@ -39,7 +38,7 @@ const plugins = [
 
 const esBuild = {
   input: 'src/index.ts',
-  plugins: plugins.concat([production && filesize()]),
+  plugins,
   external: Object.keys(pkg.dependencies),
   output: [
     {
