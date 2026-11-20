@@ -140,8 +140,8 @@ Let's now inspect what's your app is made of. Open the file `src/script.js` (or 
 Replace the contents of the file by the following lines, that import the marcelle library:
 
 ```js
-import '@marcellejs/core/dist/marcelle.css';
-import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
+import '@marcellejs/core/marcelle.css';
+import '@marcellejs/gui-widgets/marcelle-gui-widgets.css';
 import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import * as core from '@marcellejs/core';
 import * as widgets from '@marcellejs/gui-widgets';
@@ -443,8 +443,8 @@ To give it a try, first train the model, then switch to the second page for test
 ::: details Full Code
 
 ```js
-import '@marcellejs/core/dist/marcelle.css';
-import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
+import '@marcellejs/core/marcelle.css';
+import '@marcellejs/gui-widgets/marcelle-gui-widgets.css';
 import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import * as core from '@marcellejs/core';
 import * as widgets from '@marcellejs/gui-widgets';

@@ -1,4 +1,4 @@
-import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/core/marcelle.css';
 import { dashboard, dataStore } from '@marcellejs/core';
 
 export const store = dataStore('localStorage');

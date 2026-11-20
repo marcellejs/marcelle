@@ -1,5 +1,5 @@
-import '@marcellejs/core/dist/marcelle.css';
-import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
+import '@marcellejs/core/marcelle.css';
+import '@marcellejs/gui-widgets/marcelle-gui-widgets.css';
 import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import './style.css';
 import {
@@ -18,7 +18,7 @@ import { button, modelParameters, select, textInput, toggle } from '@marcellejs/
 import { dashboard } from '@marcellejs/layouts';
 import { setMove, reset, stop } from './tetris';
 import App from './App.svelte';
-import { mount } from "svelte";
+import { mount } from 'svelte';
 
 // -----------------------------------------------------------
 // INPUT PIPELINE & DATA CAPTURE

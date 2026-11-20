@@ -1,5 +1,5 @@
-import '@marcellejs/core/dist/marcelle.css';
-import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
+import '@marcellejs/core/marcelle.css';
+import '@marcellejs/gui-widgets/marcelle-gui-widgets.css';
 import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import { datasetBrowser, dataset, dataStore, webcam } from '@marcellejs/core';
 import { button, textInput } from '@marcellejs/gui-widgets';
@@ -23,7 +23,7 @@ const $instances = zip(input.$images, input.$thumbnails).pipe(
     y: label.$value.getValue(),
     thumbnail,
   })),
-  mergeMap((x) => from(x))
+  mergeMap((x) => from(x)),
 );
 
 $instances.subscribe(trainingSet.create);

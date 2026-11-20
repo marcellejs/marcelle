@@ -1,5 +1,5 @@
-import '@marcellejs/core/dist/marcelle.css';
-import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
+import '@marcellejs/core/marcelle.css';
+import '@marcellejs/gui-widgets/marcelle-gui-widgets.css';
 import '@marcellejs/layouts/dist/marcelle-layouts.css';
 import howler from 'https://cdn.jsdelivr.net/npm/howler@2.2.4/+esm';
 import {

@@ -24,6 +24,7 @@
     "rimraf": "^6.1.4",
     "svelte": "^5.57.3",
     "svelte-eslint-parser": "^1.10.1",
+    "svelte2tsx": "^0.7.63",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.73.0"
   },

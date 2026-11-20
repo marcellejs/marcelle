@@ -1,7 +1,7 @@
 import svelte from 'rollup-plugin-svelte';
 import { sveltePreprocess } from 'svelte-preprocess';
 import { defineConfig } from 'tsdown';
-import { svelteDtsPlugin } from './scripts/tsdown-plugin-svelte-dts.ts';
+import { svelteDtsPlugin } from '../../scripts/tsdown-plugin-svelte-dts.ts';
 
 export default defineConfig({
   dts: true,
