@@ -29,6 +29,11 @@ export abstract class TFJSCustomClassifier extends TFJSCustomModel<
 > {
   title = 'TFJSCustomClassifier';
 
+  constructor(options: Partial<TFJSCustomClassifierOptions> = {}) {
+    super(options);
+    console.log('TFJCustomClassifier parameters', this.parameters);
+  }
+
   @Catch
   async train(
     dataset: Dataset<ClassifierInstance> | LazyIterable<ClassifierInstance>,

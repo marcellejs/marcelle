@@ -16,7 +16,7 @@ type PredictionType = number;
  * A Multi-layer Perceptron for regression with two hidden layers
  */
 export class Todo extends TFJSCustomModel<InputType, OutputType, PredictionType> {
-  parameters: {
+  declare parameters: {
     units: Stream<number>;
   } & TFJSCustomModel<InputType, OutputType, PredictionType>['parameters'];
 
@@ -32,8 +32,7 @@ export class Todo extends TFJSCustomModel<InputType, OutputType, PredictionType>
   async train(
     dataset: Dataset<InputType, OutputType> | ServiceIterable<Instance<InputType, OutputType>>,
     validationDataset?:
-      | Dataset<InputType, OutputType>
-      | ServiceIterable<Instance<InputType, OutputType>>,
+      Dataset<InputType, OutputType> | ServiceIterable<Instance<InputType, OutputType>>,
   ): Promise<void> {
     this.transformDataset = (ds) =>
       ds.map((instance) => ({

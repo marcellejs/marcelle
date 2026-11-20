@@ -59,6 +59,8 @@ const b = button('Train');
 b.title = 'Training Launcher';
 const classifier = mlpClassifier({ layers: [64, 32], epochs: 20 }).sync(store, 'mlp-dashboard');
 
+console.log('classifier', classifier);
+
 b.$click.subscribe(() => classifier.train(trainingSet));
 
 const params = modelParameters(classifier);

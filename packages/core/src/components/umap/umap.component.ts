@@ -23,7 +23,7 @@ export class Umap extends Model<UmapInstance, number[]> {
   title = 'UMAP';
   serviceName = 'umap';
 
-  parameters: {
+  declare parameters: {
     nComponents: BehaviorSubject<number>;
     nNeighbors: BehaviorSubject<number>;
     minDist: BehaviorSubject<number>;
