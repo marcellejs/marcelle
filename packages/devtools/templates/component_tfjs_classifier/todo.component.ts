@@ -10,7 +10,7 @@ export interface TodoOptions extends TFJSCustomClassifierOptions {
  * A Multi-layer Perceptron for classification with two hidden layers
  */
 export class Todo extends TFJSCustomClassifier {
-  parameters: {
+  declare parameters: {
     units: Stream<number[]>;
   } & TFJSCustomClassifier['parameters'];
 

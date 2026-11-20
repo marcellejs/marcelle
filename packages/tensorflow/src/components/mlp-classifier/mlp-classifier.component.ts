@@ -10,12 +10,14 @@ export interface MLPClassifierOptions extends TFJSCustomClassifierOptions {
 export class MLPClassifier extends TFJSCustomClassifier {
   title = 'MLPClassifier';
 
-  parameters: {
+  declare parameters: {
     layers: BehaviorSubject<number[]>;
   } & TFJSCustomClassifier['parameters'];
 
   constructor({ layers = [64, 32], ...rest }: Partial<MLPClassifierOptions> = {}) {
     super(rest);
+    console.log('rest', rest);
+    console.log('this.parameters', this.parameters);
     this.parameters = {
       layers: new BehaviorSubject(layers),
       ...this.parameters,

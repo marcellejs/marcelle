@@ -32,7 +32,7 @@ export interface KNNInstance extends Instance {
 export class KNNClassifier extends Model<KNNInstance, ClassifierResults> {
   title = 'KNN classifier';
 
-  parameters: {
+  declare parameters: {
     k: BehaviorSubject<number>;
   };
   serviceName = 'knn-classifier-models';
@@ -45,6 +45,7 @@ export class KNNClassifier extends Model<KNNInstance, ClassifierResults> {
     this.parameters = {
       k: new BehaviorSubject(k),
     };
+    this.labels = [];
   }
 
   @Catch

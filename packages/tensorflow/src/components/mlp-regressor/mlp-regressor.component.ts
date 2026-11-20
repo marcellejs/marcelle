@@ -16,14 +16,14 @@ export interface MLPRegressorInstance extends Instance {
 export class MLPRegressor extends TFJSCustomModel<MLPRegressorInstance, number | number[]> {
   title = 'MLPRegressor';
 
-  parameters: {
+  declare parameters: {
     units: BehaviorSubject<number[]>;
   } & TFJSCustomModel<MLPRegressorInstance, number | number[]>['parameters'];
 
   constructor({ units = [64, 32], ...rest }: Partial<MLPRegressorOptions> = {}) {
     super(rest);
     this.parameters = {
-      units: new BehaviorSubject(units),
+      units: new BehaviorSubject<number[]>(units),
       ...this.parameters,
     };
   }

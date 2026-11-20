@@ -1,6 +1,6 @@
-import '@marcellejs/core/dist/marcelle.css';
-import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
-import '@marcellejs/layouts/dist/marcelle-layouts.css';
+import '@marcellejs/core/marcelle.css';
+import '@marcellejs/gui-widgets/marcelle-gui-widgets.css';
+import '@marcellejs/layouts/marcelle-layouts.css';
 import {
   batchPrediction,
   datasetBrowser,
@@ -58,6 +58,8 @@ $instances.subscribe(trainingSet.create);
 const b = button('Train');
 b.title = 'Training Launcher';
 const classifier = mlpClassifier({ layers: [64, 32], epochs: 20 }).sync(store, 'mlp-dashboard');
+
+console.log('classifier', classifier);
 
 b.$click.subscribe(() => classifier.train(trainingSet));
 

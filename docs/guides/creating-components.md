@@ -57,7 +57,7 @@ Then, update the main application entry point (`src/index.js`) with the applicat
 ::: details src/index.js
 
 ```js
-import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/core/marcelle.css';
 import {
   dashboard,
   dataset,
@@ -153,7 +153,7 @@ Select 'Create a component', choose the name 'umap', the CLI will generate the f
 The generated component is already functional. Let's start by displaying it in our application. Edit `src/index.js` to import the component, create a new instance, and display it in the dashboard:
 
 ```js{6,12,19}
-import '@marcellejs/core/dist/marcelle.css';
+import '@marcellejs/core/marcelle.css';
 import {
   ...
 } from '@marcellejs/core';

@@ -36,7 +36,7 @@ export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
   title = 'k-means clustering';
   serviceName = 'kmeans-models';
 
-  parameters: {
+  declare parameters: {
     k: BehaviorSubject<number>;
   };
 
@@ -50,8 +50,9 @@ export class KMeansClustering extends Model<KMeansInstance, ClusteringResults> {
     this.parameters = {
       k: new BehaviorSubject(k),
     };
-    this.$centers = new BehaviorSubject([]);
-    this.$clusters = new BehaviorSubject([]);
+    this.$centers = new BehaviorSubject<number[][]>([]);
+    this.$clusters = new BehaviorSubject<number[]>([]);
+    this.extremes = [];
     this.dataset = [];
   }
 

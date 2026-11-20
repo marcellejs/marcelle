@@ -45,9 +45,9 @@ Then, update the main application entry point (`src/index.js`) with the followin
 ::: details src/index.js
 
 ```js
-import '@marcellejs/core/dist/marcelle.css';
-import '@marcellejs/gui-widgets/dist/marcelle-gui-widgets.css';
-import '@marcellejs/layouts/dist/marcelle-layouts.css';
+import '@marcellejs/core/marcelle.css';
+import '@marcellejs/gui-widgets/marcelle-gui-widgets.css';
+import '@marcellejs/layouts/marcelle-layouts.css';
 import { dataset, datasetBrowser, dataStore, webcam } from '@marcellejs/core';
 import { button, textInput } from '@marcellejs/gui-widgets';
 import { dashboard } from '@marcellejs/layouts';
