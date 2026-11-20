@@ -31,7 +31,7 @@ pnpm add @marcellejs/layouts
 To use the package in your app, import both the CSS and the JS constructors:
 
 ```js
-import '@marcellejs/layouts/dist/marcelle-layouts.css';
+import '@marcellejs/layouts/marcelle-layouts.css';
 import { dashboard } from '@marcellejs/layouts';
 ```
 

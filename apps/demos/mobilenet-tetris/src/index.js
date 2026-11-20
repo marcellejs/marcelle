@@ -1,6 +1,6 @@
 import '@marcellejs/core/marcelle.css';
 import '@marcellejs/gui-widgets/marcelle-gui-widgets.css';
-import '@marcellejs/layouts/dist/marcelle-layouts.css';
+import '@marcellejs/layouts/marcelle-layouts.css';
 import './style.css';
 import {
   datasetBrowser,

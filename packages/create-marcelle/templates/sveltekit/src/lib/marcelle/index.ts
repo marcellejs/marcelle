@@ -1,6 +1,6 @@
 import '@marcellejs/core/marcelle.css';
 import '@marcellejs/gui-widgets/marcelle-gui-widgets.css';
-import '@marcellejs/layouts/dist/marcelle-layouts.css';
+import '@marcellejs/layouts/marcelle-layouts.css';
 import { datasetBrowser, dataset, dataStore, webcam } from '@marcellejs/core';
 import { button, textInput } from '@marcellejs/gui-widgets';
 import { filter, from, map, mergeMap, zip } from 'rxjs';
